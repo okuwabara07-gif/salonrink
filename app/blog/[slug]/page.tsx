@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 export async function generateStaticParams() {
   return getAllPosts().map(p => ({ slug: p.slug }));
 }
-export default function PostPage({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   if (!post) notFound();
   return (
     <main style={{ minHeight: "100vh", background: "#FAF6EE", fontFamily: "Georgia, serif", padding: "60px 40px" }}>
