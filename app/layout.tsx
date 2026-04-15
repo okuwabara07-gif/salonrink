@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: "SalonRink",
   description: "美容サロン統合管理プラットフォーム",
   verification: {
-    google: "xpdiFRYHloMJxfhCT-IMD08p5na4v9WUqvPY9OrDsHs",
+    google: "LhDE3K0d8OvwCM_wvoTnUiVQ9pj9r8H7abwiz7ShlV4",
   },
 };
 
