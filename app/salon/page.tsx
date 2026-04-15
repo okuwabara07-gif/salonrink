@@ -24,7 +24,7 @@ export default function SalonPage() {
             {item.label}
           </div>
         ))}
-        <div style={{marginTop:'auto',padding:'20px',borderTop:'1px solid rgba(255,255,255,.08)',marginTop:32}}>
+        <div style={{padding:'20px',borderTop:'1px solid rgba(255,255,255,.08)',marginTop:32}}>
           <div style={{fontSize:11,color:'rgba(255,255,255,0.3)',marginBottom:4}}>キレイ鶴見店</div>
           <div style={{fontSize:12,color:'rgba(255,255,255,0.5)'}}>田中オーナー</div>
         </div>
