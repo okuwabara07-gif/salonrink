@@ -137,7 +137,7 @@ export default function Home() {
           Salon<span style={{ color: '#B8966A' }}>Rink</span>
         </div>
         <p style={{ fontSize: 12, color: '#7A6E64', fontFamily: 'sans-serif', letterSpacing: 2 }}>
-          © 2026 AOKAE合同会社
+          © 2026 SalonRink
         </p>
       </footer>
     </main>
