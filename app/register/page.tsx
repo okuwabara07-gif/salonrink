@@ -19,6 +19,12 @@ export default function RegisterPage() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  const STRIPE_LINKS: Record<string, string> = {
+    basic: 'https://buy.stripe.com/test_28E5kD7lPdahabs9lc0kE00',
+    small: 'https://buy.stripe.com/test_3cIeVd49D5HP0ASbtk0kE01',
+    medium: 'https://buy.stripe.com/test_7sY28r7lP2vDdnEbtk0kE02',
+  }
+
   const plans = [
     { id: 'basic', name: 'ベーシック', price: '¥980', desc: '予約同期・リマインド自動送信' },
     { id: 'small', name: 'スモール', price: '¥2,480', desc: '＋顧客カルテ・失客アラート' },
@@ -162,7 +168,7 @@ export default function RegisterPage() {
             </div>
             <div style={{display:'flex',gap:12}}>
               <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-              <button onClick={handleSubmit} disabled={loading}
+              <button onClick={() => window.location.href = STRIPE_LINKS[form.plan]} 
                 style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:loading?'#E0D8D0':'#1A1018',color:loading?'#999':'#FAF6EE',fontSize:14,cursor:loading?'not-allowed':'pointer'}}>
                 {loading?'登録中...':'登録してLINEと連携する →'}
               </button>
