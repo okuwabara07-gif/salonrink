@@ -107,11 +107,9 @@ export default function Home() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 24, maxWidth: 1000, margin: '0 auto' }}>
           {[
-            { name: 'FL Solo', price: '¥980', unit: '/月', desc: 'フリーランス向け', color: '#8B7BAA' },
-            { name: 'FL Pro', price: '¥2,480', unit: '/月', desc: 'フリーランス上位', color: '#8B7BAA' },
-            { name: 'Starter', price: '¥2,980', unit: '/月', desc: 'サロン向け基本', color: '#B8966A' },
-            { name: 'Standard', price: '¥5,980', unit: '/月', desc: 'サロン向け人気', color: '#7A3550', featured: true },
-            { name: 'Premium', price: '¥9,800', unit: '/月', desc: 'サロン向け上位', color: '#1A1018' },
+            { name: 'ベーシック', price: '¥980', unit: '/月', desc: '予約同期・リマインド自動送信', color: '#8B7BAA', link: 'https://buy.stripe.com/test_28E5kD7lPdahabs9lc0kE00' },
+            { name: 'スモール', price: '¥2,480', unit: '/月', desc: '＋顧客カルテ・失客アラート', color: '#B8966A', featured: true, link: 'https://buy.stripe.com/test_3cIeVd49D5HP0ASbtk0kE01' },
+            { name: 'ミディアム', price: '¥3,980', unit: '/月', desc: '＋売上レポート・スタッフ管理', color: '#7A3550', link: 'https://buy.stripe.com/test_7sY28r7lP2vDdnEbtk0kE02' },
           ].map((p) => (
             <div key={p.name} style={{
               padding: '32px 24px',
@@ -123,6 +121,7 @@ export default function Home() {
               <div style={{ fontSize: 36, color: '#1A1018', marginBottom: 4 }}>{p.price}</div>
               <div style={{ fontSize: 12, color: '#A89E94', marginBottom: 16, fontFamily: 'sans-serif' }}>{p.unit}</div>
               <div style={{ fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>{p.desc}</div>
+              <a href={(p as any).link} style={{ display: 'block', marginTop: 16, padding: '10px 16px', background: '#1A1018', color: '#FAF6EE', textDecoration: 'none', fontSize: 13, fontFamily: 'sans-serif', borderRadius: 6 }}>14日間無料で始める →</a>
             </div>
           ))}
         </div>
