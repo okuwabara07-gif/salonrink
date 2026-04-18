@@ -2,7 +2,10 @@ export default function CustomerPage() {
   return (
     <main style={{minHeight:'100vh',background:'#FAF6EE',fontFamily:'sans-serif'}}>
       <header style={{padding:'16px 24px',display:'flex',justifyContent:'space-between',alignItems:'center',background:'#fff',borderBottom:'1px solid rgba(184,150,106,.2)'}}>
-        <div style={{fontSize:18,fontWeight:300,letterSpacing:4,color:'#1A1018'}}>Salon<span style={{color:'#B8966A'}}>Rink</span></div>
+        <div style={{lineHeight:1}}>
+          <div style={{fontSize:20,fontWeight:300,letterSpacing:6,color:'#1A1018'}}>SALOMÉ</div>
+          <div style={{fontSize:9,letterSpacing:3,color:'#B8966A',marginTop:3}}>SalonRink</div>
+        </div>
         <nav style={{display:'flex',gap:24,fontSize:13,color:'#7A6E64'}}>
           <a href="#reserve" style={{textDecoration:'none',color:'#7A3550',fontWeight:500}}>予約</a>
           <a href="#history" style={{textDecoration:'none',color:'inherit'}}>履歴</a>

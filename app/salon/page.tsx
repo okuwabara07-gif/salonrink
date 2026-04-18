@@ -2,8 +2,9 @@ export default function SalonPage() {
   return (
     <main style={{minHeight:'100vh',background:'#F5F5F5',fontFamily:'sans-serif',display:'flex'}}>
       <aside style={{width:200,background:'#1A1018',padding:'24px 0',flexShrink:0}}>
-        <div style={{fontSize:16,fontWeight:300,letterSpacing:4,color:'#FAF6EE',padding:'0 20px',marginBottom:32}}>
-          Salon<span style={{color:'#B8966A'}}>Rink</span>
+        <div style={{padding:'0 20px',marginBottom:32,lineHeight:1}}>
+          <div style={{fontSize:18,fontWeight:300,letterSpacing:6,color:'#FAF6EE'}}>SALOMÉ</div>
+          <div style={{fontSize:9,letterSpacing:3,color:'#B8966A',marginTop:4}}>SalonRink</div>
         </div>
         {[
           {label:'ダッシュボード',active:true},

@@ -2,12 +2,15 @@ export default function AgencyPage() {
   return (
     <main style={{minHeight:'100vh',background:'#F5F5F5',fontFamily:'sans-serif'}}>
       <header style={{padding:'14px 32px',background:'#1A1018',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-        <div style={{fontSize:18,fontWeight:300,letterSpacing:4,color:'#FAF6EE'}}>
-          Salon<span style={{color:'#B8966A'}}>Rink</span>
-          <span style={{fontSize:11,color:'rgba(255,255,255,0.4)',letterSpacing:1,marginLeft:12,fontWeight:400}}>代理店管理</span>
+        <div style={{display:'flex',alignItems:'flex-end',gap:14}}>
+          <div style={{lineHeight:1}}>
+            <div style={{fontSize:20,fontWeight:300,letterSpacing:6,color:'#FAF6EE'}}>SALOMÉ</div>
+            <div style={{fontSize:9,letterSpacing:3,color:'#B8966A',marginTop:3}}>SalonRink</div>
+          </div>
+          <span style={{fontSize:11,color:'rgba(255,255,255,0.4)',letterSpacing:1,fontWeight:400,paddingBottom:2}}>代理店管理</span>
         </div>
         <div style={{display:'flex',alignItems:'center',gap:12}}>
-          <span style={{fontSize:12,color:'rgba(255,255,255,0.5)'}}>AOKAE合同会社</span>
+          <span style={{fontSize:12,color:'rgba(255,255,255,0.5)'}}>AOKAE LLC</span>
           <div style={{width:32,height:32,borderRadius:'50%',background:'#E6F1FB',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:500,color:'#185FA5'}}>AO</div>
         </div>
       </header>

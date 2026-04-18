@@ -1,8 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 
-const SUPABASE_URL = 'https://fmpmgilgvvfezursmyic.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtcG1naWxndnZmZXp1cnNteWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MjM4MzMsImV4cCI6MjA5MTk5OTgzM30.cOJarUiOQdBpTI8_iISIZSiC9Bh9eaTyz_7To-LQjUw'
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export default function DashboardPage() {
   const [salon, setSalon] = useState<any>(null)
@@ -82,8 +82,9 @@ export default function DashboardPage() {
     <main style={{minHeight:'100vh',background:'#F5F1EC',fontFamily:'sans-serif',display:'flex'}}>
       {/* サイドバー */}
       <aside style={{width:220,background:'#1A1018',padding:'24px 0',flexShrink:0,display:'flex',flexDirection:'column'}}>
-        <div style={{fontSize:16,fontWeight:300,letterSpacing:4,color:'#FAF6EE',padding:'0 20px',marginBottom:32,fontFamily:'Georgia, serif'}}>
-          Salon<span style={{color:'#B8966A'}}>Rink</span>
+        <div style={{padding:'0 20px',marginBottom:32,fontFamily:'Georgia, serif',lineHeight:1}}>
+          <div style={{fontSize:18,fontWeight:300,letterSpacing:6,color:'#FAF6EE'}}>SALOMÉ</div>
+          <div style={{fontSize:9,letterSpacing:3,color:'#B8966A',marginTop:4,fontFamily:'sans-serif'}}>SalonRink</div>
         </div>
         {[
           {id:'dashboard',label:'ダッシュボード'},

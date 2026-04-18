@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return {};
-  return { title: `${post.title} | SalonRink`, description: post.description };
+  return { title: `${post.title} | SALOMÉ`, description: post.description };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -34,7 +34,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
 
       <div style={{ background:"#f7f5f2", borderRadius:"4px", padding:"1.25rem 1.5rem", marginBottom:"2.5rem", borderLeft:"3px solid #111" }}>
         <p style={{ fontSize:"0.8rem", color:"#555", lineHeight:1.9 }}>
-          <span style={{ fontWeight:700, color:"#111" }}>監修：</span>SalonRink 編集部<br />
+          <span style={{ fontWeight:700, color:"#111" }}>監修：</span>SALOMÉ 編集部<br />
           美容サロン経営者とITエンジニアが共同運営。サロン経営・LINE予約・顧客管理に関する実践的な情報を発信しています。
         </p>
       </div>
@@ -52,7 +52,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div style={{ background:"#1a1a1a", borderRadius:"4px", padding:"2rem", margin:"3rem 0", textAlign:"center" }}>
-        <p style={{ fontFamily:"serif", fontSize:"1rem", color:"#fff", marginBottom:"0.5rem", fontWeight:400 }}>SalonRinkを30日間無料で試す</p>
+        <p style={{ fontFamily:"serif", fontSize:"1rem", color:"#fff", marginBottom:"0.5rem", fontWeight:400 }}>SALOMÉを30日間無料で試す</p>
         <p style={{ fontSize:"0.82rem", color:"rgba(255,255,255,0.55)", marginBottom:"1.5rem", lineHeight:1.8 }}>
           LINE予約・顧客管理・EC・配送を一元管理
         </p>
