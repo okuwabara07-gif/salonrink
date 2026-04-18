@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.3",
     "gray-matter": "^4.0.3",
     "next": "16.2.3",
     "next-mdx-remote": "^6.0.0",

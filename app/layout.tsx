@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SalonRink",
+  title: "SALOMÉ | SalonRink",
   description: "美容サロン統合管理プラットフォーム",
   verification: {
     google: "LhDE3K0d8OvwCM_wvoTnUiVQ9pj9r8H7abwiz7ShlV4",

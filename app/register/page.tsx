@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { registerSalon } from './actions'
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1)
@@ -32,29 +33,26 @@ export default function RegisterPage() {
   ]
 
   const handleSubmit = async () => {
+    if (loading) return
     setLoading(true)
-    try {
-      const res = await fetch('https://kirei-line-bot-production.up.railway.app/api/salons/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.salonName,
-          hotpepper_url: form.hotpepperUrl,
-          ical_url: form.icalUrl,
-          owner_name: form.ownerName,
-          phone: form.phone,
-          email: form.email,
-          plan: form.plan,
-        })
-      })
-      if (res.ok) {
-        setRegistered(true)
-      }
-    } catch (e) {
-      alert('エラーが発生しました。再度お試しください。')
-    } finally {
+    const result = await registerSalon({
+      salonName: form.salonName,
+      hotpepperUrl: form.hotpepperUrl,
+      icalUrl: form.icalUrl,
+      ownerName: form.ownerName,
+      phone: form.phone,
+      email: form.email,
+      plan: form.plan,
+    })
+    if (!result.ok) {
       setLoading(false)
+      alert(result.message)
+      return
     }
+    const url = new URL(STRIPE_LINKS[form.plan])
+    url.searchParams.set('client_reference_id', result.salonId)
+    url.searchParams.set('prefilled_email', form.email)
+    window.location.href = url.toString()
   }
 
   if (registered) {
@@ -81,8 +79,9 @@ export default function RegisterPage() {
   return (
     <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',padding:'40px 20px'}}>
       <div style={{textAlign:'center',marginBottom:40}}>
-        <div style={{fontSize:22,fontWeight:400,letterSpacing:6,color:'#1A1018',marginBottom:8}}>
-          Salon<span style={{color:'#B8966A'}}>Rink</span>
+        <div style={{marginBottom:8,lineHeight:1}}>
+          <div style={{fontSize:26,fontWeight:400,letterSpacing:8,color:'#1A1018'}}>SALOMÉ</div>
+          <div style={{fontSize:10,letterSpacing:4,color:'#B8966A',marginTop:4}}>SalonRink</div>
         </div>
         <p style={{fontSize:13,color:'#888',letterSpacing:2}}>無料トライアル 14日間</p>
       </div>
@@ -107,7 +106,7 @@ export default function RegisterPage() {
             <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>サロン情報を入力</h2>
             <p style={{fontSize:13,color:'#888',marginBottom:16}}>ホットペッパービューティーに掲載中のサロン情報を入力してください</p>
             <div style={{background:'#FFF8F0',borderRadius:8,padding:12,border:'1px solid #FFD8A8',marginBottom:20,fontSize:11,color:'#996633',lineHeight:1.7}}>
-              ⚠️ 免責事項：SalonRinkはツール提供のみを行います。ホットペッパービューティーの利用規約の遵守はお客様ご自身の責任となります。当サービスはリクルート社とは一切関係ありません。
+              ⚠️ 免責事項：SALOMÉはツール提供のみを行います。ホットペッパービューティーの利用規約の遵守はお客様ご自身の責任となります。当サービスはリクルート社とは一切関係ありません。
             </div>
             {[
               {name:'salonName',label:'サロン名',placeholder:'例：ヘアサロン キレイ 鶴見店'},
@@ -168,9 +167,9 @@ export default function RegisterPage() {
             </div>
             <div style={{display:'flex',gap:12}}>
               <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-              <button onClick={() => window.location.href = STRIPE_LINKS[form.plan]} 
+              <button onClick={handleSubmit} disabled={loading}
                 style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:loading?'#E0D8D0':'#1A1018',color:loading?'#999':'#FAF6EE',fontSize:14,cursor:loading?'not-allowed':'pointer'}}>
-                {loading?'登録中...':'登録してLINEと連携する →'}
+                {loading?'登録中...':'登録してStripeで決済へ →'}
               </button>
             </div>
           </div>

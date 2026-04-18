@@ -15,12 +15,14 @@ export default function Home() {
         alignItems: 'center',
         borderBottom: '1px solid rgba(184,150,106,.2)',
       }}>
-        <div style={{ fontSize: 24, fontWeight: 300, letterSpacing: 6, color: '#1A1018' }}>
-          Salon<span style={{ color: '#B8966A' }}>Rink</span>
+        <div style={{ lineHeight: 1 }}>
+          <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SALOMÉ</div>
+          <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
         <nav style={{ display: 'flex', gap: 32, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>
           <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>機能</a>
           <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>料金</a>
+          <a href="/salons/tsurumi" style={{ textDecoration: 'none', color: 'inherit' }}>キレイ鶴見店</a>
           <a href="#contact" style={{ textDecoration: 'none', color: 'inherit' }}>お問い合わせ</a>
         </nav>
       </header>
@@ -132,11 +134,12 @@ export default function Home() {
 
       {/* Footer */}
       <footer style={{ padding: '40px', background: '#1A1018', textAlign: 'center' }}>
-        <div style={{ fontSize: 20, fontWeight: 300, letterSpacing: 6, color: '#FAF6EE', marginBottom: 16 }}>
-          Salon<span style={{ color: '#B8966A' }}>Rink</span>
+        <div style={{ marginBottom: 16, lineHeight: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 300, letterSpacing: 8, color: '#FAF6EE' }}>SALOMÉ</div>
+          <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
         <p style={{ fontSize: 12, color: '#7A6E64', fontFamily: 'sans-serif', letterSpacing: 2 }}>
-          © 2026 AOKAE合同会社
+          © 2026 AOKAE LLC
         </p>
       </footer>
     </main>
