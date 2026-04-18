@@ -5,7 +5,8 @@
 alter table public.salons
   add column if not exists owner_user_id uuid references auth.users(id) on delete set null,
   add column if not exists status text default 'pending'
-    check (status in ('pending','active','past_due','canceled'));
+    check (status in ('pending','active','past_due','canceled')),
+  add column if not exists trial_ends_at timestamptz;
 
 create index if not exists salons_email_idx on public.salons (email);
 create index if not exists salons_owner_user_id_idx on public.salons (owner_user_id);
