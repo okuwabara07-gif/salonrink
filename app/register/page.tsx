@@ -1,5 +1,6 @@
 'use client'
 import { useState } from 'react'
+import { registerSalon } from './actions'
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1)
@@ -32,29 +33,26 @@ export default function RegisterPage() {
   ]
 
   const handleSubmit = async () => {
+    if (loading) return
     setLoading(true)
-    try {
-      const res = await fetch('https://kirei-line-bot-production.up.railway.app/api/salons/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: form.salonName,
-          hotpepper_url: form.hotpepperUrl,
-          ical_url: form.icalUrl,
-          owner_name: form.ownerName,
-          phone: form.phone,
-          email: form.email,
-          plan: form.plan,
-        })
-      })
-      if (res.ok) {
-        setRegistered(true)
-      }
-    } catch (e) {
-      alert('エラーが発生しました。再度お試しください。')
-    } finally {
+    const result = await registerSalon({
+      salonName: form.salonName,
+      hotpepperUrl: form.hotpepperUrl,
+      icalUrl: form.icalUrl,
+      ownerName: form.ownerName,
+      phone: form.phone,
+      email: form.email,
+      plan: form.plan,
+    })
+    if (!result.ok) {
       setLoading(false)
+      alert(result.message)
+      return
     }
+    const url = new URL(STRIPE_LINKS[form.plan])
+    url.searchParams.set('client_reference_id', result.salonId)
+    url.searchParams.set('prefilled_email', form.email)
+    window.location.href = url.toString()
   }
 
   if (registered) {
@@ -169,9 +167,9 @@ export default function RegisterPage() {
             </div>
             <div style={{display:'flex',gap:12}}>
               <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-              <button onClick={() => window.location.href = STRIPE_LINKS[form.plan]} 
+              <button onClick={handleSubmit} disabled={loading}
                 style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:loading?'#E0D8D0':'#1A1018',color:loading?'#999':'#FAF6EE',fontSize:14,cursor:loading?'not-allowed':'pointer'}}>
-                {loading?'登録中...':'登録してLINEと連携する →'}
+                {loading?'登録中...':'登録してStripeで決済へ →'}
               </button>
             </div>
           </div>
