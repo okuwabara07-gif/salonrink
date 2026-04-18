@@ -22,6 +22,7 @@ export default function Home() {
         <nav style={{ display: 'flex', gap: 32, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>
           <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>機能</a>
           <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>料金</a>
+          <a href="/salons/tsurumi" style={{ textDecoration: 'none', color: 'inherit' }}>キレイ鶴見店</a>
           <a href="#contact" style={{ textDecoration: 'none', color: 'inherit' }}>お問い合わせ</a>
         </nav>
       </header>
