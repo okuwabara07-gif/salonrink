@@ -82,22 +82,26 @@ export default function Home() {
         </h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24, maxWidth: 1000, margin: '0 auto' }}>
           {[
-            { icon: '📅', title: 'LINE予約', desc: 'リッチメニューからワンタップで予約。ホットペッパーとの重複もブロック。' },
-            { icon: '📋', title: '顧客カルテ', desc: '施術履歴・AIレコメンド・ポイント管理を一元化。' },
-            { icon: '🛍', title: 'ECストア', desc: '自社商品とアフィリを同時展開。配送も自動管理。' },
-            { icon: '⭐', title: '口コミ収益化', desc: '口コミページにAdSense・アフィリを自動表示。' },
-            { icon: '💬', title: 'LINE自動化', desc: 'リマインド・失客防止・来店後フォローを自動送信。' },
-            { icon: '📊', title: 'AI仕訳', desc: 'フリーランス向け売上自動集計・確定申告対応。' },
+            { slug: 'line-reservation', icon: '📅', title: 'LINE予約', desc: 'リッチメニューからワンタップで予約。ホットペッパーとの重複もブロック。' },
+            { slug: 'customer-record', icon: '📋', title: '顧客カルテ', desc: '施術履歴・AIレコメンド・ポイント管理を一元化。' },
+            { slug: 'ec-store', icon: '🛍', title: 'ECストア', desc: '自社商品とアフィリを同時展開。配送も自動管理。' },
+            { slug: 'review-monetization', icon: '⭐', title: '口コミ収益化', desc: '口コミページにAdSense・アフィリを自動表示。' },
+            { slug: 'line-automation', icon: '💬', title: 'LINE自動化', desc: 'リマインド・失客防止・来店後フォローを自動送信。' },
+            { slug: 'ai-accounting', icon: '📊', title: 'AI仕訳', desc: 'フリーランス向け売上自動集計・確定申告対応。' },
           ].map((f) => (
-            <div key={f.title} style={{
+            <a key={f.title} href={`/features/${f.slug}`} style={{
+              display: 'block',
               padding: '32px',
               border: '1px solid rgba(184,150,106,.2)',
               background: 'rgba(255,255,255,.03)',
+              textDecoration: 'none',
+              transition: 'all 0.2s',
             }}>
               <div style={{ fontSize: 32, marginBottom: 16 }}>{f.icon}</div>
               <h3 style={{ fontSize: 18, color: '#FAF6EE', marginBottom: 12, fontWeight: 400, letterSpacing: 2 }}>{f.title}</h3>
-              <p style={{ fontSize: 14, color: '#A89E94', lineHeight: 1.8, fontFamily: 'sans-serif' }}>{f.desc}</p>
-            </div>
+              <p style={{ fontSize: 14, color: '#A89E94', lineHeight: 1.8, fontFamily: 'sans-serif', marginBottom: 12 }}>{f.desc}</p>
+              <span style={{ fontSize: 12, color: '#B8966A', fontFamily: 'sans-serif', letterSpacing: 2 }}>詳しく見る →</span>
+            </a>
           ))}
         </div>
       </section>
