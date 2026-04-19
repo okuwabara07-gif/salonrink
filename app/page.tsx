@@ -19,11 +19,12 @@ export default function Home() {
           <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SALOMÉ</div>
           <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
-        <nav style={{ display: 'flex', gap: 32, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>
+        <nav style={{ display: 'flex', gap: 24, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>
           <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>機能</a>
-          <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>料金</a>
-          <a href="/salons/tsurumi" style={{ textDecoration: 'none', color: 'inherit' }}>キレイ鶴見店</a>
-          <a href="#contact" style={{ textDecoration: 'none', color: 'inherit' }}>お問い合わせ</a>
+          <a href="/pricing" style={{ textDecoration: 'none', color: 'inherit' }}>料金</a>
+          <a href="/case-studies/kirei-tsurumi" style={{ textDecoration: 'none', color: 'inherit' }}>導入事例</a>
+          <a href="/faq" style={{ textDecoration: 'none', color: 'inherit' }}>FAQ</a>
+          <a href="/contact" style={{ textDecoration: 'none', color: 'inherit' }}>お問い合わせ</a>
         </nav>
       </header>
 
@@ -142,12 +143,15 @@ export default function Home() {
           <div style={{ fontSize: 22, fontWeight: 300, letterSpacing: 8, color: '#FAF6EE' }}>SALOMÉ</div>
           <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
-        <nav style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16, fontSize: 12, fontFamily: 'sans-serif' }}>
+        <nav style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16, fontSize: 12, fontFamily: 'sans-serif' }}>
           <a href="/company" style={{ color: '#B8966A', textDecoration: 'none' }}>会社概要</a>
+          <a href="/pricing" style={{ color: '#B8966A', textDecoration: 'none' }}>料金</a>
+          <a href="/faq" style={{ color: '#B8966A', textDecoration: 'none' }}>FAQ</a>
+          <a href="/case-studies/kirei-tsurumi" style={{ color: '#B8966A', textDecoration: 'none' }}>導入事例</a>
           <a href="/tokusho" style={{ color: '#B8966A', textDecoration: 'none' }}>特定商取引法に基づく表記</a>
           <a href="/privacy" style={{ color: '#B8966A', textDecoration: 'none' }}>プライバシーポリシー</a>
           <a href="/agency" style={{ color: '#B8966A', textDecoration: 'none' }}>代理店向け</a>
-          <a href="/customer" style={{ color: '#B8966A', textDecoration: 'none' }}>お客様向け</a>
+          <a href="/contact" style={{ color: '#B8966A', textDecoration: 'none' }}>お問い合わせ</a>
         </nav>
         <p style={{ fontSize: 12, color: '#7A6E64', fontFamily: 'sans-serif', letterSpacing: 2 }}>
           © 2026 AOKAE合同会社
