@@ -41,13 +41,13 @@ export default function Home() {
           Beauty × Technology
         </div>
         <h1 style={{ fontSize: 56, fontWeight: 300, color: '#1A1018', letterSpacing: 4, lineHeight: 1.2, marginBottom: 24 }}>
-          サロンと顧客を、<br />
-          <span style={{ color: '#B8966A' }}>なめらかに</span>つなぐ。
+          サロンの <span style={{ color: '#B8966A' }}>"ちょっと面倒"</span> を、<br />
+          <span style={{ color: '#06c755' }}>LINE</span>で全部解決。
         </h1>
         <p style={{ fontSize: 18, color: '#7A6E64', lineHeight: 1.8, marginBottom: 48, maxWidth: 600, fontFamily: 'sans-serif' }}>
-          LINEリッチメニューからワンタップで予約。<br />
-          顧客カルテ・EC・配送・口コミ収益化まで、<br />
-          美容サロンに必要なすべてを一つに。
+          予約管理・顧客カルテ・自動リマインド・売上集計。<br />
+          オーナーが現場に集中できる経営プラットフォームを、<br />
+          月額 <strong style={{ color: '#1A1018' }}>¥980</strong> から。
         </p>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
           <a href="#" style={{
