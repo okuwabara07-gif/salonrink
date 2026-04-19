@@ -139,6 +139,7 @@ export default function Home() {
           <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
         <nav style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16, fontSize: 12, fontFamily: 'sans-serif' }}>
+          <a href="/company" style={{ color: '#B8966A', textDecoration: 'none' }}>会社概要</a>
           <a href="/tokusho" style={{ color: '#B8966A', textDecoration: 'none' }}>特定商取引法に基づく表記</a>
           <a href="/privacy" style={{ color: '#B8966A', textDecoration: 'none' }}>プライバシーポリシー</a>
           <a href="/agency" style={{ color: '#B8966A', textDecoration: 'none' }}>代理店向け</a>
