@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { saveIcalUrl } from './actions'
 
 type Salon = {
@@ -15,6 +15,7 @@ type Reservation = {
   customer_name: string | null
   datetime: string
   menu: string | null
+  status: string | null
 }
 type Customer = {
   id: string
@@ -49,6 +50,36 @@ export default function DashboardClient({
   const todayReservations = reservations.filter(
     r => new Date(r.datetime).toDateString() === today
   )
+
+  const stats = useMemo(() => {
+    const now = new Date()
+    const thisMonth = now.getMonth()
+    const thisYear = now.getFullYear()
+
+    const monthReservations = reservations.filter(r => {
+      const d = new Date(r.datetime)
+      return d.getMonth() === thisMonth && d.getFullYear() === thisYear
+    })
+
+    const confirmedCount = reservations.filter(r => r.status === 'confirmed').length
+    const pendingCount = reservations.filter(r => r.status === 'pending').length
+    const cancelledCount = reservations.filter(r => r.status === 'cancelled').length
+
+    const avgVisits = customers.length > 0
+      ? (customers.reduce((sum, c) => sum + (c.visit_count || 0), 0) / customers.length).toFixed(1)
+      : 0
+
+    const repeatCustomers = customers.filter(c => (c.visit_count || 0) >= 3).length
+
+    return {
+      monthReservations,
+      confirmedCount,
+      pendingCount,
+      cancelledCount,
+      avgVisits,
+      repeatCustomers
+    }
+  }, [reservations, customers])
 
   return (
     <main style={{minHeight:'100vh',background:'#F5F1EC',fontFamily:'sans-serif',display:'flex'}}>
@@ -86,33 +117,81 @@ export default function DashboardClient({
       <div style={{flex:1,padding:28,overflowY:'auto'}}>
         {activeTab === 'dashboard' && (
           <div>
-            <h1 style={{fontSize:18,fontWeight:500,color:'#1A1018',marginBottom:20}}>ダッシュボード</h1>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12,marginBottom:24}}>
+            <h1 style={{fontSize:18,fontWeight:500,color:'#1A1018',marginBottom:24}}>ダッシュボード</h1>
+
+            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
               {[
-                {label:'今日の予約',value:`${todayReservations.length}件`,sub:'本日'},
-                {label:'総予約数',value:`${reservations.length}件`,sub:'全期間'},
-                {label:'顧客数',value:`${customers.length}名`,sub:'登録済み'},
+                {label:'今日の予約',value:`${todayReservations.length}`,sub:'本日',icon:'📅'},
+                {label:'確認済み',value:`${stats.confirmedCount}`,sub:'確定',icon:'✓'},
+                {label:'保留中',value:`${stats.pendingCount}`,sub:'対応待ち',icon:'⏳'},
+                {label:'リピーター',value:`${stats.repeatCustomers}`,sub:'3回以上',icon:'⭐'},
               ].map(c => (
-                <div key={c.label} style={{background:'#fff',borderRadius:10,padding:'16px',border:'1px solid #E8E8E8'}}>
+                <div key={c.label} style={{background:'#fff',borderRadius:10,padding:'16px',border:'1px solid #E8E8E8',position:'relative'}}>
+                  <div style={{fontSize:24,position:'absolute',right:12,top:12,opacity:0.3}}>{c.icon}</div>
                   <div style={{fontSize:11,color:'#888',marginBottom:6}}>{c.label}</div>
-                  <div style={{fontSize:24,fontWeight:500,color:'#1A1018'}}>{c.value}</div>
-                  <div style={{fontSize:11,color:'#A89E94',marginTop:4}}>{c.sub}</div>
+                  <div style={{fontSize:32,fontWeight:500,color:'#1A1018',marginBottom:4}}>{c.value}</div>
+                  <div style={{fontSize:11,color:'#A89E94'}}>{c.sub}</div>
                 </div>
               ))}
             </div>
-            <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8'}}>
-              <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>今日の予約</h2>
-              {todayReservations.length === 0 ? (
-                <p style={{fontSize:13,color:'#888',textAlign:'center',padding:'20px 0'}}>今日の予約はありません</p>
-              ) : todayReservations.map(r => (
-                <div key={r.id} style={{display:'flex',justifyContent:'space-between',padding:'10px 0',borderBottom:'1px solid #F5F5F5',fontSize:13}}>
-                  <span style={{color:'#1A1018'}}>{r.customer_name}</span>
-                  <div style={{display:'flex',gap:8}}>
-                    <span style={{color:'#888'}}>{new Date(r.datetime).getHours()}:{String(new Date(r.datetime).getMinutes()).padStart(2,'0')}</span>
-                    <span style={{padding:'2px 8px',background:'#EAF3DE',color:'#3B6D11',borderRadius:20,fontSize:11}}>{r.menu || 'メニュー未定'}</span>
-                  </div>
+
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
+              <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8'}}>
+                <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>今月の統計</h2>
+                <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                  {[
+                    {label:'今月の予約',value:stats.monthReservations.length,color:'#7A3550'},
+                    {label:'顧客数',value:customers.length,color:'#B8966A'},
+                    {label:'平均来店回数',value:stats.avgVisits,color:'#3B6D11'},
+                  ].map(item => (
+                    <div key={item.label} style={{display:'flex',justifyContent:'space-between',alignItems:'center',paddingBottom:12,borderBottom:'1px solid #F5F5F5'}}>
+                      <span style={{fontSize:13,color:'#888'}}>{item.label}</span>
+                      <span style={{fontSize:18,fontWeight:500,color:item.color}}>{item.value}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+
+              <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8'}}>
+                <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>予約ステータス</h2>
+                <div style={{display:'flex',flexDirection:'column',gap:12}}>
+                  {[
+                    {status:'確認済み',count:stats.confirmedCount,color:'#3B6D11',bg:'#EAF3DE'},
+                    {status:'保留中',count:stats.pendingCount,color:'#9B8E3C',bg:'#F5F2DC'},
+                    {status:'キャンセル',count:stats.cancelledCount,color:'#8B4A4A',bg:'#F5EDEE'},
+                  ].map(item => (
+                    <div key={item.status} style={{display:'flex',alignItems:'center',gap:12}}>
+                      <div style={{width:12,height:12,background:item.color,borderRadius:2}}></div>
+                      <div style={{flex:1,display:'flex',justifyContent:'space-between'}}>
+                        <span style={{fontSize:13,color:'#888'}}>{item.status}</span>
+                        <span style={{fontSize:13,fontWeight:500,color:item.color}}>{item.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8'}}>
+              <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>本日の予約</h2>
+              {todayReservations.length === 0 ? (
+                <p style={{fontSize:13,color:'#888',textAlign:'center',padding:'20px 0'}}>本日の予約はありません</p>
+              ) : (
+                <div style={{display:'flex',flexDirection:'column',gap:0}}>
+                  {todayReservations.map((r, idx) => (
+                    <div key={r.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 0',borderBottom:idx<todayReservations.length-1?'1px solid #F5F5F5':'none',fontSize:13}}>
+                      <div>
+                        <div style={{fontWeight:500,color:'#1A1018',marginBottom:2}}>{r.customer_name}</div>
+                        <div style={{fontSize:12,color:'#888'}}>{r.menu || 'メニュー未定'}</div>
+                      </div>
+                      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                        <span style={{color:'#1A1018',fontWeight:500}}>{new Date(r.datetime).getHours()}:{String(new Date(r.datetime).getMinutes()).padStart(2,'0')}</span>
+                        <span style={{padding:'2px 8px',background:r.status==='confirmed'?'#EAF3DE':r.status==='pending'?'#F5F2DC':'#F5EDEE',color:r.status==='confirmed'?'#3B6D11':r.status==='pending'?'#9B8E3C':'#8B4A4A',borderRadius:20,fontSize:11}}>{r.status==='confirmed'?'確定':r.status==='pending'?'保留中':'キャンセル'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
