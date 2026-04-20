@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { useActionState } from 'react'
 import { sendMagicLink, type LoginState } from './actions'
 
@@ -7,6 +8,34 @@ export default function LoginPage() {
     sendMagicLink,
     null
   )
+  const [cooldown, setCooldown] = useState(0)
+  const [email, setEmail] = useState('')
+
+  // レート制限エラーを検出してcooldownを設定
+  useEffect(() => {
+    if (state && !state.ok && state.message) {
+      const match = state.message.match(/(\d+)秒後/)
+      if (match) {
+        const seconds = parseInt(match[1])
+        setCooldown(seconds)
+      }
+    }
+  }, [state])
+
+  // カウントダウン処理
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const timer = setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer)
+          return 0
+        }
+        return prev - 1
+      })
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [cooldown])
 
   return (
     <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',display:'flex',alignItems:'center',justifyContent:'center',padding:'24px'}}>
@@ -27,14 +56,17 @@ export default function LoginPage() {
             required
             autoComplete="email"
             placeholder="your@email.com"
-            style={{width:'100%',padding:'12px 14px',borderRadius:8,border:'1px solid #E0D8D0',fontSize:14,background:'#FAFAFA',outline:'none',boxSizing:'border-box',marginBottom:12}}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            disabled={cooldown > 0}
+            style={{width:'100%',padding:'12px 14px',borderRadius:8,border:'1px solid #E0D8D0',fontSize:14,background:cooldown > 0 ? '#F5F5F5' : '#FAFAFA',outline:'none',boxSizing:'border-box',marginBottom:12,opacity:cooldown > 0 ? 0.6 : 1,cursor:cooldown > 0 ? 'not-allowed' : 'text'}}
           />
           <button
             type="submit"
-            disabled={pending}
-            style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:pending?'#E0D8D0':'#1A1018',color:pending?'#999':'#FAF6EE',fontSize:14,cursor:pending?'not-allowed':'pointer'}}
+            disabled={pending || cooldown > 0 || !email}
+            style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:(pending || cooldown > 0)?'#E0D8D0':'#1A1018',color:(pending || cooldown > 0)?'#999':'#FAF6EE',fontSize:14,cursor:(pending || cooldown > 0)?'not-allowed':'pointer'}}
           >
-            {pending ? '送信中...' : 'ログインリンクを送る'}
+            {cooldown > 0 ? `${cooldown}秒後に再送信可能` : pending ? '送信中...' : 'ログインリンクを送る'}
           </button>
         </form>
         {state && (
