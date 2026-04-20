@@ -1,6 +1,16 @@
+import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import DashboardClient from './dashboard-client'
+
+export const metadata: Metadata = {
+  title: 'ダッシュボード | SALOMÉ - サロン管理SaaS',
+  description: '予約管理、顧客管理、売上管理、リマインド送信などをまとめて管理できるSALOMÉダッシュボードです。',
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 export default async function DashboardPage() {
   const supabase = await createClient()

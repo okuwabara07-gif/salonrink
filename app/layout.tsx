@@ -12,11 +12,48 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
+
 export const metadata: Metadata = {
-  title: "SALOMÉ | SalonRink",
-  description: "美容サロン統合管理プラットフォーム",
+  title: "SALOMÉ（サロメ）| LINEで予約自動化するサロン経営SaaS",
+  description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥980から。ホットペッパー依存から脱却。",
+  keywords: ["サロン管理", "LINE予約", "予約システム", "顧客管理", "美容サロン", "SaaS"],
+  authors: [{ name: "AOKAE合同会社" }],
   verification: {
     google: "LhDE3K0d8OvwCM_wvoTnUiVQ9pj9r8H7abwiz7ShlV4",
+  },
+  openGraph: {
+    title: "SALOMÉ（サロメ）| LINEで予約自動化するサロン経営SaaS",
+    description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥980から。ホットペッパー依存から脱却。",
+    url: siteUrl,
+    siteName: "SALOMÉ",
+    type: "website",
+    locale: "ja_JP",
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "SALOMÉ - サロン経営SaaS",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SALOMÉ（サロメ）| LINEで予約自動化するサロン経営SaaS",
+    description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥980から。",
+    creator: "@salonrink_jp",
+    images: [`${siteUrl}/og-image.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    "max-video-preview": -1,
+  },
+  alternates: {
+    canonical: siteUrl,
   },
 };
 
