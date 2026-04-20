@@ -42,7 +42,8 @@ export async function sendMagicLink(
   })
 
   if (error) {
-    return { ok: false, message: translateAuthError(error.message) }
+    // 一時的に生エラーメッセージを表示（デバッグ用）
+    return { ok: false, message: `[DEBUG] ${error.message}` }
   }
   return { ok: true, message: 'ログインリンクをメールで送信しました。メールをご確認ください。' }
 }
