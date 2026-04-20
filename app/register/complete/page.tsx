@@ -54,23 +54,150 @@ export default async function RegisterCompletePage({
   }
 
   return <Message
-    title="決済完了！"
-    body={`ログインリンクを ${salon.email} にお送りしました。メールをご確認ください。`}
+    title="お申し込みありがとうございます"
+    email={salon.email}
+    salonId={salon_id}
   />
 }
 
-function Message({ title, body, cta }: { title: string; body: string; cta?: { href: string; label: string } }) {
+function Message({
+  title,
+  body,
+  email,
+  salonId,
+  cta,
+}: {
+  title: string
+  body?: string
+  email?: string
+  salonId?: string
+  cta?: { href: string; label: string }
+}) {
   return (
-    <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',padding:'40px 20px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-      <div style={{maxWidth:520,width:'100%',background:'#fff',borderRadius:16,padding:'48px 32px',boxShadow:'0 2px 20px rgba(0,0,0,0.06)',textAlign:'center'}}>
-        <div style={{marginBottom:16,lineHeight:1}}>
-          <div style={{fontSize:22,fontWeight:400,letterSpacing:8,color:'#1A1018'}}>SALOMÉ</div>
-          <div style={{fontSize:9,letterSpacing:4,color:'#B8966A',marginTop:4}}>SalonRink</div>
+    <main
+      style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(160deg, #F2EAD8 0%, #FAF6EE 50%, #F2EAD8 100%)',
+        fontFamily: 'Georgia, serif',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '40px 20px',
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 600,
+          width: '100%',
+          background: '#fff',
+          borderRadius: 8,
+          padding: '60px 40px',
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ marginBottom: 40, lineHeight: 1 }}>
+          <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SALOMÉ</div>
+          <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>
+            SalonRink
+          </div>
         </div>
-        <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:16}}>{title}</h2>
-        <p style={{fontSize:13,color:'#888',lineHeight:1.8,marginBottom:24}}>{body}</p>
+
+        {/* Success Icon */}
+        <div style={{ fontSize: 60, marginBottom: 24 }}>✓</div>
+
+        <h1 style={{ fontSize: 28, fontWeight: 400, color: '#1A1018', marginBottom: 16, letterSpacing: 2 }}>
+          {title}
+        </h1>
+
+        {email && (
+          <p style={{ fontSize: 14, color: '#7A6E64', lineHeight: 1.8, marginBottom: 32, fontFamily: 'sans-serif' }}>
+            ログインリンクを <strong>{email}</strong> にお送りしました。<br />
+            メールをご確認ください。
+          </p>
+        )}
+
+        {body && <p style={{ fontSize: 14, color: '#7A6E64', lineHeight: 1.8, marginBottom: 32, fontFamily: 'sans-serif' }}>{body}</p>}
+
+        {/* Next Steps */}
+        <div
+          style={{
+            background: '#FAF6EE',
+            borderLeft: '3px solid #B8966A',
+            padding: '20px 24px',
+            marginBottom: 32,
+            textAlign: 'left',
+          }}
+        >
+          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#1A1018', marginBottom: 12, letterSpacing: 1, fontFamily: 'sans-serif' }}>
+            次のステップ
+          </h3>
+          <ol
+            style={{
+              fontSize: 13,
+              color: '#7A6E64',
+              lineHeight: 1.8,
+              paddingLeft: 20,
+              fontFamily: 'sans-serif',
+            }}
+          >
+            <li style={{ marginBottom: 8 }}>メール内のリンクをクリックしてログイン</li>
+            <li style={{ marginBottom: 8 }}>ダッシュボードで LINE 連携を設定</li>
+            <li>リッチメニューから予約管理を開始</li>
+          </ol>
+        </div>
+
+        {/* CTA Buttons */}
+        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <a
+            href="/dashboard"
+            style={{
+              display: 'inline-block',
+              padding: '14px 32px',
+              background: '#7A3550',
+              color: '#FAF6EE',
+              textDecoration: 'none',
+              fontSize: 13,
+              letterSpacing: 1,
+              fontFamily: 'sans-serif',
+              borderRadius: 4,
+            }}
+          >
+            ダッシュボードへ →
+          </a>
+          <a
+            href="/"
+            style={{
+              display: 'inline-block',
+              padding: '14px 32px',
+              border: '1px solid #B8966A',
+              color: '#7A6E64',
+              textDecoration: 'none',
+              fontSize: 13,
+              letterSpacing: 1,
+              fontFamily: 'sans-serif',
+              borderRadius: 4,
+            }}
+          >
+            トップページに戻る
+          </a>
+        </div>
+
         {cta && (
-          <a href={cta.href} style={{display:'inline-block',padding:'12px 24px',borderRadius:10,background:'#1A1018',color:'#FAF6EE',textDecoration:'none',fontSize:13}}>
+          <a
+            href={cta.href}
+            style={{
+              display: 'inline-block',
+              marginTop: 16,
+              padding: '12px 24px',
+              borderRadius: 4,
+              background: '#1A1018',
+              color: '#FAF6EE',
+              textDecoration: 'none',
+              fontSize: 13,
+              fontFamily: 'sans-serif',
+            }}
+          >
             {cta.label}
           </a>
         )}

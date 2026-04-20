@@ -51,7 +51,7 @@ export default function Home() {
           月額 <strong style={{ color: '#1A1018' }}>¥980</strong> から。
         </p>
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <a href="#" style={{
+          <a href="/register" style={{
             padding: '16px 40px',
             background: '#7A3550',
             color: '#FAF6EE',
@@ -60,7 +60,7 @@ export default function Home() {
             letterSpacing: 2,
             fontFamily: 'sans-serif',
           }}>
-            30日間無料で試す
+            14日間無料で試す
           </a>
           <a href="#features" style={{
             padding: '16px 40px',
