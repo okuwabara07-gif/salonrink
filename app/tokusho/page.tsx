@@ -32,6 +32,7 @@ export default function TokushoPage() {
           ['電話番号', '090-3220-7783（受付時間：平日10:00〜18:00）'],
           ['メールアドレス', 'aokae2020@gmail.com'],
           ['サービス名', 'SALOMÉ（サロメ）- LINE予約自動化SaaS'],
+          ['サービス内容', '美容サロン向けのLINE予約自動化・顧客管理・リマインド送信機能を提供するクラウドサービス'],
           ['サービスURL', 'https://salonrink.com'],
           ['販売価格', 'ベーシックプラン：¥980/月\nスモールプラン：¥2,480/月\nミディアムプラン：¥3,980/月\n（税込）'],
           ['支払方法', 'クレジットカード（Visa / Mastercard / American Express / JCB）'],
@@ -65,15 +66,18 @@ export default function TokushoPage() {
         ))}
       </table>
 
-      <p style={{
+      <div style={{
         marginTop: '48px',
         fontSize: '13px',
         color: '#888',
         borderTop: '1px solid #e8ddd4',
         paddingTop: '24px',
       }}>
-        最終更新日：2026年4月17日
-      </p>
+        <p>最終更新日：2026年4月20日</p>
+        <p style={{marginTop: '12px'}}>
+          個人情報保護方針については<a href="/privacy" style={{color: '#8b6fa0', textDecoration: 'underline'}}>プライバシーポリシー</a>をご覧ください。
+        </p>
+      </div>
     </main>
   );
 }
