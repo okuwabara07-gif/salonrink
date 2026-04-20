@@ -9,6 +9,10 @@ function verifyLineSignature(body: string, signature: string): boolean {
   return hash === signature
 }
 
+export async function GET(request: Request) {
+  return new Response(JSON.stringify({ status: 'ok' }), { status: 200 })
+}
+
 export async function POST(request: Request) {
   try {
     // Signature verification
