@@ -16,6 +16,8 @@ type Reservation = {
   datetime: string
   menu: string | null
   status: string | null
+  price: number | null
+  completed_at: string | null
 }
 type Customer = {
   id: string
@@ -65,11 +67,31 @@ export default function DashboardClient({
     const pendingCount = reservations.filter(r => r.status === 'pending').length
     const cancelledCount = reservations.filter(r => r.status === 'cancelled').length
 
+    const thisMonthRevenue = monthReservations.reduce((sum, r) => sum + (r.price || 0), 0)
+    const totalRevenue = reservations.reduce((sum, r) => sum + (r.price || 0), 0)
+    const avgRevenuePerReservation = confirmedCount > 0 ? (thisMonthRevenue / confirmedCount).toFixed(0) : 0
+
     const avgVisits = customers.length > 0
       ? (customers.reduce((sum, c) => sum + (c.visit_count || 0), 0) / customers.length).toFixed(1)
       : 0
 
     const repeatCustomers = customers.filter(c => (c.visit_count || 0) >= 3).length
+
+    // 日別売上データ（グラフ用）
+    const dailyRevenue: Record<string, number> = {}
+    monthReservations.forEach(r => {
+      const date = new Date(r.datetime).toLocaleDateString('ja-JP')
+      dailyRevenue[date] = (dailyRevenue[date] || 0) + (r.price || 0)
+    })
+
+    // 過去7日の売上
+    const last7Days = []
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(d.getDate() - i)
+      const dateStr = d.toLocaleDateString('ja-JP')
+      last7Days.push({ date: dateStr, revenue: dailyRevenue[dateStr] || 0 })
+    }
 
     return {
       monthReservations,
@@ -77,7 +99,12 @@ export default function DashboardClient({
       pendingCount,
       cancelledCount,
       avgVisits,
-      repeatCustomers
+      repeatCustomers,
+      thisMonthRevenue,
+      totalRevenue,
+      avgRevenuePerReservation,
+      last7Days,
+      dailyRevenue
     }
   }, [reservations, customers])
 
@@ -119,20 +146,49 @@ export default function DashboardClient({
           <div>
             <h1 style={{fontSize:18,fontWeight:500,color:'#1A1018',marginBottom:24}}>ダッシュボード</h1>
 
-            <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:12,marginBottom:24}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:12,marginBottom:24}}>
               {[
                 {label:'今日の予約',value:`${todayReservations.length}`,sub:'本日',icon:'📅'},
                 {label:'確認済み',value:`${stats.confirmedCount}`,sub:'確定',icon:'✓'},
                 {label:'保留中',value:`${stats.pendingCount}`,sub:'対応待ち',icon:'⏳'},
                 {label:'リピーター',value:`${stats.repeatCustomers}`,sub:'3回以上',icon:'⭐'},
+                {label:'今月売上',value:`¥${stats.thisMonthRevenue.toLocaleString()}`,sub:'確定分',icon:'💰'},
               ].map(c => (
                 <div key={c.label} style={{background:'#fff',borderRadius:10,padding:'16px',border:'1px solid #E8E8E8',position:'relative'}}>
                   <div style={{fontSize:24,position:'absolute',right:12,top:12,opacity:0.3}}>{c.icon}</div>
                   <div style={{fontSize:11,color:'#888',marginBottom:6}}>{c.label}</div>
-                  <div style={{fontSize:32,fontWeight:500,color:'#1A1018',marginBottom:4}}>{c.value}</div>
+                  <div style={{fontSize:c.label==='今月売上'?24:32,fontWeight:500,color:'#1A1018',marginBottom:4}}>{c.value}</div>
                   <div style={{fontSize:11,color:'#A89E94'}}>{c.sub}</div>
                 </div>
               ))}
+            </div>
+
+            <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8',marginBottom:24}}>
+              <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>過去7日の売上推移</h2>
+              <div style={{display:'flex',alignItems:'flex-end',justifyContent:'space-between',height:120,gap:4,paddingBottom:12,borderBottom:'1px solid #F5F5F5'}}>
+                {stats.last7Days.map((day, idx) => {
+                  const maxRevenue = Math.max(...stats.last7Days.map(d => d.revenue), 1)
+                  const height = (day.revenue / maxRevenue) * 100
+                  return (
+                    <div key={idx} style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                      <div style={{width:'100%',background:day.revenue>0?'#B8966A':'#E8E8E8',borderRadius:4,height:`${height}%`,minHeight:4}}></div>
+                      <div style={{fontSize:10,color:'#888'}}>{day.date.split('/')[2]}</div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,marginTop:16}}>
+                {[
+                  {label:'今月売上',value:`¥${stats.thisMonthRevenue.toLocaleString()}`,color:'#7A3550'},
+                  {label:'平均単価',value:`¥${stats.avgRevenuePerReservation}`,color:'#B8966A'},
+                  {label:'累計売上',value:`¥${stats.totalRevenue.toLocaleString()}`,color:'#3B6D11'},
+                ].map(item => (
+                  <div key={item.label} style={{textAlign:'center',paddingTop:12,borderTop:'1px solid #F5F5F5'}}>
+                    <div style={{fontSize:12,color:'#888',marginBottom:4}}>{item.label}</div>
+                    <div style={{fontSize:18,fontWeight:500,color:item.color}}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:20,marginBottom:24}}>
