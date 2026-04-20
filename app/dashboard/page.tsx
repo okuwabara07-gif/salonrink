@@ -31,7 +31,7 @@ export default async function DashboardPage() {
   }
 
   const [{ data: reservations }, { data: customers }] = await Promise.all([
-    supabase.from('reservations').select('id, customer_name, datetime, menu').eq('salon_id', salon.id).order('datetime', { ascending: false }).limit(50),
+    supabase.from('reservations').select('id, customer_name, datetime, menu, status').eq('salon_id', salon.id).order('datetime', { ascending: false }).limit(50),
     supabase.from('customers').select('id, name, visit_count, last_visit').eq('salon_id', salon.id).order('last_visit', { ascending: false, nullsFirst: false }).limit(50),
   ])
 
