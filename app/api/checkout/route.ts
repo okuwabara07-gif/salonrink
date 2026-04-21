@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 
 export async function POST(req: Request) {
   try {
@@ -48,6 +48,7 @@ export async function POST(req: Request) {
     }
 
     const origin = process.env.NEXT_PUBLIC_APP_URL ?? 'https://salonrink.com'
+    const stripe = getStripe()
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
