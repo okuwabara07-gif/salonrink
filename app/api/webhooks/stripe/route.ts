@@ -52,6 +52,7 @@ export async function POST(req: Request) {
           subscriptionId as string
         )) as any
 
+        const periodEnd = subscription.items?.data?.[0]?.current_period_end || subscription.current_period_end
         await supabase.from('subscriptions').upsert({
           user_id: userId,
           stripe_customer_id: customerId,
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
             ? new Date(subscription.trial_end * 1000).toISOString()
             : null,
           current_period_end: new Date(
-            subscription.current_period_end * 1000
+            periodEnd * 1000
           ).toISOString(),
           plan,
         })
@@ -80,12 +81,13 @@ export async function POST(req: Request) {
           .maybeSingle()
 
         if (sub) {
+          const periodEnd = subscription.items?.data?.[0]?.current_period_end || subscription.current_period_end
           await supabase
             .from('subscriptions')
             .update({
               status,
               current_period_end: new Date(
-                subscription.current_period_end * 1000
+                periodEnd * 1000
               ).toISOString(),
               cancel_at_period_end: subscription.cancel_at_period_end,
             })
