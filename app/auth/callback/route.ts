@@ -4,15 +4,16 @@ import { createAdminClient } from '@/lib/supabase/admin'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
-  const code = searchParams.get('code')
-  const redirectTo = searchParams.get('redirect') ?? '/pricing'
+  const token_hash = searchParams.get('token_hash')
+  const type = searchParams.get('type')
+  const next = searchParams.get('next') ?? '/pricing'
 
-  if (!code) {
-    return NextResponse.redirect(`${origin}/login?error=missing_code`)
+  if (!token_hash || !type) {
+    return NextResponse.redirect(`${origin}/login?error=missing_token`)
   }
 
   const supabase = await createClient()
-  const { error, data } = await supabase.auth.exchangeCodeForSession(code)
+  const { error, data } = await supabase.auth.verifyOtp({ token_hash, type: type as 'email' | 'sms' })
 
   if (error || !data.user) {
     return NextResponse.redirect(`${origin}/login?error=invalid_link`)
@@ -26,5 +27,5 @@ export async function GET(request: Request) {
     .eq('email', data.user.email)
     .is('owner_user_id', null)
 
-  return NextResponse.redirect(`${origin}${redirectTo}`)
+  return NextResponse.redirect(`${origin}${next}`)
 }
