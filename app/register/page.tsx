@@ -1,6 +1,8 @@
 'use client'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { registerSalon } from './actions'
+import { CheckoutButton } from '@/app/pricing/checkout-button'
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1)
@@ -15,15 +17,10 @@ export default function RegisterPage() {
     email: '',
     plan: 'basic',
   })
+  const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
-  }
-
-  const STRIPE_LINKS: Record<string, string> = {
-    basic: 'https://buy.stripe.com/test_28E5kD7lPdahabs9lc0kE00',
-    small: 'https://buy.stripe.com/test_3cIeVd49D5HP0ASbtk0kE01',
-    medium: 'https://buy.stripe.com/test_7sY28r7lP2vDdnEbtk0kE02',
   }
 
   const plans = [
@@ -49,10 +46,7 @@ export default function RegisterPage() {
       alert(result.message)
       return
     }
-    const url = new URL(STRIPE_LINKS[form.plan])
-    url.searchParams.set('client_reference_id', result.salonId)
-    url.searchParams.set('prefilled_email', form.email)
-    window.location.href = url.toString()
+    setRegistered(true)
   }
 
   if (registered) {
@@ -63,13 +57,9 @@ export default function RegisterPage() {
           <h2 style={{fontSize:20,fontWeight:400,color:'#1A1018',marginBottom:12}}>登録完了！</h2>
           <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
             {form.ownerName}様、ご登録ありがとうございます。<br/>
-            14日間の無料トライアルが開始されました。<br/>
-            次にLINE公式アカウントと連携してください。
+            次にプランを選択して決済を完了してください。
           </p>
-          <a href="https://lin.ee/545fncvi" target="_blank" rel="noopener noreferrer"
-            style={{display:'block',padding:'16px',borderRadius:10,background:'#06C755',color:'#fff',textDecoration:'none',fontSize:15,fontWeight:500,marginBottom:16}}>
-            LINEで連携する →
-          </a>
+          <CheckoutButton plan={form.plan as 'basic' | 'small' | 'medium'} style={{marginBottom:16}} />
           <a href="/" style={{fontSize:13,color:'#888',textDecoration:'none'}}>トップページに戻る</a>
         </div>
       </main>
