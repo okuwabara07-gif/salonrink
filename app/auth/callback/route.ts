@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   }
 
   const supabase = await createClient()
-  const { error, data } = await supabase.auth.verifyOtp({ token_hash, type: type as 'email' | 'sms' })
+  const { error, data } = await supabase.auth.verifyOtp({ token_hash, type: type as any })
 
   if (error || !data.user) {
     return NextResponse.redirect(`${origin}/login?error=invalid_link`)
