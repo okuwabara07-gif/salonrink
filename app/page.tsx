@@ -23,12 +23,13 @@ export default function Home() {
           <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SALOMÉ</div>
           <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>SalonRink</div>
         </div>
-        <nav style={{ display: 'flex', gap: 24, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif' }}>
+        <nav style={{ display: 'flex', gap: 24, fontSize: 13, color: '#7A6E64', fontFamily: 'sans-serif', alignItems: 'center' }}>
           <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>機能</a>
           <a href="/pricing" style={{ textDecoration: 'none', color: 'inherit' }}>料金</a>
           <a href="/case-studies/kirei-tsurumi" style={{ textDecoration: 'none', color: 'inherit' }}>導入事例</a>
           <a href="/faq" style={{ textDecoration: 'none', color: 'inherit' }}>FAQ</a>
           <a href="/contact" style={{ textDecoration: 'none', color: 'inherit' }}>お問い合わせ</a>
+          <a href="/login" style={{ textDecoration: 'none', color: '#B8966A', fontWeight: 600, paddingLeft: 12, borderLeft: '1px solid rgba(184,150,106,.2)' }}>ログイン</a>
         </nav>
       </header>
 

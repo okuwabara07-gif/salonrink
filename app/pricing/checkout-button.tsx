@@ -25,7 +25,7 @@ export function CheckoutButton({
 
       if (!res.ok) {
         if (res.status === 401) {
-          router.push('/login?redirect=/pricing')
+          router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`)
           return
         }
         alert(data.error || 'エラーが発生しました')
