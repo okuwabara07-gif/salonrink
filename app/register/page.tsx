@@ -8,6 +8,7 @@ export default function RegisterPage() {
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
   const [registered, setRegistered] = useState(false)
+  const [error, setError] = useState('')
   const [form, setForm] = useState({
     salonName: '',
     hotpepperUrl: '',
@@ -32,6 +33,7 @@ export default function RegisterPage() {
   const handleSubmit = async () => {
     if (loading) return
     setLoading(true)
+    setError('')
     const result = await registerSalon({
       salonName: form.salonName,
       hotpepperUrl: form.hotpepperUrl,
@@ -43,7 +45,7 @@ export default function RegisterPage() {
     })
     if (!result.ok) {
       setLoading(false)
-      alert(result.message)
+      setError(result.message)
       return
     }
     setRegistered(true)
@@ -90,6 +92,13 @@ export default function RegisterPage() {
       </div>
 
       <div style={{maxWidth:520,margin:'0 auto',background:'#fff',borderRadius:16,padding:'36px 32px',boxShadow:'0 2px 20px rgba(0,0,0,0.06)'}}>
+
+        {error && (
+          <div style={{background:'#FFE8E8',borderRadius:8,padding:16,border:'1px solid #FFB3B3',marginBottom:20}}>
+            <p style={{fontSize:13,color:'#C00',margin:'0 0 12px 0'}}>{error}</p>
+            <button onClick={()=>{window.location.href='/login'}} style={{padding:'10px 16px',borderRadius:6,border:'none',background:'#1A1018',color:'#FAF6EE',fontSize:13,cursor:'pointer',fontFamily:'sans-serif'}}>ログインする →</button>
+          </div>
+        )}
 
         {step===1&&(
           <div>
