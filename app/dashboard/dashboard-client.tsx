@@ -30,10 +30,12 @@ export default function DashboardClient({
   salon,
   reservations,
   customers,
+  userId,
 }: {
   salon: Salon
   reservations: Reservation[]
   customers: Customer[]
+  userId: string
 }) {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [icalUrl, setIcalUrl] = useState(salon.ical_url ?? '')
@@ -327,7 +329,7 @@ export default function DashboardClient({
           const res = await fetch('/api/customer-portal', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ userId: user.id })
+            body: JSON.stringify({ userId })
           })
           const data = await res.json()
           if (data.url) window.location.href = data.url

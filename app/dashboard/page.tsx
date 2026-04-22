@@ -50,6 +50,7 @@ export default async function DashboardPage() {
       salon={salon}
       reservations={reservations ?? []}
       customers={customers ?? []}
+      userId={user.id}
     />
   )
 }
