@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
     }
 
-    if (!plan || !['basic', 'small', 'medium'].includes(plan)) {
+    if (!plan || !['basic', 'small', 'medium', 'free'].includes(plan)) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
     }
 
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
       basic: process.env.STRIPE_PRICE_ID_BASIC,
       small: process.env.STRIPE_PRICE_ID_SMALL,
       medium: process.env.STRIPE_PRICE_ID_MEDIUM,
+      free: process.env.STRIPE_PRICE_ID_FREE,
     }
 
     const priceId = PRICE_IDS[plan]

@@ -9,6 +9,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false)
   const [registered, setRegistered] = useState(false)
   const [error, setError] = useState('')
+  const [inviteCode, setInviteCode] = useState('')
+  const [inviteCodeValid, setInviteCodeValid] = useState(false)
+  const [inviteCodeChecking, setInviteCodeChecking] = useState(false)
   const [form, setForm] = useState({
     salonName: '',
     hotpepperUrl: '',
@@ -24,7 +27,36 @@ export default function RegisterPage() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
+  const validateInviteCode = async () => {
+    if (!inviteCode.trim()) {
+      setInviteCodeValid(false)
+      return
+    }
+    setInviteCodeChecking(true)
+    try {
+      const res = await fetch('/api/validate-invite-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: inviteCode })
+      })
+      const data = await res.json()
+      if (data.valid) {
+        setForm({ ...form, plan: data.plan })
+        setInviteCodeValid(true)
+      } else {
+        setError(data.error)
+        setInviteCodeValid(false)
+      }
+    } catch (err) {
+      setError('コード検証に失敗しました')
+      setInviteCodeValid(false)
+    } finally {
+      setInviteCodeChecking(false)
+    }
+  }
+
   const plans = [
+    { id: 'free', name: '永久無料', price: '¥0', desc: 'キレイ鶴見店専用招待コード' },
     { id: 'basic', name: 'ベーシック', price: '¥980', desc: '予約同期・リマインド自動送信' },
     { id: 'small', name: 'スモール', price: '¥2,480', desc: '＋顧客カルテ・失客アラート' },
     { id: 'medium', name: 'ミディアム', price: '¥3,980', desc: '＋売上レポート・スタッフ管理' },
@@ -61,7 +93,7 @@ export default function RegisterPage() {
             {form.ownerName}様、ご登録ありがとうございます。<br/>
             次にプランを選択して決済を完了してください。
           </p>
-          <CheckoutButton plan={form.plan as 'basic' | 'small' | 'medium'} style={{marginBottom:16}} />
+          <CheckoutButton plan={form.plan as 'basic' | 'small' | 'medium' | 'free'} style={{marginBottom:16}} />
           <a href="/" style={{fontSize:13,color:'#888',textDecoration:'none'}}>トップページに戻る</a>
         </div>
       </main>
@@ -132,9 +164,31 @@ export default function RegisterPage() {
           <div>
             <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>プランを選択</h2>
             <p style={{fontSize:13,color:'#888',marginBottom:24}}>14日間無料トライアル後に課金開始。いつでも解約可能。</p>
+
+            {/* 招待コード入力 */}
+            <div style={{background:'#FFF8F0',borderRadius:10,padding:16,border:'1px solid #FFD8A8',marginBottom:24}}>
+              <label style={{fontSize:12,color:'#996633',display:'block',marginBottom:8,fontWeight:500}}>招待コードをお持ちですか？</label>
+              <div style={{display:'flex',gap:8}}>
+                <input
+                  type="text"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                  placeholder="例：KIREI-FREE"
+                  style={{flex:1,padding:'10px 12px',borderRadius:8,border:'1px solid #FFD8A8',fontSize:13,outline:'none',boxSizing:'border-box'}}
+                />
+                <button
+                  onClick={validateInviteCode}
+                  disabled={inviteCodeChecking || !inviteCode.trim()}
+                  style={{padding:'10px 16px',borderRadius:8,border:'none',background:inviteCodeValid?'#90EE90':'#996633',color:'#fff',fontSize:12,cursor:'pointer'}}
+                >
+                  {inviteCodeChecking?'確認中...':inviteCodeValid?'✓ 確認済み':'確認'}
+                </button>
+              </div>
+            </div>
+
             {plans.map(plan=>(
-              <div key={plan.id} onClick={()=>setForm({...form,plan:plan.id})}
-                style={{padding:'16px 20px',borderRadius:10,border:`2px solid ${form.plan===plan.id?'#B8966A':'#E8E0D8'}`,background:form.plan===plan.id?'#FBF6F0':'#fff',cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+              <div key={plan.id} onClick={()=>!inviteCodeValid||plan.id==='free'?setForm({...form,plan:plan.id}):null}
+                style={{padding:'16px 20px',borderRadius:10,border:`2px solid ${form.plan===plan.id?'#B8966A':'#E8E0D8'}`,background:form.plan===plan.id?'#FBF6F0':'#fff',cursor:inviteCodeValid&&plan.id!=='free'?'not-allowed':'pointer',opacity:inviteCodeValid&&plan.id!=='free'?0.5:1,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
                 <div>
                   <div style={{fontSize:15,fontWeight:500,color:'#1A1018'}}>{plan.name}</div>
                   <div style={{fontSize:12,color:'#888',marginTop:2}}>{plan.desc}</div>

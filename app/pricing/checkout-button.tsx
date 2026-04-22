@@ -7,7 +7,7 @@ export function CheckoutButton({
   plan,
   style,
 }: {
-  plan: 'basic' | 'small' | 'medium'
+  plan: 'basic' | 'small' | 'medium' | 'free'
   style?: React.CSSProperties
 }) {
   const [loading, setLoading] = useState(false)
