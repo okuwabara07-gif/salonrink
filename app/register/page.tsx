@@ -87,15 +87,28 @@ export default function RegisterPage() {
   }
 
   if (registered) {
+    const isFreeplan = form.plan === 'free'
     return (
       <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',padding:'40px 20px',display:'flex',alignItems:'center',justifyContent:'center'}}>
         <div style={{maxWidth:520,width:'100%',background:'#fff',borderRadius:16,padding:'48px 32px',boxShadow:'0 2px 20px rgba(0,0,0,0.06)',textAlign:'center'}}>
           <div style={{fontSize:48,marginBottom:16}}>🎉</div>
           <h2 style={{fontSize:20,fontWeight:400,color:'#1A1018',marginBottom:12}}>登録完了！</h2>
-          <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
-            {form.ownerName}様、ご登録ありがとうございます。<br/>
-            次にプランを選択して決済を完了してください。
-          </p>
+          {isFreeplan ? (
+            <>
+              <div style={{background:'#E8F5E9',borderRadius:12,padding:16,border:'2px solid #4CAF50',marginBottom:24}}>
+                <p style={{fontSize:13,color:'#228B22',fontWeight:700,margin:0}}>✅ 永久無料プランが適用されました</p>
+              </div>
+              <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
+                {form.ownerName}様、ご登録ありがとうございます。<br/>
+                キレイ鶴見店の永久無料プランがご利用いただけます。
+              </p>
+            </>
+          ) : (
+            <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
+              {form.ownerName}様、ご登録ありがとうございます。<br/>
+              次にプランを選択して決済を完了してください。
+            </p>
+          )}
           <CheckoutButton plan={form.plan as 'basic' | 'small' | 'medium' | 'free'} style={{marginBottom:16}} />
           <a href="/" style={{fontSize:13,color:'#888',textDecoration:'none'}}>トップページに戻る</a>
         </div>
@@ -217,19 +230,21 @@ export default function RegisterPage() {
           <div>
             <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>確認して登録</h2>
             <p style={{fontSize:13,color:'#888',marginBottom:24}}>内容を確認して登録を完了してください</p>
-            <div style={{background:'#F8F4EF',borderRadius:10,padding:16,border:'1px solid #EAE0D5',marginBottom:24}}>
-              <p style={{fontSize:12,color:'#7A6E64',marginBottom:10,fontWeight:500}}>登録内容</p>
+            <div style={{background:form.plan==='free'?'#E8F5E9':'#F8F4EF',borderRadius:10,padding:16,border:form.plan==='free'?'1px solid #4CAF50':'1px solid #EAE0D5',marginBottom:24}}>
+              <p style={{fontSize:12,color:form.plan==='free'?'#228B22':'#7A6E64',marginBottom:10,fontWeight:500}}>登録内容</p>
               <p style={{margin:'4px 0',fontSize:13}}>サロン名：{form.salonName}</p>
               <p style={{margin:'4px 0',fontSize:13}}>担当者：{form.ownerName}</p>
               <p style={{margin:'4px 0',fontSize:13}}>メール：{form.email}</p>
               <p style={{margin:'4px 0',fontSize:13}}>プラン：{plans.find(p=>p.id===form.plan)?.name} {plans.find(p=>p.id===form.plan)?.price}/月</p>
-              <p style={{margin:'8px 0 0',fontSize:11,color:'#B8966A'}}>✅ 14日間無料トライアル付き</p>
+              <p style={{margin:'8px 0 0',fontSize:11,color:form.plan==='free'?'#228B22':'#B8966A'}}>
+                {form.plan==='free'?'✅ 永久無料プラン':'✅ 14日間無料トライアル付き'}
+              </p>
             </div>
             <div style={{display:'flex',gap:12}}>
               <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
               <button onClick={handleSubmit} disabled={loading}
-                style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:loading?'#E0D8D0':'#1A1018',color:loading?'#999':'#FAF6EE',fontSize:14,cursor:loading?'not-allowed':'pointer'}}>
-                {loading?'登録中...':'登録してStripeで決済へ →'}
+                style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:loading?'#E0D8D0':form.plan==='free'?'#4CAF50':'#1A1018',color:loading?'#999':'#FAF6EE',fontSize:14,cursor:loading?'not-allowed':'pointer'}}>
+                {loading?'登録中...':form.plan==='free'?'永久無料で始める →':'登録してStripeで決済へ →'}
               </button>
             </div>
           </div>

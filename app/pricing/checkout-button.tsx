@@ -43,6 +43,11 @@ export function CheckoutButton({
     }
   }
 
+  const isFreeplan = plan === 'free'
+  const buttonText = isFreeplan
+    ? (loading ? '処理中...' : '永久無料プランで始める →')
+    : (loading ? '処理中...' : '14日間無料で始める →')
+
   return (
     <button
       onClick={handleClick}
@@ -50,7 +55,7 @@ export function CheckoutButton({
       style={{
         display: 'block',
         padding: '12px 20px',
-        background: loading ? '#ccc' : '#1A1018',
+        background: loading ? '#ccc' : isFreeplan ? '#4CAF50' : '#1A1018',
         color: '#FAF6EE',
         textAlign: 'center',
         fontSize: 13,
@@ -63,7 +68,7 @@ export function CheckoutButton({
         ...style,
       }}
     >
-      {loading ? '処理中...' : '14日間無料で始める →'}
+      {buttonText}
     </button>
   )
 }
