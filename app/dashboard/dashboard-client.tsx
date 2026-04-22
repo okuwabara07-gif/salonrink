@@ -322,6 +322,20 @@ export default function DashboardClient({
               <p style={{fontSize:13,color:'#444',marginBottom:4}}>担当者：{salon.owner_name}</p>
               <p style={{fontSize:13,color:'#444',marginBottom:4}}>プラン：{salon.plan}</p>
               <p style={{fontSize:13,color:'#444'}}>トライアル終了：{salon.trial_ends_at ? new Date(salon.trial_ends_at).toLocaleDateString('ja-JP') : '未設定'}</p>
+      <button
+        onClick={async () => {
+          const res = await fetch('/api/customer-portal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id })
+          })
+          const data = await res.json()
+          if (data.url) window.location.href = data.url
+        }}
+        style={{marginTop: 12, padding: '8px 16px', fontSize: 13, background: '#8B7355', color: '#fff', border: 'none', borderRadius: 4, cursor: 'pointer'}}
+      >
+        プラン管理
+      </button>
             </div>
           </div>
         )}
