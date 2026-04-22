@@ -1,4 +1,4 @@
-import { stripe } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Stripe Customer Portalセッションを作成
+    const stripe = getStripe()
     const session = await stripe.billingPortal.sessions.create({
       customer: user.stripe_customer_id,
       return_url: `${process.env.NEXT_PUBLIC_SALONRINK_URL}/dashboard`,
