@@ -29,9 +29,11 @@ export default function RegisterPage() {
 
   const validateInviteCode = async () => {
     if (!inviteCode.trim()) {
+      setError('コードを入力してください')
       setInviteCodeValid(false)
       return
     }
+    setError('')
     setInviteCodeChecking(true)
     try {
       const res = await fetch('/api/validate-invite-code', {
@@ -43,8 +45,9 @@ export default function RegisterPage() {
       if (data.valid) {
         setForm({ ...form, plan: data.plan })
         setInviteCodeValid(true)
+        setError('')
       } else {
-        setError(data.error)
+        setError(data.error || 'コードが無効です')
         setInviteCodeValid(false)
       }
     } catch (err) {
@@ -168,27 +171,30 @@ export default function RegisterPage() {
             {/* 招待コード入力 */}
             <div style={{background:'#FFF8F0',borderRadius:10,padding:16,border:'1px solid #FFD8A8',marginBottom:24}}>
               <label style={{fontSize:12,color:'#996633',display:'block',marginBottom:8,fontWeight:500}}>招待コードをお持ちですか？</label>
-              <div style={{display:'flex',gap:8}}>
+              <div style={{display:'flex',gap:8,marginBottom:inviteCodeValid?8:0}}>
                 <input
                   type="text"
                   value={inviteCode}
                   onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                   placeholder="例：KIREI-FREE"
-                  style={{flex:1,padding:'10px 12px',borderRadius:8,border:'1px solid #FFD8A8',fontSize:13,outline:'none',boxSizing:'border-box'}}
+                  style={{flex:1,padding:'10px 12px',borderRadius:8,border:inviteCodeValid?'2px solid #90EE90':'1px solid #FFD8A8',fontSize:13,outline:'none',boxSizing:'border-box',background:inviteCodeValid?'#F0FFF0':'#fff'}}
                 />
                 <button
                   onClick={validateInviteCode}
                   disabled={inviteCodeChecking || !inviteCode.trim()}
-                  style={{padding:'10px 16px',borderRadius:8,border:'none',background:inviteCodeValid?'#90EE90':'#996633',color:'#fff',fontSize:12,cursor:'pointer'}}
+                  style={{padding:'10px 16px',borderRadius:8,border:'none',background:inviteCodeValid?'#90EE90':'#996633',color:'#fff',fontSize:12,cursor:inviteCodeChecking||!inviteCode.trim()?'not-allowed':'pointer',opacity:inviteCodeChecking||!inviteCode.trim()?0.6:1}}
                 >
                   {inviteCodeChecking?'確認中...':inviteCodeValid?'✓ 確認済み':'確認'}
                 </button>
               </div>
+              {inviteCodeValid && <p style={{fontSize:12,color:'#228B22',margin:'0 0 8px 0',fontWeight:500}}>✅ コード確認済み - 永久無料プランが適用されます</p>}
             </div>
 
-            {plans.map(plan=>(
-              <div key={plan.id} onClick={()=>!inviteCodeValid||plan.id==='free'?setForm({...form,plan:plan.id}):null}
-                style={{padding:'16px 20px',borderRadius:10,border:`2px solid ${form.plan===plan.id?'#B8966A':'#E8E0D8'}`,background:form.plan===plan.id?'#FBF6F0':'#fff',cursor:inviteCodeValid&&plan.id!=='free'?'not-allowed':'pointer',opacity:inviteCodeValid&&plan.id!=='free'?0.5:1,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+            {plans.map(plan=>{
+              const isDisabled = inviteCodeValid && plan.id !== 'free'
+              return (
+              <div key={plan.id} onClick={()=>!isDisabled && setForm({...form,plan:plan.id})}
+                style={{padding:'16px 20px',borderRadius:10,border:`2px solid ${form.plan===plan.id?'#B8966A':'#E8E0D8'}`,background:form.plan===plan.id?'#FBF6F0':'#fff',cursor:isDisabled?'not-allowed':'pointer',opacity:isDisabled?0.5:1,display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
                 <div>
                   <div style={{fontSize:15,fontWeight:500,color:'#1A1018'}}>{plan.name}</div>
                   <div style={{fontSize:12,color:'#888',marginTop:2}}>{plan.desc}</div>
@@ -198,7 +204,8 @@ export default function RegisterPage() {
                   <div style={{fontSize:11,color:'#999'}}>/月（税込）</div>
                 </div>
               </div>
-            ))}
+              )
+            })}
             <div style={{display:'flex',gap:12,marginTop:8}}>
               <button onClick={()=>setStep(1)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
               <button onClick={()=>setStep(3)} style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:'#1A1018',color:'#FAF6EE',fontSize:14,cursor:'pointer'}}>次へ：LINE連携 →</button>
