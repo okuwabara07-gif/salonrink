@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: inviteCode, error } = await supabase
       .from('invite_codes')
-      .select('id, code, is_active')
+      .select('id, code, is_active, usage_count')
       .eq('code', code.toUpperCase())
       .single()
 
