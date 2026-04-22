@@ -1,15 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { getStripe } from '@/lib/stripe'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-
+    const { data: { user } } = await supabase.auth.getUser()
+    
     if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     let plan: string
@@ -17,11 +16,11 @@ export async function POST(req: Request) {
       const body = await req.json()
       plan = body.plan
     } catch {
-      return Response.json({ error: 'Invalid request body' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
     }
 
     if (!plan || !['basic', 'small', 'medium'].includes(plan)) {
-      return Response.json({ error: 'Invalid plan' }, { status: 400 })
+      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
     }
 
     const PRICE_IDS: Record<string, string | undefined> = {
@@ -33,7 +32,7 @@ export async function POST(req: Request) {
     const priceId = PRICE_IDS[plan]
     if (!priceId) {
       console.error(`Missing price ID for plan: ${plan}`)
-      return Response.json(
+      return NextResponse.json(
         { error: 'Price ID not configured' },
         { status: 500 }
       )
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
 
     if (!process.env.STRIPE_SECRET_KEY) {
       console.error('STRIPE_SECRET_KEY is not set')
-      return Response.json(
+      return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
       )
@@ -49,6 +48,8 @@ export async function POST(req: Request) {
 
     const origin = process.env.NEXT_PUBLIC_APP_URL ?? 'https://salonrink.com'
     const stripe = getStripe()
+
+    console.log('Creating checkout session for:', { plan, priceId, userEmail: user.email })
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
@@ -70,21 +71,23 @@ export async function POST(req: Request) {
       allow_promotion_codes: true,
     })
 
+    console.log('Checkout session created:', { sessionId: session.id, url: session.url })
+
     if (!session.url) {
       console.error('Stripe session created but no URL returned')
-      return Response.json(
+      return NextResponse.json(
         { error: 'Failed to get checkout URL' },
         { status: 500 }
       )
     }
 
-    return Response.json({ url: session.url })
+    return NextResponse.json({ url: session.url })
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : 'Unknown error'
-    console.error('Checkout error:', errorMessage, error)
-    return Response.json(
-      { error: 'Failed to create checkout session' },
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : ''
+    console.error('Checkout error:', errorMessage, errorStack, error)
+    return NextResponse.json(
+      { error: 'Failed to create checkout session', details: errorMessage },
       { status: 500 }
     )
   }
