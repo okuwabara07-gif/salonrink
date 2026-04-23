@@ -12,12 +12,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    console.log('Supabase URL:', supabaseUrl)
+    console.log('Supabase Project ID from URL:', supabaseUrl?.split('.')[0].replace('https://', ''))
+    console.log('Validating code:', code.toUpperCase())
+
     const supabase = await createClient()
     const { data: inviteCode, error } = await supabase
       .from('invite_codes')
       .select('id, code, is_active, usage_count')
       .eq('code', code.toUpperCase())
       .single()
+
+    if (error) {
+      console.log('Supabase query error:', error)
+    }
 
     if (error || !inviteCode) {
       return NextResponse.json(
@@ -32,12 +42,6 @@ export async function POST(req: NextRequest) {
         { status: 400 }
       )
     }
-
-    // 使用回数をインクリメント
-    await supabase
-      .from('invite_codes')
-      .update({ usage_count: inviteCode.usage_count + 1 })
-      .eq('id', inviteCode.id)
 
     return NextResponse.json({
       valid: true,
