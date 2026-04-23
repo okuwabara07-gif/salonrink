@@ -233,7 +233,7 @@ export default function DashboardClient({
         {/* フッター */}
         <div style={{marginTop:40,paddingTop:24,borderTop:'1px solid #E0D8D0',textAlign:'center'}}>
           <p style={{fontSize:12,color:'#888',margin:0}}>
-            問題がある場合は <a href="mailto:aokae2020@gmail.com" style={{color:'#B8966A',textDecoration:'underline'}}>aokae2020@gmail.com</a> までお問い合わせください
+            問題がある場合は <a href="mailto:info@aokae.net" style={{color:'#B8966A',textDecoration:'underline'}}>info@aokae.net</a> までお問い合わせください
           </p>
         </div>
       </div>

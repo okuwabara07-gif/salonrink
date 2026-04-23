@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 const info: [string, string | React.ReactNode][] = [
   ['商号', 'AOKAE合同会社'],
   ['英文表記', 'AOKAE LLC'],
-  ['代表者', '代表社員 桒原 理'],
-  ['所在地', '〒158-0092 東京都世田谷区野毛2丁目28-11 207'],
-  ['連絡先', 'aokae2020@gmail.com / 090-3220-7783'],
+  ['代表者', '代表社員'],
+  ['所在地', '東京都'],
+  ['連絡先', 'info@aokae.net / （非公開）'],
   ['事業内容', 'SaaS開発・運営 / Webメディア運営 / 美容サロン運営'],
   ['設立', '2024年'],
 ];

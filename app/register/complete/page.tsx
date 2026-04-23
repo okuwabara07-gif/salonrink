@@ -49,7 +49,7 @@ export default async function RegisterCompletePage({
   if (error) {
     return <Message
       title="メール送信に失敗しました"
-      body={`もう一度お試しいただくか、サポート（aokae2020@gmail.com）までご連絡ください。エラー: ${error.message}`}
+      body={`もう一度お試しいただくか、サポート（info@aokae.net）までご連絡ください。エラー: ${error.message}`}
     />
   }
 

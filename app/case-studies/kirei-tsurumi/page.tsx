@@ -77,7 +77,7 @@ export default function CaseStudyPage() {
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               <dt style={{ minWidth: 100, color: '#8b6fa0' }}>所在地</dt>
-              <dd style={{ margin: 0 }}>神奈川県横浜市鶴見区</dd>
+              <dd style={{ margin: 0 }}>東京都</dd>
             </div>
             <div style={{ display: 'flex', gap: 12 }}>
               <dt style={{ minWidth: 100, color: '#8b6fa0' }}>業態</dt>

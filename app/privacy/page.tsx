@@ -4,8 +4,8 @@ export default function PrivacyPage() {
       title: '1. 事業者情報',
       body: [
         '事業者名：AOKAE LLC',
-        '所在地：〒158-0092 東京都世田谷区野毛2丁目28-11 207',
-        '連絡先：aokae2020@gmail.com',
+        '所在地：東京都',
+        '連絡先：info@aokae.net',
       ],
     },
     {
@@ -93,8 +93,8 @@ export default function PrivacyPage() {
       body: [
         '個人情報の取扱いに関するお問い合わせは、下記までご連絡ください。',
         'AOKAE LLC',
-        'メール：aokae2020@gmail.com',
-        '電話：090-3220-7783（受付時間：平日10:00〜18:00）',
+        'メール：info@aokae.net',
+        '電話：（非公開）（受付時間：平日10:00〜18:00）',
       ],
     },
   ]

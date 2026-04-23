@@ -34,7 +34,7 @@ const supabase = createClient(
 const SALON_DATA = {
   name: 'キレイ鶴見店',
   email: 'kirei.tsurumi2021@gmail.com',
-  owner_name: '桒原理',
+  owner_name: '代表社員',
   phone: '09032207783',
   hotpepper_url: 'https://beauty.hotpepper.jp/slnH000501100/',
   plan: 'basic',
