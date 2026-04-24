@@ -8,6 +8,7 @@ export default function HpbSetupPage() {
   const [saving, setSaving] = useState(false)
   const [credentialsExist, setCredentialsExist] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const [formData, setFormData] = useState({
     hpb_login_id: '',
@@ -16,32 +17,61 @@ export default function HpbSetupPage() {
   })
 
   useEffect(() => {
+    let isMounted = true
+
     async function loadData() {
       try {
         const supabase = await createClient()
         const { data: { user } } = await supabase.auth.getUser()
-        if (!user) return
 
-        const { data: salon } = await supabase
+        if (!isMounted) return
+
+        if (!user) {
+          setError('ログインが必要です')
+          setLoading(false)
+          return
+        }
+
+        const { data: salon, error: salonError } = await supabase
           .from('salons')
           .select('id')
           .eq('owner_user_id', user.id)
           .maybeSingle()
 
+        if (!isMounted) return
+
+        if (salonError) {
+          console.error('Salon query error:', salonError)
+          setError('サロン情報の取得に失敗しました')
+          setLoading(false)
+          return
+        }
+
         if (!salon) {
+          setError('サロン情報が見つかりません')
           setLoading(false)
           return
         }
 
         setSalonId(salon.id)
 
-        const { data: credentials, error } = await supabase
+        const { data: credentials, error: credError } = await supabase
           .from('salon_hpb_credentials')
           .select('*')
           .eq('salon_id', salon.id)
           .maybeSingle()
 
-        if (!error && credentials) {
+        if (!isMounted) return
+
+        if (credError) {
+          console.error('Credentials query error:', credError)
+          // テーブルが存在しない場合は、エラーを無視して続行
+          if (credError.code !== 'PGRST116') {
+            setError('認証情報の取得に失敗しました')
+          }
+        }
+
+        if (credentials) {
           setCredentialsExist(true)
           setFormData(prev => ({
             ...prev,
@@ -52,11 +82,18 @@ export default function HpbSetupPage() {
         setLoading(false)
       } catch (err) {
         console.error('Error loading HPB setup data:', err)
-        setLoading(false)
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : '予期しないエラーが発生しました')
+          setLoading(false)
+        }
       }
     }
 
     loadData()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +140,37 @@ export default function HpbSetupPage() {
     return (
       <main style={{ padding: '40px 20px', maxWidth: 800, margin: '0 auto' }}>
         <p style={{ color: '#666' }}>読み込み中...</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main style={{ padding: '40px 20px', maxWidth: 800, margin: '0 auto' }}>
+        <h1 style={{
+          fontSize: 28,
+          fontWeight: 400,
+          letterSpacing: 4,
+          color: '#1A1018',
+          marginBottom: 32,
+        }}>
+          HPB設定
+        </h1>
+        <div style={{
+          background: '#fff',
+          borderRadius: 16,
+          padding: 32,
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+        }}>
+          <p style={{
+            fontSize: 13,
+            color: '#A32D2D',
+            textAlign: 'center',
+            margin: 0,
+          }}>
+            エラーが発生しました: {error}
+          </p>
+        </div>
       </main>
     )
   }

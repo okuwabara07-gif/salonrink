@@ -23,6 +23,7 @@ interface SyncLog {
 export default function SyncStatusPage() {
   const [salonId, setSalonId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null)
   const [syncLogs, setSyncLogs] = useState<SyncLog[]>([])
   const [toggling, setToggling] = useState(false)
@@ -56,28 +57,59 @@ export default function SyncStatusPage() {
   }
 
   useEffect(() => {
+    let isMounted = true
+
     async function init() {
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
 
-      const { data: salon } = await supabase
-        .from('salons')
-        .select('id')
-        .eq('owner_user_id', user.id)
-        .maybeSingle()
+        if (!isMounted) return
 
-      if (!salon) {
+        if (!user) {
+          setError('ログインが必要です')
+          setLoading(false)
+          return
+        }
+
+        const { data: salon, error: salonError } = await supabase
+          .from('salons')
+          .select('id')
+          .eq('owner_user_id', user.id)
+          .maybeSingle()
+
+        if (!isMounted) return
+
+        if (salonError) {
+          console.error('Salon query error:', salonError)
+          setError('サロン情報の取得に失敗しました')
+          setLoading(false)
+          return
+        }
+
+        if (!salon) {
+          setError('サロン情報が見つかりません')
+          setLoading(false)
+          return
+        }
+
+        setSalonId(salon.id)
+        await loadData(supabase, salon.id)
         setLoading(false)
-        return
+      } catch (err) {
+        console.error('Error initializing sync status:', err)
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : '予期しないエラーが発生しました')
+          setLoading(false)
+        }
       }
-
-      setSalonId(salon.id)
-      await loadData(supabase, salon.id)
-      setLoading(false)
     }
 
     init()
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   useEffect(() => {
@@ -125,6 +157,37 @@ export default function SyncStatusPage() {
     return (
       <main style={{ padding: '40px 20px', maxWidth: 800, margin: '0 auto' }}>
         <p style={{ color: '#666' }}>読み込み中...</p>
+      </main>
+    )
+  }
+
+  if (error) {
+    return (
+      <main style={{ padding: '40px 20px', maxWidth: 800, margin: '0 auto' }}>
+        <h1 style={{
+          fontSize: 28,
+          fontWeight: 400,
+          letterSpacing: 4,
+          color: '#1A1018',
+          marginBottom: 32,
+        }}>
+          同期状態
+        </h1>
+        <div style={{
+          background: '#fff',
+          borderRadius: 16,
+          padding: 32,
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+        }}>
+          <p style={{
+            fontSize: 13,
+            color: '#A32D2D',
+            textAlign: 'center',
+            margin: 0,
+          }}>
+            エラーが発生しました: {error}
+          </p>
+        </div>
       </main>
     )
   }
