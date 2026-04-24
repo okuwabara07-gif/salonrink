@@ -31,6 +31,8 @@ export default async function DashboardLayout({
     { id: 'booking', label: '予約管理', path: '/dashboard/booking' },
     { id: 'line', label: 'LINE連携', path: '/dashboard/line' },
     { id: 'hotpepper', label: 'HPB連携', path: '/dashboard/hotpepper' },
+    { id: 'hpb-setup', label: 'HPB設定', path: '/dashboard/hpb-setup' },
+    { id: 'sync-status', label: '同期状態', path: '/dashboard/sync-status' },
     { id: 'karte', label: 'カルテ', path: '/dashboard/karte' },
     { id: 'richmenu', label: 'リッチメニュー', path: '/dashboard/richmenu' },
     { id: 'plan', label: 'プラン', path: '/dashboard/plan' },
