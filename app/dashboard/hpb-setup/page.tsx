@@ -17,38 +17,43 @@ export default function HpbSetupPage() {
 
   useEffect(() => {
     async function loadData() {
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return
 
-      const { data: salon } = await supabase
-        .from('salons')
-        .select('id')
-        .eq('owner_user_id', user.id)
-        .maybeSingle()
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('id')
+          .eq('owner_user_id', user.id)
+          .maybeSingle()
 
-      if (!salon) {
+        if (!salon) {
+          setLoading(false)
+          return
+        }
+
+        setSalonId(salon.id)
+
+        const { data: credentials, error } = await supabase
+          .from('salon_hpb_credentials')
+          .select('*')
+          .eq('salon_id', salon.id)
+          .maybeSingle()
+
+        if (!error && credentials) {
+          setCredentialsExist(true)
+          setFormData(prev => ({
+            ...prev,
+            hpb_salon_id: credentials.hpb_salon_id || '',
+          }))
+        }
+
         setLoading(false)
-        return
+      } catch (err) {
+        console.error('Error loading HPB setup data:', err)
+        setLoading(false)
       }
-
-      setSalonId(salon.id)
-
-      const { data: credentials } = await supabase
-        .from('salon_hpb_credentials')
-        .select('*')
-        .eq('salon_id', salon.id)
-        .maybeSingle()
-
-      if (credentials) {
-        setCredentialsExist(true)
-        setFormData(prev => ({
-          ...prev,
-          hpb_salon_id: credentials.hpb_salon_id || '',
-        }))
-      }
-
-      setLoading(false)
     }
 
     loadData()

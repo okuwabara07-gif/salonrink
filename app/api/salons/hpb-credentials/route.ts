@@ -51,9 +51,12 @@ export async function POST(req: NextRequest) {
 
     if (upsertError) {
       console.error('Supabase upsert error:', upsertError)
+      const errorMessage = upsertError.code === 'PGRST116'
+        ? 'Supabaseで salon_hpb_credentials テーブルを作成してください。HPB_SETUP_INSTRUCTIONS.md を参照してください。'
+        : 'Failed to save credentials'
       return NextResponse.json(
-        { error: 'Failed to save credentials' },
-        { status: 500 }
+        { error: errorMessage },
+        { status: upsertError.code === 'PGRST116' ? 501 : 500 }
       )
     }
 

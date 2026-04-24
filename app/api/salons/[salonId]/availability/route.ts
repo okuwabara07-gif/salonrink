@@ -25,9 +25,12 @@ export async function GET(
 
     if (statusError) {
       console.error('Error fetching sync status:', statusError)
+      const errorMessage = statusError.code === 'PGRST116'
+        ? 'Supabase tables not yet created. See HPB_SETUP_INSTRUCTIONS.md'
+        : 'Failed to fetch sync status'
       return NextResponse.json(
-        { error: 'Failed to fetch sync status' },
-        { status: 500 }
+        { error: errorMessage },
+        { status: statusError.code === 'PGRST116' ? 501 : 500 }
       )
     }
 

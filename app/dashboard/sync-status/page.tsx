@@ -29,22 +29,30 @@ export default function SyncStatusPage() {
   const [countdown, setCountdown] = useState(60)
 
   const loadData = async (supabase: any, salonId: string) => {
-    const { data: status } = await supabase
-      .from('sync_status')
-      .select('*')
-      .eq('salon_id', salonId)
-      .maybeSingle()
+    try {
+      const { data: status, error: statusError } = await supabase
+        .from('sync_status')
+        .select('*')
+        .eq('salon_id', salonId)
+        .maybeSingle()
 
-    setSyncStatus(status)
+      if (!statusError) {
+        setSyncStatus(status)
+      }
 
-    const { data: logs } = await supabase
-      .from('sync_logs')
-      .select('*')
-      .eq('salon_id', salonId)
-      .order('created_at', { ascending: false })
-      .limit(10)
+      const { data: logs, error: logsError } = await supabase
+        .from('sync_logs')
+        .select('*')
+        .eq('salon_id', salonId)
+        .order('created_at', { ascending: false })
+        .limit(10)
 
-    setSyncLogs(logs || [])
+      if (!logsError) {
+        setSyncLogs(logs || [])
+      }
+    } catch (err) {
+      console.error('Error loading sync data:', err)
+    }
   }
 
   useEffect(() => {
