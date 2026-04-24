@@ -67,30 +67,28 @@ export default async function DashboardLayout({
             </div>
 
             {/* ナビゲーション */}
+            <style>{`
+              .nav-link {
+                display: block;
+                padding: 12px 20px;
+                font-size: 13px;
+                color: rgba(255,255,255,0.6);
+                text-decoration: none;
+                transition: all 0.2s ease;
+                border-left: 2px solid transparent;
+              }
+              .nav-link:hover {
+                color: #FAF6EE;
+                background: rgba(184,150,106,.1);
+                border-left: 2px solid #B8966A;
+              }
+            `}</style>
             <nav style={{ flex: 1 }}>
               {navItems.map(item => (
                 <a
                   key={item.id}
                   href={item.path}
-                  style={{
-                    display: 'block',
-                    padding: '12px 20px',
-                    fontSize: 13,
-                    color: 'rgba(255,255,255,0.6)',
-                    textDecoration: 'none',
-                    transition: 'all 0.2s ease',
-                    borderLeft: '2px solid transparent',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#FAF6EE'
-                    e.currentTarget.style.background = 'rgba(184,150,106,.1)'
-                    e.currentTarget.style.borderLeft = '2px solid #B8966A'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
-                    e.currentTarget.style.background = 'transparent'
-                    e.currentTarget.style.borderLeft = '2px solid transparent'
-                  }}
+                  className="nav-link"
                 >
                   {item.label}
                 </a>
