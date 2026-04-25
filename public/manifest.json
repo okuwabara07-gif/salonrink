@@ -1,0 +1,47 @@
+{
+  "name": "SalonRink - 美容室経営、もうこれ1つで完結",
+  "short_name": "SalonRink",
+  "description": "フリーランスから多店舗チェーンまで対応する美容室総合管理システム",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAF6F0",
+  "theme_color": "#9B8AAB",
+  "scope": "/",
+  "lang": "ja",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ダッシュボード",
+      "short_name": "Home",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "予約一覧",
+      "short_name": "予約",
+      "url": "/dashboard/booking",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "顧客カルテ",
+      "short_name": "カルテ",
+      "url": "/dashboard/karte",
+      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

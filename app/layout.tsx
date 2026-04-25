@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -19,6 +20,19 @@ export const metadata: Metadata = {
   description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥980から。ホットペッパー依存から脱却。",
   keywords: ["サロン管理", "LINE予約", "予約システム", "顧客管理", "美容サロン", "SaaS"],
   authors: [{ name: "AOKAE合同会社" }],
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SalonRink",
+  },
+  icons: {
+    icon: [
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/icons/apple-touch-icon.png",
+  },
   verification: {
     google: "LhDE3K0d8OvwCM_wvoTnUiVQ9pj9r8H7abwiz7ShlV4",
   },
@@ -57,6 +71,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  themeColor: "#9B8AAB",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -73,6 +94,7 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+        <PWAInstallPrompt />
       </body>
     </html>
   );
