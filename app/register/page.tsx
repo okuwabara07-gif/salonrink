@@ -188,7 +188,7 @@ function RegisterFormContent() {
     <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',padding:'40px 20px'}}>
       <div style={{textAlign:'center',marginBottom:40}}>
         <div style={{marginBottom:8,lineHeight:1}}>
-          <div style={{fontSize:26,fontWeight:400,letterSpacing:8,color:'#1A1018'}}>SALOMÉ</div>
+          <div style={{fontSize:26,fontWeight:400,letterSpacing:8,color:'#1A1018'}}>SalonRink</div>
           <div style={{fontSize:10,letterSpacing:4,color:'#B8966A',marginTop:4}}>SalonRink</div>
         </div>
         <p style={{fontSize:13,color:'#888',letterSpacing:2}}>無料トライアル 14日間</p>
@@ -270,7 +270,7 @@ function RegisterFormContent() {
             <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>サロン情報を入力</h2>
             <p style={{fontSize:13,color:'#888',marginBottom:16}}>ホットペッパービューティーに掲載中のサロン情報を入力してください</p>
             <div style={{background:'#FFF8F0',borderRadius:8,padding:12,border:'1px solid #FFD8A8',marginBottom:20,fontSize:11,color:'#996633',lineHeight:1.7}}>
-              ⚠️ 免責事項：SALOMÉはツール提供のみを行います。ホットペッパービューティーの利用規約の遵守はお客様ご自身の責任となります。当サービスはリクルート社とは一切関係ありません。
+              ⚠️ 免責事項：SalonRinkはツール提供のみを行います。ホットペッパービューティーの利用規約の遵守はお客様ご自身の責任となります。当サービスはリクルート社とは一切関係ありません。
             </div>
             {[
               {name:'salonName',label:'サロン名',placeholder:'例：ヘアサロン キレイ 鶴見店'},

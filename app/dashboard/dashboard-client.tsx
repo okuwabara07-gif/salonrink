@@ -73,7 +73,7 @@ export default function DashboardClient({
         {/* ヘッダー */}
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:40}}>
           <div>
-            <h1 style={{fontSize:32,fontWeight:400,letterSpacing:6,color:'#1A1018',margin:0}}>SALOMÉ</h1>
+            <h1 style={{fontSize:32,fontWeight:400,letterSpacing:6,color:'#1A1018',margin:0}}>SalonRink</h1>
             <p style={{fontSize:12,color:'#B8966A',letterSpacing:2,margin:'6px 0 0 0'}}>ダッシュボード</p>
           </div>
           <div style={{textAlign:'right'}}>

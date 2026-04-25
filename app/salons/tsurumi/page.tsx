@@ -248,7 +248,7 @@ export default function KireiturumiPage() {
       {/* Section 1: Hero */}
       <section style={styles.hero}>
         <h1 style={styles.title}>
-          キレイ鶴見店がSALOMÉで変わった
+          キレイ鶴見店がSalonRinkで変わった
         </h1>
         <p style={styles.subtitle}>
           LINE予約の確定率 68% → 92% に改善。<br />
@@ -272,7 +272,7 @@ export default function KireiturumiPage() {
               ホットペッパー・LINE・電話が混在、<br />
               重複予約が月 12 件発生
             </div>
-            <div style={styles.cardArrow}>↓ SALOMÉ 導入</div>
+            <div style={styles.cardArrow}>↓ SalonRink 導入</div>
             <div style={styles.cardAfter}>92%</div>
             <div style={styles.cardDescription}>
               システムが自動で重複をブロック
@@ -290,7 +290,7 @@ export default function KireiturumiPage() {
               LINEリマインドを手動で送信、<br />
               フォローが属人的
             </div>
-            <div style={styles.cardArrow}>↓ SALOMÉ 導入</div>
+            <div style={styles.cardArrow}>↓ SalonRink 導入</div>
             <div style={styles.cardAfter}>68%</div>
             <div style={styles.cardDescription}>
               来店後 24h に自動でフォロー送信
@@ -307,7 +307,7 @@ export default function KireiturumiPage() {
             <div style={styles.cardDescription}>
               施術売上のみ
             </div>
-            <div style={styles.cardArrow}>↓ SALOMÉ 導入</div>
+            <div style={styles.cardArrow}>↓ SalonRink 導入</div>
             <div style={styles.cardAfter}>¥850,000</div>
             <div style={styles.cardDescription}>
               施術売上 + EC販売 ¥170k/月
@@ -321,7 +321,7 @@ export default function KireiturumiPage() {
 
       {/* Section 3: Features */}
       <section style={styles.section3}>
-        <h2 style={styles.section3Title}>SALOMÉ の機能</h2>
+        <h2 style={styles.section3Title}>SalonRink の機能</h2>
         <div style={styles.featureContainer}>
           {/* Feature 1 */}
           <div style={styles.featureCard}>

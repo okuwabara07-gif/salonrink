@@ -11,7 +11,7 @@ export default function PrivacyPage() {
     {
       title: '2. 取得する個人情報',
       body: [
-        '当社が運営するSALOMÉ（以下「本サービス」）では、以下の情報を取得します。',
+        '当社が運営するSalonRink（以下「本サービス」）では、以下の情報を取得します。',
         '・サロン事業者情報：サロン名、担当者名、電話番号、メールアドレス、ホットペッパービューティーのサロンページURL、サロンボードのiCal URL',
         '・顧客情報：氏名、来店日時、施術メニュー、施術履歴、LINE ID、ポイント残高',
         '・決済情報：Stripe社を通じた決済状況（カード番号は当社では保持しません）',
@@ -121,7 +121,7 @@ export default function PrivacyPage() {
       </h1>
 
       <p style={{ fontSize: 14, color: '#555', marginBottom: 40 }}>
-        AOKAE LLC（以下「当社」）は、本サービス「SALOMÉ」（SalonRink）におけるお客様の個人情報の取扱いについて、以下のとおりプライバシーポリシーを定めます。
+        AOKAE LLC（以下「当社」）は、本サービス「SalonRink」（SalonRink）におけるお客様の個人情報の取扱いについて、以下のとおりプライバシーポリシーを定めます。
       </p>
 
       {sections.map(s => (

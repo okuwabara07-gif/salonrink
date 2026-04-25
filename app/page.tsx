@@ -24,8 +24,9 @@ export default function Home() {
         position: 'relative',
       }}>
         <div style={{ lineHeight: 1 }}>
-          <div style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 300, letterSpacing: 6, color: '#1A1018' }}>SALOMÉ</div>
-          <div style={{ fontSize: 8, letterSpacing: 3, color: '#B8966A', marginTop: 2, fontFamily: 'sans-serif' }}>SalonRink</div>
+          <div style={{ fontSize: 'clamp(20px, 5vw, 28px)', fontWeight: 300, letterSpacing: 6, color: '#1A1018' }}>
+            Salon<span style={{ color: '#9B8AAB' }}>Rink</span>
+          </div>
         </div>
 
         {/* Hamburger Menu (Mobile) */}
@@ -116,15 +117,15 @@ export default function Home() {
           Beauty × Technology
         </div>
         <h1 style={{
-          fontSize: 'clamp(32px, 8vw, 56px)',
+          fontSize: 'clamp(28px, 7vw, 48px)',
           fontWeight: 300,
           color: '#1A1018',
           letterSpacing: 2,
           lineHeight: 1.2,
           marginBottom: 'clamp(16px, 4vw, 24px)',
         }}>
-          サロンの <span style={{ color: '#B8966A' }}>"ちょっと面倒"</span> を、<br />
-          <span style={{ color: '#06c755' }}>LINE</span>で全部解決。
+          美容室経営、<br />
+          もうこれ1つで完結。
         </h1>
         <p style={{
           fontSize: 'clamp(14px, 4vw, 18px)',
@@ -134,8 +135,8 @@ export default function Home() {
           maxWidth: 600,
           fontFamily: 'sans-serif',
         }}>
-          予約管理・顧客カルテ・自動リマインド・売上集計。<br />
-          オーナーが現場に集中できる経営プラットフォームを、<br />
+          LINE予約・顧客管理・売上分析・スタッフ管理を一元化。<br />
+          フリーランス美容師から多店舗チェーンまで対応。<br />
           月額 <strong style={{ color: '#1A1018' }}>¥980</strong> から。
         </p>
         <div style={{
@@ -161,7 +162,7 @@ export default function Home() {
           }}>
             14日間無料で試す
           </a>
-          <a href="#features" style={{
+          <a href="/pricing" style={{
             padding: 'clamp(12px, 3vw, 16px) clamp(24px, 8vw, 40px)',
             border: '1px solid #B8966A',
             color: '#7A6E64',
@@ -173,7 +174,7 @@ export default function Home() {
             maxWidth: 300,
             textAlign: 'center',
           }}>
-            機能を見る
+            料金プランを見る
           </a>
         </div>
       </section>
@@ -341,16 +342,7 @@ export default function Home() {
             letterSpacing: 6,
             color: '#FAF6EE',
           }}>
-            SALOMÉ
-          </div>
-          <div style={{
-            fontSize: 8,
-            letterSpacing: 3,
-            color: '#B8966A',
-            marginTop: 2,
-            fontFamily: 'sans-serif',
-          }}>
-            SalonRink
+            Salon<span style={{ color: '#9B8AAB' }}>Rink</span>
           </div>
         </div>
         <nav style={{

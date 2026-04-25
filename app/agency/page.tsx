@@ -4,7 +4,7 @@ export default function AgencyPage() {
       <header style={{padding:'14px 32px',background:'#1A1018',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
         <div style={{display:'flex',alignItems:'flex-end',gap:14}}>
           <div style={{lineHeight:1}}>
-            <div style={{fontSize:20,fontWeight:300,letterSpacing:6,color:'#FAF6EE'}}>SALOMÉ</div>
+            <div style={{fontSize:20,fontWeight:300,letterSpacing:6,color:'#FAF6EE'}}>SalonRink</div>
             <div style={{fontSize:9,letterSpacing:3,color:'#B8966A',marginTop:3}}>SalonRink</div>
           </div>
           <span style={{fontSize:11,color:'rgba(255,255,255,0.4)',letterSpacing:1,fontWeight:400,paddingBottom:2}}>代理店管理</span>

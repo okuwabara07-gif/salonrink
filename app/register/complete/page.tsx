@@ -97,7 +97,7 @@ function Message({
         }}
       >
         <div style={{ marginBottom: 40, lineHeight: 1 }}>
-          <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SALOMÉ</div>
+          <div style={{ fontSize: 28, fontWeight: 300, letterSpacing: 8, color: '#1A1018' }}>SalonRink</div>
           <div style={{ fontSize: 10, letterSpacing: 4, color: '#B8966A', marginTop: 4, fontFamily: 'sans-serif' }}>
             SalonRink
           </div>

@@ -18,7 +18,7 @@ const info: [string, string | React.ReactNode][] = [
 
 const services = [
   {
-    name: 'SalonRink / SALOMÉ',
+    name: 'SalonRink / SalonRink',
     category: 'SaaS事業',
     url: 'https://salonrink.com',
     desc: '美容サロン向け統合管理プラットフォーム。LINE予約連動、顧客カルテ、売上分析、失客防止を一つに。月額¥980〜',
@@ -35,7 +35,7 @@ const services = [
     name: 'キレイ鶴見店',
     category: '実店舗事業',
     url: 'https://kirei-tsurumi.com',
-    desc: '横浜市鶴見区の美容サロン。SALOMÉ プラットフォームのショーケース店舗として運営。',
+    desc: '横浜市鶴見区の美容サロン。SalonRink プラットフォームのショーケース店舗として運営。',
     color: '#8B7BAA',
   },
 ];

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'ダッシュボード | SALOMÉ',
+  title: 'ダッシュボード | SalonRink',
   description: 'サロン管理ダッシュボード',
   robots: { index: false, follow: false },
 }
@@ -59,7 +59,7 @@ export default async function DashboardLayout({
             {/* ロゴ */}
             <div style={{ padding: '0 20px', marginBottom: 32, lineHeight: 1 }}>
               <div style={{ fontSize: 18, fontWeight: 300, letterSpacing: 6, color: '#FAF6EE' }}>
-                SALOMÉ
+                SalonRink
               </div>
               <div style={{ fontSize: 9, letterSpacing: 3, color: '#B8966A', marginTop: 4 }}>
                 SalonRink

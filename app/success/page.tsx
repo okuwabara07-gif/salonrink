@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: '決済完了 | SALOMÉ - LINE予約自動化SaaS',
-  description: 'SALOMÉ のサブスクリプション契約が完了しました。',
+  title: '決済完了 | SalonRink - LINE予約自動化SaaS',
+  description: 'SalonRink のサブスクリプション契約が完了しました。',
   robots: { index: false, follow: false },
 }
 
@@ -61,7 +61,7 @@ export default function SuccessPage() {
             marginBottom: 32,
           }}
         >
-          SALOMÉ のサブスクリプションが確定しました。
+          SalonRink のサブスクリプションが確定しました。
           <br />
           14日間の無料トライアル期間をお楽しみください。
         </p>
