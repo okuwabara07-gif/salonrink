@@ -9,7 +9,7 @@
   --sr-blue-pale-light: #b8d4e8;
   --sr-blue-pale: #9dbddb;
   --sr-blue-pale-dark: #7da5c7;
-  --sr-blue-pale-deepest: #6a8eb0;
+  --sr-blue-pale-deepest: #2c4373;
 
   /* アクセント色（薄ピンク・コマンド色） */
   --sr-pink-pale: #ffe5ec;
@@ -27,7 +27,7 @@
   --sr-bg: #fafcff;
   --sr-bg-card: #ffffff;
   --sr-border: #e8eef5;
-  --sr-text-soft: #889aa8;
+  --sr-text-soft: #5a6878;
 }
 
 @theme inline {
