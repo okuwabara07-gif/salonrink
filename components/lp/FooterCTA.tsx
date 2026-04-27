@@ -4,7 +4,7 @@ export default function FooterCTA() {
   return (
     <section
       style={{
-        background: 'linear-gradient(135deg, #6a8eb0 0%, #7da5c7 100%)',
+        background: 'linear-gradient(135deg, var(--sr-blue-pale-deepest) 0%, var(--sr-blue-pale-dark) 100%)',
         padding: '80px 20px',
         textAlign: 'center',
       }}
