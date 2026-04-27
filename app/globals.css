@@ -3,6 +3,31 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* SalonRink LP - ペールトーン色調 */
+  /* メイン色 */
+  --sr-blue-pale-light: #b8d4e8;
+  --sr-blue-pale: #9dbddb;
+  --sr-blue-pale-dark: #7da5c7;
+  --sr-blue-pale-deepest: #6a8eb0;
+
+  /* アクセント色（薄ピンク・コマンド色） */
+  --sr-pink-pale: #ffe5ec;
+  --sr-pink: #ffd1dc;
+  --sr-pink-coral: #f0a0a0;
+  --sr-pink-text: #d88896;
+
+  /* 補助色 */
+  --sr-yellow-cream: #ffe89a;
+  --sr-mint-pale: #b8e8c8;
+  --sr-mint: #7bca9c;
+  --sr-orange-pale: #f0a878;
+
+  /* 背景・グレー */
+  --sr-bg: #fafcff;
+  --sr-bg-card: #ffffff;
+  --sr-border: #e8eef5;
+  --sr-text-soft: #889aa8;
 }
 
 @theme inline {
@@ -20,7 +45,22 @@
 }
 
 body {
-  background: var(--background);
+  background: var(--sr-bg);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ダミー画像用グラデーション背景 */
+.bg-photo-salon-1 { background: linear-gradient(135deg, #e8d8c5 0%, #d4c4b0 100%); }
+.bg-photo-salon-2 { background: linear-gradient(135deg, #d8c8b8 0%, #c4b4a4 100%); }
+.bg-photo-salon-3 { background: linear-gradient(135deg, #e4d0bd 0%, #d0bca9 100%); }
+.bg-photo-salon-4 { background: linear-gradient(135deg, #dcc8b5 0%, #c8b4a1 100%); }
+.bg-photo-salon-5 { background: linear-gradient(135deg, #e0cdb9 0%, #ccb9a5 100%); }
+.bg-photo-salon-6 { background: linear-gradient(135deg, #d8c4b0 0%, #c4b09c 100%); }
+.bg-photo-salon-7 { background: linear-gradient(135deg, #e2cfbb 0%, #cebba7 100%); }
+.bg-photo-salon-8 { background: linear-gradient(135deg, #dccab6 0%, #c8b6a2 100%); }
+.bg-photo-blue { background: linear-gradient(135deg, #c8d4e0 0%, #b4c0d0 100%); }
+.bg-photo-mint { background: linear-gradient(135deg, #b8e8c8 0%, #98d4a8 100%); }
+.bg-photo-pink { background: linear-gradient(135deg, #ffd1dc 0%, #f5b8c8 100%); }
+.bg-photo-cream { background: linear-gradient(135deg, #ffe89a 0%, #ffd878 100%); }
+.bg-photo-light { background: linear-gradient(135deg, #e8eef5 0%, #d4dce8 100%); }
