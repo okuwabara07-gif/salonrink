@@ -28,8 +28,11 @@ const PLANS = [
   { id: 'large', name: 'カスタム', price: 0, priceId: '', description: '大規模向け' },
 ]
 
+const FREE_PLAN = { id: 'free', name: 'フリープラン', price: 0, priceId: '', description: '無料トライアル' }
+
 export default function PlanPage() {
   const [salonId, setSalonId] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string>('free')
   const [selectedPlan, setSelectedPlan] = useState<string>('free')
   const [addons, setAddons] = useState<Addon[]>(ADDONS_CONFIG)
@@ -42,6 +45,8 @@ export default function PlanPage() {
       const supabase = await createClient()
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
+
+      setUserId(user.id)
 
       // サロン情報取得
       const { data: salon } = await supabase
@@ -163,12 +168,27 @@ export default function PlanPage() {
   }
 
   const handleOpenPortal = async () => {
+    if (!userId) {
+      setMessage({ ok: false, text: 'ユーザー情報が見つかりません' })
+      return
+    }
+
     try {
       const response = await fetch('/api/customer-portal', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId }),
       })
 
       const data = await response.json()
+
+      if (response.status === 404) {
+        setMessage({ ok: false, text: 'サブスクリプション情報が見つかりません。プランを契約してください。' })
+        return
+      }
+
       if (data.url) {
         window.location.href = data.url
       }
@@ -181,7 +201,7 @@ export default function PlanPage() {
     .filter(a => a.enabled)
     .reduce((sum, a) => sum + a.price, 0)
 
-  const currentPlanData = PLANS.find(p => p.id === currentPlan)
+  const currentPlanData = currentPlan === 'free' ? FREE_PLAN : PLANS.find(p => p.id === currentPlan)
 
   if (loading) {
     return (
