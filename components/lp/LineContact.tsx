@@ -1,3 +1,15 @@
+'use client'
+
+function PhoneIcon() {
+  return (
+    <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+      <rect x="12" y="6" width="40" height="52" rx="4" stroke="currentColor" strokeWidth="2" fill="none" />
+      <rect x="16" y="12" width="32" height="32" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.5" />
+      <line x1="32" y1="48" x2="32" y2="50" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
 export default function LineContact() {
   return (
     <section style={{ background: '#ffffff', padding: '80px 20px' }}>
@@ -15,10 +27,10 @@ export default function LineContact() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '64px',
+            color: 'rgba(255,255,255,0.7)',
           }}
         >
-          📱
+          <PhoneIcon />
         </div>
         <p style={{ color: 'var(--sr-text-soft)', marginBottom: '24px', fontSize: '16px' }}>
           QRコードを読み込んでLINE公式アカウントを友だち追加
