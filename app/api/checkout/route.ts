@@ -24,10 +24,10 @@ export async function POST(req: NextRequest) {
     }
 
     const PRICE_IDS: Record<string, string | undefined> = {
-      basic: process.env.STRIPE_PRICE_ID_BASIC,
-      small: process.env.STRIPE_PRICE_ID_SMALL,
-      medium: process.env.STRIPE_PRICE_ID_MEDIUM,
-      free: process.env.STRIPE_PRICE_ID_FREE,
+      basic: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || process.env.STRIPE_PRICE_ID_BASIC,
+      small: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || process.env.STRIPE_PRICE_ID_SMALL,
+      medium: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || process.env.STRIPE_PRICE_ID_MEDIUM,
+      free: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_FREE || process.env.STRIPE_PRICE_ID_FREE,
     }
 
     const priceId = PRICE_IDS[plan]
