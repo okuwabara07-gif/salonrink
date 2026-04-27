@@ -87,12 +87,11 @@ const addons = [
   { id: 'hpb', name: 'HPB同期', price: 1000, popular: true },
   { id: 'karte', name: 'カルテ', price: 300 },
   { id: 'ec', name: '店販EC', price: 300 },
-  { id: 'coupon', name: 'クーポン', price: 300 },
   { id: 'point', name: 'ポイント', price: 300 },
   { id: 'blog', name: 'ブログ', price: 200 },
   { id: 'tax', name: '確定申告', price: 200 },
   { id: 'staff', name: 'スタッフ追加（1名）', price: 500 },
-  { id: 'ad-free', name: '広告非表示', price: 500 },
+  { id: 'beauty-column', name: '美容コラム配信', price: 300 },
 ]
 
 const competitors = [

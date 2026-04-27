@@ -14,20 +14,19 @@ interface Addon {
 const ADDONS_CONFIG: Addon[] = [
   { id: '1', addon_key: 'karte', enabled: true, price: 300, label: '顧客カルテ', description: '施術履歴・処方レシピ管理' },
   { id: '2', addon_key: 'ec_store', enabled: false, price: 300, label: '店販EC', description: 'オンラインショップ' },
-  { id: '3', addon_key: 'coupon', enabled: false, price: 300, label: 'クーポン配信', description: 'LINE クーポン自動配信' },
   { id: '4', addon_key: 'points', enabled: false, price: 300, label: 'ポイントカード', description: 'デジタルポイント管理' },
   { id: '5', addon_key: 'blog', enabled: false, price: 200, label: 'ブログ発信', description: '施術ブログ自動配信' },
   { id: '6', addon_key: 'tax_report', enabled: false, price: 200, label: '売上確定申告', description: '決算書自動生成' },
   { id: '7', addon_key: 'multi_staff', enabled: false, price: 500, label: '複数スタッフ', description: 'スタッフ管理機能' },
-  { id: '8', addon_key: 'no_ads', enabled: false, price: 500, label: '広告非表示', description: '広告掲載なし' },
+  { id: '9', addon_key: 'beauty_column', enabled: false, price: 300, label: '美容コラム配信', description: '美容トレンド・施術コラム自動配信' },
 ]
 
 const PLANS = [
   { id: 'free', name: 'フリー', price: 0, priceId: '', description: '個人美容師向け' },
-  { id: 'freelance', name: 'フリーランス', price: 980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || '', description: 'フリーランス向け' },
-  { id: 'small', name: 'スモール', price: 2480, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || '', description: '小規模店舗向け' },
-  { id: 'medium', name: 'ミディアム', price: 3980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || '', description: '中規模店舗向け' },
-  { id: 'large', name: 'ラージ', price: 0, priceId: '', description: '要相談（大規模向け）' },
+  { id: 'basic', name: 'フリーランス', price: 980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || '', description: 'フリーランス向け' },
+  { id: 'small', name: 'スタンダード', price: 2480, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || '', description: '小規模店舗向け' },
+  { id: 'medium', name: 'プロ', price: 3980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || '', description: 'HPB同期込み・中〜大規模向け' },
+  { id: 'large', name: 'カスタム', price: 0, priceId: '', description: '大規模向け' },
 ]
 
 export default function PlanPage() {
@@ -110,7 +109,7 @@ export default function PlanPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId: selectedPlanData.priceId,
+          plan: selectedPlan,
         }),
       })
 
@@ -315,7 +314,7 @@ export default function PlanPage() {
                   {plan.description}
                 </p>
                 <p style={{ fontSize: 18, fontWeight: 500, color: '#1A1018', margin: 0 }}>
-                  {plan.price === 0 ? '無料' : `¥${plan.price.toLocaleString()}/月`}
+                  {plan.id === 'large' ? '要相談' : (plan.price === 0 ? '無料' : `¥${plan.price.toLocaleString()}/月`)}
                 </p>
               </div>
               {plan.id === currentPlan && (
