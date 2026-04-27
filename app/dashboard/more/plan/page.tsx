@@ -118,11 +118,17 @@ export default function PlanPage() {
       })
 
       const data = await response.json()
-      if (data.sessionId) {
-        // Stripe Checkout にリダイレクト
-        window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`
+
+      if (!response.ok) {
+        setMessage({ ok: false, text: data.error || 'プラン変更に失敗しました' })
+        return
+      }
+
+      if (data.url) {
+        window.location.href = data.url
       }
     } catch (error) {
+      console.error('Checkout error:', error)
       setMessage({ ok: false, text: 'エラーが発生しました' })
     }
   }
