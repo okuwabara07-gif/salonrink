@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
     return [
       // Group 1: 顧客タブ（旧 /dashboard/karte）
       {
+        source: '/dashboard/karte',
+        destination: '/dashboard/customers',
+        permanent: true,
+      },
+      {
         source: '/dashboard/karte/:path*',
         destination: '/dashboard/customers/:path*',
         permanent: true,

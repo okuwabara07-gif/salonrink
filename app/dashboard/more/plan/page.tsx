@@ -22,7 +22,6 @@ const ADDONS_CONFIG: Addon[] = [
 ]
 
 const PLANS = [
-  { id: 'free', name: 'フリー', price: 0, priceId: '', description: '個人美容師向け' },
   { id: 'basic', name: 'フリーランス', price: 980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || '', description: 'フリーランス向け' },
   { id: 'small', name: 'スタンダード', price: 2480, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || '', description: '小規模店舗向け' },
   { id: 'medium', name: 'プロ', price: 3980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || '', description: 'HPB同期込み・中〜大規模向け' },
