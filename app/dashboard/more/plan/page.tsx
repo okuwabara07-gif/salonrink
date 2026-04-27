@@ -440,7 +440,40 @@ export default function PlanPage() {
         </div>
       </div>
 
-      {/* セクション4：支払い情報 */}
+      {/* セクション4：月額合計 */}
+      {currentPlanData && (
+        <div style={{
+          background: '#fff',
+          borderRadius: 16,
+          padding: 32,
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+          marginBottom: 24,
+        }}>
+          <h2 style={{ fontSize: 18, fontWeight: 500, color: '#1A1018', marginBottom: 24 }}>
+            月額合計
+          </h2>
+
+          <div style={{ display: 'grid', gap: 12, marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#1A1018' }}>
+              <span>{currentPlanData.name}</span>
+              <span>¥{currentPlanData.price.toLocaleString()}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#1A1018' }}>
+              <span>アドオン ({addons.filter(a => a.enabled).length}件)</span>
+              <span>¥{enabledAddonsPrice.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div style={{ borderTop: '2px solid #E0D8D0', paddingTop: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 18, fontWeight: 600, color: '#1A1018' }}>
+              <span>合計</span>
+              <span>¥{(currentPlanData.price + enabledAddonsPrice).toLocaleString()}<span style={{ fontSize: 12, fontWeight: 400, color: '#888', marginLeft: 4 }}>/月</span></span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* セクション5：支払い情報 */}
       <div style={{
         background: '#fff',
         borderRadius: 16,
