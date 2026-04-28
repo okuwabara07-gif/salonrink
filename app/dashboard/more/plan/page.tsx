@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 interface Addon {
@@ -9,6 +10,13 @@ interface Addon {
   price: number
   label: string
   description: string
+}
+
+interface Subscription {
+  stripe_subscription_id: string
+  status: string
+  current_period_end: string
+  cancel_at_period_end: boolean
 }
 
 const ADDONS_CONFIG: Addon[] = [
@@ -31,11 +39,13 @@ const PLANS = [
 const FREE_PLAN = { id: 'free', name: 'フリープラン', price: 0, priceId: '', description: '無料トライアル' }
 
 export default function PlanPage() {
+  const router = useRouter()
   const [salonId, setSalonId] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
   const [currentPlan, setCurrentPlan] = useState<string>('free')
   const [selectedPlan, setSelectedPlan] = useState<string>('free')
   const [addons, setAddons] = useState<Addon[]>(ADDONS_CONFIG)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
@@ -63,6 +73,17 @@ export default function PlanPage() {
       setSalonId(salon.id)
       setCurrentPlan(salon.plan || 'free')
       setSelectedPlan(salon.plan || 'free')
+
+      // サブスクリプション情報取得
+      const { data: subData } = await supabase
+        .from('subscriptions')
+        .select('stripe_subscription_id, status, current_period_end, cancel_at_period_end')
+        .eq('user_id', user.id)
+        .maybeSingle()
+
+      if (subData) {
+        setSubscription(subData as Subscription)
+      }
 
       // アドオン取得
       const { data: addonsData } = await supabase
@@ -203,6 +224,29 @@ export default function PlanPage() {
     }
   }
 
+  const handleReactivateClick = async () => {
+    setUpdating(true)
+    try {
+      const response = await fetch('/api/subscription/reactivate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setMessage({ ok: false, text: data.error || 'サブスクリプションの再開に失敗しました' })
+      } else {
+        setMessage({ ok: true, text: 'サブスクリプションを再開しました' })
+        setSubscription(sub => sub ? { ...sub, cancel_at_period_end: false } : null)
+      }
+    } catch (error) {
+      setMessage({ ok: false, text: 'エラーが発生しました' })
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   const enabledAddonsPrice = addons
     .filter(a => a.enabled)
     .reduce((sum, a) => sum + a.price, 0)
@@ -290,6 +334,74 @@ export default function PlanPage() {
                 </p>
               </div>
             </div>
+
+            {subscription && (
+              <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid #E0D8D0' }}>
+                {subscription.cancel_at_period_end ? (
+                  <>
+                    <div style={{
+                      background: '#FFF3CD',
+                      borderRadius: 12,
+                      padding: 16,
+                      marginBottom: 16,
+                      borderLeft: '4px solid #FFC107',
+                    }}>
+                      <p style={{ fontSize: 13, fontWeight: 500, color: '#856404', margin: 0, marginBottom: 4 }}>
+                        解約予定
+                      </p>
+                      <p style={{ fontSize: 12, color: '#856404', margin: 0 }}>
+                        {new Date(subscription.current_period_end).toLocaleDateString('ja-JP')} をもってサービスを終了します
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={handleReactivateClick}
+                      disabled={updating}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        borderRadius: 10,
+                        border: 'none',
+                        background: updating ? '#E0D8D0' : '#2E7D32',
+                        color: updating ? '#999' : '#fff',
+                        fontSize: 14,
+                        fontWeight: 500,
+                        cursor: updating ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                    >
+                      {updating ? '処理中...' : 'サブスクリプションを再開'}
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => router.push('/dashboard/more/plan/cancel')}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: 10,
+                      border: '1px solid #A32D2D',
+                      background: 'transparent',
+                      color: '#A32D2D',
+                      fontSize: 14,
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = '#A32D2D'
+                      e.currentTarget.style.color = '#fff'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent'
+                      e.currentTarget.style.color = '#A32D2D'
+                    }}
+                  >
+                    プランを解約する
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
