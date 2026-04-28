@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import PhoneMockup from './PhoneMockup'
 
 export default function Hero() {
   return (
@@ -168,47 +169,7 @@ export default function Hero() {
 
           {/* 右カラム: スマホモックアップ (40%) */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            {/* スマホ枠コンテナ（黒いベゼル） */}
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '320px',
-                background: '#000000',
-                borderRadius: '40px',
-                padding: '12px',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-              }}
-            >
-              {/* 画面領域（コンテンツを閉じ込める） */}
-              <div
-                style={{
-                  position: 'relative',
-                  width: '100%',
-                  aspectRatio: '9/19.5',
-                  borderRadius: '32px',
-                  overflow: 'hidden',
-                  background: '#ffffff',
-                  maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%)',
-                  WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 85%, rgba(0,0,0,0) 100%)',
-                }}
-              >
-                <Image
-                  src="/images/lp/hero-mockup.svg"
-                  alt="SalonRink スマホダッシュボード - 予約・売上・顧客管理"
-                  width={296}
-                  height={577}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    display: 'block',
-                  }}
-                  unoptimized
-                  priority
-                />
-              </div>
-            </div>
+            <PhoneMockup />
           </div>
         </div>
 
