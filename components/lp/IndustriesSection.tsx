@@ -198,44 +198,54 @@ export default function IndustriesSection() {
                 }}
               />
 
-              {/* 下部30%の文字帯 */}
+              {/* SVGアイコン（右上） */}
               <div
                 style={{
                   position: 'absolute',
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  height: '30%',
-                  background: 'linear-gradient(to bottom, rgba(157, 189, 219, 0.95) 0%, rgba(157, 189, 219, 1) 100%)',
+                  top: '12px',
+                  right: '12px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '50%',
+                  background: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(4px)',
                   display: 'flex',
-                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '8px',
-                  zIndex: 2,
-                  padding: '16px',
-                  boxSizing: 'border-box',
+                  zIndex: 3,
                 }}
               >
-                <div
-                  style={{
-                    color: 'var(--sr-blue-pale)',
-                    fontSize: '20px',
-                  }}
-                >
+                <div style={{ color: '#1a2c4f', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <ind.Icon />
                 </div>
-                <div
+              </div>
+
+              {/* 文字帯（画像の上に重ねる） */}
+              <div
+                style={{
+                  position: 'absolute',
+                  bottom: '12px',
+                  left: '12px',
+                  right: '12px',
+                  padding: '8px 12px',
+                  borderRadius: '8px',
+                  background: 'rgba(157, 189, 219, 0.85)',
+                  backdropFilter: 'blur(4px)',
+                  zIndex: 2,
+                }}
+              >
+                <p
                   style={{
-                    color: '#ffffff',
-                    fontSize: '14px',
-                    fontWeight: 600,
                     textAlign: 'center',
-                    lineHeight: 1.2,
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: '#1a2c4f',
+                    margin: 0,
+                    lineHeight: 1.3,
                   }}
                 >
                   {ind.name}
-                </div>
+                </p>
               </div>
             </div>
           ))}
