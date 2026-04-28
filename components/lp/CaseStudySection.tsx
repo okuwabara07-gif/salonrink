@@ -158,7 +158,7 @@ export default function CaseStudySection() {
                     marginBottom: '8px',
                   }}
                 >
-                  予約管理時間削減
+                  予約管理時間短縮
                 </p>
                 <p
                   style={{
@@ -167,7 +167,7 @@ export default function CaseStudySection() {
                     color: 'var(--sr-blue-pale-deepest)',
                   }}
                 >
-                  66%
+                  約66%
                 </p>
               </div>
 
@@ -186,7 +186,7 @@ export default function CaseStudySection() {
                     marginBottom: '8px',
                   }}
                 >
-                  リマインド配信率
+                  リマインド到達率
                 </p>
                 <p
                   style={{
@@ -195,9 +195,22 @@ export default function CaseStudySection() {
                     color: 'var(--sr-blue-pale-deepest)',
                   }}
                 >
-                  95%
+                  約95%
                 </p>
               </div>
+
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--sr-text-soft)',
+                  lineHeight: 1.6,
+                  marginTop: '24px',
+                  paddingTop: '16px',
+                  borderTop: '1px solid var(--sr-border)',
+                }}
+              >
+                ※ 上記数値はキレイ鶴見店での試験運用期間中の参考値です。サンプル数が限定的なため、実際の効果は店舗ごとに異なる可能性があります。継続的に実データを蓄積・検証中です。
+              </p>
             </div>
           </div>
         </div>
