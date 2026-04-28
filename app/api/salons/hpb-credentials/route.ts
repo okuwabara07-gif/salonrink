@@ -50,16 +50,16 @@ export async function POST(req: NextRequest) {
 
     console.log('HPB credentials: Salon found:', salon.id)
 
-    const hpb_username_encrypted = encrypt(hpb_login_id)
-    const hpb_password_encrypted = encrypt(hpb_password)
+    const hpb_login_id_enc = encrypt(hpb_login_id)
+    const hpb_password_enc = encrypt(hpb_password)
 
     console.log('HPB credentials: Encrypting and upserting to table')
     const { error: upsertError } = await supabase
       .from('salon_hpb_credentials')
       .upsert({
         salon_id: salon.id,
-        hpb_username_encrypted,
-        hpb_password_encrypted,
+        hpb_login_id_enc,
+        hpb_password_enc,
         hpb_salon_id: hpb_salon_id.trim(),
         updated_at: new Date().toISOString(),
       }, {
