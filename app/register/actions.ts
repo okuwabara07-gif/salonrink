@@ -9,6 +9,8 @@ export type RegisterInput = {
   ownerName: string
   phone: string
   email: string
+  // plan: Stripe内部名 (basic/small/medium/free)
+  // → DB salons.plan に保存される際は lib/plans.ts のマッピング参照
   plan: string
   ownerUserId?: string
   inviteCodeUsed?: boolean

@@ -11,6 +11,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // plan は Stripe内部名 (basic/small/medium/free) で受け取る
+    // ※ LP表記 との対応:
+    //   basic → フリーランス (¥980)
+    //   small → スタンダード (¥2,480) [人気]
+    //   medium → プロ (¥3,980)
+    //   free → 永久無料プラン (招待コード利用時)
     let plan: string
     try {
       const body = await req.json()

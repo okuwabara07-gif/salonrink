@@ -142,6 +142,11 @@ function RegisterFormContent() {
     setRegistered(true)
   }
 
+  // プラン定義（Stripe内部名と表示名のマッピング）
+  // lib/plans.ts を参照して統一管理される:
+  // - id (Stripe内部名): basic / small / medium / free
+  // - name: ユーザー向けUI表記 ※LP表記とは異なる
+  // - LP表記は components/lp/PricingSection.tsx で管理
   const plans = [
     { id: 'basic', name: 'ベーシック', price: '¥980', desc: '予約同期・リマインド自動送信' },
     { id: 'small', name: 'スモール', price: '¥2,480', desc: '＋顧客カルテ・失客アラート' },

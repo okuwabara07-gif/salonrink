@@ -37,6 +37,9 @@ export async function POST(req: Request) {
         const userId = session.client_reference_id
         const customerId = session.customer
         const subscriptionId = session.subscription
+        // plan: Stripe内部名 (basic/small/medium/free)
+        // Stripe Checkout Session作成時に subscription_data.metadata に保存される
+        // lib/plans.ts を参照してLP表記等と対応確認
         const plan = session.metadata?.plan || 'basic'
 
         if (!userId || !customerId || !subscriptionId) {
