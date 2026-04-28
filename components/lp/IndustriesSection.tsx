@@ -198,7 +198,7 @@ export default function IndustriesSection() {
                 }}
               />
 
-              {/* ペールトーン白半透明オーバーレイ */}
+              {/* グラデーションオーバーレイ（下が濃い） */}
               <div
                 style={{
                   position: 'absolute',
@@ -206,12 +206,12 @@ export default function IndustriesSection() {
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  background: 'rgba(184, 212, 232, 0.4)',
+                  background: 'linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.3) 100%)',
                   zIndex: 1,
                 }}
               />
 
-              {/* SVGアイコン */}
+              {/* SVGアイコンと業種名 */}
               <div
                 style={{
                   position: 'absolute',
@@ -224,17 +224,18 @@ export default function IndustriesSection() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '12px',
-                  color: 'rgba(255,255,255,0.8)',
+                  color: 'var(--sr-blue-pale)',
                   zIndex: 2,
                 }}
               >
                 <ind.Icon />
                 <div
                   style={{
-                    color: '#ffffff',
+                    color: 'var(--sr-blue-pale-deepest)',
                     fontSize: '14px',
                     fontWeight: 600,
                     textAlign: 'center',
+                    textShadow: '0 1px 2px rgba(255,255,255,0.5)',
                   }}
                 >
                   {ind.name}

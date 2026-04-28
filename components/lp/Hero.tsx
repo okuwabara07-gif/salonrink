@@ -24,7 +24,7 @@ export default function Hero() {
         }}
       />
 
-      {/* ペールトーン白半透明オーバーレイ */}
+      {/* 濃いペールトーン白オーバーレイ */}
       <div
         style={{
           position: 'absolute',
@@ -32,7 +32,7 @@ export default function Hero() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(184, 212, 232, 0.7) 0%, rgba(157, 189, 219, 0.7) 100%)',
+          background: 'rgba(255, 255, 255, 0.7)',
           zIndex: 1,
         }}
       />
@@ -65,7 +65,7 @@ export default function Hero() {
           style={{
             fontSize: 'clamp(32px, 8vw, 56px)',
             fontWeight: 700,
-            color: '#ffffff',
+            color: 'var(--sr-blue-pale-deepest)',
             lineHeight: 1.2,
             marginBottom: '24px',
           }}
@@ -77,7 +77,7 @@ export default function Hero() {
         <p
           style={{
             fontSize: 'clamp(16px, 4vw, 20px)',
-            color: 'rgba(255,255,255,0.95)',
+            color: 'var(--sr-text-soft)',
             lineHeight: 1.6,
             marginBottom: '40px',
             maxWidth: '600px',
