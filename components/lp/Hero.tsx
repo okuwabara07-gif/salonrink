@@ -103,51 +103,54 @@ export default function Hero() {
           <a
             href="/register"
             style={{
-              background: 'linear-gradient(135deg, #ffd1dc 0%, #f0a0a0 100%)',
+              background: 'linear-gradient(135deg, #f5b8b8 0%, #f0a5a5 100%)',
               color: '#ffffff',
               padding: '16px 40px',
               borderRadius: '999px',
               textDecoration: 'none',
               fontWeight: 600,
               fontSize: '16px',
-              border: 'none',
+              border: '1px solid rgba(255,255,255,0.3)',
               cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(240,160,160,0.4)',
-              transition: 'transform 0.2s, box-shadow 0.2s',
+              boxShadow: '0 4px 12px rgba(245,184,184,0.3)',
+              backdropFilter: 'blur(8px)',
+              transition: 'all 0.3s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.05)'
-              e.currentTarget.style.boxShadow = '0 12px 28px rgba(240,160,160,0.5)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(245,184,184,0.4)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)'
-              e.currentTarget.style.boxShadow = '0 8px 20px rgba(240,160,160,0.4)'
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(245,184,184,0.3)'
             }}
           >
             無料で始める（14日間）
           </a>
           <button
             style={{
-              background: 'rgba(255,255,255,0.9)',
-              backdropFilter: 'blur(4px)',
+              background: 'rgba(255,255,255,0.5)',
+              backdropFilter: 'blur(8px)',
               color: '#1a2c4f',
               padding: '16px 40px',
               borderRadius: '999px',
-              border: 'none',
+              border: '1.5px solid rgba(255,255,255,0.7)',
               textDecoration: 'none',
               fontWeight: 600,
               fontSize: '16px',
               cursor: 'pointer',
-              transition: 'all 0.2s',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.95)'
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'
+              e.currentTarget.style.background = 'rgba(255,255,255,0.6)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.9)'
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
+              e.currentTarget.style.transform = 'translateY(0)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'
+              e.currentTarget.style.background = 'rgba(255,255,255,0.5)'
             }}
           >
             デモを見る
