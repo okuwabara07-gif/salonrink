@@ -5,10 +5,22 @@ import { createClient } from '@/lib/supabase/client'
 export default function LinePage() {
   const [salonId, setSalonId] = useState<string | null>(null)
   const [lineAccount, setLineAccount] = useState<any>(null)
+  const [credentialsExist, setCredentialsExist] = useState(false)
   const [linkedCount, setLinkedCount] = useState(0)
   const [recentLinks, setRecentLinks] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
+  const [showGuide, setShowGuide] = useState(false)
+  const [showToken, setShowToken] = useState(false)
+  const [showSecret, setShowSecret] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
+  const [formData, setFormData] = useState({
+    channel_id: '',
+    channel_access_token: '',
+    channel_secret: '',
+  })
 
   useEffect(() => {
     async function loadData() {
@@ -39,6 +51,11 @@ export default function LinePage() {
 
       setLineAccount(lineData)
 
+      // 認証情報の有無を確認
+      if (lineData?.channel_access_token_enc) {
+        setCredentialsExist(true)
+      }
+
       // 紐付き顧客数
       const { count } = await supabase
         .from('line_customer_links')
@@ -62,9 +79,99 @@ export default function LinePage() {
     loadData()
   }, [])
 
-  const handleCopyCode = () => {
-    if (lineAccount?.salon_code) {
-      navigator.clipboard.writeText(lineAccount.salon_code)
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleTestConnection = async () => {
+    if (!formData.channel_access_token) {
+      setMessage({ ok: false, text: 'Channel Access Token を入力してください' })
+      return
+    }
+
+    setTesting(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/line/test-connection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel_access_token: formData.channel_access_token,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setMessage({ ok: false, text: `接続テスト失敗: ${data.error}` })
+        setTesting(false)
+        return
+      }
+
+      setMessage({
+        ok: true,
+        text: `接続成功: ${data.bot_info.display_name} (${data.bot_info.user_id})`,
+      })
+    } catch (error) {
+      setMessage({ ok: false, text: 'エラーが発生しました' })
+    } finally {
+      setTesting(false)
+    }
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!salonId) return
+
+    setSaving(true)
+    setMessage(null)
+
+    try {
+      const response = await fetch('/api/salons/line-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        setMessage({ ok: false, text: `エラー: ${error.error}` })
+        setSaving(false)
+        return
+      }
+
+      setCredentialsExist(true)
+      setMessage({ ok: true, text: '保存しました' })
+      setFormData(prev => ({
+        ...prev,
+        channel_access_token: '',
+        channel_secret: '',
+      }))
+
+      // データ再読み込み
+      const supabase = await createClient()
+      const { data: lineData } = await supabase
+        .from('line_accounts')
+        .select('*')
+        .eq('salon_id', salonId)
+        .maybeSingle()
+
+      if (lineData) {
+        setLineAccount(lineData)
+      }
+    } catch (error) {
+      setMessage({ ok: false, text: 'エラーが発生しました' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleCopyWebhookUrl = () => {
+    if (salonId) {
+      const webhookUrl = `https://salonrink.com/api/line/webhook/${salonId}`
+      navigator.clipboard.writeText(webhookUrl)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
@@ -84,8 +191,173 @@ export default function LinePage() {
         LINE連携
       </h1>
 
-      {/* 連携状態 */}
+      {/* セットアップガイド（折りたたみ式） */}
       <div style={{
+        background: '#FFF9F0',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 24,
+        border: '1px solid #FFE4D0',
+      }}>
+        <button
+          onClick={() => setShowGuide(!showGuide)}
+          style={{
+            width: '100%',
+            padding: 12,
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            textAlign: 'left',
+            fontSize: 14,
+            fontWeight: 500,
+            color: '#1A1018',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          <span style={{ fontSize: 16 }}>📺</span>
+          LINE Bot の作り方を見る（タップして展開）
+          <span style={{ marginLeft: 'auto', fontSize: 12, color: '#888' }}>
+            {showGuide ? '▼' : '▶'}
+          </span>
+        </button>
+
+        {showGuide && (
+          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #FFE4D0' }}>
+            <div style={{ fontSize: 13, lineHeight: 1.8, color: '#1A1018' }}>
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: '#B8966A',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}>
+                    1
+                  </span>
+                  <div>
+                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>LINE Developers にログイン</p>
+                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
+                      <a href="https://developers.line.biz/" target="_blank" rel="noopener noreferrer"
+                        style={{ color: '#B8966A', textDecoration: 'none', fontWeight: 500 }}>
+                        https://developers.line.biz/
+                      </a>
+                      にアクセスしてログインしてください
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: '#B8966A',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}>
+                    2
+                  </span>
+                  <div>
+                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>Messaging API Channel を新規作成</p>
+                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
+                      プロバイダーを作成し、「Messaging API」を選択してチャネルを作成してください
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: '#B8966A',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}>
+                    3
+                  </span>
+                  <div>
+                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>基本情報を確認</p>
+                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
+                      「Channel基本情報」タブで「Channel ID」と「Channel Secret」を確認してください
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: '#B8966A',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}>
+                    4
+                  </span>
+                  <div>
+                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>Channel Access Token を発行</p>
+                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
+                      「Messaging API設定」タブで「Channel Access Token」を発行してください
+                    </p>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    background: '#B8966A',
+                    color: '#fff',
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    flexShrink: 0,
+                  }}>
+                    5
+                  </span>
+                  <div>
+                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>認証情報を保存</p>
+                    <p style={{ margin: 0, color: '#666' }}>
+                      取得した3つの値を下のフォームに貼り付けて「保存」してください
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 認証情報入力フォーム */}
+      <form onSubmit={handleSave} style={{
         background: '#fff',
         borderRadius: 16,
         padding: 32,
@@ -93,108 +365,272 @@ export default function LinePage() {
         marginBottom: 24,
       }}>
         <h2 style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', marginBottom: 20 }}>
-          連携状態
+          {credentialsExist ? '認証情報（更新）' : 'LINE 認証情報'}
         </h2>
 
-        {lineAccount ? (
-          <>
-            <div style={{ display: 'grid', gap: 20 }}>
-              {/* サロンコード */}
-              <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
-                  サロンコード
-                </p>
-                <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                  <code style={{
-                    fontSize: 16,
-                    fontWeight: 500,
-                    color: '#1A1018',
-                    background: '#F5F1EC',
-                    padding: '12px 16px',
-                    borderRadius: 8,
-                    fontFamily: 'monospace',
-                    flex: 1,
-                  }}>
-                    {lineAccount.salon_code}
-                  </code>
-                  <button
-                    onClick={handleCopyCode}
-                    style={{
-                      padding: '10px 16px',
-                      fontSize: 12,
-                      border: '1px solid #B8966A',
-                      background: 'transparent',
-                      color: '#B8966A',
-                      borderRadius: 8,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      whiteSpace: 'nowrap',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = '#B8966A'
-                      e.currentTarget.style.color = '#FAF6EE'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = 'transparent'
-                      e.currentTarget.style.color = '#B8966A'
-                    }}
-                  >
-                    {copied ? 'コピーしました' : 'コピー'}
-                  </button>
-                </div>
-              </div>
+        {/* Channel ID */}
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#666', marginBottom: 8 }}>
+            Channel ID
+          </label>
+          <input
+            type="text"
+            name="channel_id"
+            value={formData.channel_id}
+            onChange={handleChange}
+            placeholder="例: 1234567890"
+            style={{
+              width: '100%',
+              padding: '12px 14px',
+              borderRadius: 8,
+              border: '1px solid #E0D8D0',
+              fontSize: 14,
+              boxSizing: 'border-box',
+              fontFamily: 'inherit',
+            }}
+          />
+          <p style={{ fontSize: 11, color: '#888', margin: '8px 0 0 0' }}>
+            LINE Developers の「Channel基本情報」から確認できます
+          </p>
+        </div>
 
-              {/* 状態 */}
-              <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
-                  状態
-                </p>
-                <span style={{
-                  display: 'inline-block',
-                  padding: '6px 12px',
-                  borderRadius: 6,
-                  fontSize: 12,
-                  fontWeight: 500,
-                  background: lineAccount.active ? '#E8F5E9' : '#F3E5F5',
-                  color: lineAccount.active ? '#2E7D32' : '#6A1B9A',
-                }}>
-                  {lineAccount.active ? '✓ 有効' : '無効'}
-                </span>
-              </div>
-
-              {/* 連携日時 */}
-              <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
-                  連携日時
-                </p>
-                <p style={{ fontSize: 13, color: '#1A1018', margin: 0 }}>
-                  {new Date(lineAccount.created_at).toLocaleDateString('ja-JP', {
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </p>
-              </div>
-            </div>
-          </>
-        ) : (
-          <div style={{
-            padding: 20,
-            background: '#FFF3E0',
-            borderRadius: 8,
-            textAlign: 'center',
-          }}>
-            <p style={{ fontSize: 13, color: '#E65100', margin: 0 }}>
-              LINE連携がまだ設定されていません
-            </p>
+        {/* Channel Access Token */}
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#666', marginBottom: 8 }}>
+            Channel Access Token
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showToken ? 'text' : 'password'}
+              name="channel_access_token"
+              value={formData.channel_access_token}
+              onChange={handleChange}
+              placeholder="Messaging API設定から発行したトークン"
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                paddingRight: 40,
+                borderRadius: 8,
+                border: '1px solid #E0D8D0',
+                fontSize: 14,
+                boxSizing: 'border-box',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowToken(!showToken)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#999',
+                fontSize: 12,
+                padding: 4,
+              }}
+            >
+              {showToken ? '非表示' : '表示'}
+            </button>
           </div>
+          <p style={{ fontSize: 11, color: '#888', margin: '8px 0 0 0' }}>
+            AES-256-GCMで暗号化されて保存されます
+          </p>
+        </div>
+
+        {/* Channel Secret */}
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#666', marginBottom: 8 }}>
+            Channel Secret
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showSecret ? 'text' : 'password'}
+              name="channel_secret"
+              value={formData.channel_secret}
+              onChange={handleChange}
+              placeholder="Channel基本情報から確認したシークレット"
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                paddingRight: 40,
+                borderRadius: 8,
+                border: '1px solid #E0D8D0',
+                fontSize: 14,
+                boxSizing: 'border-box',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowSecret(!showSecret)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#999',
+                fontSize: 12,
+                padding: 4,
+              }}
+            >
+              {showSecret ? '非表示' : '表示'}
+            </button>
+          </div>
+          <p style={{ fontSize: 11, color: '#888', margin: '8px 0 0 0' }}>
+            AES-256-GCMで暗号化されて保存されます
+          </p>
+        </div>
+
+        {/* ボタン */}
+        <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+          <button
+            type="button"
+            onClick={handleTestConnection}
+            disabled={testing}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 10,
+              border: '1px solid #B8966A',
+              background: 'transparent',
+              color: '#B8966A',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: testing ? 'not-allowed' : 'pointer',
+              opacity: testing ? 0.5 : 1,
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {testing ? '接続テスト中...' : '接続テスト'}
+          </button>
+
+          <button
+            type="submit"
+            disabled={saving}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 10,
+              border: 'none',
+              background: saving ? '#E0D8D0' : '#1A1018',
+              color: saving ? '#999' : '#FAF6EE',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: saving ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {saving ? '保存中...' : '保存'}
+          </button>
+        </div>
+
+        {message && (
+          <p style={{
+            marginTop: 16,
+            fontSize: 13,
+            textAlign: 'center',
+            color: message.ok ? '#3B6D11' : '#A32D2D',
+          }}>
+            {message.text}
+          </p>
         )}
+      </form>
+
+      {/* Webhook URL 表示（認証情報保存済みの場合のみ） */}
+      {credentialsExist && (
+        <div style={{
+          background: '#fff',
+          borderRadius: 16,
+          padding: 32,
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+          marginBottom: 24,
+        }}>
+          <h2 style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', marginBottom: 20 }}>
+            Webhook URL
+          </h2>
+          <p style={{ fontSize: 13, color: '#666', marginBottom: 16 }}>
+            LINE Developers Console の Webhook URL 設定にこの値を貼り付けてください
+          </p>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
+            <code style={{
+              flex: 1,
+              fontSize: 12,
+              fontFamily: 'monospace',
+              background: '#F5F1EC',
+              padding: '12px 16px',
+              borderRadius: 8,
+              overflow: 'auto',
+              wordBreak: 'break-all',
+              color: '#1A1018',
+            }}>
+              https://salonrink.com/api/line/webhook/{salonId}
+            </code>
+            <button
+              onClick={handleCopyWebhookUrl}
+              style={{
+                padding: '10px 16px',
+                fontSize: 12,
+                border: '1px solid #B8966A',
+                background: 'transparent',
+                color: '#B8966A',
+                borderRadius: 8,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#B8966A'
+                e.currentTarget.style.color = '#FAF6EE'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.color = '#B8966A'
+              }}
+            >
+              {copied ? 'コピーしました' : '📋 コピー'}
+            </button>
+          </div>
+          <p style={{ fontSize: 11, color: '#888', margin: 0 }}>
+            このURLは秘密ではないので、第三者に見られても問題ありません
+          </p>
+        </div>
+      )}
+
+      {/* ご利用上の注意 */}
+      <div style={{
+        background: '#E8DCD0',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 24,
+      }}>
+        <p style={{ fontSize: 12, color: '#1A1018', margin: '0 0 8px 0', fontWeight: 500 }}>
+          📌 ご利用上の注意
+        </p>
+        <ul style={{ fontSize: 12, color: '#666', margin: '0', paddingLeft: 20, lineHeight: 1.8 }}>
+          <li style={{ marginBottom: 6 }}>
+            LINE公式アカウントの利用規約に従ってください
+          </li>
+          <li style={{ marginBottom: 6 }}>
+            Channel Access Token は秘密情報です。第三者と共有しないでください
+          </li>
+          <li style={{ marginBottom: 6 }}>
+            保存後、LINE Developers Console で Webhook URL の設定が必要です
+          </li>
+          <li>
+            Channel Access Token を再発行した場合は、ここで再度保存してください
+          </li>
+        </ul>
       </div>
 
       {/* 紐付き顧客情報 */}
-      {lineAccount && (
+      {credentialsExist && (
         <div style={{
           background: '#fff',
           borderRadius: 16,
