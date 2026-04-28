@@ -25,132 +25,138 @@ export default function MeritComparison() {
   ]
 
   return (
-    <section className="bg-gradient-to-b from-blue-100 to-blue-50 py-20 px-4 relative overflow-hidden">
-      {/* 男性画像（左端、絶対配置） */}
-      <div className="absolute left-0 bottom-0 w-1/4 md:w-1/5 hidden md:block h-full">
-        <Image
-          src="/images/lp/winwin-salon-male.jpg"
-          alt="美容師（サロン側）"
-          fill
-          className="object-cover object-right"
-          priority
-        />
-      </div>
-
-      {/* 女性画像（右端、絶対配置） */}
-      <div className="absolute right-0 bottom-0 w-1/4 md:w-1/5 hidden md:block h-full">
-        <Image
-          src="/images/lp/winwin-customer-female.jpg"
-          alt="お客様"
-          fill
-          className="object-cover object-left"
-          priority
-        />
-      </div>
-
-      {/* 中央コンテンツ */}
-      <div className="relative z-10 max-w-3xl mx-auto">
-        <h2
-          className="text-3xl md:text-4xl font-bold text-white text-center mb-12"
-          style={{
-            fontSize: 'clamp(28px, 6vw, 44px)',
-            fontWeight: 700,
-            color: '#ffffff',
-            marginBottom: '48px',
-          }}
-        >
-          WIN-WINの関係を実現
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {/* サロン側のメリット */}
-          <div>
-            <h3
-              style={{
-                fontSize: '20px',
-                fontWeight: 700,
-                color: '#ffffff',
-                marginBottom: '24px',
-              }}
-            >
-              {merits[0].title}
-            </h3>
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-              }}
-            >
-              {merits[0].items.map((item, j) => (
-                <li
-                  key={j}
-                  style={{
-                    padding: '12px 0',
-                    paddingLeft: '28px',
-                    color: '#ffffff',
-                    fontSize: '15px',
-                    position: 'relative',
-                  }}
-                >
-                  <span
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      color: 'var(--sr-yellow-cream)',
-                      fontWeight: 700,
-                    }}
-                  >
-                    ✓
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+    <section className="bg-gradient-to-b from-blue-100 to-blue-50 py-20 px-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr_280px] gap-8 items-end">
+          {/* 左：男性画像 */}
+          <div className="hidden md:block">
+            <Image
+              src="/images/lp/winwin-salon-male.jpg"
+              alt="美容師（サロン側）"
+              width={280}
+              height={400}
+              className="w-full h-auto object-cover rounded-lg shadow-lg"
+              priority
+            />
           </div>
 
-          {/* お客様側のメリット */}
+          {/* 中央：見出し + メリット */}
           <div>
-            <h3
+            <h2
               style={{
-                fontSize: '20px',
+                fontSize: 'clamp(28px, 6vw, 44px)',
                 fontWeight: 700,
                 color: '#ffffff',
-                marginBottom: '24px',
+                textAlign: 'center',
+                marginBottom: '48px',
               }}
             >
-              {merits[1].title}
-            </h3>
-            <ul
-              style={{
-                listStyle: 'none',
-                padding: 0,
-              }}
-            >
-              {merits[1].items.map((item, j) => (
-                <li
-                  key={j}
+              WIN-WINの関係を実現
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* サロン側のメリット */}
+              <div>
+                <h3
                   style={{
-                    padding: '12px 0',
-                    paddingLeft: '28px',
+                    fontSize: '20px',
+                    fontWeight: 700,
                     color: '#ffffff',
-                    fontSize: '15px',
-                    position: 'relative',
+                    marginBottom: '24px',
                   }}
                 >
-                  <span
-                    style={{
-                      position: 'absolute',
-                      left: 0,
-                      color: 'var(--sr-yellow-cream)',
-                      fontWeight: 700,
-                    }}
-                  >
-                    ✓
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+                  {merits[0].title}
+                </h3>
+                <ul
+                  style={{
+                    listStyle: 'none',
+                    padding: 0,
+                  }}
+                >
+                  {merits[0].items.map((item, j) => (
+                    <li
+                      key={j}
+                      style={{
+                        padding: '12px 0',
+                        paddingLeft: '28px',
+                        color: '#ffffff',
+                        fontSize: '15px',
+                        position: 'relative',
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          color: 'var(--sr-yellow-cream)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* お客様側のメリット */}
+              <div>
+                <h3
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    marginBottom: '24px',
+                  }}
+                >
+                  {merits[1].title}
+                </h3>
+                <ul
+                  style={{
+                    listStyle: 'none',
+                    padding: 0,
+                  }}
+                >
+                  {merits[1].items.map((item, j) => (
+                    <li
+                      key={j}
+                      style={{
+                        padding: '12px 0',
+                        paddingLeft: '28px',
+                        color: '#ffffff',
+                        fontSize: '15px',
+                        position: 'relative',
+                      }}
+                    >
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          color: 'var(--sr-yellow-cream)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        ✓
+                      </span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* 右：女性画像 */}
+          <div className="hidden md:block">
+            <Image
+              src="/images/lp/winwin-customer-female.jpg"
+              alt="お客様"
+              width={280}
+              height={400}
+              className="w-full h-auto object-cover rounded-lg shadow-lg"
+              priority
+            />
           </div>
         </div>
       </div>
