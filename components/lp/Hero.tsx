@@ -157,17 +157,29 @@ export default function Hero() {
           </button>
         </div>
 
-        {/* ダミーダッシュボード画像 */}
+        {/* SalonRinkダッシュボード画像 */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #d8c8b8 0%, #c4b4a4 100%)',
-            aspectRatio: '16/9',
-            borderRadius: '16px',
-            maxWidth: '800px',
+            maxWidth: '400px',
             margin: '0 auto',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.15)',
+            display: 'flex',
+            justifyContent: 'center',
           }}
-        />
+        >
+          <Image
+            src="/images/lp/hero-mockup.svg"
+            alt="SalonRink スマホダッシュボード - 予約・売上・顧客管理を一画面で"
+            width={320}
+            height={640}
+            style={{
+              width: '100%',
+              height: 'auto',
+              maxWidth: '100%',
+            }}
+            unoptimized
+            priority
+          />
+        </div>
       </div>
     </section>
   )
