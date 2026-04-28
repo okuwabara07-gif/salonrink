@@ -1,3 +1,7 @@
+'use client'
+
+import Image from 'next/image'
+
 export default function MeritComparison() {
   const merits = [
     {
@@ -47,51 +51,123 @@ export default function MeritComparison() {
             gap: '40px',
           }}
         >
-          {merits.map((merit, i) => (
-            <div key={i}>
-              <h3
-                style={{
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  marginBottom: '24px',
-                }}
-              >
-                {merit.title}
-              </h3>
-              <ul
-                style={{
-                  listStyle: 'none',
-                  padding: 0,
-                }}
-              >
-                {merit.items.map((item, j) => (
-                  <li
-                    key={j}
+          {/* サロン側のメリット カラム */}
+          <div>
+            {/* 画像 */}
+            <div className="flex justify-center mb-6">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white/30 ring-4 ring-white/50 shadow-lg">
+                <Image
+                  src="/images/lp/winwin-salon-male.jpg"
+                  alt="美容師（サロン側）"
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: "center 30%" }}
+                />
+              </div>
+            </div>
+
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#ffffff',
+                marginBottom: '24px',
+                textAlign: 'center',
+              }}
+            >
+              {merits[0].title}
+            </h3>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+              }}
+            >
+              {merits[0].items.map((item, j) => (
+                <li
+                  key={j}
+                  style={{
+                    padding: '12px 0',
+                    paddingLeft: '28px',
+                    color: '#ffffff',
+                    fontSize: '15px',
+                    position: 'relative',
+                  }}
+                >
+                  <span
                     style={{
-                      padding: '12px 0',
-                      paddingLeft: '28px',
-                      color: '#ffffff',
-                      fontSize: '15px',
-                      position: 'relative',
+                      position: 'absolute',
+                      left: 0,
+                      color: 'var(--sr-yellow-cream)',
+                      fontWeight: 700,
                     }}
                   >
-                    <span
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        color: 'var(--sr-yellow-cream)',
-                        fontWeight: 700,
-                      }}
-                    >
-                      ✓
-                    </span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
+                    ✓
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* お客様側のメリット カラム */}
+          <div>
+            {/* 画像 */}
+            <div className="flex justify-center mb-6">
+              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white/30 ring-4 ring-white/50 shadow-lg">
+                <Image
+                  src="/images/lp/winwin-customer-female.jpg"
+                  alt="お客様"
+                  fill
+                  className="object-cover"
+                  style={{ objectPosition: "center 20%" }}
+                />
+              </div>
             </div>
-          ))}
+
+            <h3
+              style={{
+                fontSize: '20px',
+                fontWeight: 700,
+                color: '#ffffff',
+                marginBottom: '24px',
+                textAlign: 'center',
+              }}
+            >
+              {merits[1].title}
+            </h3>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+              }}
+            >
+              {merits[1].items.map((item, j) => (
+                <li
+                  key={j}
+                  style={{
+                    padding: '12px 0',
+                    paddingLeft: '28px',
+                    color: '#ffffff',
+                    fontSize: '15px',
+                    position: 'relative',
+                  }}
+                >
+                  <span
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      color: 'var(--sr-yellow-cream)',
+                      fontWeight: 700,
+                    }}
+                  >
+                    ✓
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
     </section>
