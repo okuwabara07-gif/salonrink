@@ -25,16 +25,17 @@ export default function BookingFlowSection() {
           </p>
         </div>
 
-        {/* デスクトップ: SVG表示 */}
-        <div style={{ display: 'none' }} className="md:block">
+        {/* デスクトップ: 5画面横並びSVG表示 */}
+        <div className="hidden md:block">
           <div style={{ background: '#ffffff', borderRadius: '16px', boxShadow: '0 2px 16px rgba(0,0,0,0.06)', padding: '40px', textAlign: 'center' }}>
             <Image
               src="/images/lp/booking-flow.svg"
-              alt="SalonRink予約フロー全体像 8ステップ"
-              width={680}
-              height={1480}
-              style={{ width: '100%', height: 'auto', maxWidth: '680px', margin: '0 auto' }}
+              alt="SalonRink予約フロー 5ステップ横並び表示"
+              width={1400}
+              height={720}
+              style={{ width: '100%', height: 'auto' }}
               unoptimized
+              priority
             />
           </div>
         </div>

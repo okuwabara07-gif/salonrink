@@ -1,251 +1,386 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 1480" role="img" aria-labelledby="bfTitle bfDesc">
-<title id="bfTitle">SalonRink予約フロー全体像 - 8ステップ</title>
-<desc id="bfDesc">LINE友だち追加から予約完了・前日リマインドまでの8ステップを各画面のミニモックアップとともに示す</desc>
-<defs>
-<marker id="bf-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-<path d="M2 1L8 5L2 9" fill="none" stroke="#1a2c4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</marker>
-<style>
-.bf-fs { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif; }
-</style>
-</defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 720" width="100%" role="img" aria-label="SalonRink 予約フロー 5ステップ">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBEAF0" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#E8EEF5" stop-opacity="0.3"/>
+    </linearGradient>
+    <linearGradient id="phoneFrame" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a3d5f"/>
+      <stop offset="100%" stop-color="#1a2c4f"/>
+    </linearGradient>
+    <linearGradient id="screenBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fdfaf6"/>
+      <stop offset="100%" stop-color="#faf7f2"/>
+    </linearGradient>
+    <linearGradient id="ctaGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f5b8b8"/>
+      <stop offset="100%" stop-color="#d88896"/>
+    </linearGradient>
+    <filter id="phoneShadow" x="-20%" y="-10%" width="140%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.15"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
 
-<text x="40" y="42" class="bf-fs" font-size="20" font-weight="500" fill="#1a2c4f">予約までの流れ</text>
-<text x="40" y="66" class="bf-fs" font-size="13" fill="#5a6878">お客様も、サロンも、迷わずシンプルに。</text>
+  <!-- 背景 -->
+  <rect width="1400" height="720" fill="url(#bgGrad)" rx="24"/>
 
-<g transform="translate(40, 100)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">01</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">LINE友だち追加</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">サロンのQRコード or URLから</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">タップひとつで友だち登録完了</text>
-</g>
+  <!-- 接続線(矢印) -->
+  <g stroke="#d88896" stroke-width="2" stroke-dasharray="4,4" fill="none" opacity="0.5">
+    <path d="M 250 360 L 290 360" marker-end="url(#arrowhead)"/>
+    <path d="M 510 360 L 550 360" marker-end="url(#arrowhead)"/>
+    <path d="M 770 360 L 810 360" marker-end="url(#arrowhead)"/>
+    <path d="M 1030 360 L 1070 360" marker-end="url(#arrowhead)"/>
+  </g>
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M 0 0 L 8 3 L 0 6 Z" fill="#d88896"/>
+    </marker>
+  </defs>
 
-<g transform="translate(280, 100)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.3"/>
-<rect x="40" y="30" width="80" height="80" rx="40" fill="#1a2c4f"/>
-<text x="80" y="78" text-anchor="middle" class="bf-fs" font-size="14" font-weight="500" fill="#ffffff">SalonRink</text>
-<rect x="30" y="130" width="100" height="32" rx="16" fill="#06C755"/>
-<text x="80" y="150" text-anchor="middle" class="bf-fs" font-size="12" font-weight="500" fill="#ffffff">友だち追加</text>
-<text x="80" y="190" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">キレイ鶴見店</text>
-</g>
+  <!-- ============ Phone 1: LINE友だち追加 ============ -->
+  <g transform="translate(40, 80)">
+    <!-- ステップ番号バッジ -->
+    <circle cx="105" cy="-20" r="22" fill="#d88896"/>
+    <text x="105" y="-14" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">01</text>
+    
+    <!-- スマホ筐体 -->
+    <g filter="url(#phoneShadow)">
+      <rect x="0" y="0" width="210" height="430" rx="26" ry="26" fill="url(#phoneFrame)"/>
+      <rect x="6" y="6" width="198" height="418" rx="22" ry="22" fill="url(#screenBg)"/>
+    </g>
+    <rect x="80" y="10" width="50" height="14" rx="7" ry="7" fill="#1a2c4f"/>
+    
+    <!-- ヘッダー -->
+    <text x="105" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">SalonRink 予約</text>
+    <line x1="20" y1="62" x2="190" y2="62" stroke="#f0e8df" stroke-width="1"/>
+    
+    <!-- コンテンツ: QRコード -->
+    <text x="105" y="90" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">公式アカウントを追加</text>
+    
+    <!-- QRコード風モチーフ -->
+    <rect x="55" y="110" width="100" height="100" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="1.5"/>
+    <!-- QRパターン(ランダムに見える格子) -->
+    <g fill="#1a2c4f">
+      <rect x="62" y="117" width="18" height="18"/>
+      <rect x="130" y="117" width="18" height="18"/>
+      <rect x="62" y="185" width="18" height="18"/>
+      <rect x="68" y="123" width="6" height="6" fill="#ffffff"/>
+      <rect x="136" y="123" width="6" height="6" fill="#ffffff"/>
+      <rect x="68" y="191" width="6" height="6" fill="#ffffff"/>
+      <rect x="86" y="120" width="4" height="4"/>
+      <rect x="94" y="120" width="4" height="4"/>
+      <rect x="102" y="120" width="4" height="4"/>
+      <rect x="86" y="128" width="4" height="4"/>
+      <rect x="102" y="128" width="4" height="4"/>
+      <rect x="118" y="124" width="4" height="4"/>
+      <rect x="86" y="140" width="4" height="4"/>
+      <rect x="94" y="148" width="4" height="4"/>
+      <rect x="110" y="144" width="4" height="4"/>
+      <rect x="118" y="148" width="4" height="4"/>
+      <rect x="86" y="160" width="4" height="4"/>
+      <rect x="102" y="160" width="4" height="4"/>
+      <rect x="118" y="160" width="4" height="4"/>
+      <rect x="86" y="172" width="4" height="4"/>
+      <rect x="94" y="180" width="4" height="4"/>
+      <rect x="110" y="180" width="4" height="4"/>
+      <rect x="86" y="192" width="4" height="4"/>
+      <rect x="94" y="192" width="4" height="4"/>
+      <rect x="110" y="192" width="4" height="4"/>
+      <rect x="118" y="192" width="4" height="4"/>
+      <rect x="124" y="148" width="4" height="4"/>
+      <rect x="132" y="148" width="4" height="4"/>
+      <rect x="140" y="148" width="4" height="4"/>
+      <rect x="124" y="160" width="4" height="4"/>
+      <rect x="132" y="172" width="4" height="4"/>
+      <rect x="140" y="172" width="4" height="4"/>
+      <rect x="124" y="180" width="4" height="4"/>
+      <rect x="132" y="184" width="4" height="4"/>
+      <rect x="140" y="192" width="4" height="4"/>
+    </g>
+    
+    <!-- CTA -->
+    <rect x="30" y="240" width="150" height="36" rx="18" fill="url(#ctaGrad)"/>
+    <text x="105" y="263" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">友だち追加</text>
+    
+    <!-- サブテキスト -->
+    <text x="105" y="300" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">QR・URL・SMS どれでも</text>
+    
+    <!-- 信頼バッジ -->
+    <g transform="translate(45, 320)">
+      <rect width="120" height="60" rx="8" fill="#FBEAF0" opacity="0.5"/>
+      <text x="60" y="20" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878" text-anchor="middle">登録済みお客様</text>
+      <text x="60" y="42" font-family="-apple-system, sans-serif" font-size="18" font-weight="700" fill="#d88896" text-anchor="middle">2,847</text>
+      <text x="60" y="55" font-family="-apple-system, sans-serif" font-size="8" fill="#5a6878" text-anchor="middle">名突破</text>
+    </g>
+    
+    <!-- ステップタイトル(下) -->
+    <text x="105" y="475" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a2c4f" text-anchor="middle">LINE友だち追加</text>
+    <text x="105" y="495" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">QRコード or URLから1タップ</text>
+  </g>
 
-<g transform="translate(480, 100)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="40" rx="6" fill="#1a2c4f"/>
-<text x="80" y="34" text-anchor="middle" class="bf-fs" font-size="11" fill="#ffffff">SalonRink公式</text>
-<rect x="20" y="60" width="120" height="50" rx="8" fill="#FBEAF0"/>
-<text x="80" y="80" text-anchor="middle" class="bf-fs" font-size="10" fill="#72243E">いらっしゃいませ</text>
-<text x="80" y="98" text-anchor="middle" class="bf-fs" font-size="9" fill="#993556">ご予約はこちらから</text>
-<rect x="20" y="120" width="55" height="36" rx="6" fill="#1a2c4f"/>
-<text x="47" y="142" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#ffffff">予約する</text>
-<rect x="85" y="120" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
-<text x="112" y="142" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">予約確認</text>
-<rect x="20" y="166" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
-<text x="47" y="188" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">マイページ</text>
-<rect x="85" y="166" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
-<text x="112" y="188" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">店舗情報</text>
-</g>
+  <!-- ============ Phone 2: メニュー選択 ============ -->
+  <g transform="translate(300, 80)">
+    <circle cx="105" cy="-20" r="22" fill="#d88896"/>
+    <text x="105" y="-14" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">02</text>
+    
+    <g filter="url(#phoneShadow)">
+      <rect x="0" y="0" width="210" height="430" rx="26" ry="26" fill="url(#phoneFrame)"/>
+      <rect x="6" y="6" width="198" height="418" rx="22" ry="22" fill="url(#screenBg)"/>
+    </g>
+    <rect x="80" y="10" width="50" height="14" rx="7" ry="7" fill="#1a2c4f"/>
+    
+    <text x="105" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">メニューを選択</text>
+    <line x1="20" y1="62" x2="190" y2="62" stroke="#f0e8df" stroke-width="1"/>
+    
+    <!-- メニューカード1: カット(選択中) -->
+    <g transform="translate(20, 78)">
+      <rect width="170" height="56" rx="10" fill="#FBEAF0" stroke="#d88896" stroke-width="2"/>
+      <rect x="10" y="10" width="36" height="36" rx="6" fill="#f5b8b8" opacity="0.4"/>
+      <text x="56" y="24" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f">カット</text>
+      <text x="56" y="38" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">所要 60分</text>
+      <text x="160" y="32" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#d88896" text-anchor="end">¥4,800</text>
+      <circle cx="155" cy="46" r="6" fill="#d88896"/>
+      <path d="M 152 46 L 155 49 L 159 44" stroke="#ffffff" stroke-width="1.5" fill="none"/>
+    </g>
+    
+    <!-- メニューカード2: カラー -->
+    <g transform="translate(20, 144)">
+      <rect width="170" height="56" rx="10" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <rect x="10" y="10" width="36" height="36" rx="6" fill="#E8EEF5"/>
+      <text x="56" y="24" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f">カラー + カット</text>
+      <text x="56" y="38" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">所要 120分</text>
+      <text x="160" y="32" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f" text-anchor="end">¥12,800</text>
+    </g>
+    
+    <!-- メニューカード3: パーマ -->
+    <g transform="translate(20, 210)">
+      <rect width="170" height="56" rx="10" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <rect x="10" y="10" width="36" height="36" rx="6" fill="#C8E6D4"/>
+      <text x="56" y="24" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f">パーマ</text>
+      <text x="56" y="38" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">所要 90分</text>
+      <text x="160" y="32" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f" text-anchor="end">¥9,800</text>
+    </g>
+    
+    <!-- メニューカード4: トリートメント -->
+    <g transform="translate(20, 276)">
+      <rect width="170" height="56" rx="10" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <rect x="10" y="10" width="36" height="36" rx="6" fill="#E0D5F0"/>
+      <text x="56" y="24" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f">トリートメント</text>
+      <text x="56" y="38" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">所要 30分</text>
+      <text x="160" y="32" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f" text-anchor="end">¥3,200</text>
+    </g>
+    
+    <!-- 次へボタン -->
+    <rect x="30" y="350" width="150" height="36" rx="18" fill="#1a2c4f"/>
+    <text x="105" y="373" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">次へ</text>
+    
+    <text x="105" y="475" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a2c4f" text-anchor="middle">メニュー選択</text>
+    <text x="105" y="495" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">画像と価格でシンプル選択</text>
+  </g>
 
-<line x1="70" y1="345" x2="70" y2="380" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+  <!-- ============ Phone 3: 日時選択 ============ -->
+  <g transform="translate(560, 80)">
+    <circle cx="105" cy="-20" r="22" fill="#d88896"/>
+    <text x="105" y="-14" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">03</text>
+    
+    <g filter="url(#phoneShadow)">
+      <rect x="0" y="0" width="210" height="430" rx="26" ry="26" fill="url(#phoneFrame)"/>
+      <rect x="6" y="6" width="198" height="418" rx="22" ry="22" fill="url(#screenBg)"/>
+    </g>
+    <rect x="80" y="10" width="50" height="14" rx="7" ry="7" fill="#1a2c4f"/>
+    
+    <text x="105" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">日時を選択</text>
+    <line x1="20" y1="62" x2="190" y2="62" stroke="#f0e8df" stroke-width="1"/>
+    
+    <!-- 月表示 -->
+    <text x="105" y="85" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">2026年 5月</text>
+    
+    <!-- 曜日ヘッダー -->
+    <g transform="translate(20, 100)">
+      <text x="12" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">日</text>
+      <text x="36" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">月</text>
+      <text x="60" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">火</text>
+      <text x="84" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">水</text>
+      <text x="108" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">木</text>
+      <text x="132" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">金</text>
+      <text x="156" y="10" font-family="-apple-system, sans-serif" font-size="9" fill="#9ba8b8" text-anchor="middle">土</text>
+    </g>
+    
+    <!-- カレンダーの日付 -->
+    <g transform="translate(20, 115)" font-family="-apple-system, sans-serif" font-size="10" fill="#1a2c4f" text-anchor="middle">
+      <!-- Week 1 -->
+      <text x="12" y="14">1</text>
+      <text x="36" y="14">2</text>
+      <text x="60" y="14">3</text>
+      <text x="84" y="14">4</text>
+      <text x="108" y="14">5</text>
+      <text x="132" y="14">6</text>
+      <text x="156" y="14">7</text>
+      <!-- Week 2 -->
+      <text x="12" y="36">8</text>
+      <text x="36" y="36">9</text>
+      <text x="60" y="36">10</text>
+      <text x="84" y="36">11</text>
+      <text x="108" y="36">12</text>
+      <!-- 13日(選択中) -->
+      <circle cx="132" cy="32" r="11" fill="#d88896"/>
+      <text x="132" y="36" fill="#ffffff" font-weight="700">13</text>
+      <text x="156" y="36">14</text>
+      <!-- Week 3 -->
+      <text x="12" y="58">15</text>
+      <text x="36" y="58">16</text>
+      <text x="60" y="58">17</text>
+      <text x="84" y="58">18</text>
+      <text x="108" y="58">19</text>
+      <text x="132" y="58">20</text>
+      <text x="156" y="58">21</text>
+      <!-- Week 4 -->
+      <text x="12" y="80">22</text>
+      <text x="36" y="80">23</text>
+      <text x="60" y="80">24</text>
+      <text x="84" y="80">25</text>
+      <text x="108" y="80">26</text>
+      <text x="132" y="80">27</text>
+      <text x="156" y="80">28</text>
+    </g>
+    
+    <!-- 時間スロット -->
+    <text x="20" y="240" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#1a2c4f">空いている時間</text>
+    <g transform="translate(20, 250)">
+      <!-- 10:00(選択中) -->
+      <rect width="50" height="26" rx="6" fill="#d88896"/>
+      <text x="25" y="17" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">10:00</text>
+      <rect x="58" y="0" width="50" height="26" rx="6" fill="#FBEAF0"/>
+      <text x="83" y="17" font-family="-apple-system, sans-serif" font-size="10" fill="#1a2c4f" text-anchor="middle">11:30</text>
+      <rect x="116" y="0" width="50" height="26" rx="6" fill="#FBEAF0"/>
+      <text x="141" y="17" font-family="-apple-system, sans-serif" font-size="10" fill="#1a2c4f" text-anchor="middle">14:00</text>
+    </g>
+    <g transform="translate(20, 284)">
+      <rect width="50" height="26" rx="6" fill="#FBEAF0"/>
+      <text x="25" y="17" font-family="-apple-system, sans-serif" font-size="10" fill="#1a2c4f" text-anchor="middle">15:30</text>
+      <rect x="58" y="0" width="50" height="26" rx="6" fill="#FBEAF0"/>
+      <text x="83" y="17" font-family="-apple-system, sans-serif" font-size="10" fill="#1a2c4f" text-anchor="middle">17:00</text>
+      <rect x="116" y="0" width="50" height="26" rx="6" fill="#f0e8df"/>
+      <text x="141" y="17" font-family="-apple-system, sans-serif" font-size="10" fill="#9ba8b8" text-anchor="middle">満</text>
+    </g>
+    
+    <!-- 確定ボタン -->
+    <rect x="30" y="350" width="150" height="36" rx="18" fill="#1a2c4f"/>
+    <text x="105" y="373" font-family="-apple-system, sans-serif" font-size="12" font-weight="600" fill="#ffffff" text-anchor="middle">確定する</text>
+    
+    <text x="105" y="475" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a2c4f" text-anchor="middle">日時選択</text>
+    <text x="105" y="495" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">空き枠をカレンダーから</text>
+  </g>
 
-<g transform="translate(40, 380)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">02</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">メニュー選択</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">画像と価格を見ながらシンプル選択</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">カテゴリで絞り込みも可能</text>
-</g>
+  <!-- ============ Phone 4: 予約完了 ============ -->
+  <g transform="translate(820, 80)">
+    <circle cx="105" cy="-20" r="22" fill="#d88896"/>
+    <text x="105" y="-14" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">04</text>
+    
+    <g filter="url(#phoneShadow)">
+      <rect x="0" y="0" width="210" height="430" rx="26" ry="26" fill="url(#phoneFrame)"/>
+      <rect x="6" y="6" width="198" height="418" rx="22" ry="22" fill="url(#screenBg)"/>
+    </g>
+    <rect x="80" y="10" width="50" height="14" rx="7" ry="7" fill="#1a2c4f"/>
+    
+    <text x="105" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">予約完了</text>
+    <line x1="20" y1="62" x2="190" y2="62" stroke="#f0e8df" stroke-width="1"/>
+    
+    <!-- 大きなチェックマーク -->
+    <circle cx="105" cy="115" r="32" fill="#C8E6D4"/>
+    <path d="M 90 115 L 102 127 L 122 105" stroke="#7AB89A" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <text x="105" y="170" font-family="-apple-system, sans-serif" font-size="13" font-weight="700" fill="#1a2c4f" text-anchor="middle">ご予約ありがとう</text>
+    <text x="105" y="186" font-family="-apple-system, sans-serif" font-size="13" font-weight="700" fill="#1a2c4f" text-anchor="middle">ございました</text>
+    
+    <!-- 予約詳細カード -->
+    <g transform="translate(20, 200)">
+      <rect width="170" height="120" rx="10" fill="#FBEAF0" opacity="0.5"/>
+      <text x="14" y="20" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">予約番号</text>
+      <text x="156" y="20" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="end">SR-7855</text>
+      <line x1="14" y1="32" x2="156" y2="32" stroke="#ffffff" stroke-width="1"/>
+      <text x="14" y="48" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">日時</text>
+      <text x="156" y="48" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="end">5/13(水) 10:00</text>
+      <text x="14" y="68" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">メニュー</text>
+      <text x="156" y="68" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="end">カット</text>
+      <text x="14" y="88" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">スタッフ</text>
+      <text x="156" y="88" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="end">山田</text>
+      <line x1="14" y1="98" x2="156" y2="98" stroke="#ffffff" stroke-width="1"/>
+      <text x="14" y="114" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f">合計</text>
+      <text x="156" y="114" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#d88896" text-anchor="end">¥4,800</text>
+    </g>
+    
+    <!-- LINE通知の予告 -->
+    <g transform="translate(20, 332)">
+      <rect width="170" height="40" rx="8" fill="#E8F5EE" opacity="0.7"/>
+      <text x="14" y="18" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f">前日にLINEでリマインド</text>
+      <text x="14" y="32" font-family="-apple-system, sans-serif" font-size="8" fill="#5a6878">忘れ防止の自動通知が届きます</text>
+    </g>
+    
+    <text x="105" y="475" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a2c4f" text-anchor="middle">予約完了</text>
+    <text x="105" y="495" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">即座にLINEへ確定通知</text>
+  </g>
 
-<g transform="translate(380, 380)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
-<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">メニューを選ぶ</text>
-<rect x="15" y="48" width="130" height="48" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
-<rect x="20" y="54" width="36" height="36" rx="4" fill="#FBEAF0"/>
-<text x="64" y="68" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">カット+カラー</text>
-<text x="64" y="84" class="bf-fs" font-size="9" fill="#993556">¥8,800 / 90分</text>
-<rect x="15" y="104" width="130" height="48" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
-<rect x="20" y="110" width="36" height="36" rx="4" fill="#FBEAF0"/>
-<text x="64" y="124" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">カット+トリートメント</text>
-<text x="64" y="140" class="bf-fs" font-size="9" fill="#993556">¥6,500 / 60分</text>
-<rect x="15" y="160" width="130" height="48" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="1"/>
-<rect x="20" y="166" width="36" height="36" rx="4" fill="#ffffff"/>
-<text x="64" y="180" class="bf-fs" font-size="9" font-weight="500" fill="#72243E">カットのみ</text>
-<text x="64" y="196" class="bf-fs" font-size="9" fill="#993556">¥4,500 / 45分</text>
-</g>
+  <!-- ============ Phone 5: マイページ ============ -->
+  <g transform="translate(1080, 80)">
+    <circle cx="105" cy="-20" r="22" fill="#d88896"/>
+    <text x="105" y="-14" font-family="-apple-system, sans-serif" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">05</text>
+    
+    <g filter="url(#phoneShadow)">
+      <rect x="0" y="0" width="210" height="430" rx="26" ry="26" fill="url(#phoneFrame)"/>
+      <rect x="6" y="6" width="198" height="418" rx="22" ry="22" fill="url(#screenBg)"/>
+    </g>
+    <rect x="80" y="10" width="50" height="14" rx="7" ry="7" fill="#1a2c4f"/>
+    
+    <text x="105" y="50" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">マイページ</text>
+    <line x1="20" y1="62" x2="190" y2="62" stroke="#f0e8df" stroke-width="1"/>
+    
+    <!-- プロフィール -->
+    <circle cx="105" cy="95" r="22" fill="#FBEAF0"/>
+    <text x="105" y="100" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#d88896" text-anchor="middle">M</text>
+    <text x="105" y="135" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f" text-anchor="middle">松本 様</text>
+    
+    <!-- 次回予約 -->
+    <text x="20" y="160" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#1a2c4f">次回のご予約</text>
+    <g transform="translate(20, 168)">
+      <rect width="170" height="60" rx="10" fill="#FBEAF0" opacity="0.5"/>
+      <text x="14" y="22" font-family="-apple-system, sans-serif" font-size="11" font-weight="700" fill="#1a2c4f">5/13(水) 10:00</text>
+      <text x="14" y="38" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878">カット ・ 山田</text>
+      <rect x="14" y="44" width="60" height="12" rx="6" fill="#ffffff"/>
+      <text x="44" y="53" font-family="-apple-system, sans-serif" font-size="8" font-weight="600" fill="#d88896" text-anchor="middle">変更・キャンセル</text>
+    </g>
+    
+    <!-- 予約履歴 -->
+    <text x="20" y="250" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#1a2c4f">予約履歴</text>
+    <g transform="translate(20, 258)">
+      <rect width="170" height="36" rx="8" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <text x="10" y="16" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f">3/22(土)</text>
+      <text x="10" y="28" font-family="-apple-system, sans-serif" font-size="8" fill="#5a6878">カラー + カット</text>
+      <text x="160" y="22" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878" text-anchor="end">¥12,800</text>
+    </g>
+    <g transform="translate(20, 300)">
+      <rect width="170" height="36" rx="8" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <text x="10" y="16" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f">2/15(土)</text>
+      <text x="10" y="28" font-family="-apple-system, sans-serif" font-size="8" fill="#5a6878">カット</text>
+      <text x="160" y="22" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878" text-anchor="end">¥4,800</text>
+    </g>
+    <g transform="translate(20, 342)">
+      <rect width="170" height="36" rx="8" fill="#ffffff" stroke="#f0e8df" stroke-width="1"/>
+      <text x="10" y="16" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f">1/10(土)</text>
+      <text x="10" y="28" font-family="-apple-system, sans-serif" font-size="8" fill="#5a6878">カット + トリートメント</text>
+      <text x="160" y="22" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6878" text-anchor="end">¥8,000</text>
+    </g>
+    
+    <text x="105" y="475" font-family="-apple-system, sans-serif" font-size="14" font-weight="700" fill="#1a2c4f" text-anchor="middle">マイページ</text>
+    <text x="105" y="495" font-family="-apple-system, sans-serif" font-size="10" fill="#5a6878" text-anchor="middle">履歴管理 + 次回予約</text>
+  </g>
 
-<line x1="70" y1="465" x2="70" y2="500" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 500)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">03</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">スタッフ指名(任意)</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">指名なしも選択可能</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">得意分野・経歴も確認できる</text>
-</g>
-
-<g transform="translate(380, 500)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
-<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">スタッフを選ぶ</text>
-<rect x="15" y="48" width="62" height="80" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
-<rect x="22" y="55" width="48" height="48" rx="24" fill="#FBEAF0"/>
-<text x="46" y="118" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">スタッフA</text>
-<rect x="83" y="48" width="62" height="80" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="1"/>
-<rect x="90" y="55" width="48" height="48" rx="24" fill="#ffffff"/>
-<text x="114" y="118" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#72243E">スタッフB</text>
-<rect x="15" y="138" width="130" height="40" rx="6" fill="#ffffff" stroke="#5a6878" stroke-width="0.5" stroke-dasharray="3 2"/>
-<text x="80" y="162" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">指名なし(空いている人)</text>
-<rect x="15" y="186" width="130" height="22" rx="4" fill="#ffffff"/>
-<text x="80" y="201" text-anchor="middle" class="bf-fs" font-size="9" fill="#993556">指名料 ¥500</text>
-</g>
-
-<line x1="70" y1="585" x2="70" y2="620" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 620)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">04</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">日時選択</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">カレンダーから空き枠を一目で確認</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">15分単位で細かく調整可能</text>
-</g>
-
-<g transform="translate(380, 620)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
-<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">日時を選ぶ</text>
-<text x="80" y="56" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">2026年5月</text>
-<g class="bf-fs" font-size="9" fill="#5a6878">
-<text x="25" y="78">月</text><text x="50" y="78">火</text><text x="75" y="78">水</text><text x="100" y="78">木</text><text x="125" y="78">金</text>
-</g>
-<g class="bf-fs" font-size="9" fill="#1a2c4f">
-<text x="25" y="98">5</text><text x="50" y="98">6</text><text x="75" y="98">7</text><text x="100" y="98">8</text><text x="125" y="98">9</text>
-</g>
-<g>
-<circle cx="25" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<circle cx="50" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<circle cx="75" cy="110" r="8" fill="#D4537E"/>
-<circle cx="100" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<circle cx="125" cy="110" r="8" fill="#e5e5e5"/>
-</g>
-<text x="80" y="148" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#72243E">5/7(水)</text>
-<g class="bf-fs" font-size="9">
-<rect x="20" y="160" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="39" y="174" text-anchor="middle" fill="#993556">10:00</text>
-<rect x="62" y="160" width="38" height="22" rx="4" fill="#D4537E"/>
-<text x="81" y="174" text-anchor="middle" fill="#ffffff">10:30</text>
-<rect x="104" y="160" width="38" height="22" rx="4" fill="#e5e5e5"/>
-<text x="123" y="174" text-anchor="middle" fill="#999">11:00</text>
-<rect x="20" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="39" y="200" text-anchor="middle" fill="#993556">11:30</text>
-<rect x="62" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="81" y="200" text-anchor="middle" fill="#993556">12:00</text>
-<rect x="104" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="123" y="200" text-anchor="middle" fill="#993556">12:30</text>
-</g>
-</g>
-
-<line x1="70" y1="705" x2="70" y2="740" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 740)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">05</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">予約内容確認</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">メニュー・スタッフ・日時を一覧表示</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">要望のコメントも記入可能</text>
-</g>
-
-<g transform="translate(380, 740)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
-<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">予約内容を確認</text>
-<text x="20" y="58" class="bf-fs" font-size="9" fill="#5a6878">日時</text>
-<text x="20" y="74" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">5月7日(水) 10:30</text>
-<line x1="20" y1="84" x2="140" y2="84" stroke="#e5e5e5" stroke-width="0.5"/>
-<text x="20" y="100" class="bf-fs" font-size="9" fill="#5a6878">メニュー</text>
-<text x="20" y="116" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">カット+カラー ¥8,800</text>
-<line x1="20" y1="126" x2="140" y2="126" stroke="#e5e5e5" stroke-width="0.5"/>
-<text x="20" y="142" class="bf-fs" font-size="9" fill="#5a6878">スタッフ</text>
-<text x="20" y="158" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">スタッフB(指名)</text>
-<rect x="15" y="180" width="130" height="28" rx="6" fill="#1a2c4f"/>
-<text x="80" y="198" text-anchor="middle" class="bf-fs" font-size="11" font-weight="500" fill="#ffffff">この内容で予約する</text>
-</g>
-
-<line x1="70" y1="825" x2="70" y2="860" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 860)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">06</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">予約完了通知</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">即座にLINEへ確定通知が届く</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">予約番号も自動発行</text>
-</g>
-
-<g transform="translate(380, 860)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.2"/>
-<rect x="20" y="30" width="130" height="120" rx="10" fill="#ffffff" stroke="#534AB7" stroke-width="0.5"/>
-<circle cx="40" cy="50" r="10" fill="#534AB7"/>
-<text x="40" y="54" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#ffffff">✓</text>
-<text x="60" y="55" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">予約完了</text>
-<text x="30" y="80" class="bf-fs" font-size="9" fill="#5a6878">予約番号</text>
-<text x="30" y="94" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">SR-20260507-001</text>
-<text x="30" y="112" class="bf-fs" font-size="9" fill="#5a6878">日時</text>
-<text x="30" y="126" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">5月7日(水) 10:30</text>
-<text x="30" y="144" class="bf-fs" font-size="9" fill="#534AB7">詳細を見る ›</text>
-<text x="80" y="180" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">SalonRink公式</text>
-</g>
-
-<line x1="70" y1="945" x2="70" y2="980" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 980)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">07</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">前日リマインド</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">お客様への自動メッセージ配信</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">無断キャンセルを大幅に削減</text>
-</g>
-
-<g transform="translate(380, 980)">
-<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
-<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.2"/>
-<circle cx="30" cy="40" r="14" fill="#1a2c4f"/>
-<text x="30" y="44" text-anchor="middle" class="bf-fs" font-size="9" font-weight="500" fill="#ffffff">SR</text>
-<rect x="48" y="26" width="100" height="80" rx="10" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
-<text x="58" y="44" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">明日のご予約</text>
-<text x="58" y="58" class="bf-fs" font-size="8" fill="#5a6878">5月7日(水)</text>
-<text x="58" y="70" class="bf-fs" font-size="8" fill="#5a6878">10:30〜</text>
-<text x="58" y="86" class="bf-fs" font-size="8" fill="#1a2c4f">スタッフB</text>
-<text x="58" y="98" class="bf-fs" font-size="8" fill="#1a2c4f">カット+カラー</text>
-<rect x="48" y="120" width="100" height="28" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="98" y="138" text-anchor="middle" class="bf-fs" font-size="10" fill="#993556">予約変更・キャンセル</text>
-<text x="48" y="170" class="bf-fs" font-size="9" fill="#5a6878">5分前にお越しください</text>
-<text x="48" y="184" class="bf-fs" font-size="9" fill="#5a6878">お待ちしております</text>
-</g>
-
-<line x1="70" y1="1065" x2="70" y2="1100" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
-
-<g transform="translate(40, 1100)">
-<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
-<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">08</text>
-<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">来店・施術後フォロー</text>
-<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">マイページで予約履歴を確認</text>
-<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">次回予約も同じLINEから完結</text>
-</g>
-
-<rect x="40" y="1200" width="600" height="120" rx="12" fill="#1a2c4f"/>
-<text x="340" y="1234" text-anchor="middle" class="bf-fs" font-size="14" font-weight="500" fill="#ffffff">SalonRinkで予約フローを完全自動化</text>
-<line x1="290" y1="1248" x2="390" y2="1248" stroke="#9DBDDB" stroke-width="0.5"/>
-<text x="180" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">お客様の操作</text>
-<text x="180" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">約30秒</text>
-<text x="340" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">受付対応</text>
-<text x="340" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">24時間</text>
-<text x="500" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">サロンの操作</text>
-<text x="500" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">ゼロ</text>
-
-<rect x="40" y="1340" width="600" height="60" rx="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
-<text x="340" y="1370" text-anchor="middle" class="bf-fs" font-size="13" font-weight="500" fill="#72243E">月額¥980〜・初期費用無料・最短当日からスタート</text>
-<text x="340" y="1390" text-anchor="middle" class="bf-fs" font-size="11" fill="#993556">salonrink.com</text>
+  <!-- フッターメッセージ -->
+  <g transform="translate(700, 660)">
+    <rect x="-280" y="-20" width="560" height="36" rx="18" fill="#FBEAF0" opacity="0.5"/>
+    <text x="0" y="3" font-family="-apple-system, sans-serif" font-size="13" font-weight="600" fill="#1a2c4f" text-anchor="middle">所要 90秒 ・ 24時間いつでも予約OK</text>
+  </g>
 </svg>
