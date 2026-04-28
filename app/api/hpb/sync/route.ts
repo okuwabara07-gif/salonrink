@@ -51,11 +51,13 @@ export async function POST(req: NextRequest) {
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), VPS_REQUEST_TIMEOUT)
+      const syncApiKey = process.env.VPS_SYNC_API_KEY || 'default-sync-key'
 
       vpsResponse = await fetch(VPS_SYNC_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${syncApiKey}`,
         },
         body: JSON.stringify({ salon_id: salonId }),
         signal: controller.signal,
