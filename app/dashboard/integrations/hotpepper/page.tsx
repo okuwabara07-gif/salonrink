@@ -100,9 +100,40 @@ export default function HotpepperPage() {
     setSyncing(true)
     setMessage(null)
 
-    // TODO: 実装 - /api/hpb/sync を呼ぶ
-    setMessage({ ok: true, text: '同期を開始しました（バックグラウンド処理）' })
-    setSyncing(false)
+    try {
+      const response = await fetch('/api/hpb/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setMessage({ ok: false, text: `同期エラー: ${data.error || '不明なエラー'}` })
+        setSyncing(false)
+        return
+      }
+
+      setMessage({ ok: true, text: '同期を開始しました。完了までお待ちください...' })
+
+      // Refresh integration data after a delay
+      setTimeout(async () => {
+        const supabase = await createClient()
+        const { data: integrationData } = await supabase
+          .from('hpb_integrations')
+          .select('*')
+          .eq('salon_id', salonId)
+          .maybeSingle()
+
+        if (integrationData) {
+          setIntegration(integrationData)
+        }
+        setSyncing(false)
+      }, 2000)
+    } catch (error) {
+      setMessage({ ok: false, text: 'エラーが発生しました' })
+      setSyncing(false)
+    }
   }
 
   if (loading) {
