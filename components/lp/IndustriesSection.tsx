@@ -198,44 +198,40 @@ export default function IndustriesSection() {
                 }}
               />
 
-              {/* グラデーションオーバーレイ（下が濃い） */}
+              {/* 下部30%の文字帯 */}
               <div
                 style={{
                   position: 'absolute',
-                  top: 0,
+                  bottom: 0,
                   left: 0,
                   right: 0,
-                  bottom: 0,
-                  background: 'linear-gradient(to top, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0.3) 100%)',
-                  zIndex: 1,
-                }}
-              />
-
-              {/* SVGアイコンと業種名 */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
+                  height: '30%',
+                  background: 'linear-gradient(to bottom, rgba(157, 189, 219, 0.95) 0%, rgba(157, 189, 219, 1) 100%)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
-                  color: 'var(--sr-blue-pale)',
+                  gap: '8px',
                   zIndex: 2,
+                  padding: '16px',
+                  boxSizing: 'border-box',
                 }}
               >
-                <ind.Icon />
                 <div
                   style={{
-                    color: 'var(--sr-blue-pale-deepest)',
+                    color: 'var(--sr-blue-pale)',
+                    fontSize: '20px',
+                  }}
+                >
+                  <ind.Icon />
+                </div>
+                <div
+                  style={{
+                    color: '#ffffff',
                     fontSize: '14px',
                     fontWeight: 600,
                     textAlign: 'center',
-                    textShadow: '0 1px 2px rgba(255,255,255,0.5)',
+                    lineHeight: 1.2,
                   }}
                 >
                   {ind.name}

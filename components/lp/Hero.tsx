@@ -64,10 +64,12 @@ export default function Hero() {
         <h1
           style={{
             fontSize: 'clamp(32px, 8vw, 56px)',
-            fontWeight: 700,
+            fontWeight: 600,
             color: 'var(--sr-blue-pale-deepest)',
-            lineHeight: 1.2,
+            lineHeight: 1.3,
+            letterSpacing: '-0.02em',
             marginBottom: '24px',
+            fontFeatureSettings: '"palt" 1',
           }}
         >
           HPBはそのまま、<br />
@@ -110,38 +112,42 @@ export default function Hero() {
               fontSize: '16px',
               border: 'none',
               cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(240,160,160,0.3)',
+              boxShadow: '0 8px 20px rgba(240,160,160,0.4)',
               transition: 'transform 0.2s, box-shadow 0.2s',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.05)'
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(240,160,160,0.4)'
+              e.currentTarget.style.boxShadow = '0 12px 28px rgba(240,160,160,0.5)'
             }}
             onMouseLeave={(e) => {
               e.currentTarget.style.transform = 'scale(1)'
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(240,160,160,0.3)'
+              e.currentTarget.style.boxShadow = '0 8px 20px rgba(240,160,160,0.4)'
             }}
           >
             無料で始める（14日間）
           </a>
           <button
             style={{
-              background: 'rgba(255,255,255,0.2)',
-              color: '#ffffff',
+              background: 'rgba(255,255,255,0.9)',
+              backdropFilter: 'blur(4px)',
+              color: '#1a2c4f',
               padding: '16px 40px',
               borderRadius: '999px',
-              border: '2px solid rgba(255,255,255,0.4)',
+              border: 'none',
               textDecoration: 'none',
               fontWeight: 600,
               fontSize: '16px',
               cursor: 'pointer',
               transition: 'all 0.2s',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.3)'
+              e.currentTarget.style.background = 'rgba(255,255,255,0.95)'
+              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.15)'
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.2)'
+              e.currentTarget.style.background = 'rgba(255,255,255,0.9)'
+              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)'
             }}
           >
             デモを見る
