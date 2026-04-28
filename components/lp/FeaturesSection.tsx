@@ -4,15 +4,15 @@ import Image from 'next/image'
 
 export default function FeaturesSection() {
   const features = [
-    { id: 1, title: '業界最安 ¥980〜', desc: '充実した機能を最安値で', color: '#ffe89a' },
-    { id: 2, title: 'HPB自動同期', desc: '毎時0分に顧客データ自動更新', color: '#f0a878' },
-    { id: 3, title: 'LINE予約・アプリ不要', desc: 'LINEミニアプリで簡単予約', image: '/images/lp/feature-03-line.webp' },
-    { id: 4, title: '前日リマインド自動', desc: '全プラン共通で来店率UP', color: '#ffd1dc' },
-    { id: 5, title: '顧客カルテ管理', desc: '施術履歴・処方レシピ完全記録', image: '/images/lp/feature-05-karte.webp' },
-    { id: 6, title: '店販EC', desc: 'LINE上での商品販売', image: '/images/lp/feature-06-ec.webp' },
-    { id: 7, title: 'クーポン配信', desc: 'セグメント配信で効果最大化', color: '#f0a0a0' },
-    { id: 8, title: 'ポイントカード', desc: 'デジタルポイントで再来店促進', color: '#ffe89a' },
-    { id: 9, title: '動画付き商品紹介', desc: '【NEW】LINE上で動画配信可能', color: '#ffd1dc' },
+    { id: 1, title: 'LINE Bot 自動応答', desc: '24時間お客様の問い合わせに即時対応。営業時間外でも予約を取りこぼしません。', image: '/images/lp/feature-01-line-bot.svg', isSvg: true },
+    { id: 2, title: '予約管理', desc: 'ペールトーンの手帳のように、すべての予約をひと目で。直感的な操作で予定変更も簡単。', image: '/images/lp/feature-02-reservation.webp' },
+    { id: 3, title: 'LINE通知連携', desc: 'お客様にLINEで自動通知。予約確認・前日リマインドで、無断キャンセルを大幅削減。', image: '/images/lp/feature-03-line.webp' },
+    { id: 4, title: '顧客管理', desc: 'お客様一人ひとりの好みや履歴を記録。常連様にパーソナライズされた提案ができる。', image: '/images/lp/feature-04-customer.webp' },
+    { id: 5, title: '電子カルテ', desc: '施術履歴・カラーレシピをデジタル化。スタッフ間の引継ぎもスムーズに。', image: '/images/lp/feature-05-karte.webp' },
+    { id: 6, title: 'EC連携', desc: 'サロン専用ECで物販収益も自動化。BeautyPassとも連携して動画ECにも対応。', image: '/images/lp/feature-06-ec.webp' },
+    { id: 7, title: 'マーケティング分析', desc: 'タブレットでも直感的に。来店傾向・売上推移を可視化して、次の打ち手を見える化。', image: '/images/lp/feature-07-marketing.webp' },
+    { id: 8, title: 'PC・スマホ両対応', desc: 'どのデバイスからでも、サロンの状況をリアルタイムで把握。', image: '/images/lp/feature-08-pc-dashboard.webp' },
+    { id: 9, title: 'システム連携', desc: 'Stripe・GA4・Resend・LINE──既存の業務ツールとシームレスに繋がる。', image: '/images/lp/feature-09-integration.webp' },
   ]
 
   return (
@@ -65,50 +65,31 @@ export default function FeaturesSection() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              {/* 画像またはグラデーション */}
-              {feat.image ? (
-                <div
+              {/* 画像表示(SVGはunoptimized) */}
+              <div
+                style={{
+                  width: '80px',
+                  minWidth: '80px',
+                  height: '80px',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  position: 'relative',
+                }}
+              >
+                <Image
+                  src={feat.image}
+                  alt={feat.title}
+                  width={80}
+                  height={80}
+                  loading="lazy"
                   style={{
-                    width: '80px',
-                    minWidth: '80px',
-                    height: '80px',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    position: 'relative',
+                    objectFit: 'cover',
+                    width: '100%',
+                    height: '100%',
                   }}
-                >
-                  <Image
-                    src={feat.image}
-                    alt={feat.title}
-                    width={80}
-                    height={80}
-                    loading="lazy"
-                    style={{
-                      objectFit: 'cover',
-                      width: '100%',
-                      height: '100%',
-                    }}
-                  />
-                </div>
-              ) : (
-                <div
-                  style={{
-                    width: '80px',
-                    minWidth: '80px',
-                    height: '80px',
-                    borderRadius: '12px',
-                    background: `linear-gradient(135deg, ${feat.color}40 0%, ${feat.color}20 100%)`,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '36px',
-                    fontWeight: 700,
-                    color: feat.color,
-                  }}
-                >
-                  #{feat.id.toString().padStart(2, '0')}
-                </div>
-              )}
+                  {...(feat.isSvg ? { unoptimized: true } : {})}
+                />
+              </div>
 
               <div>
                 <h3

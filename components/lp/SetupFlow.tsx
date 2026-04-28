@@ -1,56 +1,70 @@
+'use client'
+
+import Image from 'next/image'
+
 export default function SetupFlow() {
   const steps = [
-    { num: 1, title: '登録', desc: 'メールアドレスで簡単登録' },
-    { num: 2, title: '基本情報', desc: 'サロン情報を入力' },
-    { num: 3, title: 'HPB連携', desc: '既存HPB顧客を自動読み込み' },
-    { num: 4, title: '運用開始', desc: 'LINE予約をスタート' },
+    { num: '01', image: '/images/lp/setup-01.webp', title: 'お申し込み', desc: 'salonrink.com からお申し込み。最短当日にアカウント発行。' },
+    { num: '02', image: '/images/lp/setup-02.webp', title: 'カスタマイズ', desc: 'メニュー・営業時間・スタッフ情報を登録。サロン専用にカスタマイズ。' },
+    { num: '03', image: '/images/lp/setup-03.webp', title: 'テスト運用', desc: '実際に予約フローをテスト。問題ないことを確認。' },
+    { num: '04', image: '/images/lp/setup-04.webp', title: '本格運用開始', desc: 'お客様への告知でスタート。サポートチームが伴走します。' },
   ]
+
   return (
-    <section style={{ background: 'var(--sr-bg)', padding: '80px 20px' }}>
+    <section style={{ background: '#faf7f2', padding: '80px 20px' }}>
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         <h2
           style={{
             fontSize: 'clamp(28px, 6vw, 44px)',
             fontWeight: 700,
-            color: 'var(--sr-blue-pale-deepest)',
+            color: '#1a2c4f',
             textAlign: 'center',
-            marginBottom: '60px',
+            marginBottom: '16px',
           }}
         >
-          導入の流れ（10分で完了）
+          導入の流れ
         </h2>
+        <p
+          style={{
+            textAlign: 'center',
+            color: '#5a6878',
+            marginBottom: '60px',
+            fontSize: '16px',
+          }}
+        >
+          お申し込みから本格運用まで、最短1週間。
+        </p>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '20px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '24px',
           }}
         >
-          {steps.map((step, i) => (
-            <div key={i}>
-              <div
-                style={{
-                  background: 'linear-gradient(135deg, #ffd1dc 0%, #f0a0a0 100%)',
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '999px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#ffffff',
-                  fontSize: '28px',
-                  fontWeight: 700,
-                  marginBottom: '16px',
-                }}
-              >
-                {step.num}
+          {steps.map((step) => (
+            <div key={step.num} style={{ background: '#ffffff', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+              <div style={{ aspectRatio: '1/1', position: 'relative', overflow: 'hidden', background: '#f5f5f5' }}>
+                <Image
+                  src={step.image}
+                  alt={step.title}
+                  fill
+                  loading="lazy"
+                  style={{ objectFit: 'cover' }}
+                />
               </div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--sr-blue-pale-deepest)', marginBottom: '8px' }}>
-                {step.title}
-              </h3>
-              <p style={{ fontSize: '14px', color: 'var(--sr-text-soft)', margin: 0 }}>
-                {step.desc}
-              </p>
+              <div style={{ padding: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span style={{ fontSize: '18px', fontWeight: 700, color: '#d88896' }}>
+                    {step.num}
+                  </span>
+                  <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1a2c4f', margin: 0 }}>
+                    {step.title}
+                  </h3>
+                </div>
+                <p style={{ fontSize: '14px', color: '#5a6878', margin: 0, lineHeight: 1.6 }}>
+                  {step.desc}
+                </p>
+              </div>
             </div>
           ))}
         </div>

@@ -1,0 +1,251 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 680 1480" role="img" aria-labelledby="bfTitle bfDesc">
+<title id="bfTitle">SalonRink予約フロー全体像 - 8ステップ</title>
+<desc id="bfDesc">LINE友だち追加から予約完了・前日リマインドまでの8ステップを各画面のミニモックアップとともに示す</desc>
+<defs>
+<marker id="bf-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#1a2c4f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+<style>
+.bf-fs { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", sans-serif; }
+</style>
+</defs>
+
+<text x="40" y="42" class="bf-fs" font-size="20" font-weight="500" fill="#1a2c4f">予約までの流れ</text>
+<text x="40" y="66" class="bf-fs" font-size="13" fill="#5a6878">お客様も、サロンも、迷わずシンプルに。</text>
+
+<g transform="translate(40, 100)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">01</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">LINE友だち追加</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">サロンのQRコード or URLから</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">タップひとつで友だち登録完了</text>
+</g>
+
+<g transform="translate(280, 100)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.3"/>
+<rect x="40" y="30" width="80" height="80" rx="40" fill="#1a2c4f"/>
+<text x="80" y="78" text-anchor="middle" class="bf-fs" font-size="14" font-weight="500" fill="#ffffff">SalonRink</text>
+<rect x="30" y="130" width="100" height="32" rx="16" fill="#06C755"/>
+<text x="80" y="150" text-anchor="middle" class="bf-fs" font-size="12" font-weight="500" fill="#ffffff">友だち追加</text>
+<text x="80" y="190" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">キレイ鶴見店</text>
+</g>
+
+<g transform="translate(480, 100)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="40" rx="6" fill="#1a2c4f"/>
+<text x="80" y="34" text-anchor="middle" class="bf-fs" font-size="11" fill="#ffffff">SalonRink公式</text>
+<rect x="20" y="60" width="120" height="50" rx="8" fill="#FBEAF0"/>
+<text x="80" y="80" text-anchor="middle" class="bf-fs" font-size="10" fill="#72243E">いらっしゃいませ</text>
+<text x="80" y="98" text-anchor="middle" class="bf-fs" font-size="9" fill="#993556">ご予約はこちらから</text>
+<rect x="20" y="120" width="55" height="36" rx="6" fill="#1a2c4f"/>
+<text x="47" y="142" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#ffffff">予約する</text>
+<rect x="85" y="120" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
+<text x="112" y="142" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">予約確認</text>
+<rect x="20" y="166" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
+<text x="47" y="188" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">マイページ</text>
+<rect x="85" y="166" width="55" height="36" rx="6" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
+<text x="112" y="188" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">店舗情報</text>
+</g>
+
+<line x1="70" y1="345" x2="70" y2="380" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 380)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">02</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">メニュー選択</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">画像と価格を見ながらシンプル選択</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">カテゴリで絞り込みも可能</text>
+</g>
+
+<g transform="translate(380, 380)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
+<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">メニューを選ぶ</text>
+<rect x="15" y="48" width="130" height="48" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
+<rect x="20" y="54" width="36" height="36" rx="4" fill="#FBEAF0"/>
+<text x="64" y="68" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">カット+カラー</text>
+<text x="64" y="84" class="bf-fs" font-size="9" fill="#993556">¥8,800 / 90分</text>
+<rect x="15" y="104" width="130" height="48" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
+<rect x="20" y="110" width="36" height="36" rx="4" fill="#FBEAF0"/>
+<text x="64" y="124" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">カット+トリートメント</text>
+<text x="64" y="140" class="bf-fs" font-size="9" fill="#993556">¥6,500 / 60分</text>
+<rect x="15" y="160" width="130" height="48" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="1"/>
+<rect x="20" y="166" width="36" height="36" rx="4" fill="#ffffff"/>
+<text x="64" y="180" class="bf-fs" font-size="9" font-weight="500" fill="#72243E">カットのみ</text>
+<text x="64" y="196" class="bf-fs" font-size="9" fill="#993556">¥4,500 / 45分</text>
+</g>
+
+<line x1="70" y1="465" x2="70" y2="500" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 500)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">03</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">スタッフ指名(任意)</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">指名なしも選択可能</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">得意分野・経歴も確認できる</text>
+</g>
+
+<g transform="translate(380, 500)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
+<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">スタッフを選ぶ</text>
+<rect x="15" y="48" width="62" height="80" rx="6" fill="#ffffff" stroke="#D4537E" stroke-width="0.5"/>
+<rect x="22" y="55" width="48" height="48" rx="24" fill="#FBEAF0"/>
+<text x="46" y="118" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">スタッフA</text>
+<rect x="83" y="48" width="62" height="80" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="1"/>
+<rect x="90" y="55" width="48" height="48" rx="24" fill="#ffffff"/>
+<text x="114" y="118" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#72243E">スタッフB</text>
+<rect x="15" y="138" width="130" height="40" rx="6" fill="#ffffff" stroke="#5a6878" stroke-width="0.5" stroke-dasharray="3 2"/>
+<text x="80" y="162" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">指名なし(空いている人)</text>
+<rect x="15" y="186" width="130" height="22" rx="4" fill="#ffffff"/>
+<text x="80" y="201" text-anchor="middle" class="bf-fs" font-size="9" fill="#993556">指名料 ¥500</text>
+</g>
+
+<line x1="70" y1="585" x2="70" y2="620" stroke="#1a2c4f" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 620)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#993556">04</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">日時選択</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">カレンダーから空き枠を一目で確認</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">15分単位で細かく調整可能</text>
+</g>
+
+<g transform="translate(380, 620)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
+<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">日時を選ぶ</text>
+<text x="80" y="56" text-anchor="middle" class="bf-fs" font-size="10" fill="#1a2c4f">2026年5月</text>
+<g class="bf-fs" font-size="9" fill="#5a6878">
+<text x="25" y="78">月</text><text x="50" y="78">火</text><text x="75" y="78">水</text><text x="100" y="78">木</text><text x="125" y="78">金</text>
+</g>
+<g class="bf-fs" font-size="9" fill="#1a2c4f">
+<text x="25" y="98">5</text><text x="50" y="98">6</text><text x="75" y="98">7</text><text x="100" y="98">8</text><text x="125" y="98">9</text>
+</g>
+<g>
+<circle cx="25" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<circle cx="50" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<circle cx="75" cy="110" r="8" fill="#D4537E"/>
+<circle cx="100" cy="110" r="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<circle cx="125" cy="110" r="8" fill="#e5e5e5"/>
+</g>
+<text x="80" y="148" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#72243E">5/7(水)</text>
+<g class="bf-fs" font-size="9">
+<rect x="20" y="160" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="39" y="174" text-anchor="middle" fill="#993556">10:00</text>
+<rect x="62" y="160" width="38" height="22" rx="4" fill="#D4537E"/>
+<text x="81" y="174" text-anchor="middle" fill="#ffffff">10:30</text>
+<rect x="104" y="160" width="38" height="22" rx="4" fill="#e5e5e5"/>
+<text x="123" y="174" text-anchor="middle" fill="#999">11:00</text>
+<rect x="20" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="39" y="200" text-anchor="middle" fill="#993556">11:30</text>
+<rect x="62" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="81" y="200" text-anchor="middle" fill="#993556">12:00</text>
+<rect x="104" y="186" width="38" height="22" rx="4" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="123" y="200" text-anchor="middle" fill="#993556">12:30</text>
+</g>
+</g>
+
+<line x1="70" y1="705" x2="70" y2="740" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 740)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">05</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">予約内容確認</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">メニュー・スタッフ・日時を一覧表示</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">要望のコメントも記入可能</text>
+</g>
+
+<g transform="translate(380, 740)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="28" rx="6" fill="#1a2c4f"/>
+<text x="80" y="28" text-anchor="middle" class="bf-fs" font-size="10" fill="#ffffff">予約内容を確認</text>
+<text x="20" y="58" class="bf-fs" font-size="9" fill="#5a6878">日時</text>
+<text x="20" y="74" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">5月7日(水) 10:30</text>
+<line x1="20" y1="84" x2="140" y2="84" stroke="#e5e5e5" stroke-width="0.5"/>
+<text x="20" y="100" class="bf-fs" font-size="9" fill="#5a6878">メニュー</text>
+<text x="20" y="116" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">カット+カラー ¥8,800</text>
+<line x1="20" y1="126" x2="140" y2="126" stroke="#e5e5e5" stroke-width="0.5"/>
+<text x="20" y="142" class="bf-fs" font-size="9" fill="#5a6878">スタッフ</text>
+<text x="20" y="158" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">スタッフB(指名)</text>
+<rect x="15" y="180" width="130" height="28" rx="6" fill="#1a2c4f"/>
+<text x="80" y="198" text-anchor="middle" class="bf-fs" font-size="11" font-weight="500" fill="#ffffff">この内容で予約する</text>
+</g>
+
+<line x1="70" y1="825" x2="70" y2="860" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 860)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">06</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">予約完了通知</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">即座にLINEへ確定通知が届く</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">予約番号も自動発行</text>
+</g>
+
+<g transform="translate(380, 860)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.2"/>
+<rect x="20" y="30" width="130" height="120" rx="10" fill="#ffffff" stroke="#534AB7" stroke-width="0.5"/>
+<circle cx="40" cy="50" r="10" fill="#534AB7"/>
+<text x="40" y="54" text-anchor="middle" class="bf-fs" font-size="10" font-weight="500" fill="#ffffff">✓</text>
+<text x="60" y="55" class="bf-fs" font-size="11" font-weight="500" fill="#1a2c4f">予約完了</text>
+<text x="30" y="80" class="bf-fs" font-size="9" fill="#5a6878">予約番号</text>
+<text x="30" y="94" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">SR-20260507-001</text>
+<text x="30" y="112" class="bf-fs" font-size="9" fill="#5a6878">日時</text>
+<text x="30" y="126" class="bf-fs" font-size="10" font-weight="500" fill="#1a2c4f">5月7日(水) 10:30</text>
+<text x="30" y="144" class="bf-fs" font-size="9" fill="#534AB7">詳細を見る ›</text>
+<text x="80" y="180" text-anchor="middle" class="bf-fs" font-size="10" fill="#5a6878">SalonRink公式</text>
+</g>
+
+<line x1="70" y1="945" x2="70" y2="980" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 980)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">07</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">前日リマインド</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">お客様への自動メッセージ配信</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">無断キャンセルを大幅に削減</text>
+</g>
+
+<g transform="translate(380, 980)">
+<rect x="0" y="0" width="160" height="220" rx="20" fill="#ffffff" stroke="#1a2c4f" stroke-width="1"/>
+<rect x="10" y="10" width="140" height="200" rx="10" fill="#9DBDDB" opacity="0.2"/>
+<circle cx="30" cy="40" r="14" fill="#1a2c4f"/>
+<text x="30" y="44" text-anchor="middle" class="bf-fs" font-size="9" font-weight="500" fill="#ffffff">SR</text>
+<rect x="48" y="26" width="100" height="80" rx="10" fill="#ffffff" stroke="#1a2c4f" stroke-width="0.5"/>
+<text x="58" y="44" class="bf-fs" font-size="9" font-weight="500" fill="#1a2c4f">明日のご予約</text>
+<text x="58" y="58" class="bf-fs" font-size="8" fill="#5a6878">5月7日(水)</text>
+<text x="58" y="70" class="bf-fs" font-size="8" fill="#5a6878">10:30〜</text>
+<text x="58" y="86" class="bf-fs" font-size="8" fill="#1a2c4f">スタッフB</text>
+<text x="58" y="98" class="bf-fs" font-size="8" fill="#1a2c4f">カット+カラー</text>
+<rect x="48" y="120" width="100" height="28" rx="6" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="98" y="138" text-anchor="middle" class="bf-fs" font-size="10" fill="#993556">予約変更・キャンセル</text>
+<text x="48" y="170" class="bf-fs" font-size="9" fill="#5a6878">5分前にお越しください</text>
+<text x="48" y="184" class="bf-fs" font-size="9" fill="#5a6878">お待ちしております</text>
+</g>
+
+<line x1="70" y1="1065" x2="70" y2="1100" stroke="#534AB7" stroke-width="1.5" marker-end="url(#bf-arr)"/>
+
+<g transform="translate(40, 1100)">
+<rect x="0" y="0" width="60" height="60" rx="30" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="30" y="38" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#3C3489">08</text>
+<text x="80" y="22" class="bf-fs" font-size="15" font-weight="500" fill="#1a2c4f">来店・施術後フォロー</text>
+<text x="80" y="42" class="bf-fs" font-size="12" fill="#5a6878">マイページで予約履歴を確認</text>
+<text x="80" y="58" class="bf-fs" font-size="12" fill="#5a6878">次回予約も同じLINEから完結</text>
+</g>
+
+<rect x="40" y="1200" width="600" height="120" rx="12" fill="#1a2c4f"/>
+<text x="340" y="1234" text-anchor="middle" class="bf-fs" font-size="14" font-weight="500" fill="#ffffff">SalonRinkで予約フローを完全自動化</text>
+<line x1="290" y1="1248" x2="390" y2="1248" stroke="#9DBDDB" stroke-width="0.5"/>
+<text x="180" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">お客様の操作</text>
+<text x="180" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">約30秒</text>
+<text x="340" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">受付対応</text>
+<text x="340" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">24時間</text>
+<text x="500" y="1276" text-anchor="middle" class="bf-fs" font-size="11" fill="#9DBDDB">サロンの操作</text>
+<text x="500" y="1296" text-anchor="middle" class="bf-fs" font-size="18" font-weight="500" fill="#ffffff">ゼロ</text>
+
+<rect x="40" y="1340" width="600" height="60" rx="8" fill="#FBEAF0" stroke="#D4537E" stroke-width="0.5"/>
+<text x="340" y="1370" text-anchor="middle" class="bf-fs" font-size="13" font-weight="500" fill="#72243E">月額¥980〜・初期費用無料・最短当日からスタート</text>
+<text x="340" y="1390" text-anchor="middle" class="bf-fs" font-size="11" fill="#993556">salonrink.com</text>
+</svg>

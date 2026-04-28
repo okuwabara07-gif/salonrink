@@ -14,6 +14,7 @@ import SetupFlow from '@/components/lp/SetupFlow'
 import FAQSection from '@/components/lp/FAQSection'
 import ResourceForm from '@/components/lp/ResourceForm'
 import LineContact from '@/components/lp/LineContact'
+import SupportSection from '@/components/lp/SupportSection'
 import FooterCTA from '@/components/lp/FooterCTA'
 import Footer from '@/components/lp/Footer'
 
@@ -44,6 +45,7 @@ export default function Home() {
       <PricingSection />
       <CaseStudySection />
       <SetupFlow />
+      <SupportSection />
       <FAQSection />
       <ResourceForm />
       <LineContact />

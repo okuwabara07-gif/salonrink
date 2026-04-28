@@ -1,47 +1,60 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function FooterCTA() {
   return (
-    <section
-      style={{
-        background: 'linear-gradient(135deg, var(--sr-blue-pale-deepest) 0%, var(--sr-blue-pale-dark) 100%)',
-        padding: '80px 20px',
-        textAlign: 'center',
-      }}
-    >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <section style={{ position: 'relative', padding: '80px 20px', overflow: 'hidden' }}>
+      {/* 背景画像 */}
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
+        <Image
+          src="/images/lp/footer-cta.webp"
+          alt=""
+          fill
+          style={{ objectFit: 'cover', opacity: 0.5 }}
+          aria-hidden="true"
+        />
+        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255, 255, 255, 0.7)' }} />
+      </div>
+
+      {/* コンテンツ */}
+      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
+        <p style={{ fontSize: '14px', fontWeight: 600, color: '#d88896', marginBottom: '12px' }}>
+          GET STARTED
+        </p>
         <h2
           style={{
             fontSize: 'clamp(28px, 6vw, 44px)',
             fontWeight: 700,
-            color: '#ffffff',
-            marginBottom: '24px',
+            color: '#1a2c4f',
+            marginBottom: '16px',
+            lineHeight: 1.4,
           }}
         >
-          今すぐ無料で始めましょう
+          サロン経営の新しい軸を、<br />今日から始める。
         </h2>
         <p
           style={{
-            fontSize: '18px',
-            color: 'rgba(255,255,255,0.95)',
+            fontSize: '16px',
+            color: '#5a6878',
             marginBottom: '40px',
           }}
         >
-          14日間の無料トライアル。クレジットカード不要。
+          月額¥980〜・初期費用無料・最短当日からスタート
         </p>
         <a
-          href="/register"
+          href="/signup"
           style={{
             display: 'inline-block',
-            background: 'linear-gradient(135deg, #ffd1dc 0%, #f0a0a0 100%)',
-            color: '#ffffff',
-            padding: '18px 50px',
+            padding: '16px 40px',
             borderRadius: '999px',
+            fontWeight: 600,
+            fontSize: '16px',
             textDecoration: 'none',
-            fontWeight: 700,
-            fontSize: '18px',
-            boxShadow: '0 6px 20px rgba(240,160,160,0.4)',
-            transition: 'all 0.3s',
+            color: '#ffffff',
+            backgroundColor: '#1a2c4f',
+            transition: 'transform 0.3s',
+            boxShadow: '0 4px 12px rgba(26, 44, 79, 0.2)',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'scale(1.05)'
@@ -50,7 +63,7 @@ export default function FooterCTA() {
             e.currentTarget.style.transform = 'scale(1)'
           }}
         >
-          無料登録
+          無料で始める
         </a>
       </div>
     </section>
