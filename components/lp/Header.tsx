@@ -28,13 +28,32 @@ export default function Header() {
         {/* Logo */}
         <div
           style={{
-            fontSize: '24px',
-            fontWeight: 600,
-            color: '#ffffff',
-            letterSpacing: '2px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
           }}
         >
-          SalonRink
+          <div
+            style={{
+              fontSize: '24px',
+              fontWeight: 600,
+              color: '#ffffff',
+              letterSpacing: '2px',
+            }}
+          >
+            SalonRink
+          </div>
+          <div
+            style={{
+              fontSize: '11px',
+              fontWeight: 400,
+              color: 'rgba(255, 255, 255, 0.85)',
+              letterSpacing: '0.5px',
+              lineHeight: 1.3,
+            }}
+          >
+            フリーランスから始められる、サロン経営の新しい軸
+          </div>
         </div>
 
         {/* Desktop Nav */}
