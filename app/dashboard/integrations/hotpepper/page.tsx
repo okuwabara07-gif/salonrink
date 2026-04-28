@@ -5,12 +5,15 @@ import { createClient } from '@/lib/supabase/client'
 export default function HotpepperPage() {
   const [salonId, setSalonId] = useState<string | null>(null)
   const [integration, setIntegration] = useState<any>(null)
+  const [credentialsExist, setCredentialsExist] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [syncing, setSyncing] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const [formData, setFormData] = useState({
-    ical_url: '',
+    username: '',
+    password: '',
     menu_mapping: 'auto',
   })
 
@@ -43,10 +46,21 @@ export default function HotpepperPage() {
 
       if (integrationData) {
         setIntegration(integrationData)
-        setFormData({
-          ical_url: integrationData.ical_url || '',
+        setFormData(prev => ({
+          ...prev,
           menu_mapping: integrationData.menu_mapping?.[0]?.type || 'auto',
-        })
+        }))
+      }
+
+      // 認証情報の有無を確認
+      const { data: credentials } = await supabase
+        .from('salon_hpb_credentials')
+        .select('id')
+        .eq('salon_id', salon.id)
+        .maybeSingle()
+
+      if (credentials) {
+        setCredentialsExist(true)
       }
 
       setLoading(false)
@@ -67,32 +81,52 @@ export default function HotpepperPage() {
     setSaving(true)
     setMessage(null)
 
-    const supabase = await createClient()
+    try {
+      // SALON BOARD 認証情報を保存
+      const credResponse = await fetch('/api/salons/hpb-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hpb_login_id: formData.username,
+          hpb_password: formData.password,
+          hpb_salon_id: salonId,
+        }),
+      })
 
-    // iCal URLの検証
-    const trimmedUrl = formData.ical_url.trim()
-    if (trimmedUrl && !/^(webcal|https?):\/\//.test(trimmedUrl)) {
-      setMessage({ ok: false, text: 'webcal:// または https:// で始まるURLを入力してください' })
+      if (!credResponse.ok) {
+        const error = await credResponse.json()
+        setMessage({ ok: false, text: `エラー: ${error.error}` })
+        setSaving(false)
+        return
+      }
+
+      setCredentialsExist(true)
+
+      // HPB連携情報を更新
+      const supabase = await createClient()
+      const { error } = await supabase
+        .from('hpb_integrations')
+        .upsert({
+          salon_id: salonId,
+          menu_mapping: [{ type: formData.menu_mapping }],
+          active: true,
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'salon_id' })
+
       setSaving(false)
-      return
-    }
-
-    // 更新または作成
-    const { error } = await supabase
-      .from('hpb_integrations')
-      .upsert({
-        salon_id: salonId,
-        ical_url: trimmedUrl,
-        menu_mapping: [{ type: formData.menu_mapping }],
-        active: true,
-        updated_at: new Date().toISOString(),
-      }, { onConflict: 'salon_id' })
-
-    setSaving(false)
-    if (error) {
-      setMessage({ ok: false, text: `エラー: ${error.message}` })
-    } else {
-      setMessage({ ok: true, text: '保存しました' })
+      if (error) {
+        setMessage({ ok: false, text: `エラー: ${error.message}` })
+      } else {
+        setMessage({ ok: true, text: '保存しました' })
+        setFormData(prev => ({
+          ...prev,
+          username: '',
+          password: '',
+        }))
+      }
+    } catch (error) {
+      setMessage({ ok: false, text: 'エラーが発生しました' })
+      setSaving(false)
     }
   }
 
@@ -156,17 +190,17 @@ export default function HotpepperPage() {
         padding: 32,
         boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
       }}>
-        {/* iCal URL */}
+        {/* SALON BOARD ログインID */}
         <div style={{ marginBottom: 24 }}>
           <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#666', marginBottom: 8 }}>
-            iCal URL
+            SALON BOARD ログインID
           </label>
           <input
             type="text"
-            name="ical_url"
-            value={formData.ical_url}
+            name="username"
+            value={formData.username}
             onChange={handleChange}
-            placeholder="webcal://... または https://..."
+            placeholder="通常、メールアドレス"
             style={{
               width: '100%',
               padding: '12px 14px',
@@ -174,12 +208,58 @@ export default function HotpepperPage() {
               border: '1px solid #E0D8D0',
               fontSize: 14,
               boxSizing: 'border-box',
-              fontFamily: 'monospace',
-              marginBottom: 8,
+              fontFamily: 'inherit',
             }}
           />
           <p style={{ fontSize: 11, color: '#888', margin: '8px 0 0 0' }}>
-            ホットペッパーのカレンダーから取得した iCal URL を貼り付けてください
+            サロンマネージャーへのログインに使用するIDです
+          </p>
+        </div>
+
+        {/* SALON BOARD パスワード */}
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#666', marginBottom: 8 }}>
+            SALON BOARD パスワード
+          </label>
+          <div style={{ position: 'relative' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="パスワード"
+              style={{
+                width: '100%',
+                padding: '12px 14px',
+                paddingRight: 40,
+                borderRadius: 8,
+                border: '1px solid #E0D8D0',
+                fontSize: 14,
+                boxSizing: 'border-box',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#999',
+                fontSize: 12,
+                padding: 4,
+              }}
+            >
+              {showPassword ? '非表示' : '表示'}
+            </button>
+          </div>
+          <p style={{ fontSize: 11, color: '#888', margin: '8px 0 0 0' }}>
+            AES-256-GCMで暗号化されて保存されます
           </p>
         </div>
 
@@ -272,7 +352,7 @@ export default function HotpepperPage() {
           <button
             type="button"
             onClick={handleSync}
-            disabled={syncing || !formData.ical_url}
+            disabled={syncing || !credentialsExist}
             style={{
               flex: 1,
               padding: '14px',
@@ -282,8 +362,8 @@ export default function HotpepperPage() {
               color: '#B8966A',
               fontSize: 14,
               fontWeight: 500,
-              cursor: (syncing || !formData.ical_url) ? 'not-allowed' : 'pointer',
-              opacity: (syncing || !formData.ical_url) ? 0.5 : 1,
+              cursor: (syncing || !credentialsExist) ? 'not-allowed' : 'pointer',
+              opacity: (syncing || !credentialsExist) ? 0.5 : 1,
               transition: 'all 0.2s ease',
             }}
           >
@@ -303,7 +383,7 @@ export default function HotpepperPage() {
         )}
       </form>
 
-      {/* ヘルプテキスト */}
+      {/* ご利用上の注意 */}
       <div style={{
         background: '#E8DCD0',
         borderRadius: 12,
@@ -311,14 +391,22 @@ export default function HotpepperPage() {
         marginTop: 24,
       }}>
         <p style={{ fontSize: 12, color: '#1A1018', margin: '0 0 8px 0', fontWeight: 500 }}>
-          📌 iCal URL の取得方法
+          📌 ご利用上の注意
         </p>
-        <ol style={{ fontSize: 12, color: '#666', margin: '0', paddingLeft: 20, lineHeight: 1.8 }}>
-          <li>ホットペッパー Beauty に登録</li>
-          <li>お店の予約カレンダーを開く</li>
-          <li>iCal 形式の URL をコピー</li>
-          <li>上の入力欄に貼り付け</li>
-        </ol>
+        <ul style={{ fontSize: 12, color: '#666', margin: '0', paddingLeft: 20, lineHeight: 1.8 }}>
+          <li style={{ marginBottom: 6 }}>
+            SALON BOARD の利用規約上、自動取得による連携は推奨されていません
+          </li>
+          <li style={{ marginBottom: 6 }}>
+            1時間ごとに自動同期されます
+          </li>
+          <li style={{ marginBottom: 6 }}>
+            認証情報はAES-256-GCMで暗号化して保存されます
+          </li>
+          <li>
+            Cookie変更時は再度ログイン情報を登録してください
+          </li>
+        </ul>
       </div>
     </main>
   )
