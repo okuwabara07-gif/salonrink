@@ -1,5 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 640" width="320" height="640" role="img" aria-label="SalonRink スマホダッシュボード">
-  <!-- 背景透過 -->
   <defs>
     <linearGradient id="phoneFrame" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#2a3d5f"/>
@@ -18,9 +17,9 @@
       <stop offset="100%" stop-color="#9DBDDB" stop-opacity="0.5"/>
     </linearGradient>
     <filter id="phoneShadow" x="-20%" y="-10%" width="140%" height="120%">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="12"/>
-      <feOffset dx="0" dy="8"/>
-      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14"/>
+      <feOffset dx="0" dy="10"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.22"/></feComponentTransfer>
       <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
   </defs>
@@ -37,21 +36,18 @@
   <!-- ステータスバー -->
   <text x="42" y="56" font-family="-apple-system, sans-serif" font-size="11" font-weight="600" fill="#1a2c4f">9:41</text>
   <g transform="translate(245, 48)">
-    <!-- Wi-Fi -->
     <path d="M 0 4 Q 6 0 12 4" stroke="#1a2c4f" stroke-width="1.5" fill="none"/>
     <path d="M 2 6 Q 6 3 10 6" stroke="#1a2c4f" stroke-width="1.5" fill="none"/>
     <circle cx="6" cy="8" r="1" fill="#1a2c4f"/>
-    <!-- バッテリー -->
     <rect x="20" y="3" width="20" height="8" rx="2" fill="none" stroke="#1a2c4f" stroke-width="1"/>
     <rect x="22" y="5" width="14" height="4" fill="#1a2c4f"/>
     <rect x="40" y="5" width="2" height="4" fill="#1a2c4f"/>
   </g>
 
-  <!-- ヘッダー -->
+  <!-- ヘッダー: Salon Lumière -->
   <g transform="translate(28, 78)">
     <text x="0" y="14" font-family="-apple-system, sans-serif" font-size="11" fill="#5a6878">こんにちは</text>
-    <text x="0" y="34" font-family="-apple-system, sans-serif" font-size="17" font-weight="700" fill="#1a2c4f">キレイ鶴見店</text>
-    <!-- 通知ベル -->
+    <text x="0" y="34" font-family="Georgia, 'Times New Roman', serif" font-size="17" font-weight="700" fill="#1a2c4f" letter-spacing="0.3">Salon Lumière</text>
     <g transform="translate(238, 14)">
       <circle cx="10" cy="10" r="16" fill="#FBEAF0"/>
       <path d="M 10 5 C 7 5 5 7 5 10 L 5 13 L 4 14 L 16 14 L 15 13 L 15 10 C 15 7 13 5 10 5 Z" fill="#1a2c4f"/>
@@ -66,7 +62,6 @@
     <text x="14" y="56" font-family="-apple-system, sans-serif" font-size="32" font-weight="700" fill="#1a2c4f">8</text>
     <text x="48" y="56" font-family="-apple-system, sans-serif" font-size="13" fill="#5a6878">件</text>
     <text x="14" y="74" font-family="-apple-system, sans-serif" font-size="10" fill="#9ba8b8">前週比 +2件</text>
-    <!-- 売上 -->
     <rect x="140" y="14" width="2" height="56" fill="#ffffff" opacity="0.6"/>
     <text x="156" y="22" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#5a6878">本日の売上</text>
     <text x="156" y="56" font-family="-apple-system, sans-serif" font-size="20" font-weight="700" fill="#1a2c4f">¥86,400</text>
@@ -119,15 +114,12 @@
   <g transform="translate(28, 478)">
     <rect width="264" height="60" rx="12" fill="url(#cardGrad2)" opacity="0.7"/>
     <text x="14" y="22" font-family="-apple-system, sans-serif" font-size="10" font-weight="600" fill="#5a6878">クイックアクション</text>
-    <!-- ボタン1 -->
     <rect x="14" y="30" width="74" height="22" rx="11" fill="#ffffff"/>
     <text x="51" y="44" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="middle">+ 新規予約</text>
-    <!-- ボタン2 -->
     <rect x="94" y="30" width="74" height="22" rx="11" fill="#ffffff"/>
-    <text x="131" y="44" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="middle">📋 カルテ</text>
-    <!-- ボタン3 -->
+    <text x="131" y="44" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="middle">カルテ</text>
     <rect x="174" y="30" width="74" height="22" rx="11" fill="#ffffff"/>
-    <text x="211" y="44" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="middle">💬 LINE</text>
+    <text x="211" y="44" font-family="-apple-system, sans-serif" font-size="9" font-weight="600" fill="#1a2c4f" text-anchor="middle">LINE通知</text>
   </g>
 
   <!-- 下部タブバー(5項目) -->
@@ -135,34 +127,25 @@
     <rect width="284" height="64" rx="0" fill="#ffffff"/>
     <rect width="284" height="1" fill="#f0e8df"/>
     
-    <!-- タブ1: ホーム(アクティブ) -->
     <g transform="translate(0, 8)">
       <path d="M 28 18 L 36 12 L 44 18 L 44 28 L 28 28 Z" fill="#d88896"/>
       <text x="36" y="44" font-family="-apple-system, sans-serif" font-size="8" font-weight="600" fill="#d88896" text-anchor="middle">ホーム</text>
     </g>
-    
-    <!-- タブ2: 予約 -->
     <g transform="translate(57, 8)">
       <rect x="28" y="14" width="16" height="14" rx="2" fill="none" stroke="#9ba8b8" stroke-width="1.5"/>
       <line x1="28" y1="20" x2="44" y2="20" stroke="#9ba8b8" stroke-width="1.5"/>
       <text x="36" y="44" font-family="-apple-system, sans-serif" font-size="8" fill="#9ba8b8" text-anchor="middle">予約</text>
     </g>
-    
-    <!-- タブ3: 顧客 -->
     <g transform="translate(114, 8)">
       <circle cx="36" cy="18" r="4" fill="none" stroke="#9ba8b8" stroke-width="1.5"/>
       <path d="M 28 30 Q 36 22 44 30" fill="none" stroke="#9ba8b8" stroke-width="1.5"/>
       <text x="36" y="44" font-family="-apple-system, sans-serif" font-size="8" fill="#9ba8b8" text-anchor="middle">顧客</text>
     </g>
-    
-    <!-- タブ4: 連携 -->
     <g transform="translate(171, 8)">
       <circle cx="32" cy="20" r="3.5" fill="none" stroke="#9ba8b8" stroke-width="1.5"/>
       <circle cx="40" cy="20" r="3.5" fill="none" stroke="#9ba8b8" stroke-width="1.5"/>
       <text x="36" y="44" font-family="-apple-system, sans-serif" font-size="8" fill="#9ba8b8" text-anchor="middle">連携</text>
     </g>
-    
-    <!-- タブ5: その他 -->
     <g transform="translate(228, 8)">
       <circle cx="30" cy="20" r="1.5" fill="#9ba8b8"/>
       <circle cx="36" cy="20" r="1.5" fill="#9ba8b8"/>
@@ -171,6 +154,5 @@
     </g>
   </g>
 
-  <!-- ホームインジケーター -->
   <rect x="125" y="618" width="70" height="4" rx="2" fill="#1a2c4f" opacity="0.4"/>
 </svg>
