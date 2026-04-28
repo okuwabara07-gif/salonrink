@@ -10,11 +10,11 @@ export default function SupportSection() {
           {/* 左: 画像 */}
           <div style={{ borderRadius: '16px', overflow: 'hidden', order: 1 }}>
             <Image
-              src="/images/lp/feature-11-support.webp"
-              alt="SalonRinkサポート体制"
+              src="/images/lp/support-consultation.jpg"
+              alt="美容室での笑顔のサロン相談シーン"
               width={600}
-              height={600}
-              style={{ width: '100%', height: 'auto', display: 'block' }}
+              height={900}
+              style={{ width: '100%', height: 'auto', display: 'block', objectFit: 'cover' }}
             />
           </div>
 
