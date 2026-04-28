@@ -96,7 +96,7 @@ export default function CaseStudySection() {
 
               <div style={{ display: 'flex', gap: '16px' }}>
                 <a
-                  href="#contact"
+                  href="#case-study"
                   style={{
                     display: 'inline-block',
                     background: 'var(--sr-blue-pale-deepest)',

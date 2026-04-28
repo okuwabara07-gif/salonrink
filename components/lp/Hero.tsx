@@ -147,6 +147,9 @@ export default function Hero() {
                 無料で始める（14日間）
               </a>
               <button
+                onClick={() => {
+                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
+                }}
                 style={{
                   background: 'rgba(255,255,255,0.5)',
                   backdropFilter: 'blur(8px)',

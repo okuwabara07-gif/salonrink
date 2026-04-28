@@ -43,7 +43,7 @@ export default function FooterCTA() {
           月額¥980〜・初期費用無料・最短当日からスタート
         </p>
         <a
-          href="/signup"
+          href="/register"
           style={{
             display: 'inline-block',
             padding: '16px 40px',
