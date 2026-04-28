@@ -25,54 +25,52 @@ export default function MeritComparison() {
   ]
 
   return (
-    <section
-      style={{
-        background: 'linear-gradient(135deg, #b8d4e8 0%, #c8d4e0 100%)',
-        padding: '80px 20px',
-      }}
-    >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <section className="bg-gradient-to-b from-blue-100 to-blue-50 py-20 px-4 relative overflow-hidden">
+      {/* 男性画像（左端、絶対配置） */}
+      <div className="absolute left-0 bottom-0 w-1/4 md:w-1/5 hidden md:block h-full">
+        <Image
+          src="/images/lp/winwin-salon-male.jpg"
+          alt="美容師（サロン側）"
+          fill
+          className="object-cover object-right"
+          priority
+        />
+      </div>
+
+      {/* 女性画像（右端、絶対配置） */}
+      <div className="absolute right-0 bottom-0 w-1/4 md:w-1/5 hidden md:block h-full">
+        <Image
+          src="/images/lp/winwin-customer-female.jpg"
+          alt="お客様"
+          fill
+          className="object-cover object-left"
+          priority
+        />
+      </div>
+
+      {/* 中央コンテンツ */}
+      <div className="relative z-10 max-w-3xl mx-auto">
         <h2
+          className="text-3xl md:text-4xl font-bold text-white text-center mb-12"
           style={{
             fontSize: 'clamp(28px, 6vw, 44px)',
             fontWeight: 700,
             color: '#ffffff',
-            textAlign: 'center',
-            marginBottom: '60px',
+            marginBottom: '48px',
           }}
         >
           WIN-WINの関係を実現
         </h2>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '40px',
-          }}
-        >
-          {/* サロン側のメリット カラム */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          {/* サロン側のメリット */}
           <div>
-            {/* 画像 */}
-            <div className="flex justify-center mb-6">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white/30 ring-4 ring-white/50 shadow-lg">
-                <Image
-                  src="/images/lp/winwin-salon-male.jpg"
-                  alt="美容師（サロン側）"
-                  fill
-                  className="object-cover"
-                  style={{ objectPosition: "center 30%" }}
-                />
-              </div>
-            </div>
-
             <h3
               style={{
                 fontSize: '20px',
                 fontWeight: 700,
                 color: '#ffffff',
                 marginBottom: '24px',
-                textAlign: 'center',
               }}
             >
               {merits[0].title}
@@ -110,28 +108,14 @@ export default function MeritComparison() {
             </ul>
           </div>
 
-          {/* お客様側のメリット カラム */}
+          {/* お客様側のメリット */}
           <div>
-            {/* 画像 */}
-            <div className="flex justify-center mb-6">
-              <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden bg-white/30 ring-4 ring-white/50 shadow-lg">
-                <Image
-                  src="/images/lp/winwin-customer-female.jpg"
-                  alt="お客様"
-                  fill
-                  className="object-cover"
-                  style={{ objectPosition: "center 20%" }}
-                />
-              </div>
-            </div>
-
             <h3
               style={{
                 fontSize: '20px',
                 fontWeight: 700,
                 color: '#ffffff',
                 marginBottom: '24px',
-                textAlign: 'center',
               }}
             >
               {merits[1].title}
