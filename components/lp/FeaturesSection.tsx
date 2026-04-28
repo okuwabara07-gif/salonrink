@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function FeaturesSection() {
   const features = [
     { id: 1, title: '業界最安 ¥980〜', desc: '充実した機能を最安値で', color: '#ffe89a' },
@@ -7,7 +9,7 @@ export default function FeaturesSection() {
     { id: 3, title: 'LINE予約・アプリ不要', desc: 'LINEミニアプリで簡単予約', color: '#7bca9c' },
     { id: 4, title: '前日リマインド自動', desc: '全プラン共通で来店率UP', color: '#ffd1dc' },
     { id: 5, title: '顧客カルテ管理', desc: '施術履歴・処方レシピ完全記録', color: '#9dbddb' },
-    { id: 6, title: '店販EC', desc: 'LINE上での商品販売', color: '#b8e8c8' },
+    { id: 6, title: '店販EC', desc: 'LINE上での商品販売', image: '/images/lp/feature-06-ec.webp' },
     { id: 7, title: 'クーポン配信', desc: 'セグメント配信で効果最大化', color: '#f0a0a0' },
     { id: 8, title: 'ポイントカード', desc: 'デジタルポイントで再来店促進', color: '#ffe89a' },
     { id: 9, title: '動画付き商品紹介', desc: '【NEW】LINE上で動画配信可能', color: '#ffd1dc' },
@@ -63,24 +65,50 @@ export default function FeaturesSection() {
                 e.currentTarget.style.boxShadow = 'none'
               }}
             >
-              {/* ダミー画像 */}
-              <div
-                style={{
-                  width: '80px',
-                  minWidth: '80px',
-                  height: '80px',
-                  borderRadius: '12px',
-                  background: `linear-gradient(135deg, ${feat.color}40 0%, ${feat.color}20 100%)`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '36px',
-                  fontWeight: 700,
-                  color: feat.color,
-                }}
-              >
-                #{feat.id.toString().padStart(2, '0')}
-              </div>
+              {/* 画像またはグラデーション */}
+              {feat.image ? (
+                <div
+                  style={{
+                    width: '80px',
+                    minWidth: '80px',
+                    height: '80px',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    position: 'relative',
+                  }}
+                >
+                  <Image
+                    src={feat.image}
+                    alt={feat.title}
+                    width={80}
+                    height={80}
+                    loading="lazy"
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: '100%',
+                    }}
+                  />
+                </div>
+              ) : (
+                <div
+                  style={{
+                    width: '80px',
+                    minWidth: '80px',
+                    height: '80px',
+                    borderRadius: '12px',
+                    background: `linear-gradient(135deg, ${feat.color}40 0%, ${feat.color}20 100%)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '36px',
+                    fontWeight: 700,
+                    color: feat.color,
+                  }}
+                >
+                  #{feat.id.toString().padStart(2, '0')}
+                </div>
+              )}
 
               <div>
                 <h3

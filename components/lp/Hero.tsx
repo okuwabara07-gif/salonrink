@@ -1,27 +1,39 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function Hero() {
   return (
     <section
       style={{
-        background: 'linear-gradient(135deg, #b8d4e8 0%, #9dbddb 100%)',
-        padding: '80px 20px',
-        textAlign: 'center',
         position: 'relative',
+        minHeight: '600px',
+        display: 'flex',
+        alignItems: 'center',
         overflow: 'hidden',
       }}
     >
-      {/* ダミー背景画像 */}
+      {/* 背景画像 */}
+      <Image
+        src="/images/lp/hero-salon.webp"
+        alt="明るい美容室の内観"
+        fill
+        priority
+        style={{
+          objectFit: 'cover',
+        }}
+      />
+
+      {/* ペールトーン白半透明オーバーレイ */}
       <div
         style={{
           position: 'absolute',
           top: 0,
+          left: 0,
           right: 0,
-          width: '40%',
-          height: '100%',
-          background: 'linear-gradient(135deg, #c8d4e0 0%, #b4c0d0 100%)',
-          opacity: 0.3,
-          zIndex: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(184, 212, 232, 0.7) 0%, rgba(157, 189, 219, 0.7) 100%)',
+          zIndex: 1,
         }}
       />
 

@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 // SVGアイコンコンポーネント
 function ScissorsIcon() {
   return (
@@ -89,42 +91,42 @@ export default function IndustriesSection() {
   const industries = [
     {
       name: '美容室',
-      gradient: 'linear-gradient(135deg, #e8d8c5 0%, #d4c4b0 100%)',
+      image: '/images/lp/industry-hair.webp',
       Icon: ScissorsIcon,
     },
     {
       name: '理容室',
-      gradient: 'linear-gradient(135deg, #d8c8b8 0%, #c4b4a4 100%)',
+      image: '/images/lp/industry-barber.webp',
       Icon: BarberPoleIcon,
     },
     {
       name: 'ネイルサロン',
-      gradient: 'linear-gradient(135deg, #ffd1dc 0%, #f5b8c8 100%)',
+      image: '/images/lp/industry-nail.webp',
       Icon: StarIcon,
     },
     {
       name: 'エステ',
-      gradient: 'linear-gradient(135deg, #d8d0c0 0%, #c4bcac 100%)',
+      image: '/images/lp/industry-esthetic.webp',
       Icon: FaceIcon,
     },
     {
       name: 'アイラッシュ',
-      gradient: 'linear-gradient(135deg, #e0d4c4 0%, #cdc0b0 100%)',
+      image: '/images/lp/industry-eyelash.webp',
       Icon: EyeIcon,
     },
     {
       name: '脱毛サロン',
-      gradient: 'linear-gradient(135deg, #c8d4e0 0%, #b4c0d0 100%)',
+      image: '/images/lp/industry-clinic.webp',
       Icon: CircleIcon,
     },
     {
       name: '整体・リラク',
-      gradient: 'linear-gradient(135deg, #d0c8d0 0%, #bcb4bc 100%)',
+      image: '/images/lp/industry-wellness.webp',
       Icon: CrossIcon,
     },
     {
       name: 'その他サービス',
-      gradient: 'linear-gradient(135deg, #c8d4e0 0%, #b4c0d0 100%)',
+      image: '/images/lp/industry-other.webp',
       Icon: PlusCircleIcon,
     },
   ]
@@ -177,7 +179,6 @@ export default function IndustriesSection() {
                 position: 'relative',
                 cursor: 'pointer',
                 transition: 'transform 0.3s',
-                background: ind.gradient,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'scale(1.05)'
@@ -186,6 +187,30 @@ export default function IndustriesSection() {
                 e.currentTarget.style.transform = 'scale(1)'
               }}
             >
+              {/* 背景画像 */}
+              <Image
+                src={ind.image}
+                alt={ind.name}
+                fill
+                loading="lazy"
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+
+              {/* ペールトーン白半透明オーバーレイ */}
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(184, 212, 232, 0.4)',
+                  zIndex: 1,
+                }}
+              />
+
               {/* SVGアイコン */}
               <div
                 style={{
@@ -199,7 +224,8 @@ export default function IndustriesSection() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '12px',
-                  color: 'rgba(255,255,255,0.7)',
+                  color: 'rgba(255,255,255,0.8)',
+                  zIndex: 2,
                 }}
               >
                 <ind.Icon />
