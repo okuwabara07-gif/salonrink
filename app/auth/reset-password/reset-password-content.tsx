@@ -1,9 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ResetPasswordContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   // メール認証後、Supabase がリダイレクトしてくる際に付与するパラメータ
   const hasRecoveryToken = searchParams.has('type') && searchParams.get('type') === 'recovery'
@@ -15,6 +16,21 @@ export default function ResetPasswordContent() {
   const [showPassword, setShowPassword] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
   const [loading, setLoading] = useState(false)
+  const [isRedirecting, setIsRedirecting] = useState(false)
+
+  // ステップ2でメアドを取得
+  useEffect(() => {
+    if (step === 'password' && !email) {
+      const fetchEmail = async () => {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user?.email) {
+          setEmail(user.email)
+        }
+      }
+      fetchEmail()
+    }
+  }, [step, email])
 
   // ステップ1: メールアドレス送信
   const handleSendEmail = async (e: React.FormEvent) => {
@@ -56,12 +72,16 @@ export default function ResetPasswordContent() {
 
     if (error) {
       setMessage({ ok: false, text: error.message })
+      setLoading(false)
     } else {
-      setMessage({ ok: true, text: 'パスワードをリセットしました。ログインページからログインしてください。' })
+      setMessage({ ok: true, text: 'パスワードを更新しました。ダッシュボードへ移動します...' })
       setPassword('')
       setConfirmPassword('')
+      setIsRedirecting(true)
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 800)
     }
-    setLoading(false)
   }
 
   return (
@@ -102,9 +122,17 @@ export default function ResetPasswordContent() {
           </>
         ) : (
           <>
-            <h1 style={{fontSize:16,fontWeight:400,color:'#1A1018',textAlign:'center',marginBottom:24}}>新しいパスワードを設定</h1>
+            <h1 style={{fontSize:16,fontWeight:400,color:'#1A1018',textAlign:'center',marginBottom:16}}>新しいパスワードを設定</h1>
+            <div style={{background:'#F5F1EC',borderRadius:12,padding:12,marginBottom:24,textAlign:'center'}}>
+              <p style={{fontSize:11,fontWeight:500,color:'#888',textTransform:'uppercase',letterSpacing:1,margin:'0 0 6px 0'}}>
+                リセット対象
+              </p>
+              <p style={{fontSize:14,fontWeight:500,color:'#B8966A',margin:0}}>
+                {email}
+              </p>
+            </div>
             <p style={{fontSize:12,color:'#888',lineHeight:1.8,marginBottom:24,textAlign:'center'}}>
-              新しいパスワードを入力してください
+              下記のメールアドレスの新しいパスワードを設定します
             </p>
 
             <form onSubmit={handleResetPassword}>
@@ -140,10 +168,10 @@ export default function ResetPasswordContent() {
 
               <button
                 type="submit"
-                disabled={loading || !password || !confirmPassword}
-                style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:(loading || !password || !confirmPassword)?'#E0D8D0':'#1A1018',color:(loading || !password || !confirmPassword)?'#999':'#FAF6EE',fontSize:14,fontWeight:500,cursor:(loading || !password || !confirmPassword)?'not-allowed':'pointer',transition:'all 0.2s ease'}}
+                disabled={loading || isRedirecting || !password || !confirmPassword}
+                style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:(loading || isRedirecting || !password || !confirmPassword)?'#E0D8D0':'#1A1018',color:(loading || isRedirecting || !password || !confirmPassword)?'#999':'#FAF6EE',fontSize:14,fontWeight:500,cursor:(loading || isRedirecting || !password || !confirmPassword)?'not-allowed':'pointer',transition:'all 0.2s ease'}}
               >
-                {loading ? '更新中...' : 'パスワードを更新'}
+                {loading ? '更新中...' : isRedirecting ? '移動中...' : 'パスワードを更新'}
               </button>
             </form>
           </>
@@ -155,7 +183,7 @@ export default function ResetPasswordContent() {
           </p>
         )}
 
-        {message?.ok && step === 'password' && (
+        {message?.ok && step === 'email' && (
           <div style={{marginTop:20,paddingTop:20,borderTop:'1px solid #E0D8D0',textAlign:'center'}}>
             <a href="/login" style={{background:'none',border:'none',color:'#B8966A',fontSize:12,cursor:'pointer',textDecoration:'underline',padding:0,display:'inline-block'}}>
               ログインページに戻る
