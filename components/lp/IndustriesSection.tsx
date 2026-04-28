@@ -198,39 +198,32 @@ export default function IndustriesSection() {
                 }}
               />
 
-              {/* SVGアイコン（右上） */}
+              {/* 画像下半分のグラデーションオーバーレイ */}
               <div
                 style={{
                   position: 'absolute',
-                  top: '12px',
-                  right: '12px',
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '50%',
-                  background: 'rgba(255, 255, 255, 0.8)',
-                  backdropFilter: 'blur(4px)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  zIndex: 3,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  height: '60%',
+                  background: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%)',
+                  zIndex: 1,
                 }}
-              >
-                <div style={{ color: '#1a2c4f', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ind.Icon />
-                </div>
-              </div>
+              />
 
-              {/* 文字帯（画像の上に重ねる） */}
+              {/* 業種名テキスト */}
               <div
                 style={{
                   position: 'absolute',
-                  bottom: '12px',
-                  left: '12px',
-                  right: '12px',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  background: 'rgba(157, 189, 219, 0.85)',
-                  backdropFilter: 'blur(4px)',
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  padding: '20px 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  height: '35%',
                   zIndex: 2,
                 }}
               >
@@ -238,10 +231,11 @@ export default function IndustriesSection() {
                   style={{
                     textAlign: 'center',
                     fontWeight: 700,
-                    fontSize: '13px',
-                    color: '#1a2c4f',
+                    fontSize: '14px',
+                    color: '#ffffff',
                     margin: 0,
                     lineHeight: 1.3,
+                    textShadow: '0 2px 4px rgba(0,0,0,0.3)',
                   }}
                 >
                   {ind.name}
