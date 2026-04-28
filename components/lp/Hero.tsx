@@ -168,19 +168,29 @@ export default function Hero() {
 
           {/* 右カラム: スマホモックアップ (40%) */}
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Image
-              src="/images/lp/hero-mockup.svg"
-              alt="SalonRink スマホダッシュボード - 予約・売上・顧客管理"
-              width={320}
-              height={640}
+            <div
               style={{
+                position: 'relative',
                 width: '100%',
                 maxWidth: '320px',
-                height: 'auto',
+                maskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.3) 85%, rgba(0,0,0,0) 100%)',
+                WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, rgba(0,0,0,0.3) 85%, rgba(0,0,0,0) 100%)',
               }}
-              unoptimized
-              priority
-            />
+            >
+              <Image
+                src="/images/lp/hero-mockup.svg"
+                alt="SalonRink スマホダッシュボード - 予約・売上・顧客管理"
+                width={320}
+                height={640}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  display: 'block',
+                }}
+                unoptimized
+                priority
+              />
+            </div>
           </div>
         </div>
 
