@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     locale: "ja_JP",
     images: [
       {
-        url: `${siteUrl}/og-image.png`,
+        url: `${siteUrl}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: "SalonRink - サロン経営SaaS",
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "SalonRink（サロンリンク）| LINEで予約自動化するサロン経営SaaS",
     description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥980から。",
     creator: "@salonrink_jp",
-    images: [`${siteUrl}/og-image.png`],
+    images: [`${siteUrl}/og-image.jpg`],
   },
   robots: {
     index: true,

@@ -6,9 +6,9 @@ export default function FeaturesSection() {
   const features = [
     { id: 1, title: '業界最安 ¥980〜', desc: '充実した機能を最安値で', color: '#ffe89a' },
     { id: 2, title: 'HPB自動同期', desc: '毎時0分に顧客データ自動更新', color: '#f0a878' },
-    { id: 3, title: 'LINE予約・アプリ不要', desc: 'LINEミニアプリで簡単予約', color: '#7bca9c' },
+    { id: 3, title: 'LINE予約・アプリ不要', desc: 'LINEミニアプリで簡単予約', image: '/images/lp/feature-03-line.webp' },
     { id: 4, title: '前日リマインド自動', desc: '全プラン共通で来店率UP', color: '#ffd1dc' },
-    { id: 5, title: '顧客カルテ管理', desc: '施術履歴・処方レシピ完全記録', color: '#9dbddb' },
+    { id: 5, title: '顧客カルテ管理', desc: '施術履歴・処方レシピ完全記録', image: '/images/lp/feature-05-karte.webp' },
     { id: 6, title: '店販EC', desc: 'LINE上での商品販売', image: '/images/lp/feature-06-ec.webp' },
     { id: 7, title: 'クーポン配信', desc: 'セグメント配信で効果最大化', color: '#f0a0a0' },
     { id: 8, title: 'ポイントカード', desc: 'デジタルポイントで再来店促進', color: '#ffe89a' },
