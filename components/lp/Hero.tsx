@@ -85,7 +85,16 @@ export default function Hero() {
                 marginBottom: '24px',
               }}
             >
-              自分らしいサロン運営へ
+              <span
+                style={{
+                  background: 'linear-gradient(transparent 60%, #FEF08A 60%)',
+                  display: 'inline',
+                  padding: '0 4px',
+                }}
+              >
+                自分らしいサロン運営
+              </span>
+              へ
             </h1>
 
             <p
