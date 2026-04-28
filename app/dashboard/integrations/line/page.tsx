@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LinePage() {
+export default function LineOfficialAccountPage() {
   const [salonId, setSalonId] = useState<string | null>(null)
   const [lineAccount, setLineAccount] = useState<any>(null)
   const [credentialsExist, setCredentialsExist] = useState(false)
@@ -12,6 +12,7 @@ export default function LinePage() {
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
+  const [showCreateGuide, setShowCreateGuide] = useState(false)
   const [showToken, setShowToken] = useState(false)
   const [showSecret, setShowSecret] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -177,6 +178,13 @@ export default function LinePage() {
     }
   }
 
+  const scrollToForm = () => {
+    const formElement = document.getElementById('credentials-form')
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -188,173 +196,284 @@ export default function LinePage() {
   return (
     <main style={{ padding: '40px', maxWidth: 800, margin: '0 auto' }}>
       <h1 style={{ fontSize: 28, fontWeight: 400, letterSpacing: 4, color: '#1A1018', marginBottom: 32 }}>
-        LINE連携
+        LINE公式アカウント連携
       </h1>
 
-      {/* セットアップガイド（折りたたみ式） */}
+      {/* LINE公式アカウント保有確認セクション */}
       <div style={{
-        background: '#FFF9F0',
-        borderRadius: 12,
-        padding: 20,
-        marginBottom: 24,
-        border: '1px solid #FFE4D0',
+        background: '#FFF3F0',
+        borderRadius: 16,
+        padding: 32,
+        boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+        marginBottom: 32,
       }}>
-        <button
-          onClick={() => setShowGuide(!showGuide)}
-          style={{
-            width: '100%',
-            padding: 12,
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            textAlign: 'left',
-            fontSize: 14,
-            fontWeight: 500,
-            color: '#1A1018',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <span style={{ fontSize: 16 }}>📺</span>
-          LINE Bot の作り方を見る（タップして展開）
-          <span style={{ marginLeft: 'auto', fontSize: 12, color: '#888' }}>
-            {showGuide ? '▼' : '▶'}
-          </span>
-        </button>
+        <h2 style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', marginBottom: 12 }}>
+          LINE公式アカウントをお持ちですか?
+        </h2>
+        <p style={{ fontSize: 13, color: '#666', marginBottom: 24, lineHeight: 1.6 }}>
+          LINE公式アカウントは、個人LINEとは別の、ビジネス用LINEアカウントです。無料で作成でき、お客様への一斉メッセージや予約管理に使えます。
+        </p>
 
-        {showGuide && (
-          <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid #FFE4D0' }}>
-            <div style={{ fontSize: 13, lineHeight: 1.8, color: '#1A1018' }}>
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#B8966A',
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    flexShrink: 0,
-                  }}>
-                    1
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>LINE Developers にログイン</p>
-                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
-                      <a href="https://developers.line.biz/" target="_blank" rel="noopener noreferrer"
-                        style={{ color: '#B8966A', textDecoration: 'none', fontWeight: 500 }}>
-                        https://developers.line.biz/
-                      </a>
-                      にアクセスしてログインしてください
-                    </p>
-                  </div>
-                </div>
+        <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+          <button
+            onClick={scrollToForm}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 10,
+              border: 'none',
+              background: '#1A1018',
+              color: '#FAF6EE',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            ✅ 持っている
+          </button>
 
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#B8966A',
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    flexShrink: 0,
-                  }}>
-                    2
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>Messaging API Channel を新規作成</p>
-                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
-                      プロバイダーを作成し、「Messaging API」を選択してチャネルを作成してください
-                    </p>
-                  </div>
-                </div>
+          <button
+            onClick={() => setShowCreateGuide(!showCreateGuide)}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 10,
+              border: '1px solid #B8966A',
+              background: 'transparent',
+              color: '#B8966A',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#B8966A'
+              e.currentTarget.style.color = '#FAF6EE'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#B8966A'
+            }}
+          >
+            📱 まだ持っていない
+          </button>
+        </div>
 
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#B8966A',
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    flexShrink: 0,
-                  }}>
-                    3
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>基本情報を確認</p>
-                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
-                      「Channel基本情報」タブで「Channel ID」と「Channel Secret」を確認してください
-                    </p>
-                  </div>
-                </div>
+        <div style={{ fontSize: 12, color: '#666', textAlign: 'center' }}>
+          <p style={{ margin: 0 }}>⏰ 全体の所要時間: 約10-15分</p>
+          <p style={{ margin: '4px 0 0 0' }}>💰 完全無料で開始できます</p>
+        </div>
+      </div>
 
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#B8966A',
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    flexShrink: 0,
-                  }}>
-                    4
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>Channel Access Token を発行</p>
-                    <p style={{ margin: '0 0 8px 0', color: '#666' }}>
-                      「Messaging API設定」タブで「Channel Access Token」を発行してください
-                    </p>
-                  </div>
-                </div>
+      {/* LINE公式アカウントの作成ガイド */}
+      {showCreateGuide && (
+        <div style={{
+          background: '#fff',
+          borderRadius: 16,
+          padding: 32,
+          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+          marginBottom: 32,
+        }}>
+          <h2 style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', marginBottom: 24 }}>
+            📱 LINE公式アカウントの作り方
+          </h2>
 
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                  <span style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    background: '#B8966A',
-                    color: '#fff',
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    flexShrink: 0,
-                  }}>
-                    5
-                  </span>
-                  <div>
-                    <p style={{ fontWeight: 500, margin: '0 0 4px 0' }}>認証情報を保存</p>
-                    <p style={{ margin: 0, color: '#666' }}>
-                      取得した3つの値を下のフォームに貼り付けて「保存」してください
-                    </p>
-                  </div>
-                </div>
+          {/* ステップ1 */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#B8966A',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                1
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 8px 0' }}>
+                  📱 スマホで LINE Official Account Manager を開く
+                  <span style={{ fontSize: 12, color: '#888', fontWeight: 400, marginLeft: 8 }}>（約5分）</span>
+                </p>
+                <ul style={{ fontSize: 13, color: '#666', margin: '0 0 8px 0', paddingLeft: 16 }}>
+                  <li style={{ marginBottom: 4 }}>
+                    <a href="https://www.lycbiz.com/jp/service/line-official-account/" target="_blank" rel="noopener noreferrer"
+                      style={{ color: '#B8966A', textDecoration: 'none', fontWeight: 500 }}>
+                      LINE Official Account Manager
+                    </a>
+                    にアクセスしてください
+                  </li>
+                  <li style={{ marginBottom: 4 }}>「アカウント開設」をタップ</li>
+                  <li style={{ marginBottom: 4 }}>メールアドレスで登録</li>
+                  <li style={{ marginBottom: 4 }}>アカウント名（例: ○○美容室、ハナヘアサロン）を入力</li>
+                  <li>業種「美容・サロン」を選択</li>
+                </ul>
               </div>
             </div>
           </div>
-        )}
-      </div>
+
+          {/* ステップ2 */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#B8966A',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                2
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 8px 0' }}>
+                  💰 無料プランを選択
+                  <span style={{ fontSize: 12, color: '#888', fontWeight: 400, marginLeft: 8 }}>（0円スタート）</span>
+                </p>
+                <ul style={{ fontSize: 13, color: '#666', margin: '0 0 8px 0', paddingLeft: 16 }}>
+                  <li style={{ marginBottom: 4 }}>「コミュニケーションプラン」を選択（月200通まで無料）</li>
+                  <li>200通を超える場合は有料プランも検討可能</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* ステップ3 */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#B8966A',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                3
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 8px 0' }}>
+                  🔧 Messaging API を有効化
+                  <span style={{ fontSize: 12, color: '#888', fontWeight: 400, marginLeft: 8 }}>（約3分）</span>
+                </p>
+                <ul style={{ fontSize: 13, color: '#666', margin: '0 0 8px 0', paddingLeft: 16 }}>
+                  <li style={{ marginBottom: 4 }}>
+                    <a href="https://developers.line.biz" target="_blank" rel="noopener noreferrer"
+                      style={{ color: '#B8966A', textDecoration: 'none', fontWeight: 500 }}>
+                      LINE Developers Console
+                    </a>
+                    にアクセス
+                  </li>
+                  <li style={{ marginBottom: 4 }}>同じメールアドレスでログイン</li>
+                  <li style={{ marginBottom: 4 }}>プロバイダー作成 → Messaging API Channel を選択</li>
+                  <li>チャネル名・説明を入力</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* ステップ4 */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#B8966A',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                4
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 8px 0' }}>
+                  🔑 認証情報を取得
+                  <span style={{ fontSize: 12, color: '#888', fontWeight: 400, marginLeft: 8 }}>（約2分）</span>
+                </p>
+                <ul style={{ fontSize: 13, color: '#666', margin: '0 0 8px 0', paddingLeft: 16 }}>
+                  <li style={{ marginBottom: 4 }}>「Channel基本情報」タブで「Channel ID」と「Channel Secret」を確認</li>
+                  <li>「Messaging API設定」タブで「Channel Access Token」を発行</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* ステップ5 */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
+              <span style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#B8966A',
+                color: '#fff',
+                fontSize: 14,
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                5
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 8px 0' }}>
+                  ✅ SalonRink に保存
+                  <span style={{ fontSize: 12, color: '#888', fontWeight: 400, marginLeft: 8 }}>（完了）</span>
+                </p>
+                <ul style={{ fontSize: 13, color: '#666', margin: '0 0 8px 0', paddingLeft: 16 }}>
+                  <li style={{ marginBottom: 4 }}>下のフォームに3つの値を貼り付け</li>
+                  <li>「保存」ボタンをクリック</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => scrollToForm()}
+            style={{
+              width: '100%',
+              padding: '14px',
+              borderRadius: 10,
+              border: 'none',
+              background: '#1A1018',
+              color: '#FAF6EE',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: 'pointer',
+              marginTop: 16,
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+          >
+            認証情報を入力フォームへ
+          </button>
+        </div>
+      )}
 
       {/* 認証情報入力フォーム */}
       <form onSubmit={handleSave} style={{
@@ -363,7 +482,7 @@ export default function LinePage() {
         padding: 32,
         boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
         marginBottom: 24,
-      }}>
+      }} id="credentials-form">
         <h2 style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', marginBottom: 20 }}>
           {credentialsExist ? '認証情報（更新）' : 'LINE 認証情報'}
         </h2>
