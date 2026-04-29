@@ -53,7 +53,7 @@ export function AIWarningsSection({ karte, customerId, salonId, karteId, onRefre
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 600, color: '#A32D2D', margin: 0 }}>
-          ⚠️ AI警告・注意事項
+          ⚠️ 注意事項
         </h3>
         <button
           onClick={handleGenerate}
@@ -175,7 +175,7 @@ export function AISummarySection({ karte, customerId, salonId, karteId, onRefres
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 600, color: '#1A1018', margin: 0 }}>
-          📋 AI顧客サマリー
+          📋 顧客プロフィール
         </h3>
         <button
           onClick={handleGenerate}
@@ -278,7 +278,7 @@ export function CommunicationScriptSection({ karte, customerId, salonId, karteId
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 600, color: '#7c3aed', margin: 0 }}>
-          💬 AI接客スクリプト
+          💬 接客の言葉
         </h3>
         <button
           onClick={handleGenerate}
@@ -402,7 +402,7 @@ export function NextRecommendationSection({ karte, customerId, salonId, karteId,
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
         <h3 style={{ fontSize: 16, fontWeight: 600, color: '#059669', margin: 0 }}>
-          🎯 AI次回提案
+          🎯 次回のご提案
         </h3>
         <button
           onClick={handleGenerate}
@@ -463,7 +463,7 @@ export function NextRecommendationSection({ karte, customerId, salonId, karteId,
                 ホームケア推奨期間
               </p>
               <p style={{ fontSize: 13, color: '#1A1018', margin: 0 }}>
-                {localRecommendation.homecare_duration}日間
+                {localRecommendation.homecare_duration}
               </p>
             </div>
           )}
