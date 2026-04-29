@@ -1,9 +1,9 @@
 export default function ComparisonTable() {
-  const features = ['HPB連携', 'LINE予約', 'リマインド', '月額料金']
+  const features = ['LINE予約', 'HPB連携', 'ミニモ連携', 'AIカルテ', 'AI接客スクリプト', 'AIアレルギー警告', '月額料金']
   const competitors = [
-    { name: 'SalonRink', hpb: '✓', line: '✓', reminder: '✓', price: '¥980〜' },
-    { name: 'A社', hpb: '✗', line: '✓', reminder: '✓', price: '¥2,970' },
-    { name: 'B社', hpb: '✗', line: '✓', reminder: '✓', price: '¥2,970' },
+    { name: 'SalonRink', line: '✅', hpb: '✅', minimo: '🔔', aichart: '✅', aiscript: '✅', aialert: '✅', price: '¥1,980〜' },
+    { name: 'リピッテ', line: '✅', hpb: '❌', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥2,000〜' },
+    { name: 'サロンコネクト', line: '❌', hpb: '✅', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥3,980〜' },
   ]
   return (
     <section style={{ background: 'var(--sr-bg)', padding: '80px 20px' }}>
@@ -34,19 +34,30 @@ export default function ComparisonTable() {
               </tr>
             </thead>
             <tbody>
-              {competitors.map((comp, i) => (
-                <tr key={i} style={{ background: comp.name === 'SalonRink' ? 'linear-gradient(90deg, #ffd1dc30 0%, transparent 100%)' : '#ffffff', borderBottom: '1px solid var(--sr-border)' }}>
-                  <td style={{ padding: '16px', fontWeight: comp.name === 'SalonRink' ? 700 : 600, color: 'var(--sr-blue-pale-deepest)' }}>
-                    {comp.name}
-                  </td>
-                  <td style={{ padding: '16px', textAlign: 'center', color: 'var(--sr-text-soft)' }}>{comp.hpb}</td>
-                  <td style={{ padding: '16px', textAlign: 'center', color: 'var(--sr-text-soft)' }}>{comp.line}</td>
-                  <td style={{ padding: '16px', textAlign: 'center', color: 'var(--sr-text-soft)' }}>{comp.reminder}</td>
-                  <td style={{ padding: '16px', textAlign: 'center', fontWeight: 600, color: comp.name === 'SalonRink' ? '#f0a0a0' : 'var(--sr-text-soft)' }}>
-                    {comp.price}
-                  </td>
-                </tr>
-              ))}
+              {competitors.map((comp, i) => {
+                const getStatusColor = (value: string) => {
+                  if (value === '✅') return '#10b981'
+                  if (value === '❌') return '#9ca3af'
+                  if (value === '🔔') return '#f59e0b'
+                  return 'var(--sr-text-soft)'
+                }
+                return (
+                  <tr key={i} style={{ background: comp.name === 'SalonRink' ? 'linear-gradient(90deg, #ffd1dc30 0%, transparent 100%)' : '#ffffff', borderBottom: '1px solid var(--sr-border)' }}>
+                    <td style={{ padding: '16px', fontWeight: comp.name === 'SalonRink' ? 700 : 600, color: 'var(--sr-blue-pale-deepest)' }}>
+                      {comp.name}
+                    </td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.line), fontSize: '16px' }}>{comp.line}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.hpb), fontSize: '16px' }}>{comp.hpb}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.minimo), fontSize: '16px' }}>{comp.minimo}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.aichart), fontSize: '16px' }}>{comp.aichart}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.aiscript), fontSize: '16px' }}>{comp.aiscript}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', color: getStatusColor(comp.aialert), fontSize: '16px' }}>{comp.aialert}</td>
+                    <td style={{ padding: '16px', textAlign: 'center', fontWeight: 600, color: comp.name === 'SalonRink' ? '#f0a0a0' : 'var(--sr-text-soft)' }}>
+                      {comp.price}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>
