@@ -7,6 +7,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllergyWarningPrompt } from '@/lib/ai/prompts';
 import { callClaude, parseJsonResponse } from '@/lib/ai/claude-client';
+import { checkAIUsageLimit, recordAIUsage } from '@/lib/ai/usage-tracker';
 import type { Karte } from '@/lib/ai/prompts';
 
 const supabase = createClient(
@@ -23,6 +24,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Missing required fields: customer_id, salon_id, karte_id' },
         { status: 400 }
+      );
+    }
+
+    // AI 使用量チェック
+    const usageStatus = await checkAIUsageLimit(salon_id)
+    if (!usageStatus.allowed) {
+      return NextResponse.json(
+        {
+          error: 'AI usage limit exceeded',
+          used: usageStatus.used,
+          limit: usageStatus.limit,
+          plan: usageStatus.plan,
+        },
+        { status: 429 }
       );
     }
 
@@ -87,6 +102,14 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // 使用量記録(エラー出ても続行)
+    await recordAIUsage(
+      salon_id,
+      'allergy_warning',
+      claudeResponse.usage.input_tokens,
+      claudeResponse.usage.output_tokens
+    ).catch(err => console.error('Usage record failed:', err))
 
     return NextResponse.json(
       {
