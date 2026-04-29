@@ -118,7 +118,7 @@ export default function KartePage() {
           {paginatedCustomers.map(customer => (
             <Link
               key={customer.id}
-              href={`/dashboard/karte/${customer.id}`}
+              href={`/dashboard/customers/${customer.id}`}
               style={{
                 background: '#fff',
                 borderRadius: 12,
