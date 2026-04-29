@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import TodayWarnings from '@/components/dashboard/TodayWarnings'
 
 export default function DashboardPage() {
   const [salon, setSalon] = useState<any>(null)
@@ -171,6 +172,9 @@ export default function DashboardPage() {
           </p>
         </div>
       </div>
+
+      {/* 今日の注意 */}
+      {salon && <TodayWarnings salonId={salon.id} />}
 
       {/* 本日の予約一覧 */}
       <div style={{
