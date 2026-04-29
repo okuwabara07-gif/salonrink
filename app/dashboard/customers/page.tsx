@@ -34,7 +34,7 @@ export default function KartePage() {
       // 顧客一覧取得
       const { data: customersData } = await supabase
         .from('customers')
-        .select('id, name, age, phone, last_visit, visit_count, total_spent')
+        .select('id, name, phone, last_visit, visit_count')
         .eq('salon_id', salon.id)
         .order('last_visit', { ascending: false, nullsFirst: false })
 
