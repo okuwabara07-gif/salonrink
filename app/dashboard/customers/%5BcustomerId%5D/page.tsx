@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { AIWarningsSection, AISummarySection, CommunicationScriptSection, NextRecommendationSection } from '@/components/dashboard/AISection'
 
 export default function CustomerDetailPage() {
   const params = useParams()
   const customerId = params?.customerId as string
-  const [activeTab, setActiveTab] = useState<'info' | 'history' | 'recipe' | 'photos' | 'notes'>('info')
+  const [activeTab, setActiveTab] = useState<'info' | 'history' | 'recipe' | 'photos' | 'notes' | 'ai'>('info')
   const [customer, setCustomer] = useState<any>(null)
   const [kartes, setKartes] = useState<any[]>([])
   const [latestRecipe, setLatestRecipe] = useState<any>(null)
@@ -16,6 +17,8 @@ export default function CustomerDetailPage() {
   const [notesEditMode, setNotesEditMode] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [salonId, setSalonId] = useState<string>('')
+  const [latestKarte, setLatestKarte] = useState<any>(null)
 
   useEffect(() => {
     async function loadData() {
@@ -33,6 +36,11 @@ export default function CustomerDetailPage() {
       setCustomer(customerData)
 
       if (customerData) {
+        // サロンID取得 (顧客テーブルから)
+        if (customerData.salon_id) {
+          setSalonId(customerData.salon_id)
+        }
+
         // カルテ一覧取得
         const { data: kartesData } = await supabase
           .from('kartes')
@@ -41,6 +49,11 @@ export default function CustomerDetailPage() {
           .order('visit_date', { ascending: false })
 
         setKartes(kartesData || [])
+
+        // 最新カルテ取得 (AI表示用)
+        if (kartesData && kartesData.length > 0) {
+          setLatestKarte(kartesData[0])
+        }
 
         // 最新処方取得
         const { data: recipeData } = await supabase
@@ -154,7 +167,7 @@ export default function CustomerDetailPage() {
         borderBottom: '1px solid #E0D8D0',
         marginBottom: 32,
       }}>
-        {(['info', 'history', 'recipe', 'photos', 'notes'] as const).map(tab => (
+        {(['info', 'history', 'recipe', 'photos', 'notes', 'ai'] as const).map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -175,6 +188,7 @@ export default function CustomerDetailPage() {
             {tab === 'recipe' && '処方レシピ'}
             {tab === 'photos' && '写真'}
             {tab === 'notes' && 'メモ'}
+            {tab === 'ai' && 'AI機能'}
           </button>
         ))}
       </div>
@@ -497,6 +511,56 @@ export default function CustomerDetailPage() {
                 編集
               </button>
             </>
+          )}
+        </div>
+      )}
+
+      {/* AI機能タブ */}
+      {activeTab === 'ai' && (
+        <div>
+          {latestKarte ? (
+            <div>
+              <AIWarningsSection
+                karte={latestKarte}
+                customerId={customerId}
+                salonId={salonId}
+                karteId={latestKarte.id}
+                onRefresh={() => window.location.reload()}
+              />
+              <AISummarySection
+                karte={latestKarte}
+                customerId={customerId}
+                salonId={salonId}
+                karteId={latestKarte.id}
+                onRefresh={() => window.location.reload()}
+              />
+              <CommunicationScriptSection
+                karte={latestKarte}
+                customerId={customerId}
+                salonId={salonId}
+                karteId={latestKarte.id}
+                onRefresh={() => window.location.reload()}
+              />
+              <NextRecommendationSection
+                karte={latestKarte}
+                customerId={customerId}
+                salonId={salonId}
+                karteId={latestKarte.id}
+                onRefresh={() => window.location.reload()}
+              />
+            </div>
+          ) : (
+            <div style={{
+              background: '#fff',
+              borderRadius: 16,
+              padding: 32,
+              boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
+              textAlign: 'center',
+            }}>
+              <p style={{ fontSize: 14, color: '#888', margin: 0 }}>
+                カルテを先に作成してください
+              </p>
+            </div>
           )}
         </div>
       )}
