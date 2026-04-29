@@ -2,10 +2,10 @@
 
 export default function NumbersSection() {
   const numbers = [
-    { label: '月額最安', value: '¥980', description: 'フリーランス向けプラン' },
-    { label: 'HPB手数料', value: '¥0', description: '初期費用・手数料なし' },
-    { label: '導入時間', value: '10分', description: 'わずか10分で開始可能' },
-    { label: '無料期間', value: '14日', description: '全機能トライアル可能' },
+    { label: 'Core 価格', value: '¥1,980', description: 'コーヒー1杯分' },
+    { label: 'AIカルテ', value: 'AI', description: '業界唯一・標準装備' },
+    { label: 'データ保護', value: '100%', description: 'RLS 個人情報完全分離' },
+    { label: '無料期間', value: '14', description: 'クレジットカード不要' },
   ]
 
   return (
@@ -27,11 +27,21 @@ export default function NumbersSection() {
             fontWeight: 700,
             color: 'var(--sr-blue-pale-deepest)',
             textAlign: 'center',
+            marginBottom: '16px',
+          }}
+        >
+          選ばれ続ける美容師へ
+        </h2>
+        <p
+          style={{
+            textAlign: 'center',
+            color: 'var(--sr-text-soft)',
+            fontSize: '16px',
             marginBottom: '60px',
           }}
         >
-          すべてのサロンオーナーへ
-        </h2>
+          あなたのファンを、つくる場所
+        </p>
 
         <div
           style={{

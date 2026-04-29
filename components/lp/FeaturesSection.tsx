@@ -4,15 +4,15 @@ import Image from 'next/image'
 
 export default function FeaturesSection() {
   const features = [
-    { id: 1, title: 'LINE Bot 自動応答', desc: '24時間お客様の問い合わせに即時対応。営業時間外でも予約を取りこぼしません。', image: '/images/lp/feature-01-line-bot.svg', isSvg: true },
-    { id: 2, title: '予約管理', desc: 'ペールトーンの手帳のように、すべての予約をひと目で。直感的な操作で予定変更も簡単。', image: '/images/lp/feature-02-reservation.webp' },
-    { id: 3, title: 'LINE通知連携', desc: 'お客様にLINEで自動通知。予約確認・前日リマインドで、無断キャンセルを大幅削減。', image: '/images/lp/feature-03-line.webp' },
-    { id: 4, title: '顧客管理', desc: 'お客様一人ひとりの好みや履歴を記録。常連様にパーソナライズされた提案ができる。', image: '/images/lp/feature-04-customer.webp' },
-    { id: 5, title: '電子カルテ', desc: '施術履歴・カラーレシピをデジタル化。スタッフ間の引継ぎもスムーズに。', image: '/images/lp/feature-05-karte.webp' },
-    { id: 6, title: 'EC連携', desc: 'サロン専用ECで物販収益も自動化。BeautyPassとも連携して動画ECにも対応。', image: '/images/lp/feature-06-ec.webp' },
-    { id: 7, title: 'マーケティング分析', desc: 'タブレットでも直感的に。来店傾向・売上推移を可視化して、次の打ち手を見える化。', image: '/images/lp/feature-07-marketing.webp' },
-    { id: 8, title: 'PC・スマホ両対応', desc: 'どのデバイスからでも、サロンの状況をリアルタイムで把握。', image: '/images/lp/feature-08-pc-dashboard.webp' },
-    { id: 9, title: 'システム連携', desc: 'Stripe・GA4・Resend・LINE──既存の業務ツールとシームレスに繋がる。', image: '/images/lp/feature-09-integration.webp' },
+    { id: 1, title: 'AIカルテ', desc: '美容師のメモを Claude Haiku が構造化。顧客を完璧に記憶。', image: '/images/lp/feature-05-karte.webp', badge: 'NEW' },
+    { id: 2, title: 'AI接客スクリプト', desc: '顧客別の説明文を自動生成。あなたらしい接客をAIが支える。', image: '/images/lp/feature-04-customer.webp', badge: 'NEW' },
+    { id: 3, title: 'AIアレルギー警告', desc: '施術前の自動アラート。失敗のリスクを事前に防止。', image: '/images/lp/feature-01-line-bot.svg', isSvg: true, badge: 'NEW' },
+    { id: 4, title: 'LINE公式アカウント連携', desc: '予約・チャット・配信を統合。顧客とのコミュニケーションを一元化。', image: '/images/lp/feature-03-line.webp' },
+    { id: 5, title: 'LINE通知', desc: 'リマインダー・提案を自動送信。無断キャンセルを大幅削減。', image: '/images/lp/feature-02-reservation.webp' },
+    { id: 6, title: '写真6枚×1年保存', desc: 'ビフォーアフターを安心管理。スタッフ間の引継ぎもスムーズ。', image: '/images/lp/feature-06-ec.webp' },
+    { id: 7, title: 'HPB連携(オプション)', desc: 'ホットペッパー予約を自動同期。二重管理から解放。', image: '/images/lp/feature-07-marketing.webp' },
+    { id: 8, title: '売上分析ダッシュボード', desc: 'スマホで売上をいつでも確認。経営判断を素早く。', image: '/images/lp/feature-08-pc-dashboard.webp' },
+    { id: 9, title: 'PC・スマホ両対応', desc: 'どこでも使える、レスポンシブUI。外出先でもサロン状況を把握。', image: '/images/lp/feature-09-integration.webp' },
   ]
 
   return (
@@ -33,7 +33,7 @@ export default function FeaturesSection() {
             marginBottom: '60px',
           }}
         >
-          9つの便利機能
+          AI で進化する、9つの機能
         </h2>
 
         <div
@@ -92,16 +92,39 @@ export default function FeaturesSection() {
               </div>
 
               <div>
-                <h3
+                <div
                   style={{
-                    fontSize: '15px',
-                    fontWeight: 700,
-                    color: 'var(--sr-blue-pale-deepest)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
                     marginBottom: '6px',
                   }}
                 >
-                  {feat.title}
-                </h3>
+                  <h3
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      color: 'var(--sr-blue-pale-deepest)',
+                      margin: 0,
+                    }}
+                  >
+                    {feat.title}
+                  </h3>
+                  {feat.badge && (
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: '#ffffff',
+                        background: '#d88896',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {feat.badge}
+                    </span>
+                  )}
+                </div>
                 <p
                   style={{
                     fontSize: '13px',
