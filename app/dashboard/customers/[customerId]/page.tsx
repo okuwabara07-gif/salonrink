@@ -148,15 +148,32 @@ export default function CustomerDetailPage() {
         >
           ←
         </Link>
-        <div>
-          <h1 style={{ fontSize: 28, fontWeight: 400, letterSpacing: 4, color: '#1A1018', margin: 0 }}>
-            {customer.name}
-          </h1>
-          {customer.age && (
-            <p style={{ fontSize: 12, color: '#888', margin: '8px 0 0 0' }}>
-              {customer.age}歳 {customer.gender && `• ${customer.gender}`}
-            </p>
-          )}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{ fontSize: 28, fontWeight: 400, letterSpacing: 4, color: '#1A1018', margin: 0 }}>
+              {customer.name}
+            </h1>
+            {customer.age && (
+              <p style={{ fontSize: 12, color: '#888', margin: '8px 0 0 0' }}>
+                {customer.age}歳 {customer.gender && `• ${customer.gender}`}
+              </p>
+            )}
+          </div>
+          <Link
+            href={`/dashboard/customers/${customerId}/karte/new`}
+            style={{
+              padding: '10px 16px',
+              background: '#1A1018',
+              color: '#FAF6EE',
+              textDecoration: 'none',
+              borderRadius: 8,
+              fontSize: 13,
+              fontWeight: 500,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            + カルテ追加
+          </Link>
         </div>
       </div>
 
