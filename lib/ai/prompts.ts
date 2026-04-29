@@ -2,45 +2,55 @@
 // Phase 1: AIカルテ API スケルトン
 // kartes テーブルスキーマに基づいた実装
 
-// Karte 型定義（types/supabase.ts がないため直接定義）
+// Karte 型定義（実テーブルスキーマに基づく）
+// kartes テーブル: 基本カラムのみ
+// 詳細情報（髪質・施術内容等）は karte_recipes にて jsonb 格納
 export interface Karte {
   id: string;
   salon_id: string;
   customer_id: string | null;
   visit_date: string; // DATE
-  menu_name: string | null;
-  staff_name: string | null;
-  hair_condition: string | null;
-  scalp_condition: string | null;
-  allergies: string | null;
-  treatment_note: string | null;
-  next_suggestion: string | null;
-  service_price: number | null;
-  product_price: number | null;
-  total_price: number | null;
   created_at: string;
   updated_at: string;
+  // AI 出力用カラム（ai_summary 等は UPDATE 時に使用）
+  ai_summary?: Record<string, any>;
+  ai_communication_scripts?: Record<string, any>;
+  ai_warnings?: Record<string, any>;
+  ai_next_recommendation?: Record<string, any>;
+}
+
+// karte_recipes から詳細情報を取得する関数
+export interface KarteRecipe {
+  recipe_type: string; // 'hair_color', 'treatment', など
+  recipe_data: Record<string, any>; // 髪質・メニュー・薬剤情報等
+  notes?: string;
 }
 
 // 顧客サマリー生成用プロンプト
-export function getCustomerSummaryPrompt(karte: Karte, customerName: string): string {
+// API 呼び出し時に karte + recipe データ を結合して渡す
+export function getCustomerSummaryPrompt(
+  karte: Karte,
+  customerName: string,
+  recipeData?: Record<string, any>
+): string {
+  const hairInfo = recipeData?.hair_condition || '不明';
+  const menuInfo = recipeData?.menu_name || '不明';
+  const treatmentNote = recipeData?.treatment_note || 'なし';
+
   return `以下は美容室の顧客情報です。顧客の現在の状態を構造化したサマリーを生成してください。
 
 【顧客情報】
 名前: ${customerName}
 最終来店日: ${karte.visit_date || 'なし'}
-髪の状態: ${karte.hair_condition || '不明'}
-頭皮の状態: ${karte.scalp_condition || '不明'}
-アレルギー: ${karte.allergies || 'なし'}
-前回メニュー: ${karte.menu_name || '不明'}
-施術メモ: ${karte.treatment_note || 'なし'}
+髪の状態: ${hairInfo}
+前回メニュー: ${menuInfo}
+施術メモ: ${treatmentNote}
 
 【出力形式】
 JSON形式で以下の構造で返してください:
 {
   "summary": "顧客の現在状態の1-2文での要約",
   "hair_condition_analysis": "髪の状態に関する評価",
-  "scalp_analysis": "頭皮の状態分析",
   "recommended_care": "推奨されるケア方法",
   "generated_at": "現在時刻(ISO 8601形式)",
   "model": "claude-haiku-4-5"
@@ -50,16 +60,22 @@ JSON形式で以下の構造で返してください:
 }
 
 // 接客スクリプト生成用プロンプト
-export function getCommunicationScriptPrompt(karte: Karte, customerName: string, plannedMenu: string): string {
+export function getCommunicationScriptPrompt(
+  karte: Karte,
+  customerName: string,
+  plannedMenu: string,
+  recipeData?: Record<string, any>
+): string {
+  const hairInfo = recipeData?.hair_condition || '不明';
+  const treatmentNote = recipeData?.treatment_note || 'なし';
+
   return `以下の顧客情報と計画メニューに基づいて、接客スクリプトを生成してください。
 
 【顧客情報】
 名前: ${customerName}
 最終来店日: ${karte.visit_date || 'なし'}
-髪の状態: ${karte.hair_condition || '不明'}
-頭皮の状態: ${karte.scalp_condition || '不明'}
-アレルギー: ${karte.allergies || 'なし'}
-施術メモ: ${karte.treatment_note || 'なし'}
+髪の状態: ${hairInfo}
+施術メモ: ${treatmentNote}
 
 【計画メニュー】
 ${plannedMenu}
@@ -77,15 +93,22 @@ JSON形式で以下の構造で返してください:
 }
 
 // アレルギー警告生成用プロンプト
-export function getAllergyWarningPrompt(karte: Karte, customerName: string): string {
+export function getAllergyWarningPrompt(
+  karte: Karte,
+  customerName: string,
+  recipeData?: Record<string, any>
+): string {
+  const hairInfo = recipeData?.hair_condition || '不明';
+  const allergies = recipeData?.allergies || 'なし';
+  const treatmentNote = recipeData?.treatment_note || 'なし';
+
   return `以下の顧客情報から、施術前の注意事項と警告を生成してください。
 
 【顧客情報】
 名前: ${customerName}
-髪の状態: ${karte.hair_condition || '不明'}
-頭皮の状態: ${karte.scalp_condition || '不明'}
-アレルギー: ${karte.allergies || 'なし'}
-施術メモ: ${karte.treatment_note || 'なし'}
+髪の状態: ${hairInfo}
+アレルギー: ${allergies}
+施術メモ: ${treatmentNote}
 
 【出力形式】
 JSON形式で以下の構造で返してください:
@@ -101,16 +124,22 @@ JSON形式で以下の構造で返してください:
 }
 
 // 次回提案生成用プロンプト
-export function getNextRecommendationPrompt(karte: Karte, customerName: string, currentMenu: string): string {
+export function getNextRecommendationPrompt(
+  karte: Karte,
+  customerName: string,
+  currentMenu: string,
+  recipeData?: Record<string, any>
+): string {
+  const hairInfo = recipeData?.hair_condition || '不明';
+  const prevMenu = recipeData?.menu_name || '不明';
+
   return `以下の顧客情報と今回の施術内容から、次回来店時の提案を生成してください。
 
 【顧客情報】
 名前: ${customerName}
 最終来店日: ${karte.visit_date || 'なし'}
-髪の状態: ${karte.hair_condition || '不明'}
-頭皮の状態: ${karte.scalp_condition || '不明'}
-アレルギー: ${karte.allergies || 'なし'}
-前回メニュー: ${karte.menu_name || '不明'}
+髪の状態: ${hairInfo}
+前回メニュー: ${prevMenu}
 
 【今回の施術内容】
 ${currentMenu}

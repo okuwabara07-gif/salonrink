@@ -56,8 +56,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // karte_recipes から詳細情報を取得（最新1件）
+    const { data: recipes, error: recipesError } = await supabase
+      .from('karte_recipes')
+      .select('recipe_data')
+      .eq('salon_id', salon_id)
+      .eq('karte_id', karte_id)
+      .order('created_at', { ascending: false })
+      .limit(1);
+
+    const recipeData = recipes && recipes.length > 0 ? recipes[0].recipe_data : undefined;
+
     // Claude でスクリプトを生成
-    const prompt = getCommunicationScriptPrompt(karte as Karte, customer.name, planned_menu);
+    const prompt = getCommunicationScriptPrompt(karte as Karte, customer.name, planned_menu, recipeData);
     const claudeResponse = await callClaude(prompt);
     const scriptData = parseJsonResponse(claudeResponse.content);
 
