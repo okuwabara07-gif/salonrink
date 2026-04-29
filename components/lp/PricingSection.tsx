@@ -2,10 +2,10 @@
 
 export default function PricingSection() {
   const plans = [
-    { name: 'フリーランス', price: '¥980', desc: 'ソロオーナー向け', popular: false },
-    { name: 'スタンダード', price: '¥2,480', desc: '小規模店舗向け', popular: true },
-    { name: 'プロ', price: '¥3,980', desc: 'HPB同期・中〜大規模向け', popular: false },
-    { name: 'カスタム', price: 'お問い合わせ', desc: '大規模・複数店舗', popular: false },
+    { name: 'Core', price: '¥1,980', desc: 'フリーランス美容師向け', popular: false },
+    { name: 'セットB', price: '¥2,980', desc: '個人サロン向け', popular: true },
+    { name: 'セットC', price: '¥4,580', desc: '本格サロン向け', popular: false },
+    { name: 'カスタム', price: 'お問い合わせ', desc: '大規模サロンチェーン', popular: false },
   ]
   return (
     <section
@@ -22,11 +22,21 @@ export default function PricingSection() {
             fontWeight: 700,
             color: '#ffffff',
             textAlign: 'center',
-            marginBottom: '60px',
+            marginBottom: '16px',
           }}
         >
           シンプルな料金体系
         </h2>
+        <p
+          style={{
+            textAlign: 'center',
+            color: 'rgba(255, 255, 255, 0.9)',
+            fontSize: '16px',
+            marginBottom: '60px',
+          }}
+        >
+          Core ¥1,980 + 必要な機能だけ追加
+        </p>
         <div
           style={{
             display: 'grid',
@@ -98,9 +108,14 @@ export default function PricingSection() {
             </div>
           ))}
         </div>
-        <p style={{ textAlign: 'center', color: '#ffffff', marginTop: '40px', fontSize: '14px' }}>
-          14日間無料トライアル。クレジットカード不要。
-        </p>
+        <div style={{ textAlign: 'center', marginTop: '60px' }}>
+          <p style={{ color: '#ffffff', fontSize: '14px', marginBottom: '12px' }}>
+            14日間無料トライアル。クレジットカード不要。
+          </p>
+          <p style={{ color: 'rgba(255, 255, 255, 0.8)', fontSize: '12px', fontWeight: 500 }}>
+            ADD式: HPB +¥1,000 / ミニモ +¥800(カミングスーン) / 高度AI +¥800
+          </p>
+        </div>
       </div>
     </section>
   )

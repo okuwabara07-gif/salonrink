@@ -75,6 +75,19 @@ export default function Hero() {
               ✓ 美容師監修・実装サロンで検証済み
             </div>
 
+            {/* スーパーキャッチ */}
+            <div
+              style={{
+                fontSize: '14px',
+                color: '#888',
+                letterSpacing: '0.1em',
+                marginBottom: '16px',
+                fontWeight: 500,
+              }}
+            >
+              美容師とお客様を、一生でつなぐ。
+            </div>
+
             <h1
               style={{
                 fontSize: 'clamp(28px, 5vw, 48px)',
@@ -92,9 +105,8 @@ export default function Hero() {
                   padding: '0 4px',
                 }}
               >
-                自分らしいサロン運営
+                あなたのファンを、つくる場所。
               </span>
-              へ
             </h1>
 
             <p
@@ -105,9 +117,16 @@ export default function Hero() {
                 marginBottom: '32px',
               }}
             >
-              LINE予約・顧客カルテ・売上管理、全部ひとつで。
+              美容師は、もう「スタッフ」じゃない。
               <br />
-              ホットペッパーの顧客データをそのまま活用できる唯一のSaaS。
+              一人ひとりが、唯一無二のアーティスト。
+              <br />
+              <br />
+              AIカルテで、お客様一人ひとりを完璧に記憶。
+              <br />
+              接客スクリプトの自動生成で、あなたらしい接客を支えます。
+              <br />
+              月¥1,980から、ファンに囲まれる美容師へ。
             </p>
 
             {/* CTA ボタン */}

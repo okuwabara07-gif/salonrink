@@ -19,13 +19,13 @@ import FooterCTA from '@/components/lp/FooterCTA'
 import Footer from '@/components/lp/Footer'
 
 export const metadata: Metadata = {
-  title: 'SalonRink | 月980円から始まる、本格サロン管理SaaS',
+  title: 'SalonRink | 美容師とお客様を、一生でつなぐ',
   description:
-    'HPBはそのまま、自分らしいサロン運営へ。LINEミニアプリ予約、HPB自動同期、顧客カルテ、すべてひとつに。月¥980〜、14日間無料。',
+    'AIカルテで、美容師の頭脳を支える。LINE公式アカウントと、月¥1,980から。リピッテと同価格でAIカルテが標準装備。タレント美容師として選ばれ続けるあなたへ。',
   openGraph: {
-    title: 'SalonRink | 月980円から始まる、本格サロン管理SaaS',
+    title: 'SalonRink | 美容師とお客様を、一生でつなぐ',
     description:
-      'HPBはそのまま、LINE予約・顧客カルテ・売上管理が¥980〜',
+      'あなたのファンを、つくる場所。月¥1,980から。',
     images: ['/images/lp/og-image.webp'],
   },
 }
