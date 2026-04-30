@@ -394,55 +394,6 @@ export default function DashboardPage() {
 
         {salon && <LostCustomersList salonId={salon.id} />}
       </div>
-
-      {/* ボトムナビゲーション */}
-      <nav
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: '#fff',
-          borderTop: '1px solid var(--sr-border)',
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center',
-          padding: '12px 0',
-          zIndex: 20,
-        }}
-      >
-        {[
-          { icon: '🏠', label: 'ホーム', href: '/dashboard' },
-          { icon: '📅', label: '予約', href: '/dashboard/booking' },
-          { icon: '📋', label: 'カルテ', href: '/dashboard/customers' },
-          { icon: '📊', label: '分析', href: '/dashboard' },
-          { icon: '⚙️', label: '設定', href: '/dashboard/more/settings' },
-        ].map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              textDecoration: 'none',
-              color: 'var(--text-secondary)',
-              fontSize: 'clamp(0.7rem, 1.2vw, 0.8rem)',
-              transition: 'color 0.3s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = 'var(--accent-gold)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = 'var(--text-secondary)'
-            }}
-          >
-            <span style={{ fontSize: '1.5rem' }}>{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
-      </nav>
     </main>
   )
 }
