@@ -86,12 +86,19 @@ export default function FeaturesPage() {
           icon: '💚',
         },
         {
-          title: '外部サービス連携',
-          description: 'ホットペッパー・minimo 連携',
+          title: 'ホットペッパー連携',
+          description: '予約・顧客情報を自動同期',
           icon: '🔗',
         },
+        {
+          title: 'ミニモ連携',
+          description: '今後対応予定',
+          icon: '🌸',
+          badge: 'COMING SOON',
+          opacity: 0.85,
+        },
       ],
-      columns: 2,
+      columns: 3,
     },
   ]
 
