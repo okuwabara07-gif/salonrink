@@ -41,24 +41,10 @@ export default function FooterCTA() {
             letterSpacing: 0.02,
           }}
         >
-          美容師とお客様を、<br />一生でつなぐ。
+          まずは、14日間 free trial.
         </h2>
 
-        {/* サブキャッチコピー 1 */}
-        <p
-          style={{
-            fontFamily: 'var(--font-noto-sans-jp)',
-            fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
-            fontWeight: 400,
-            color: '#fff',
-            marginBottom: 'clamp(8px, 1vw, 12px)',
-            opacity: 0.95,
-          }}
-        >
-          それが、SalonRink。
-        </p>
-
-        {/* サブキャッチコピー 2 */}
+        {/* サブキャッチコピー */}
         <p
           style={{
             fontFamily: 'var(--font-noto-sans-jp)',
@@ -72,7 +58,7 @@ export default function FooterCTA() {
             margin: '0 auto',
           }}
         >
-          AI が、あなたのサロンの可能性を広げてくれます。
+          すべての機能を、無料でお試しいただけます。<br />美容師とお客様を、一生でつなぐ体験を。
         </p>
 
         {/* CTA ボタン */}
@@ -116,7 +102,7 @@ export default function FooterCTA() {
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            14日間無料で始める
+            14日間無料で試す →
           </Link>
 
           {/* 副 CTA */}
@@ -147,8 +133,31 @@ export default function FooterCTA() {
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            デモを見る
+            デモを予約する
           </Link>
+        </div>
+
+        {/* 信頼指標 */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 'clamp(8px, 1.5vw, 12px)',
+            alignItems: 'center',
+            marginTop: 'clamp(40px, 5vw, 60px)',
+          }}
+        >
+          <p
+            style={{
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.8rem, 1.3vw, 0.875rem)',
+              color: '#fff',
+              opacity: 0.8,
+              margin: 0,
+            }}
+          >
+            ✓ クレカ登録不要 | ✓ いつでも解約OK | ✓ しつこい営業なし
+          </p>
         </div>
       </div>
     </section>
