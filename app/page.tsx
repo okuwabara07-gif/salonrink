@@ -11,7 +11,7 @@ import Footer from '@/components/lp/Footer'
 export const metadata: Metadata = {
   title: 'SalonRink | 美容師とお客様を、一生でつなぐ',
   description:
-    'AIカルテで、美容師の頭脳を支える。LINE公式アカウントと、月¥1,980から。リピッテと同価格でAIカルテが標準装備。タレント美容師として選ばれ続けるあなたへ。',
+    'AIカルテで、美容師の頭脳を支える。LINE公式アカウントと、月¥1,980から。同価格帯でAIカルテが標準装備。タレント美容師として選ばれ続けるあなたへ。',
   openGraph: {
     title: 'SalonRink | 美容師とお客様を、一生でつなぐ',
     description:

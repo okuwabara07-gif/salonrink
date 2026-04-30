@@ -2,8 +2,8 @@ export default function ComparisonTable() {
   const features = ['LINE予約', 'HPB連携', 'ミニモ連携', 'AIカルテ', 'AI接客スクリプト', 'AIアレルギー警告', '月額料金']
   const competitors = [
     { name: 'SalonRink', line: '✅', hpb: '✅', minimo: '🔔', aichart: '✅', aiscript: '✅', aialert: '✅', price: '¥1,980〜' },
-    { name: 'リピッテ', line: '✅', hpb: '❌', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥2,000〜' },
-    { name: 'サロンコネクト', line: '❌', hpb: '✅', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥3,980〜' },
+    { name: 'A社', line: '✅', hpb: '❌', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥2,000〜' },
+    { name: 'B社', line: '❌', hpb: '✅', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥3,980〜' },
   ]
   return (
     <section style={{ background: 'var(--sr-bg)', padding: '80px 20px' }}>

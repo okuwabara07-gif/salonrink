@@ -53,7 +53,7 @@ export default function MeritComparison() {
               display: 'inline',
             }}
           >
-            リピッテにない、SalonRink 独自の世界
+            他社にない、SalonRink 独自の世界
           </span>
         </h2>
 
