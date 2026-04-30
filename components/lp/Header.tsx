@@ -18,6 +18,22 @@ export default function Header() {
         zIndex: 50,
       }}
     >
+      <style>{`
+        .header-hamburger {
+          display: flex;
+        }
+        .header-pc-nav {
+          display: none;
+        }
+        @media (min-width: 1024px) {
+          .header-hamburger {
+            display: none !important;
+          }
+          .header-pc-nav {
+            display: flex !important;
+          }
+        }
+      `}</style>
       <div
         style={{
           maxWidth: '1200px',
@@ -49,13 +65,13 @@ export default function Header() {
 
         {/* Hamburger Menu Button */}
         <button
+          className="header-hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
             background: 'none',
             border: 'none',
             cursor: 'pointer',
             color: '#ffffff',
-            display: 'flex',
             flexDirection: 'column',
             gap: '4px',
             padding: 0,
@@ -66,6 +82,115 @@ export default function Header() {
           <div style={{ width: 24, height: 2, background: '#ffffff' }} />
           <div style={{ width: 24, height: 2, background: '#ffffff' }} />
         </button>
+
+        {/* PC Navigation */}
+        <nav
+          className="header-pc-nav"
+          style={{
+            display: 'none',
+            alignItems: 'center',
+            gap: 'clamp(20px, 3vw, 32px)',
+          }}
+        >
+          <a
+            href="#features"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+            }}
+          >
+            機能
+          </a>
+          <a
+            href="#pricing"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+            }}
+          >
+            料金
+          </a>
+          <a
+            href="#case-study"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+            }}
+          >
+            導入事例
+          </a>
+          <a
+            href="/faq"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+            }}
+          >
+            よくある質問
+          </a>
+          <Link
+            href="/login"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+              padding: 'clamp(10px, 1.5vw, 12px) clamp(20px, 2vw, 24px)',
+              border: '2px solid rgba(255, 255, 255, 0.5)',
+              borderRadius: 6,
+              transition: 'all 0.3s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = '#ffffff'
+              e.currentTarget.style.opacity = '1'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'
+              e.currentTarget.style.opacity = '0.9'
+            }}
+          >
+            ログイン
+          </Link>
+          <Link
+            href="/register"
+            style={{
+              textDecoration: 'none',
+              background: '#C9A961',
+              color: '#1A1018',
+              padding: 'clamp(10px, 1.5vw, 12px) clamp(20px, 2vw, 24px)',
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: 'clamp(0.95rem, 1.5vw, 1rem)',
+              fontFamily: 'var(--font-noto-sans-jp)',
+              transition: 'all 0.3s',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#B89347'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#C9A961'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            14日間無料で試す
+          </Link>
+        </nav>
       </div>
 
       {/* Mobile Menu */}
