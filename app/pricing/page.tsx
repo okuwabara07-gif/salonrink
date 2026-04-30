@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Header from '@/components/lp/Header'
+import ComparisonTable from '@/components/lp/ComparisonTable'
 import Footer from '@/components/lp/Footer'
 
 export default function PricingPage() {
@@ -394,6 +395,15 @@ export default function PricingPage() {
                 </Link>
               </div>
             ))}
+          </div>
+
+          {/* 比較表セクション */}
+          <div
+            style={{
+              marginBottom: 'clamp(80px, 12vw, 120px)',
+            }}
+          >
+            <ComparisonTable />
           </div>
 
           {/* アドオンセクション */}
