@@ -6,15 +6,24 @@ export default function CaseStudySection() {
   const testimonials = [
     {
       image: '/images/lp-redesign/testimonial-sato.jpg',
-      alt: '佐藤翔太 - salon Lumière オーナー',
+      alt: 'S.S 様 - salon Lumière オーナー',
+      name: 'S.S 様',
+      role: '東京都・salon Lumière オーナー',
+      quote: 'お客様の好みをすぐ確認できて、カウンセリングの質が上がりました。リピート率も上がっています。',
     },
     {
       image: '/images/lp-redesign/testimonial-tanaka.jpg',
-      alt: '田中美咲 - hair design Rêve スタイリスト',
+      alt: 'T.M 様 - hair design Rêve スタイリスト',
+      name: 'T.M 様',
+      role: '神奈川県・hair design Rêve スタイリスト',
+      quote: 'ケア情報がスムーズに見れて、安心して施術できるのが本当にありがたいです。',
     },
     {
       image: '/images/lp-redesign/testimonial-suzuki.jpg',
-      alt: '鈴木健太 - BARBER KEN オーナー',
+      alt: 'S.K 様 - BARBER KEN オーナー',
+      name: 'S.K 様',
+      role: '大阪府・BARBER KEN オーナー',
+      quote: '分析レポートが分かりやすく、経営判断にも役立っています。導入して良かったです。',
     },
   ]
 
@@ -39,6 +48,22 @@ export default function CaseStudySection() {
       `}</style>
 
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* EYEBROW */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.75rem, 1.3vw, 0.875rem)',
+            fontWeight: 600,
+            color: '#C9A961',
+            textAlign: 'center',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            letterSpacing: 0.15,
+            textTransform: 'uppercase',
+          }}
+        >
+          VOICE
+        </p>
+
         {/* セクションタイトル */}
         <h2
           style={{
@@ -51,7 +76,7 @@ export default function CaseStudySection() {
             letterSpacing: 0.02,
           }}
         >
-          美容師の声
+          導入サロンから、嬉しい声が届いています。
         </h2>
 
         <p
@@ -64,7 +89,7 @@ export default function CaseStudySection() {
             marginBottom: 'clamp(60px, 8vw, 80px)',
           }}
         >
-          SalonRink を使って、サロンワークが変わりました。
+          SalonRinkを導入して、サロンワークが変わりました。
         </p>
 
         {/* テスティモニアルカード */}
@@ -82,13 +107,14 @@ export default function CaseStudySection() {
               key={i}
               className="case-study-card"
               style={{
-                position: 'relative',
+                display: 'flex',
+                flexDirection: 'column',
                 borderRadius: 16,
                 overflow: 'hidden',
-                aspectRatio: '16/9',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer',
+                background: '#FFFFFF',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
@@ -99,14 +125,74 @@ export default function CaseStudySection() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              <Image
-                src={testimonial.image}
-                alt={testimonial.alt}
-                fill
+              {/* 画像部分 */}
+              <div
                 style={{
-                  objectFit: 'cover',
+                  position: 'relative',
+                  width: '100%',
+                  aspectRatio: '16/10',
                 }}
-              />
+              >
+                <Image
+                  src={testimonial.image}
+                  alt={testimonial.alt}
+                  fill
+                  style={{
+                    objectFit: 'cover',
+                  }}
+                />
+              </div>
+
+              {/* テキスト部分 */}
+              <div
+                style={{
+                  padding: 'clamp(16px, 2.5vw, 20px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'clamp(8px, 1.5vw, 12px)',
+                }}
+              >
+                {/* 引用文 */}
+                <p
+                  style={{
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                    fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                    fontWeight: 400,
+                    color: 'var(--text-secondary)',
+                    margin: 0,
+                    lineHeight: 1.6,
+                    fontStyle: 'italic',
+                  }}
+                >
+                  "{testimonial.quote}"
+                </p>
+
+                {/* 名前 */}
+                <p
+                  style={{
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
+                  {testimonial.name}
+                </p>
+
+                {/* 役職 */}
+                <p
+                  style={{
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                    fontSize: 'clamp(0.75rem, 1.2vw, 0.8rem)',
+                    fontWeight: 400,
+                    color: 'var(--text-soft)',
+                    margin: 0,
+                  }}
+                >
+                  {testimonial.role}
+                </p>
+              </div>
             </div>
           ))}
         </div>
@@ -122,7 +208,7 @@ export default function CaseStudySection() {
             margin: 0,
           }}
         >
-          他にも多くのサロン様にご利用いただいています。
+          ※個人の感想であり、効果を保証するものではありません
         </p>
       </div>
     </section>
