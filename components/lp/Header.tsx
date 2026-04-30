@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -8,12 +9,13 @@ export default function Header() {
   return (
     <header
       style={{
-        background: 'linear-gradient(135deg, #9dbddb 0%, #7da5c7 100%)',
-        padding: '16px 20px',
-        position: 'sticky',
+        background: 'transparent',
+        padding: 'clamp(16px, 3vw, 24px) clamp(20px, 5vw, 60px)',
+        position: 'absolute',
         top: 0,
+        left: 0,
+        right: 0,
         zIndex: 50,
-        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
       }}
     >
       <div
@@ -26,87 +28,39 @@ export default function Header() {
         }}
       >
         {/* Logo */}
-        <div
+        <Link
+          href="/"
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '4px',
+            textDecoration: 'none',
           }}
         >
           <div
             style={{
-              fontSize: '24px',
-              fontWeight: 600,
+              fontSize: 'clamp(1.5rem, 3vw, 1.875rem)',
+              fontWeight: 400,
               color: '#ffffff',
-              letterSpacing: '2px',
+              fontFamily: 'var(--font-noto-serif-jp)',
+              letterSpacing: 0.05,
             }}
           >
             SalonRink
           </div>
-          <div
-            style={{
-              fontSize: '11px',
-              fontWeight: 400,
-              color: 'rgba(255, 255, 255, 0.85)',
-              letterSpacing: '0.5px',
-              lineHeight: 1.3,
-            }}
-          >
-            フリーランスから始められる、サロン経営の新しい軸
-          </div>
-        </div>
+        </Link>
 
-        {/* Desktop Nav */}
-        <nav
-          style={{
-            display: 'flex',
-            gap: '24px',
-            color: '#ffffff',
-            fontSize: '14px',
-            alignItems: 'center',
-          }}
-          className="hidden md:flex"
-        >
-          <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>
-            機能
-          </a>
-          <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>
-            料金
-          </a>
-          <a href="#case-study" style={{ textDecoration: 'none', color: 'inherit' }}>
-            導入事例
-          </a>
-          <a href="#faq" style={{ textDecoration: 'none', color: 'inherit' }}>
-            FAQ
-          </a>
-          <a
-            href="/login"
-            style={{
-              textDecoration: 'none',
-              color: '#ffffff',
-              background: 'rgba(255,255,255,0.2)',
-              padding: '8px 16px',
-              borderRadius: '999px',
-              fontSize: '13px',
-            }}
-          >
-            ログイン
-          </a>
-        </nav>
-
-        {/* Mobile Menu Button */}
+        {/* Hamburger Menu Button */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           style={{
-            display: 'none',
-            flexDirection: 'column',
-            gap: '4px',
             background: 'none',
             border: 'none',
             cursor: 'pointer',
             color: '#ffffff',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+            padding: 0,
           }}
-          className="md:hidden flex"
+          aria-label="Menu"
         >
           <div style={{ width: 24, height: 2, background: '#ffffff' }} />
           <div style={{ width: 24, height: 2, background: '#ffffff' }} />
@@ -114,44 +68,81 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile Nav */}
+      {/* Mobile Menu */}
       {menuOpen && (
         <nav
           style={{
             display: 'flex',
             flexDirection: 'column',
-            gap: '12px',
-            marginTop: '16px',
+            gap: 'clamp(12px, 2vw, 16px)',
+            marginTop: 'clamp(16px, 2vw, 20px)',
+            paddingTop: 'clamp(16px, 2vw, 20px)',
+            borderTop: '1px solid rgba(255, 255, 255, 0.2)',
             color: '#ffffff',
-            fontSize: '14px',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1rem)',
           }}
         >
-          <a href="#features" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <a
+            href="#features"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+            }}
+            onClick={() => setMenuOpen(false)}
+          >
             機能
           </a>
-          <a href="#pricing" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <a
+            href="#pricing"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+            }}
+            onClick={() => setMenuOpen(false)}
+          >
             料金
           </a>
-          <a href="#case-study" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <a
+            href="#case-study"
+            style={{
+              textDecoration: 'none',
+              color: '#ffffff',
+              opacity: 0.9,
+            }}
+            onClick={() => setMenuOpen(false)}
+          >
             導入事例
-          </a>
-          <a href="#faq" style={{ textDecoration: 'none', color: 'inherit' }}>
-            FAQ
           </a>
           <a
             href="/login"
             style={{
               textDecoration: 'none',
               color: '#ffffff',
-              background: 'rgba(255,255,255,0.2)',
-              padding: '8px 16px',
-              borderRadius: '999px',
-              display: 'inline-block',
-              width: 'fit-content',
+              opacity: 0.9,
             }}
+            onClick={() => setMenuOpen(false)}
           >
             ログイン
           </a>
+          <Link
+            href="/register"
+            style={{
+              textDecoration: 'none',
+              background: '#1A1018',
+              color: '#ffffff',
+              padding: 'clamp(12px, 2vw, 16px) clamp(24px, 4vw, 32px)',
+              borderRadius: 8,
+              fontWeight: 500,
+              textAlign: 'center',
+              display: 'block',
+              marginTop: 'clamp(8px, 1vw, 12px)',
+            }}
+            onClick={() => setMenuOpen(false)}
+          >
+            30日間無料で試す
+          </Link>
         </nav>
       )}
     </header>
