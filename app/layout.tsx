@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Serif_JP, Noto_Sans_JP, Inter } from "next/font/google";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
 
@@ -10,6 +10,23 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const notoSerifJP = Noto_Serif_JP({
+  variable: "--font-noto-serif-jp",
+  weight: ["400", "700"],
+  subsets: ["latin"],
+});
+
+const notoSansJP = Noto_Sans_JP({
+  variable: "--font-noto-sans-jp",
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+});
+
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -92,7 +109,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${notoSansJP.variable} ${inter.variable}`}>
         {children}
         <PWAInstallPrompt />
       </body>

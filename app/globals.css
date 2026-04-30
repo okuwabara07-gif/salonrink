@@ -1,53 +1,171 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* New Design System - Warm & Sophisticated Palette */
+  /* Primary Colors */
+  --bg-main: #FAF6EE;
+  --bg-card: #FFFFFF;
+  --text-primary: #1A1018;
+  --text-secondary: #6B6258;
+  --text-soft: #9D9691;
 
-  /* SalonRink LP - ペールトーン色調 */
-  /* メイン色 */
-  --sr-blue-pale-light: #b8d4e8;
-  --sr-blue-pale: #9dbddb;
-  --sr-blue-pale-dark: #7da5c7;
-  --sr-blue-pale-deepest: #2c4373;
+  /* Accent Colors */
+  --accent-gold: #B59B78;
+  --accent-mocha: #2D2A28;
+  --accent-warm-beige: #E8D8C8;
+  --accent-light-beige: #F4E8DF;
 
-  /* アクセント色（薄ピンク・コマンド色） */
-  --sr-pink-pale: #ffe5ec;
-  --sr-pink: #ffd1dc;
-  --sr-pink-coral: #f0a0a0;
-  --sr-pink-text: #d88896;
+  /* Status Colors */
+  --success: #4A7C59;
+  --warning: #C19551;
+  --error: #A32D2D;
+  --info: #5B6B8F;
 
-  /* 補助色 */
-  --sr-yellow-cream: #ffe89a;
-  --sr-mint-pale: #b8e8c8;
-  --sr-mint: #7bca9c;
-  --sr-orange-pale: #f0a878;
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 
-  /* 背景・グレー */
-  --sr-bg: #fafcff;
-  --sr-bg-card: #ffffff;
-  --sr-border: #e8eef5;
-  --sr-text-soft: #5a6878;
+  /* Gradients */
+  --gradient-warm: linear-gradient(135deg, #B59B78 0%, #E8D8C8 100%);
+  --gradient-subtle: linear-gradient(180deg, #FFFFFF 0%, #F4E8DF 100%);
+
+  /* Backward Compatibility - Old Variables Mapped to New */
+  --sr-bg: var(--bg-main);
+  --sr-bg-card: var(--bg-card);
+  --sr-text-soft: var(--text-secondary);
+  --sr-border: #E8D8C8;
+  --sr-blue-pale-light: #D4C4B0;
+  --sr-blue-pale: #B59B78;
+  --sr-blue-pale-dark: #9D8F7F;
+  --sr-blue-pale-deepest: #2D2A28;
+  --sr-pink-pale: #F4E8DF;
+  --sr-pink: #E8D8C8;
+  --sr-pink-coral: #C19551;
+  --sr-pink-text: #9D9691;
+  --sr-yellow-cream: #F4E8DF;
+  --sr-mint-pale: #E8D8C8;
+  --sr-mint: #B59B78;
+  --sr-orange-pale: #C19551;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--bg-main);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-noto-sans-jp);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-noto-serif-jp);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --bg-main: #1A1612;
+    --bg-card: #2D2A28;
+    --text-primary: #F4E8DF;
+    --text-secondary: #C9BDB3;
+    --text-soft: #9D9691;
+    --accent-gold: #D4B896;
+    --accent-mocha: #E8D8C8;
+    --accent-warm-beige: #3D3A38;
+    --accent-light-beige: #2D2A28;
+    --success: #6BA878;
+    --warning: #D4B896;
+    --error: #D46464;
+    --info: #8B9FC7;
   }
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
-  background: var(--sr-bg);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-family: var(--font-noto-sans-jp), system-ui, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+h3 {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+h4, h5, h6 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+p {
+  font-size: clamp(0.875rem, 1.5vw, 1rem);
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+a {
+  color: var(--accent-gold);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--accent-mocha);
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+input, textarea, select {
+  border: 1px solid var(--sr-border);
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+  box-shadow: 0 0 0 3px rgba(181, 155, 120, 0.1);
 }
 
 /* ダミー画像用グラデーション背景 */
