@@ -12,18 +12,22 @@ export default function FeaturesPage() {
         {
           title: 'AIサマリー生成',
           description: '顧客情報を自動分析し、最適なサマリーを生成',
+          icon: '💬',
         },
         {
           title: 'アレルギー警告',
           description: 'リスク情報を察知し、施術前に通知',
+          icon: '⚠️',
         },
         {
           title: '次回提案',
           description: '最適な施術・ケアを AI が提案',
+          icon: '✨',
         },
         {
           title: '失客予測',
           description: '来店パターンからリスクを分析',
+          icon: '📍',
         },
       ],
       columns: 4,
@@ -35,14 +39,17 @@ export default function FeaturesPage() {
         {
           title: '予約カレンダー',
           description: '予約を一元管理',
+          icon: '📅',
         },
         {
           title: '自動リマインド',
           description: '前日・当日に顧客に自動通知',
+          icon: '⏰',
         },
         {
           title: '予約統計',
           description: '売上・件数を分析',
+          icon: '📊',
         },
       ],
       columns: 3,
@@ -54,14 +61,17 @@ export default function FeaturesPage() {
         {
           title: '顧客一覧',
           description: '顧客情報を一元管理',
+          icon: '👥',
         },
         {
           title: '来店履歴',
           description: '過去の来店記録を確認',
+          icon: '📋',
         },
         {
           title: 'タグ管理',
           description: '顧客を分類・整理',
+          icon: '🏷️',
         },
       ],
       columns: 3,
@@ -73,10 +83,12 @@ export default function FeaturesPage() {
         {
           title: 'LINE連携',
           description: '予約・カルテを自動同期',
+          icon: '💚',
         },
         {
           title: '外部サービス連携',
           description: 'ホットペッパー・minimo 連携',
+          icon: '🔗',
         },
       ],
       columns: 2,
@@ -201,7 +213,7 @@ export default function FeaturesPage() {
                       background: '#FFFFFF',
                       border: '1px solid var(--sr-border)',
                       borderRadius: 12,
-                      padding: 'clamp(16px, 3vw, 20px)',
+                      padding: 'clamp(20px, 3vw, 28px)',
                       display: 'flex',
                       flexDirection: 'column',
                       alignItems: 'center',
@@ -218,6 +230,29 @@ export default function FeaturesPage() {
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
+                    {/* アイコン枠 */}
+                    <div
+                      style={{
+                        width: 56,
+                        height: 56,
+                        borderRadius: '50%',
+                        background: 'rgba(212, 175, 55, 0.1)',
+                        border: '1px solid var(--accent-gold)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: 'clamp(12px, 1.5vw, 16px)',
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: '1.75rem',
+                        }}
+                      >
+                        {feature.icon}
+                      </span>
+                    </div>
+
                     {/* タイトル */}
                     <h3
                       style={{
