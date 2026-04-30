@@ -25,6 +25,17 @@ export default function IndustriesSection() {
         padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
       }}
     >
+      <style>{`
+        @media (min-width: 1024px) {
+          .industries-card-image {
+            aspect-ratio: 4/3 !important;
+          }
+          .industries-card-wrapper {
+            max-width: 380px !important;
+          }
+        }
+      `}</style>
+
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         {/* セクションタイトル */}
         <h2
@@ -52,6 +63,7 @@ export default function IndustriesSection() {
           {challenges.map((challenge, i) => (
             <div
               key={i}
+              className="industries-card-wrapper"
               style={{
                 margin: '0 auto',
                 width: '100%',
@@ -59,6 +71,7 @@ export default function IndustriesSection() {
               }}
             >
               <div
+                className="industries-card-image"
                 style={{
                   position: 'relative',
                   borderRadius: 16,

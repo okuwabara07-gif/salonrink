@@ -25,6 +25,19 @@ export default function CaseStudySection() {
         padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
       }}
     >
+      <style>{`
+        @media (min-width: 1024px) {
+          .case-study-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
+          .case-study-card {
+            aspect-ratio: 4/3 !important;
+            max-width: 360px !important;
+            margin: 0 auto !important;
+          }
+        }
+      `}</style>
+
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         {/* セクションタイトル */}
         <h2
@@ -56,6 +69,7 @@ export default function CaseStudySection() {
 
         {/* テスティモニアルカード */}
         <div
+          className="case-study-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -66,6 +80,7 @@ export default function CaseStudySection() {
           {testimonials.map((testimonial, i) => (
             <div
               key={i}
+              className="case-study-card"
               style={{
                 position: 'relative',
                 borderRadius: 16,

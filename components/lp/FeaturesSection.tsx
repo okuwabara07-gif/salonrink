@@ -29,6 +29,35 @@ export default function FeaturesSection() {
         padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
       }}
     >
+      <style>{`
+        @media (min-width: 1024px) {
+          .features-container {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: clamp(40px, 5vw, 60px) !important;
+            align-items: center !important;
+          }
+          .features-phone-section {
+            display: flex !important;
+            justify-content: center !important;
+            margin-bottom: 0 !important;
+            order: 1 !important;
+          }
+          .features-phone-mockup {
+            width: clamp(360px, 40vw, 480px) !important;
+          }
+          .features-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: clamp(20px, 3vw, 28px) !important;
+            order: 2 !important;
+          }
+          .feature-arrow {
+            display: none !important;
+          }
+        }
+      `}</style>
+
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
         {/* セクションタイトル */}
         <h2
@@ -60,35 +89,9 @@ export default function FeaturesSection() {
           サロンワークに、AI というパートナーを。
         </p>
 
-        {/* スマホ画像: 中央・大きく */}
+        {/* メインコンテナ: PC時に2列 */}
         <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginBottom: 'clamp(40px, 6vw, 60px)',
-          }}
-        >
-          <div
-            style={{
-              position: 'relative',
-              width: 'clamp(280px, 80%, 360px)',
-              aspectRatio: '3/4',
-            }}
-          >
-            <Image
-              src="/images/lp-redesign/phone-mockup.jpg"
-              alt="SalonRink カルテ画面"
-              fill
-              style={{
-                objectFit: 'contain',
-              }}
-              priority
-            />
-          </div>
-        </div>
-
-        {/* 機能カード: 縦並び + 矢印で繋ぐ */}
-        <div
+          className="features-container"
           style={{
             display: 'flex',
             flexDirection: 'column',
@@ -96,6 +99,45 @@ export default function FeaturesSection() {
             gap: 0,
           }}
         >
+          {/* スマホ画像: 中央・大きく */}
+          <div
+            className="features-phone-section"
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: 'clamp(40px, 6vw, 60px)',
+            }}
+          >
+            <div
+              className="features-phone-mockup"
+              style={{
+                position: 'relative',
+                width: 'clamp(280px, 80%, 360px)',
+                aspectRatio: '3/4',
+              }}
+            >
+              <Image
+                src="/images/lp-redesign/phone-mockup.jpg"
+                alt="SalonRink カルテ画面"
+                fill
+                style={{
+                  objectFit: 'contain',
+                }}
+                priority
+              />
+            </div>
+          </div>
+
+          {/* 機能カード: 縦並び + 矢印で繋ぐ */}
+          <div
+            className="features-list"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 0,
+            }}
+          >
           {aiFeatures.map((feature, index) => (
             <div
               key={feature.number}
@@ -109,6 +151,7 @@ export default function FeaturesSection() {
               {/* 矢印(1番目を除く) */}
               {index > 0 && (
                 <div
+                  className="feature-arrow"
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -213,6 +256,7 @@ export default function FeaturesSection() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </section>
