@@ -142,7 +142,7 @@ export default function PricingPage() {
               marginBottom: 0,
             }}
           >
-            すべてのプランに30日間の無料期間が含まれます
+            すべてのプランに14日間の無料期間が含まれます
           </p>
         </div>
       </section>

@@ -52,7 +52,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div style={{ background:"#1a1a1a", borderRadius:"4px", padding:"2rem", margin:"3rem 0", textAlign:"center" }}>
-        <p style={{ fontFamily:"serif", fontSize:"1rem", color:"#fff", marginBottom:"0.5rem", fontWeight:400 }}>SalonRinkを30日間無料で試す</p>
+        <p style={{ fontFamily:"serif", fontSize:"1rem", color:"#fff", marginBottom:"0.5rem", fontWeight:400 }}>SalonRinkを14日間無料で試す</p>
         <p style={{ fontSize:"0.82rem", color:"rgba(255,255,255,0.55)", marginBottom:"1.5rem", lineHeight:1.8 }}>
           LINE予約・顧客管理・EC・配送を一元管理
         </p>

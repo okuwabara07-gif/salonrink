@@ -116,7 +116,7 @@ export default function FooterCTA() {
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            30日間無料で始める
+            14日間無料で始める
           </Link>
 
           {/* 副 CTA */}

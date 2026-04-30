@@ -169,7 +169,7 @@ export default function Hero() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              30日間無料で試す
+              14日間無料で試す
             </Link>
 
             {/* 副 CTA */}

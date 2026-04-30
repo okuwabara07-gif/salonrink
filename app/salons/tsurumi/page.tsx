@@ -256,7 +256,7 @@ export default function KireiturumiPage() {
           月額売上 ¥680k → ¥850k へ。
         </p>
         <a href="/register" style={styles.button}>
-          30日無料で始める
+          14日無料で始める
         </a>
       </section>
 
@@ -406,7 +406,7 @@ export default function KireiturumiPage() {
           </div>
         </div>
         <p style={styles.pricingNote}>
-          30日間無料トライアル付き。<br />
+          14日間無料トライアル付き。<br />
           キレイ鶴見店の成果は Small プランで実現。<br />
           いつでも解約可能。
         </p>
@@ -415,11 +415,11 @@ export default function KireiturumiPage() {
       {/* Section 5: CTA */}
       <section style={styles.section5}>
         <a href="/register" style={styles.ctaButton}>
-          30日無料で始める
+          14日無料で始める
         </a>
         <p style={styles.ctaSubText}>
           クレジットカード登録不要。<br />
-          30日後に自動で Small プランに移行します。
+          14日後に自動で Small プランに移行します。
         </p>
         <p style={styles.ctaFooter}>
           ご質問は support@salonrink.com までお気軽に

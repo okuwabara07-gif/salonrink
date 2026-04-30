@@ -141,7 +141,7 @@ export default function Header() {
             }}
             onClick={() => setMenuOpen(false)}
           >
-            30日間無料で試す
+            14日間無料で試す
           </Link>
         </nav>
       )}
