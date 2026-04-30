@@ -1,0 +1,14 @@
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'SalonRink の全機能 | 美容師とお客様を、一生でつなぐ',
+  description: 'AIカルテ、予約管理、顧客管理、LINE連携など、SalonRink の全機能を紹介。',
+}
+
+export default function FeaturesLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return children
+}
