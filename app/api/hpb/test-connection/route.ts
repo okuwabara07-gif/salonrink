@@ -70,6 +70,20 @@ export async function POST(req: NextRequest) {
       }
 
       const vpsData = await vpsResponse.json()
+
+      // VPS の success フィールドを確認
+      if (vpsData.success === false) {
+        console.log('HPB test connection: VPS returned failure', { message: vpsData.message })
+        return NextResponse.json(
+          {
+            success: false,
+            message: vpsData.message || 'HPB接続テストに失敗しました。ログインIDとパスワードを確認してください。',
+            error_code: vpsData.error_code || vpsData.code,
+          },
+          { status: 200 }
+        )
+      }
+
       console.log('HPB test connection: VPS success', { shop_name: vpsData.shop_name })
 
       return NextResponse.json({
