@@ -1,32 +1,23 @@
 'use client'
 
-import Image from 'next/image'
-import PhoneMockup from './PhoneMockup'
+import Link from 'next/link'
 
 export default function Hero() {
   return (
     <section
       style={{
         position: 'relative',
-        minHeight: '600px',
         display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
+        padding: 'clamp(80px, 12vw, 160px) clamp(20px, 5vw, 60px)',
+        background: 'linear-gradient(135deg, #1A1612 0%, #2D2A28 50%, #4A4440 100%)',
+        color: '#fff',
         overflow: 'hidden',
-        padding: '60px 20px',
       }}
     >
-      {/* 背景画像 */}
-      <Image
-        src="/images/lp/hero-salon.webp"
-        alt="明るい美容室の内観"
-        fill
-        priority
-        style={{
-          objectFit: 'cover',
-        }}
-      />
-
-      {/* 濃いペールトーン白オーバーレイ */}
+      {/* グラデーションオーバーレイ */}
       <div
         style={{
           position: 'absolute',
@@ -34,189 +25,140 @@ export default function Hero() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'rgba(255, 255, 255, 0.7)',
+          background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.7) 0%, rgba(45, 42, 40, 0.7) 100%)',
           zIndex: 1,
         }}
       />
 
-      {/* コンテンツ: 2カラムレイアウト */}
+      {/* コンテンツ */}
       <div
         style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
           position: 'relative',
-          zIndex: 10,
-          width: '100%',
+          zIndex: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          maxWidth: 900,
         }}
       >
+        {/* キャッチコピー */}
+        <h1
+          style={{
+            fontFamily: 'var(--font-noto-serif-jp)',
+            fontSize: 'clamp(2.5rem, 7vw, 4rem)',
+            fontWeight: 400,
+            lineHeight: 1.3,
+            marginBottom: 'clamp(24px, 3vw, 40px)',
+            letterSpacing: 0.05,
+          }}
+        >
+          美容師とお客様を、<br />一生でつなぐ。
+        </h1>
+
+        {/* サブタイトル */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+            fontWeight: 400,
+            lineHeight: 1.6,
+            marginBottom: 'clamp(12px, 2vw, 20px)',
+            opacity: 0.95,
+          }}
+        >
+          それが、SalonRink。
+        </p>
+
+        {/* 説明文 */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1.125rem)',
+            fontWeight: 300,
+            lineHeight: 1.8,
+            marginBottom: 'clamp(40px, 5vw, 60px)',
+            maxWidth: 700,
+            opacity: 0.9,
+          }}
+        >
+          AIカルテを背に、信頼でつなぐ、<br />あなたのサロンの未来を支えます。
+        </p>
+
+        {/* CTA ボタン */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '48px',
+            display: 'flex',
+            gap: 'clamp(12px, 2vw, 20px)',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
             alignItems: 'center',
           }}
         >
-          {/* 左カラム: テキスト + CTA (60%) */}
-          <div style={{ textAlign: 'left' }}>
-            {/* バッジ */}
-            <div
-              style={{
-                display: 'inline-block',
-                background: 'var(--sr-pink-pale)',
-                color: 'var(--sr-pink-text)',
-                padding: '8px 16px',
-                borderRadius: '999px',
-                fontSize: '12px',
-                fontWeight: 600,
-                marginBottom: '24px',
-              }}
-            >
-              ✓ 美容師監修・実装サロンで検証済み
-            </div>
+          {/* 主 CTA */}
+          <Link
+            href="/register"
+            style={{
+              display: 'inline-block',
+              background: '#1A1018',
+              color: '#fff',
+              padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
+              borderRadius: 8,
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)',
+              fontWeight: 500,
+              textDecoration: 'none',
+              border: '2px solid #1A1018',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#2D2A28'
+              e.currentTarget.style.borderColor = '#2D2A28'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1A1018'
+              e.currentTarget.style.borderColor = '#1A1018'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            30日間無料で試す
+          </Link>
 
-            {/* スーパーキャッチ */}
-            <div
-              style={{
-                fontSize: '14px',
-                color: '#888',
-                letterSpacing: '0.1em',
-                marginBottom: '16px',
-                fontWeight: 500,
-              }}
-            >
-              美容師とお客様を、一生でつなぐ。
-            </div>
-
-            <h1
-              style={{
-                fontSize: 'clamp(28px, 5vw, 48px)',
-                fontWeight: 600,
-                color: '#1a2c4f',
-                lineHeight: 1.3,
-                letterSpacing: '-0.02em',
-                marginBottom: '24px',
-              }}
-            >
-              <span
-                style={{
-                  background: 'linear-gradient(transparent 60%, #FEF08A 60%)',
-                  display: 'inline',
-                  padding: '0 4px',
-                }}
-              >
-                あなたのファンを、つくる場所。
-              </span>
-            </h1>
-
-            <p
-              style={{
-                fontSize: 'clamp(16px, 2vw, 18px)',
-                color: '#5a6878',
-                lineHeight: 1.7,
-                marginBottom: '32px',
-              }}
-            >
-              美容師は、もう「スタッフ」じゃない。
-              <br />
-              一人ひとりが、唯一無二のアーティスト。
-              <br />
-              <br />
-              AIカルテで、お客様一人ひとりを完璧に記憶。
-              <br />
-              接客スクリプトの自動生成で、あなたらしい接客を支えます。
-              <br />
-              月¥1,980から、ファンに囲まれる美容師へ。
-            </p>
-
-            {/* CTA ボタン */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '16px',
-                flexWrap: 'wrap',
-              }}
-            >
-              <a
-                href="/register"
-                style={{
-                  background: 'linear-gradient(135deg, #f5b8b8 0%, #f0a5a5 100%)',
-                  color: '#ffffff',
-                  padding: '14px 32px',
-                  borderRadius: '999px',
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                  fontSize: '15px',
-                  border: '1px solid rgba(255,255,255,0.3)',
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 12px rgba(245,184,184,0.3)',
-                  backdropFilter: 'blur(8px)',
-                  transition: 'all 0.3s ease',
-                  display: 'inline-block',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(245,184,184,0.4)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(245,184,184,0.3)'
-                }}
-              >
-                無料で始める（14日間）
-              </a>
-              <button
-                onClick={() => {
-                  document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
-                }}
-                style={{
-                  background: 'rgba(255,255,255,0.5)',
-                  backdropFilter: 'blur(8px)',
-                  color: '#1a2c4f',
-                  padding: '14px 32px',
-                  borderRadius: '999px',
-                  border: '1.5px solid rgba(255,255,255,0.7)',
-                  fontWeight: 600,
-                  fontSize: '15px',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.08)'
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.6)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.05)'
-                  e.currentTarget.style.background = 'rgba(255,255,255,0.5)'
-                }}
-              >
-                デモを見る
-              </button>
-            </div>
-          </div>
-
-          {/* 右カラム: スマホモックアップ (40%) */}
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <PhoneMockup />
-          </div>
+          {/* 副 CTA */}
+          <Link
+            href="#features"
+            style={{
+              display: 'inline-block',
+              background: 'transparent',
+              color: '#fff',
+              padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
+              borderRadius: 8,
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)',
+              fontWeight: 500,
+              textDecoration: 'none',
+              border: '2px solid #fff',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            デモを見る
+          </Link>
         </div>
-
-        {/* モバイル対応: 1カラムに切り替え */}
-        <style>{`
-          @media (max-width: 768px) {
-            div[style*="grid-template-columns"] {
-              grid-template-columns: 1fr !important;
-              gap: 32px !important;
-            }
-            h1 {
-              font-size: clamp(24px, 6vw, 36px) !important;
-            }
-          }
-        `}</style>
       </div>
+
+      {/* TODO: 本番用美容室写真を /public/images/hero-bg.jpg に配置後、差し替え */}
+      {/* backgroundImage: 'url(/images/hero-bg.jpg)' を背景セクションに追加予定 */}
     </section>
   )
 }

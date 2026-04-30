@@ -1,70 +1,134 @@
 'use client'
 
-import Image from 'next/image'
+import Link from 'next/link'
 
 export default function FooterCTA() {
   return (
-    <section style={{ position: 'relative', padding: '80px 20px', overflow: 'hidden' }}>
-      {/* 背景画像 */}
-      <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-        <Image
-          src="/images/lp/footer-cta.webp"
-          alt=""
-          fill
-          style={{ objectFit: 'cover', opacity: 0.5 }}
-          aria-hidden="true"
-        />
-        <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255, 255, 255, 0.7)' }} />
-      </div>
-
-      {/* コンテンツ */}
-      <div style={{ position: 'relative', zIndex: 10, maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-        <p style={{ fontSize: '14px', fontWeight: 600, color: '#d88896', marginBottom: '12px' }}>
-          GET STARTED
-        </p>
+    <section
+      style={{
+        background: 'linear-gradient(135deg, #1A1612 0%, #2D2A28 50%, #4A4440 100%)',
+        padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
+        color: '#fff',
+      }}
+    >
+      <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+        {/* メインキャッチコピー */}
         <h2
           style={{
-            fontSize: 'clamp(28px, 6vw, 44px)',
-            fontWeight: 700,
-            color: '#1a2c4f',
-            marginBottom: '16px',
-            lineHeight: 1.4,
+            fontFamily: 'var(--font-noto-serif-jp)',
+            fontSize: 'clamp(2rem, 5vw, 3rem)',
+            fontWeight: 400,
+            color: '#fff',
+            textAlign: 'center',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            lineHeight: 1.3,
+            letterSpacing: 0.02,
           }}
         >
-          サロン経営の新しい軸を、<br />今日から始める。
+          美容師とお客様を、<br />一生でつなぐ。
         </h2>
+
+        {/* サブキャッチコピー 1 */}
         <p
           style={{
-            fontSize: '16px',
-            color: '#5a6878',
-            marginBottom: '40px',
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(1.25rem, 2.5vw, 1.75rem)',
+            fontWeight: 400,
+            color: '#fff',
+            marginBottom: 'clamp(8px, 1vw, 12px)',
+            opacity: 0.95,
           }}
         >
-          月額¥980〜・初期費用無料・最短当日からスタート
+          それが、SalonRink。
         </p>
-        <a
-          href="/register"
+
+        {/* サブキャッチコピー 2 */}
+        <p
           style={{
-            display: 'inline-block',
-            padding: '16px 40px',
-            borderRadius: '999px',
-            fontWeight: 600,
-            fontSize: '16px',
-            textDecoration: 'none',
-            color: '#ffffff',
-            backgroundColor: '#1a2c4f',
-            transition: 'transform 0.3s',
-            boxShadow: '0 4px 12px rgba(26, 44, 79, 0.2)',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.05)'
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)'
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1.125rem)',
+            fontWeight: 300,
+            color: '#fff',
+            marginBottom: 'clamp(40px, 5vw, 60px)',
+            lineHeight: 1.8,
+            opacity: 0.85,
+            maxWidth: 700,
+            margin: '0 auto',
           }}
         >
-          無料で始める
-        </a>
+          AI が、あなたのサロンの可能性を広げてくれます。
+        </p>
+
+        {/* CTA ボタン */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 'clamp(12px, 2vw, 20px)',
+            flexWrap: 'wrap',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {/* 主 CTA */}
+          <Link
+            href="/register"
+            style={{
+              display: 'inline-block',
+              background: '#1A1018',
+              color: '#fff',
+              padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
+              borderRadius: 8,
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)',
+              fontWeight: 500,
+              textDecoration: 'none',
+              border: '2px solid #1A1018',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#2D2A28'
+              e.currentTarget.style.borderColor = '#2D2A28'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1A1018'
+              e.currentTarget.style.borderColor = '#1A1018'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            30日間無料で始める
+          </Link>
+
+          {/* 副 CTA */}
+          <Link
+            href="#features"
+            style={{
+              display: 'inline-block',
+              background: 'transparent',
+              color: '#fff',
+              padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
+              borderRadius: 8,
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)',
+              fontWeight: 500,
+              textDecoration: 'none',
+              border: '2px solid #fff',
+              transition: 'all 0.3s ease',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+              e.currentTarget.style.transform = 'translateY(-2px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            デモを見る
+          </Link>
+        </div>
       </div>
     </section>
   )

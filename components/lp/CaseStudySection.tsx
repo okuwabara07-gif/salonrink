@@ -1,219 +1,178 @@
 'use client'
 
-import Image from 'next/image'
-
 export default function CaseStudySection() {
+  const testimonials = [
+    {
+      name: '佐藤 翔太',
+      salon: 'salon Lumière オーナー',
+      comment: 'お客様の好みをAIが記録してくれて、提案の精度が上がりました。リピート率が30%向上しました。',
+      initials: '佐',
+      accentColor: 'var(--accent-gold)',
+    },
+    {
+      name: '田中 美咲',
+      salon: 'hair design Rêve スタイリスト',
+      comment: 'アレルギー警告で安心して施術できるようになり、お客様からの信頼も厚くなりました。',
+      initials: '田',
+      accentColor: '#B59B78',
+    },
+    {
+      name: '鈴木 健太',
+      salon: 'BARBER KEN オーナー',
+      comment: '失客リストとAI提案のおかげで、離脱していたお客様が戻ってくるようになりました。',
+      initials: '鈴',
+      accentColor: '#9D8F7F',
+    },
+  ]
+
   return (
     <section
-      id="case-study"
       style={{
-        background: '#ffffff',
-        padding: '80px 20px',
+        background: 'var(--bg-main)',
+        padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
       }}
     >
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* セクションタイトル */}
         <h2
           style={{
-            fontSize: 'clamp(28px, 6vw, 44px)',
-            fontWeight: 700,
-            color: 'var(--sr-blue-pale-deepest)',
+            fontFamily: 'var(--font-noto-serif-jp)',
+            fontSize: 'clamp(2rem, 5vw, 2.75rem)',
+            fontWeight: 400,
+            color: 'var(--text-primary)',
             textAlign: 'center',
-            marginBottom: '60px',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            letterSpacing: 0.02,
           }}
         >
-          導入事例
+          美容師の声
         </h2>
 
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1.125rem)',
+            fontWeight: 300,
+            color: 'var(--text-secondary)',
+            textAlign: 'center',
+            marginBottom: 'clamp(60px, 8vw, 80px)',
+          }}
+        >
+          SalonRink を使って、サロンワークが変わりました。
+        </p>
+
+        {/* テスティモニアルカード */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '40px',
-            alignItems: 'center',
+            gap: 'clamp(24px, 3vw, 32px)',
+            marginBottom: 'clamp(60px, 8vw, 80px)',
           }}
         >
-          {/* Case Study Card */}
-          <div
-            style={{
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-              background: 'var(--sr-bg-card)',
-            }}
-          >
+          {testimonials.map((testimonial, i) => (
             <div
+              key={i}
               style={{
-                aspectRatio: '3/2',
-                position: 'relative',
-                overflow: 'hidden',
+                background: '#FFFFFF',
+                borderRadius: 16,
+                padding: 'clamp(28px, 5vw, 36px)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
+                e.currentTarget.style.transform = 'translateY(-4px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)'
+                e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              <Image
-                src="/images/lp/case-kirei-tsurumi.webp"
-                alt="キレイ鶴見店"
-                fill
-                loading="lazy"
-                style={{
-                  objectFit: 'cover',
-                }}
-              />
-            </div>
-
-            <div style={{ padding: '32px' }}>
-              <p
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 600,
-                  color: 'var(--sr-text-soft)',
-                  marginBottom: '8px',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                CASE 01
-              </p>
-
-              <h3
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 700,
-                  color: 'var(--sr-blue-pale-deepest)',
-                  marginBottom: '16px',
-                }}
-              >
-                キレイ鶴見店
-              </h3>
-
-              <p
-                style={{
-                  fontSize: '14px',
-                  color: 'var(--sr-text-soft)',
-                  lineHeight: 1.8,
-                  marginBottom: '24px',
-                }}
-              >
-                ホットペッパーの顧客データを活用しながら、LINE予約に切り替え。予約管理の手間が3分の1に削減され、スタッフ間の情報共有も格段に改善。顧客カルテ機能で施術履歴が一元管理できるようになり、より質の高いカウンセリングが実現できました。
-              </p>
-
-              <div style={{ display: 'flex', gap: '16px' }}>
-                <a
-                  href="#case-study"
+              {/* ヘッダー: アバター + 名前・サロン */}
+              <div style={{ display: 'flex', gap: 'clamp(12px, 2vw, 16px)', marginBottom: 'clamp(20px, 3vw, 24px)' }}>
+                {/* 円形アバター */}
+                <div
                   style={{
-                    display: 'inline-block',
-                    background: 'var(--sr-blue-pale-deepest)',
-                    color: '#ffffff',
-                    padding: '12px 24px',
-                    borderRadius: '999px',
-                    textDecoration: 'none',
-                    fontSize: '14px',
+                    width: 'clamp(56px, 8vw, 64px)',
+                    height: 'clamp(56px, 8vw, 64px)',
+                    minWidth: 'clamp(56px, 8vw, 64px)',
+                    borderRadius: '50%',
+                    background: testimonial.accentColor,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#FFFFFF',
+                    fontSize: 'clamp(1.5rem, 3vw, 1.875rem)',
                     fontWeight: 600,
-                    transition: 'all 0.3s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.opacity = '0.9'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.opacity = '1'
-                    e.currentTarget.style.transform = 'translateY(0)'
+                    fontFamily: 'var(--font-noto-sans-jp)',
                   }}
                 >
-                  詳細を見る
-                </a>
-              </div>
-            </div>
-          </div>
+                  {testimonial.initials}
+                </div>
 
-          {/* Right side text content */}
-          <div>
-            <p
-              style={{
-                fontSize: '16px',
-                color: 'var(--sr-text-soft)',
-                lineHeight: 1.8,
-                marginBottom: '24px',
-              }}
-            >
-              SalonRink導入企業の実際の成果をご紹介。ホットペッパービューティーから乗り換えたサロン様の具体的な改善事例をお読みください。
-            </p>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '16px',
-              }}
-            >
-              <div
-                style={{
-                  padding: '20px',
-                  background: '#f8f9fa',
-                  borderRadius: '12px',
-                  border: '1px solid var(--sr-border)',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '12px',
-                    color: 'var(--sr-text-soft)',
-                    marginBottom: '8px',
-                  }}
-                >
-                  予約管理時間短縮
-                </p>
-                <p
-                  style={{
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    color: 'var(--sr-blue-pale-deepest)',
-                  }}
-                >
-                  約66%
-                </p>
+                {/* 名前・サロン */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                      fontSize: 'clamp(1rem, 1.8vw, 1.0625rem)',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                      marginTop: 0,
+                      marginBottom: 'clamp(4px, 1vw, 6px)',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {testimonial.name}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                      fontSize: 'clamp(0.8rem, 1.3vw, 0.875rem)',
+                      fontWeight: 400,
+                      color: 'var(--text-secondary)',
+                      margin: 0,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {testimonial.salon}
+                  </p>
+                </div>
               </div>
 
-              <div
-                style={{
-                  padding: '20px',
-                  background: '#f8f9fa',
-                  borderRadius: '12px',
-                  border: '1px solid var(--sr-border)',
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: '12px',
-                    color: 'var(--sr-text-soft)',
-                    marginBottom: '8px',
-                  }}
-                >
-                  リマインド到達率
-                </p>
-                <p
-                  style={{
-                    fontSize: '28px',
-                    fontWeight: 700,
-                    color: 'var(--sr-blue-pale-deepest)',
-                  }}
-                >
-                  約95%
-                </p>
-              </div>
-
+              {/* コメント */}
               <p
                 style={{
-                  fontSize: '12px',
-                  color: 'var(--sr-text-soft)',
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                  fontSize: 'clamp(0.9rem, 1.6vw, 0.9375rem)',
+                  fontWeight: 400,
+                  color: 'var(--text-secondary)',
                   lineHeight: 1.6,
-                  marginTop: '24px',
-                  paddingTop: '16px',
-                  borderTop: '1px solid var(--sr-border)',
+                  margin: 0,
                 }}
               >
-                ※ 上記数値はキレイ鶴見店での試験運用期間中の参考値です。サンプル数が限定的なため、実際の効果は店舗ごとに異なる可能性があります。継続的に実データを蓄積・検証中です。
+                "{testimonial.comment}"
               </p>
             </div>
-          </div>
+          ))}
         </div>
+
+        {/* 控えめな注記 */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+            fontWeight: 400,
+            color: 'var(--text-soft)',
+            textAlign: 'center',
+            margin: 0,
+          }}
+        >
+          他にも多くのサロン様にご利用いただいています。
+        </p>
       </div>
     </section>
   )
