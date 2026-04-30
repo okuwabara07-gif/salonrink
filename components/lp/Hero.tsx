@@ -13,6 +13,9 @@ export default function Hero() {
         alignItems: 'center',
         padding: 'clamp(80px, 12vw, 160px) clamp(20px, 5vw, 60px)',
         background: 'linear-gradient(135deg, #1A1612 0%, #2D2A28 50%, #4A4440 100%)',
+        backgroundImage: 'url(/images/lp-redesign/hero-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
         color: '#fff',
         overflow: 'hidden',
       }}
@@ -25,7 +28,7 @@ export default function Hero() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.7) 0%, rgba(45, 42, 40, 0.7) 100%)',
+          background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.65) 0%, rgba(45, 42, 40, 0.65) 100%)',
           zIndex: 1,
         }}
       />
@@ -156,9 +159,6 @@ export default function Hero() {
           </Link>
         </div>
       </div>
-
-      {/* TODO: 本番用美容室写真を /public/images/hero-bg.jpg に配置後、差し替え */}
-      {/* backgroundImage: 'url(/images/hero-bg.jpg)' を背景セクションに追加予定 */}
     </section>
   )
 }

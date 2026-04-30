@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function FeaturesSection() {
   const aiFeatures = [
     {
@@ -75,108 +77,20 @@ export default function FeaturesSection() {
           <div style={{ display: 'flex', justifyContent: 'center' }}>
             <div
               style={{
-                width: 'clamp(280px, 100%, 340px)',
-                aspectRatio: '9/19',
-                background: '#fff',
-                borderRadius: 40,
-                border: '8px solid #1A1018',
-                padding: 8,
-                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)',
-                overflow: 'hidden',
                 position: 'relative',
+                width: 'clamp(280px, 100%, 450px)',
+                aspectRatio: '3/4',
+                margin: '0 auto',
               }}
             >
-              {/* スマホ画面内容 */}
-              <div
+              <Image
+                src="/images/lp-redesign/phone-mockup.jpg"
+                alt="SalonRink カルテ画面"
+                fill
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  background: 'var(--bg-main)',
-                  borderRadius: 32,
-                  padding: 'clamp(16px, 3vw, 20px)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  overflow: 'hidden',
-                  fontSize: 'clamp(10px, 1.5vw, 12px)',
-                  color: 'var(--text-primary)',
+                  objectFit: 'contain',
                 }}
-              >
-                {/* ステータスバー風 */}
-                <div
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 600,
-                    marginBottom: 12,
-                    color: 'var(--text-secondary)',
-                  }}
-                >
-                  カルテ記録
-                </div>
-
-                {/* カルテ内容 */}
-                <div style={{ flex: 1, overflowY: 'auto' }}>
-                  <div style={{ marginBottom: 12 }}>
-                    <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                      山田 花子 様
-                    </div>
-                    <div style={{ fontSize: 10, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                      来店: 2024/05/20 14:30
-                      <br />
-                      メニュー: カット + カラートリートメント
-                    </div>
-                  </div>
-
-                  <div style={{ background: 'var(--accent-light-beige)', padding: 8, borderRadius: 6, marginBottom: 12 }}>
-                    <div style={{ fontWeight: 500, fontSize: 10, marginBottom: 4 }}>
-                      髪の状態
-                    </div>
-                    <div style={{ fontSize: 9, color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                      乾燥・広がりが気になる
-                    </div>
-                  </div>
-
-                  <div style={{ background: 'var(--accent-light-beige)', padding: 8, borderRadius: 6, marginBottom: 12 }}>
-                    <div style={{ fontWeight: 500, fontSize: 10, marginBottom: 4 }}>
-                      アレルギー情報
-                    </div>
-                    <div style={{ fontSize: 9, color: '#A32D2D', lineHeight: 1.4 }}>
-                      🔔 金属アレルギー (ニッケル)
-                    </div>
-                  </div>
-                </div>
-
-                {/* 保存ボタン */}
-                <div
-                  style={{
-                    background: '#1A1018',
-                    color: '#fff',
-                    padding: '8px 12px',
-                    borderRadius: 6,
-                    textAlign: 'center',
-                    fontWeight: 500,
-                    fontSize: 10,
-                    cursor: 'pointer',
-                    marginTop: 'auto',
-                  }}
-                >
-                  保存する
-                </div>
-              </div>
-
-              {/* ノッチ風デザイン */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '120px',
-                  height: '24px',
-                  background: '#1A1018',
-                  borderBottomLeftRadius: 20,
-                  borderBottomRightRadius: 20,
-                  zIndex: 10,
-                }}
+                priority
               />
             </div>
           </div>

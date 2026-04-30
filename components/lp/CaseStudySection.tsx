@@ -1,27 +1,20 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function CaseStudySection() {
   const testimonials = [
     {
-      name: '佐藤 翔太',
-      salon: 'salon Lumière オーナー',
-      comment: 'お客様の好みをAIが記録してくれて、提案の精度が上がりました。リピート率が30%向上しました。',
-      initials: '佐',
-      accentColor: 'var(--accent-gold)',
+      image: '/images/lp-redesign/testimonial-sato.jpg',
+      alt: '佐藤翔太 - salon Lumière オーナー',
     },
     {
-      name: '田中 美咲',
-      salon: 'hair design Rêve スタイリスト',
-      comment: 'アレルギー警告で安心して施術できるようになり、お客様からの信頼も厚くなりました。',
-      initials: '田',
-      accentColor: '#B59B78',
+      image: '/images/lp-redesign/testimonial-tanaka.jpg',
+      alt: '田中美咲 - hair design Rêve スタイリスト',
     },
     {
-      name: '鈴木 健太',
-      salon: 'BARBER KEN オーナー',
-      comment: '失客リストとAI提案のおかげで、離脱していたお客様が戻ってくるようになりました。',
-      initials: '鈴',
-      accentColor: '#9D8F7F',
+      image: '/images/lp-redesign/testimonial-suzuki.jpg',
+      alt: '鈴木健太 - BARBER KEN オーナー',
     },
   ]
 
@@ -74,13 +67,13 @@ export default function CaseStudySection() {
             <div
               key={i}
               style={{
-                background: '#FFFFFF',
+                position: 'relative',
                 borderRadius: 16,
-                padding: 'clamp(28px, 5vw, 36px)',
+                overflow: 'hidden',
+                aspectRatio: '16/9',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                 transition: 'all 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
+                cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
@@ -91,71 +84,14 @@ export default function CaseStudySection() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              {/* ヘッダー: アバター + 名前・サロン */}
-              <div style={{ display: 'flex', gap: 'clamp(12px, 2vw, 16px)', marginBottom: 'clamp(20px, 3vw, 24px)' }}>
-                {/* 円形アバター */}
-                <div
-                  style={{
-                    width: 'clamp(56px, 8vw, 64px)',
-                    height: 'clamp(56px, 8vw, 64px)',
-                    minWidth: 'clamp(56px, 8vw, 64px)',
-                    borderRadius: '50%',
-                    background: testimonial.accentColor,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#FFFFFF',
-                    fontSize: 'clamp(1.5rem, 3vw, 1.875rem)',
-                    fontWeight: 600,
-                    fontFamily: 'var(--font-noto-sans-jp)',
-                  }}
-                >
-                  {testimonial.initials}
-                </div>
-
-                {/* 名前・サロン */}
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-noto-sans-jp)',
-                      fontSize: 'clamp(1rem, 1.8vw, 1.0625rem)',
-                      fontWeight: 500,
-                      color: 'var(--text-primary)',
-                      marginTop: 0,
-                      marginBottom: 'clamp(4px, 1vw, 6px)',
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {testimonial.name}
-                  </h3>
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-noto-sans-jp)',
-                      fontSize: 'clamp(0.8rem, 1.3vw, 0.875rem)',
-                      fontWeight: 400,
-                      color: 'var(--text-secondary)',
-                      margin: 0,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {testimonial.salon}
-                  </p>
-                </div>
-              </div>
-
-              {/* コメント */}
-              <p
+              <Image
+                src={testimonial.image}
+                alt={testimonial.alt}
+                fill
                 style={{
-                  fontFamily: 'var(--font-noto-sans-jp)',
-                  fontSize: 'clamp(0.9rem, 1.6vw, 0.9375rem)',
-                  fontWeight: 400,
-                  color: 'var(--text-secondary)',
-                  lineHeight: 1.6,
-                  margin: 0,
+                  objectFit: 'cover',
                 }}
-              >
-                "{testimonial.comment}"
-              </p>
+              />
             </div>
           ))}
         </div>

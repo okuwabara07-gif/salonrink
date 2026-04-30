@@ -6,12 +6,28 @@ export default function FooterCTA() {
   return (
     <section
       style={{
-        background: 'linear-gradient(135deg, #1A1612 0%, #2D2A28 50%, #4A4440 100%)',
+        position: 'relative',
         padding: 'clamp(80px, 12vw, 120px) clamp(20px, 5vw, 60px)',
         color: '#fff',
+        backgroundImage: 'url(/images/lp-redesign/cta-bg.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        overflow: 'hidden',
       }}
     >
-      <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+      {/* グラデーションオーバーレイ */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.7) 0%, rgba(45, 42, 40, 0.75) 100%)',
+          zIndex: 1,
+        }}
+      />
+      <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 2 }}>
         {/* メインキャッチコピー */}
         <h2
           style={{

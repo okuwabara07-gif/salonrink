@@ -1,21 +1,20 @@
 'use client'
 
+import Image from 'next/image'
+
 export default function IndustriesSection() {
   const challenges = [
     {
-      title: '顧客の好みを覚えきれない',
-      description: '前回の会話を忘れてしまうので、信頼関係が続けない',
-      number: '01',
+      image: '/images/lp-redesign/challenge-1.jpg',
+      alt: '顧客の好みを覚えきれない',
     },
     {
-      title: 'アレルギー情報の見落とし',
-      description: '大切な情報を見落としてしまう。トラブルの原因に。',
-      number: '02',
+      image: '/images/lp-redesign/challenge-2.jpg',
+      alt: 'アレルギー情報の見落とし',
     },
     {
-      title: '失客の原因が分からない',
-      description: 'なぜ来なくなったのか分からない。対策が打てない...',
-      number: '03',
+      image: '/images/lp-redesign/challenge-3.jpg',
+      alt: '失客の原因が分からない',
     },
   ]
 
@@ -46,22 +45,21 @@ export default function IndustriesSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 'clamp(20px, 3vw, 32px)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: 'clamp(24px, 3vw, 32px)',
           }}
         >
           {challenges.map((challenge, i) => (
             <div
               key={i}
               style={{
-                background: '#FFFFFF',
+                position: 'relative',
                 borderRadius: 16,
-                padding: 'clamp(32px, 5vw, 40px)',
+                overflow: 'hidden',
+                aspectRatio: '4/3',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                 transition: 'all 0.3s ease',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-start',
+                cursor: 'pointer',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
@@ -72,48 +70,15 @@ export default function IndustriesSection() {
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
-              {/* ナンバー */}
-              <div
+              <Image
+                src={challenge.image}
+                alt={challenge.alt}
+                fill
                 style={{
-                  fontFamily: 'var(--font-noto-serif-jp)',
-                  fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-                  fontWeight: 300,
-                  color: 'var(--accent-gold)',
-                  marginBottom: 'clamp(16px, 2vw, 24px)',
-                  lineHeight: 1,
+                  objectFit: 'cover',
                 }}
-              >
-                {challenge.number}
-              </div>
-
-              {/* カード内タイトル */}
-              <h3
-                style={{
-                  fontFamily: 'var(--font-noto-sans-jp)',
-                  fontSize: 'clamp(1.125rem, 2vw, 1.25rem)',
-                  fontWeight: 500,
-                  color: 'var(--text-primary)',
-                  marginTop: 0,
-                  marginBottom: 'clamp(12px, 2vw, 16px)',
-                  lineHeight: 1.4,
-                }}
-              >
-                {challenge.title}
-              </h3>
-
-              {/* カード内本文 */}
-              <p
-                style={{
-                  fontFamily: 'var(--font-noto-sans-jp)',
-                  fontSize: 'clamp(0.875rem, 1.5vw, 0.9375rem)',
-                  fontWeight: 400,
-                  color: 'var(--text-secondary)',
-                  lineHeight: 1.6,
-                  margin: 0,
-                }}
-              >
-                {challenge.description}
-              </p>
+                priority={i === 0}
+              />
             </div>
           ))}
         </div>
