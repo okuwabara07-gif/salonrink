@@ -5,11 +5,19 @@ import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { AIWarningsSection, AISummarySection, CommunicationScriptSection, NextRecommendationSection } from '@/components/dashboard/AISection'
 
+interface Salon {
+  id: string
+  name: string
+  owner_name: string
+  plan: string
+}
+
 export default function CustomerDetailPage() {
   const params = useParams()
   const customerId = params?.customerId as string
   const [activeTab, setActiveTab] = useState<'info' | 'history' | 'recipe' | 'photos' | 'notes' | 'ai'>('info')
   const [customer, setCustomer] = useState<any>(null)
+  const [salon, setSalon] = useState<Salon | null>(null)
   const [kartes, setKartes] = useState<any[]>([])
   const [latestRecipe, setLatestRecipe] = useState<any>(null)
   const [photos, setPhotos] = useState<any[]>([])
@@ -25,6 +33,21 @@ export default function CustomerDetailPage() {
       if (!customerId) return
 
       const supabase = await createClient()
+
+      // ユーザー認証チェック
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+
+      // サロン情報取得
+      const { data: salonData } = await supabase
+        .from('salons')
+        .select('id, name, owner_name, plan')
+        .eq('owner_user_id', user.id)
+        .maybeSingle()
+
+      if (salonData) {
+        setSalon(salonData)
+      }
 
       // 顧客情報取得
       const { data: customerData } = await supabase
@@ -115,116 +138,229 @@ export default function CustomerDetailPage() {
   if (!customer) {
     return (
       <div style={{ padding: '40px', textAlign: 'center' }}>
-        <p style={{ fontSize: 16, color: '#1A1018', marginBottom: 20 }}>顧客が見つかりません</p>
+        <p style={{ fontSize: 16, color: 'var(--text-primary)', marginBottom: 20 }}>顧客が見つかりません</p>
         <Link
-          href="/dashboard/karte"
+          href="/dashboard/customers"
           style={{
             padding: '10px 20px',
-            background: '#1A1018',
-            color: '#FAF6EE',
+            background: 'var(--accent-gold)',
+            color: '#fff',
             textDecoration: 'none',
             borderRadius: 8,
             display: 'inline-block',
           }}
         >
-          カルテ一覧に戻る
+          顧客一覧に戻る
         </Link>
       </div>
     )
   }
 
   return (
-    <main style={{ padding: '40px', maxWidth: 900, margin: '0 auto' }}>
-      {/* ヘッダー */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 32 }}>
+    <main style={{ background: 'var(--bg-main)', minHeight: '100vh', paddingBottom: '80px' }}>
+      {/* ヘッダー - ダッシュボード同じ */}
+      <div
+        style={{
+          background: '#fff',
+          padding: 'clamp(20px, 4vw, 28px)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '1px solid var(--sr-border)',
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          gap: 'clamp(12px, 2vw, 16px)',
+        }}
+      >
         <Link
-          href="/dashboard/karte"
+          href="/dashboard/customers"
           style={{
-            fontSize: 20,
-            color: '#888',
+            fontSize: '1.5rem',
+            color: 'var(--text-secondary)',
             textDecoration: 'none',
             cursor: 'pointer',
+            flex: '0 0 24px',
           }}
         >
           ←
         </Link>
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <h1 style={{ fontSize: 28, fontWeight: 400, letterSpacing: 4, color: '#1A1018', margin: 0 }}>
-              {customer.name}
-            </h1>
-            {customer.age && (
-              <p style={{ fontSize: 12, color: '#888', margin: '8px 0 0 0' }}>
-                {customer.age}歳 {customer.gender && `• ${customer.gender}`}
-              </p>
-            )}
-          </div>
-          <Link
-            href={`/dashboard/customers/${customerId}/karte/new`}
+
+        <div style={{ flex: 1, textAlign: 'center' }}>
+          <p
             style={{
-              padding: '10px 16px',
-              background: '#1A1018',
-              color: '#FAF6EE',
-              textDecoration: 'none',
-              borderRadius: 8,
-              fontSize: 13,
+              fontFamily: 'var(--font-noto-sans-jp)',
+              fontSize: 'clamp(0.95rem, 1.8vw, 1rem)',
+              color: 'var(--text-primary)',
+              margin: 0,
               fontWeight: 500,
-              whiteSpace: 'nowrap',
             }}
           >
-            + カルテ追加
-          </Link>
+            顧客詳細
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: 'clamp(12px, 2vw, 16px)', alignItems: 'center' }}>
+          <button
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '1.5rem',
+              cursor: 'pointer',
+            }}
+          >
+            🔔
+          </button>
+          <div
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              background: 'var(--accent-gold)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+            }}
+          >
+            {salon?.owner_name?.charAt(0) || 'U'}
+          </div>
         </div>
       </div>
 
-      {/* タブ */}
-      <div style={{
-        display: 'flex',
-        gap: 0,
-        borderBottom: '1px solid #E0D8D0',
-        marginBottom: 32,
-      }}>
-        {(['info', 'history', 'recipe', 'photos', 'notes', 'ai'] as const).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
+      {/* コンテンツ */}
+      <div style={{ padding: 'clamp(20px, 4vw, 28px)', maxWidth: '1200px', margin: '0 auto' }}>
+        {/* 顧客プロフィール */}
+        <div style={{ textAlign: 'center', marginBottom: 'clamp(24px, 4vw, 32px)' }}>
+          <div
             style={{
-              padding: '12px 20px',
-              fontSize: 13,
-              fontWeight: 500,
-              border: 'none',
-              background: 'transparent',
-              cursor: 'pointer',
-              color: activeTab === tab ? '#1A1018' : '#888',
-              borderBottom: activeTab === tab ? '2px solid #1A1018' : '2px solid transparent',
-              transition: 'all 0.2s ease',
+              width: 'clamp(80px, 15vw, 120px)',
+              height: 'clamp(80px, 15vw, 120px)',
+              borderRadius: '50%',
+              background: 'var(--accent-gold)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontWeight: 600,
+              fontSize: 'clamp(2rem, 4vw, 3rem)',
+              margin: '0 auto clamp(16px, 2vw, 20px)',
             }}
           >
-            {tab === 'info' && '基本情報'}
-            {tab === 'history' && '施術履歴'}
-            {tab === 'recipe' && '処方レシピ'}
-            {tab === 'photos' && '写真'}
-            {tab === 'notes' && 'メモ'}
-            {tab === 'ai' && 'AI機能'}
-          </button>
-        ))}
-      </div>
+            {customer.name?.charAt(0) || '—'}
+          </div>
 
-      {/* 基本情報タブ */}
-      {activeTab === 'info' && (
-        <div style={{
-          background: '#fff',
-          borderRadius: 16,
-          padding: 32,
-          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-        }}>
-          <div style={{ display: 'grid', gap: 20 }}>
+          <h1
+            style={{
+              fontFamily: 'var(--font-noto-serif-jp)',
+              fontSize: 'clamp(1.5rem, 4vw, 2rem)',
+              fontWeight: 500,
+              color: 'var(--text-primary)',
+              margin: 0,
+              marginBottom: '8px',
+            }}
+          >
+            {customer.name || '—'}様
+          </h1>
+
+          {customer.tags && customer.tags.length > 0 && (
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px', flexWrap: 'wrap' }}>
+              {customer.tags.map((tag: string, idx: number) => (
+                <span
+                  key={idx}
+                  style={{
+                    background: 'var(--accent-gold)',
+                    color: '#fff',
+                    padding: 'clamp(4px, 1vw, 6px) clamp(10px, 2vw, 14px)',
+                    borderRadius: 12,
+                    fontSize: 'clamp(0.75rem, 1.3vw, 0.875rem)',
+                    fontWeight: 500,
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* タブナビゲーション */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 0,
+            borderBottom: '2px solid var(--sr-border)',
+            marginBottom: 'clamp(24px, 4vw, 32px)',
+            overflowX: 'auto',
+            paddingBottom: '0',
+          }}
+        >
+          {(['info', 'history', 'recipe', 'photos', 'notes', 'ai'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: 'clamp(12px, 2vw, 16px) clamp(12px, 2vw, 18px)',
+                fontSize: 'clamp(0.8rem, 1.4vw, 0.9rem)',
+                fontWeight: 500,
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                color: activeTab === tab ? 'var(--text-primary)' : 'var(--text-secondary)',
+                borderBottom: activeTab === tab ? '3px solid var(--accent-gold)' : 'none',
+                transition: 'all 0.2s ease',
+                fontFamily: 'var(--font-noto-sans-jp)',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {tab === 'info' && '基本情報'}
+              {tab === 'history' && '履歴'}
+              {tab === 'recipe' && '処方'}
+              {tab === 'photos' && '写真'}
+              {tab === 'notes' && 'メモ'}
+              {tab === 'ai' && 'AI'}
+            </button>
+          ))}
+        </div>
+
+        {/* 基本情報タブ */}
+        {activeTab === 'info' && (
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(20px, 3vw, 28px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(20px, 3vw, 24px)',
+            }}
+          >
             {customer.phone && (
               <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 8px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
                   電話番号
                 </p>
-                <p style={{ fontSize: 13, color: '#1A1018', margin: 0 }}>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
                   {customer.phone}
                 </p>
               </div>
@@ -232,355 +368,730 @@ export default function CustomerDetailPage() {
 
             {customer.email && (
               <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 8px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
                   メール
                 </p>
-                <p style={{ fontSize: 13, color: '#1A1018', margin: 0 }}>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
                   {customer.email}
                 </p>
               </div>
             )}
 
-            {customer.allergies && (
+            {customer.birth_date && (
               <div>
-                <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
-                  アレルギー情報
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 8px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  誕生日
                 </p>
-                <p style={{ fontSize: 13, color: '#A32D2D', margin: 0 }}>
-                  ⚠️ {customer.allergies}
+                <p
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
+                  {new Date(customer.birth_date).toLocaleDateString('ja-JP')}
+                </p>
+              </div>
+            )}
+
+            {customer.first_visit && (
+              <div>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 8px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  初回来店日
+                </p>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                  }}
+                >
+                  {new Date(customer.first_visit).toLocaleDateString('ja-JP')}
+                </p>
+              </div>
+            )}
+
+            {customer.allergies && (
+              <div
+                style={{
+                  background: 'rgba(212, 175, 55, 0.08)',
+                  borderLeft: '4px solid var(--accent-gold)',
+                  padding: 'clamp(12px, 2vw, 16px)',
+                  borderRadius: 8,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--accent-gold)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 8px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  ⚠️ アレルギー情報
+                </p>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                    color: 'var(--text-primary)',
+                    margin: 0,
+                    fontWeight: 500,
+                  }}
+                >
+                  {customer.allergies}
                 </p>
               </div>
             )}
 
             <div>
-              <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
+              <p
+                style={{
+                  fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  margin: '0 0 8px 0',
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                }}
+              >
                 来店回数
               </p>
-              <p style={{ fontSize: 13, color: '#1A1018', margin: 0 }}>
+              <p
+                style={{
+                  fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                  color: 'var(--text-primary)',
+                  margin: 0,
+                }}
+              >
                 {customer.visit_count || 0}回
               </p>
             </div>
 
             <div>
-              <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
+              <p
+                style={{
+                  fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  margin: '0 0 8px 0',
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                }}
+              >
                 総売上
               </p>
-              <p style={{ fontSize: 16, fontWeight: 500, color: '#1A1018', margin: 0 }}>
+              <p
+                style={{
+                  fontSize: 'clamp(1rem, 1.8vw, 1.125rem)',
+                  fontWeight: 500,
+                  color: 'var(--text-primary)',
+                  margin: 0,
+                }}
+              >
                 ¥{(customer.total_spent || 0).toLocaleString()}
               </p>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* 施術履歴タブ */}
-      {activeTab === 'history' && (
-        <div style={{
-          background: '#fff',
-          borderRadius: 16,
-          padding: 32,
-          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-          overflowX: 'auto',
-        }}>
-          {kartes.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #E0D8D0' }}>
-                  <th style={{ textAlign: 'left', padding: '12px', fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                    日付
-                  </th>
-                  <th style={{ textAlign: 'left', padding: '12px', fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                    メニュー
-                  </th>
-                  <th style={{ textAlign: 'left', padding: '12px', fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                    スタッフ
-                  </th>
-                  <th style={{ textAlign: 'right', padding: '12px', fontSize: 12, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                    金額
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {kartes.map((karte, i) => (
-                  <tr key={karte.id} style={{ borderBottom: i < kartes.length - 1 ? '1px solid #F0EAE3' : 'none' }}>
-                    <td style={{ padding: '12px', fontSize: 13, color: '#1A1018' }}>
-                      {new Date(karte.visit_date).toLocaleDateString('ja-JP')}
-                    </td>
-                    <td style={{ padding: '12px', fontSize: 13, color: '#1A1018' }}>
-                      {karte.menu_name || '—'}
-                    </td>
-                    <td style={{ padding: '12px', fontSize: 13, color: '#1A1018' }}>
-                      {karte.staff_name || '—'}
-                    </td>
-                    <td style={{ padding: '12px', fontSize: 13, color: '#1A1018', textAlign: 'right' }}>
-                      ¥{(karte.total_price || 0).toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p style={{ fontSize: 13, color: '#888', textAlign: 'center', padding: '20px', margin: 0 }}>
-              施術履歴がありません
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* 処方レシピタブ */}
-      {activeTab === 'recipe' && (
-        <div style={{
-          background: '#fff',
-          borderRadius: 16,
-          padding: 32,
-          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-        }}>
-          {latestRecipe ? (
-            <div>
-              <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 16px 0' }}>
-                最新処方
-              </p>
-              <pre style={{
-                background: '#F5F1EC',
-                borderRadius: 8,
-                padding: 16,
-                overflow: 'auto',
-                fontSize: 12,
-                color: '#1A1018',
-                fontFamily: 'monospace',
-              }}>
-                {JSON.stringify(latestRecipe.recipe_data, null, 2)}
-              </pre>
-              {latestRecipe.notes && (
-                <div style={{ marginTop: 16 }}>
-                  <p style={{ fontSize: 11, fontWeight: 500, color: '#888', textTransform: 'uppercase', letterSpacing: 1, margin: '0 0 8px 0' }}>
-                    メモ
-                  </p>
-                  <p style={{ fontSize: 13, color: '#1A1018', margin: 0, lineHeight: 1.6 }}>
-                    {latestRecipe.notes}
-                  </p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p style={{ fontSize: 13, color: '#888', textAlign: 'center', padding: '20px', margin: 0 }}>
-              処方レシピがまだ登録されていません
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* 写真タブ */}
-      {activeTab === 'photos' && (
-        <div style={{
-          background: '#fff',
-          borderRadius: 16,
-          padding: 32,
-          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-        }}>
-          {photos.length > 0 ? (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-              gap: 16,
-            }}>
-              {photos.map(photo => (
-                <div
-                  key={photo.id}
-                  style={{
-                    background: '#F5F1EC',
-                    borderRadius: 8,
-                    padding: 8,
-                    aspectRatio: '1',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    position: 'relative',
-                  }}
-                >
-                  {photo.public_url ? (
-                    <img
-                      src={photo.public_url}
-                      alt={photo.photo_type}
+        {/* 施術履歴タブ */}
+        {activeTab === 'history' && (
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(16px, 2.5vw, 20px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+              overflowX: 'auto',
+            }}
+          >
+            {kartes.length > 0 ? (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--sr-border)' }}>
+                    <th
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        borderRadius: 4,
+                        textAlign: 'left',
+                        padding: 'clamp(10px, 2vw, 14px)',
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                        fontFamily: 'var(--font-noto-sans-jp)',
                       }}
-                    />
-                  ) : (
-                    <p style={{ color: '#888', margin: 0 }}>画像なし</p>
-                  )}
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: 12,
-                      left: 12,
-                      background: photo.photo_type === 'before' ? '#2196F3' : '#4CAF50',
-                      color: '#fff',
-                      padding: '4px 8px',
-                      borderRadius: 4,
-                      fontSize: 11,
-                      fontWeight: 500,
-                    }}
-                  >
-                    {photo.photo_type === 'before' ? 'Before' : 'After'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ fontSize: 13, color: '#888', textAlign: 'center', padding: '20px', margin: 0 }}>
-              写真がまだアップロードされていません
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* メモタブ */}
-      {activeTab === 'notes' && (
-        <div style={{
-          background: '#fff',
-          borderRadius: 16,
-          padding: 32,
-          boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-        }}>
-          {notesEditMode ? (
-            <>
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                    >
+                      日付
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: 'clamp(10px, 2vw, 14px)',
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                        fontFamily: 'var(--font-noto-sans-jp)',
+                      }}
+                    >
+                      メニュー
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'left',
+                        padding: 'clamp(10px, 2vw, 14px)',
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                        fontFamily: 'var(--font-noto-sans-jp)',
+                      }}
+                    >
+                      スタッフ
+                    </th>
+                    <th
+                      style={{
+                        textAlign: 'right',
+                        padding: 'clamp(10px, 2vw, 14px)',
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                        fontFamily: 'var(--font-noto-sans-jp)',
+                      }}
+                    >
+                      金額
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {kartes.map((karte, i) => (
+                    <tr
+                      key={karte.id}
+                      style={{
+                        borderBottom: i < kartes.length - 1 ? '1px solid var(--sr-border)' : 'none',
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 14px)',
+                          fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {new Date(karte.visit_date).toLocaleDateString('ja-JP')}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 14px)',
+                          fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {karte.menu_name || '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 14px)',
+                          fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                          color: 'var(--text-primary)',
+                        }}
+                      >
+                        {karte.staff_name || '—'}
+                      </td>
+                      <td
+                        style={{
+                          padding: 'clamp(10px, 2vw, 14px)',
+                          fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                          color: 'var(--text-primary)',
+                          textAlign: 'right',
+                        }}
+                      >
+                        ¥{(karte.total_price || 0).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p
                 style={{
-                  width: '100%',
-                  minHeight: 300,
-                  padding: '12px 14px',
-                  borderRadius: 8,
-                  border: '1px solid #E0D8D0',
-                  fontSize: 13,
-                  fontFamily: 'inherit',
-                  boxSizing: 'border-box',
-                  marginBottom: 16,
-                }}
-              />
-              <div style={{ display: 'flex', gap: 12 }}>
-                <button
-                  onClick={handleSaveNotes}
-                  disabled={saving}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: saving ? '#E0D8D0' : '#1A1018',
-                    color: saving ? '#999' : '#FAF6EE',
-                    fontSize: 13,
-                    fontWeight: 500,
-                    cursor: saving ? 'not-allowed' : 'pointer',
-                  }}
-                >
-                  {saving ? '保存中...' : '保存'}
-                </button>
-                <button
-                  onClick={() => setNotesEditMode(false)}
-                  style={{
-                    flex: 1,
-                    padding: '12px',
-                    borderRadius: 8,
-                    border: '1px solid #E0D8D0',
-                    background: '#fff',
-                    color: '#1A1018',
-                    fontSize: 13,
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                  }}
-                >
-                  キャンセル
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div style={{
-                minHeight: 300,
-                padding: 16,
-                background: '#F5F1EC',
-                borderRadius: 8,
-                marginBottom: 16,
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-word',
-              }}>
-                {notes || <span style={{ color: '#888' }}>メモはまだありません</span>}
-              </div>
-              <button
-                onClick={() => setNotesEditMode(true)}
-                style={{
-                  padding: '12px 20px',
-                  borderRadius: 8,
-                  border: '1px solid #B8966A',
-                  background: 'transparent',
-                  color: '#B8966A',
-                  fontSize: 13,
-                  fontWeight: 500,
-                  cursor: 'pointer',
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                  color: 'var(--text-secondary)',
+                  textAlign: 'center',
+                  padding: 'clamp(20px, 3vw, 24px)',
+                  margin: 0,
+                  fontFamily: 'var(--font-noto-sans-jp)',
                 }}
               >
-                編集
-              </button>
-            </>
-          )}
-        </div>
+                施術履歴がありません
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 処方レシピタブ */}
+        {activeTab === 'recipe' && (
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(20px, 3vw, 28px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            {latestRecipe ? (
+              <div>
+                <p
+                  style={{
+                    fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                    fontWeight: 600,
+                    color: 'var(--text-secondary)',
+                    textTransform: 'uppercase',
+                    letterSpacing: 0.5,
+                    margin: '0 0 16px 0',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  最新処方
+                </p>
+                <pre
+                  style={{
+                    background: 'rgba(212, 175, 55, 0.08)',
+                    borderRadius: 8,
+                    padding: 'clamp(12px, 2vw, 16px)',
+                    overflow: 'auto',
+                    fontSize: 'clamp(0.75rem, 1.3vw, 0.825rem)',
+                    color: 'var(--text-primary)',
+                    fontFamily: 'monospace',
+                    margin: '0 0 16px 0',
+                  }}
+                >
+                  {JSON.stringify(latestRecipe.recipe_data, null, 2)}
+                </pre>
+                {latestRecipe.notes && (
+                  <div>
+                    <p
+                      style={{
+                        fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                        fontWeight: 600,
+                        color: 'var(--text-secondary)',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.5,
+                        margin: '0 0 8px 0',
+                        fontFamily: 'var(--font-noto-sans-jp)',
+                      }}
+                    >
+                      メモ
+                    </p>
+                    <p
+                      style={{
+                        fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                        color: 'var(--text-primary)',
+                        margin: 0,
+                        lineHeight: 1.6,
+                      }}
+                    >
+                      {latestRecipe.notes}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p
+                style={{
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                  color: 'var(--text-secondary)',
+                  textAlign: 'center',
+                  padding: 'clamp(20px, 3vw, 24px)',
+                  margin: 0,
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                }}
+              >
+                処方レシピがまだ登録されていません
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* 写真タブ */}
+        {activeTab === 'photos' && (
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(20px, 3vw, 28px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            {photos.length > 0 ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(150px, 30%, 200px), 1fr))',
+                  gap: 'clamp(12px, 2vw, 16px)',
+                }}
+              >
+                {photos.map((photo) => (
+                  <div
+                    key={photo.id}
+                    style={{
+                      background: 'rgba(212, 175, 55, 0.08)',
+                      borderRadius: 8,
+                      padding: 8,
+                      aspectRatio: '1',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    {photo.public_url ? (
+                      <img
+                        src={photo.public_url}
+                        alt={photo.photo_type}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          borderRadius: 4,
+                        }}
+                      />
+                    ) : (
+                      <p style={{ color: 'var(--text-secondary)', margin: 0 }}>画像なし</p>
+                    )}
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: 12,
+                        left: 12,
+                        background: photo.photo_type === 'before' ? '#2196F3' : '#4CAF50',
+                        color: '#fff',
+                        padding: '4px 8px',
+                        borderRadius: 4,
+                        fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {photo.photo_type === 'before' ? 'Before' : 'After'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p
+                style={{
+                  fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                  color: 'var(--text-secondary)',
+                  textAlign: 'center',
+                  padding: 'clamp(20px, 3vw, 24px)',
+                  margin: 0,
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                }}
+              >
+                写真がまだアップロードされていません
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* メモタブ */}
+        {activeTab === 'notes' && (
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(20px, 3vw, 28px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            {notesEditMode ? (
+              <>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  style={{
+                    width: '100%',
+                    minHeight: 'clamp(200px, 40vh, 300px)',
+                    padding: 'clamp(12px, 2vw, 16px)',
+                    borderRadius: 8,
+                    border: '1px solid var(--sr-border)',
+                    fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                    boxSizing: 'border-box',
+                    marginBottom: 'clamp(12px, 2vw, 16px)',
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 'clamp(8px, 1.5vw, 12px)' }}>
+                  <button
+                    onClick={handleSaveNotes}
+                    disabled={saving}
+                    style={{
+                      flex: 1,
+                      padding: 'clamp(10px, 2vw, 14px)',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: saving ? 'var(--sr-border)' : 'var(--accent-gold)',
+                      color: saving ? 'var(--text-secondary)' : '#fff',
+                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                      fontWeight: 500,
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                    }}
+                  >
+                    {saving ? '保存中...' : '保存'}
+                  </button>
+                  <button
+                    onClick={() => setNotesEditMode(false)}
+                    style={{
+                      flex: 1,
+                      padding: 'clamp(10px, 2vw, 14px)',
+                      borderRadius: 8,
+                      border: '1px solid var(--sr-border)',
+                      background: '#fff',
+                      color: 'var(--text-primary)',
+                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                    }}
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{
+                    minHeight: 'clamp(150px, 30vh, 200px)',
+                    padding: 'clamp(12px, 2vw, 16px)',
+                    background: 'rgba(212, 175, 55, 0.08)',
+                    borderRadius: 8,
+                    marginBottom: 'clamp(12px, 2vw, 16px)',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                  }}
+                >
+                  <p
+                    style={{
+                      fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                      color: notes ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      margin: 0,
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {notes || 'メモはまだありません'}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setNotesEditMode(true)}
+                  style={{
+                    padding: 'clamp(10px, 2vw, 14px) clamp(16px, 3vw, 20px)',
+                    borderRadius: 8,
+                    border: '1px solid var(--accent-gold)',
+                    background: 'transparent',
+                    color: 'var(--accent-gold)',
+                    fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  編集
+                </button>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* AI機能タブ */}
+        {activeTab === 'ai' && (
+          <div>
+            {latestKarte ? (
+              <div>
+                <AIWarningsSection
+                  karte={latestKarte}
+                  customerId={customerId}
+                  salonId={salonId}
+                  karteId={latestKarte.id}
+                  onRefresh={() => window.location.reload()}
+                />
+                <AISummarySection
+                  karte={latestKarte}
+                  customerId={customerId}
+                  salonId={salonId}
+                  karteId={latestKarte.id}
+                  onRefresh={() => window.location.reload()}
+                />
+                <CommunicationScriptSection
+                  karte={latestKarte}
+                  customerId={customerId}
+                  salonId={salonId}
+                  karteId={latestKarte.id}
+                  onRefresh={() => window.location.reload()}
+                />
+                <NextRecommendationSection
+                  karte={latestKarte}
+                  customerId={customerId}
+                  salonId={salonId}
+                  karteId={latestKarte.id}
+                  onRefresh={() => window.location.reload()}
+                />
+              </div>
+            ) : (
+              <div
+                style={{
+                  background: '#fff',
+                  borderRadius: 12,
+                  padding: 'clamp(32px, 5vw, 40px)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                  textAlign: 'center',
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                    color: 'var(--text-secondary)',
+                    margin: 0,
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                  }}
+                >
+                  カルテを先に作成してください
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* フローティングボタン - 履歴タブで表示 */}
+      {activeTab === 'history' && (
+        <Link
+          href={`/dashboard/customers/${customerId}/karte/new`}
+          style={{
+            position: 'fixed',
+            bottom: 'clamp(100px, 12vh, 120px)',
+            right: 'clamp(16px, 3vw, 24px)',
+            width: 'clamp(56px, 12vw, 64px)',
+            height: 'clamp(56px, 12vw, 64px)',
+            borderRadius: '50%',
+            background: 'var(--accent-gold)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            textDecoration: 'none',
+            color: '#fff',
+            fontSize: 'clamp(1.5rem, 3vw, 2rem)',
+            boxShadow: '0 4px 16px rgba(212, 175, 55, 0.3)',
+            transition: 'all 0.2s ease',
+            zIndex: 15,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = '0 6px 24px rgba(212, 175, 55, 0.4)'
+            e.currentTarget.style.transform = 'scale(1.05)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = '0 4px 16px rgba(212, 175, 55, 0.3)'
+            e.currentTarget.style.transform = 'scale(1)'
+          }}
+        >
+          +
+        </Link>
       )}
 
-      {/* AI機能タブ */}
-      {activeTab === 'ai' && (
-        <div>
-          {latestKarte ? (
-            <div>
-              <AIWarningsSection
-                karte={latestKarte}
-                customerId={customerId}
-                salonId={salonId}
-                karteId={latestKarte.id}
-                onRefresh={() => window.location.reload()}
-              />
-              <AISummarySection
-                karte={latestKarte}
-                customerId={customerId}
-                salonId={salonId}
-                karteId={latestKarte.id}
-                onRefresh={() => window.location.reload()}
-              />
-              <CommunicationScriptSection
-                karte={latestKarte}
-                customerId={customerId}
-                salonId={salonId}
-                karteId={latestKarte.id}
-                onRefresh={() => window.location.reload()}
-              />
-              <NextRecommendationSection
-                karte={latestKarte}
-                customerId={customerId}
-                salonId={salonId}
-                karteId={latestKarte.id}
-                onRefresh={() => window.location.reload()}
-              />
-            </div>
-          ) : (
-            <div style={{
-              background: '#fff',
-              borderRadius: 16,
-              padding: 32,
-              boxShadow: '0 2px 20px rgba(0,0,0,0.06)',
-              textAlign: 'center',
-            }}>
-              <p style={{ fontSize: 14, color: '#888', margin: 0 }}>
-                カルテを先に作成してください
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+      {/* ボトムナビゲーション */}
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: '#fff',
+          borderTop: '1px solid var(--sr-border)',
+          display: 'flex',
+          justifyContent: 'space-around',
+          alignItems: 'center',
+          padding: '12px 0',
+          zIndex: 20,
+        }}
+      >
+        {[
+          { icon: '🏠', label: 'ホーム', href: '/dashboard' },
+          { icon: '📅', label: '予約', href: '/dashboard/booking' },
+          { icon: '📋', label: 'カルテ', href: '/dashboard/customers' },
+          { icon: '📊', label: '分析', href: '/dashboard' },
+          { icon: '⚙️', label: '設定', href: '/dashboard/more/settings' },
+        ].map((item) => (
+          <Link
+            key={item.label}
+            href={item.href}
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '4px',
+              textDecoration: 'none',
+              color: 'var(--text-secondary)',
+              fontSize: 'clamp(0.7rem, 1.2vw, 0.8rem)',
+              transition: 'color 0.3s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = 'var(--accent-gold)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = 'var(--text-secondary)'
+            }}
+          >
+            <span style={{ fontSize: '1.5rem' }}>{item.icon}</span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
+      </nav>
     </main>
   )
 }
