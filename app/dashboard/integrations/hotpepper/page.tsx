@@ -10,7 +10,13 @@ export default function HotpepperPage() {
   const [saving, setSaving] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [testLoading, setTestLoading] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
+  const [testResult, setTestResult] = useState<{
+    success: boolean
+    message: string
+    shop_name?: string
+  } | null>(null)
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -72,6 +78,42 @@ export default function HotpepperPage() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleTest = async () => {
+    if (!formData.username || !formData.password) {
+      setTestResult({ success: false, message: 'ログインID とパスワードを入力してください' })
+      return
+    }
+
+    setTestLoading(true)
+    setTestResult(null)
+
+    try {
+      const response = await fetch('/api/hpb/test-connection', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hpb_login_id: formData.username,
+          hpb_password: formData.password,
+          hpb_salon_id: salonId,
+        }),
+      })
+
+      const data = await response.json()
+      setTestResult({
+        success: data.success,
+        message: data.message,
+        shop_name: data.shop_name,
+      })
+    } catch (error) {
+      setTestResult({
+        success: false,
+        message: 'テスト実行中にエラーが発生しました',
+      })
+    } finally {
+      setTestLoading(false)
+    }
   }
 
   const handleSave = async (e: React.FormEvent) => {
@@ -263,6 +305,55 @@ export default function HotpepperPage() {
           </p>
         </div>
 
+        {/* テスト結果表示 */}
+        {testResult ? (
+          <div style={{
+            background: testResult.success ? '#EFF6FF' : '#FEF2F2',
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 24,
+            border: `1px solid ${testResult.success ? '#BFDBFE' : '#FECACA'}`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+              <span style={{ fontSize: 18 }}>
+                {testResult.success ? '✅' : '❌'}
+              </span>
+              <div style={{ flex: 1 }}>
+                <p style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  color: testResult.success ? '#1E3A8A' : '#991B1B',
+                  margin: '0 0 6px 0',
+                }}>
+                  {testResult.success ? '接続成功' : `失敗: ${testResult.message}`}
+                </p>
+                {testResult.shop_name && (
+                  <p style={{ fontSize: 12, color: '#666', margin: '0 0 8px 0' }}>
+                    店舗: {testResult.shop_name}
+                  </p>
+                )}
+                {!testResult.success && (
+                  <p style={{ fontSize: 12, color: '#666', margin: 0 }}>
+                    設定を保存できますが、同期は機能しません
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            background: '#FFFBEB',
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 24,
+            border: '1px solid #FEF3C7',
+          }}>
+            <p style={{ fontSize: 13, color: '#78350F', margin: 0 }}>
+              ℹ️ 接続テストをまだ実行していません。先に接続テストを推奨します。
+            </p>
+          </div>
+        )}
+
         {/* 同期状態 */}
         {integration && (
           <div style={{
@@ -330,6 +421,26 @@ export default function HotpepperPage() {
 
         {/* ボタン */}
         <div style={{ display: 'flex', gap: 12, marginTop: 32 }}>
+          <button
+            type="button"
+            onClick={handleTest}
+            disabled={testLoading || !formData.username || !formData.password}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 10,
+              border: 'none',
+              background: testLoading || !formData.username || !formData.password ? '#E5E7EB' : '#F3F4F6',
+              color: testLoading || !formData.username || !formData.password ? '#9CA3AF' : '#4B5563',
+              fontSize: 14,
+              fontWeight: 500,
+              cursor: (testLoading || !formData.username || !formData.password) ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {testLoading ? 'テスト中...' : '接続テスト'}
+          </button>
+
           <button
             type="submit"
             disabled={saving}
