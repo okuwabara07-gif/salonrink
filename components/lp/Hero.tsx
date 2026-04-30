@@ -46,7 +46,7 @@ export default function Hero() {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.65) 0%, rgba(45, 42, 40, 0.65) 100%)',
+            background: 'linear-gradient(135deg, rgba(26, 22, 18, 0.15) 0%, rgba(45, 42, 40, 0.15) 100%)',
             zIndex: 1,
           }}
         />
@@ -100,7 +100,7 @@ export default function Hero() {
               fontSize: 'clamp(0.95rem, 1.8vw, 1.125rem)',
               fontWeight: 300,
               lineHeight: 1.8,
-              marginBottom: 'clamp(40px, 5vw, 60px)',
+              marginBottom: 'clamp(20px, 3vw, 30px)',
               maxWidth: 700,
               opacity: 0.9,
               color: '#ffffff',
@@ -108,6 +108,24 @@ export default function Hero() {
           >
             AIカルテを背に、信頼でつなぐ、<br />あなたのサロンの未来を支えます。
           </p>
+
+          {/* 信頼指標 */}
+          <div
+            style={{
+              display: 'flex',
+              gap: '14px',
+              fontSize: '11px',
+              color: 'rgba(255, 255, 255, 0.9)',
+              marginBottom: 'clamp(40px, 5vw, 60px)',
+              flexWrap: 'wrap',
+            }}
+          >
+            <span>✓ 初期費用 0円</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>|</span>
+            <span>✓ 最短 3分で登録</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>|</span>
+            <span>✓ クレカ登録不要</span>
+          </div>
 
           {/* CTA ボタン */}
           <div
@@ -126,7 +144,7 @@ export default function Hero() {
               href="/register"
               style={{
                 display: 'inline-block',
-                background: '#1A1018',
+                background: '#1A1410',
                 color: '#fff',
                 padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
                 borderRadius: 8,
@@ -134,20 +152,20 @@ export default function Hero() {
                 fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)',
                 fontWeight: 500,
                 textDecoration: 'none',
-                border: '2px solid #1A1018',
+                border: '2px solid #1A1410',
                 transition: 'all 0.3s ease',
                 cursor: 'pointer',
                 width: '100%',
                 textAlign: 'center',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#2D2A28'
-                e.currentTarget.style.borderColor = '#2D2A28'
+                e.currentTarget.style.background = '#2D2510'
+                e.currentTarget.style.borderColor = '#2D2510'
                 e.currentTarget.style.transform = 'translateY(-2px)'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#1A1018'
-                e.currentTarget.style.borderColor = '#1A1018'
+                e.currentTarget.style.background = '#1A1410'
+                e.currentTarget.style.borderColor = '#1A1410'
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
