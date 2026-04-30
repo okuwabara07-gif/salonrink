@@ -50,6 +50,22 @@ export default function PricingSection() {
       }}
     >
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* EYEBROW */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.75rem, 1.3vw, 0.875rem)',
+            fontWeight: 600,
+            color: '#C9A961',
+            textAlign: 'center',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            letterSpacing: 0.15,
+            textTransform: 'uppercase',
+          }}
+        >
+          PRICING
+        </p>
+
         {/* セクションタイトル */}
         <h2
           style={{
@@ -62,7 +78,7 @@ export default function PricingSection() {
             letterSpacing: 0.02,
           }}
         >
-          業界最安級の料金プラン
+          業界最安級の料金プラン。
         </h2>
 
         <p
@@ -75,7 +91,7 @@ export default function PricingSection() {
             marginBottom: 'clamp(60px, 8vw, 80px)',
           }}
         >
-          月額 ¥1,980〜で、すべての機能が使える
+          サロンの規模に合わせて選べる3プラン
         </p>
 
         {/* プランカード 3つ */}
@@ -299,7 +315,7 @@ export default function PricingSection() {
             margin: 0,
           }}
         >
-          ※価格は税抜表示です
+          ※ 価格は税抜表示です。全プランで 14日間無料体験できます。
         </p>
       </div>
     </section>
