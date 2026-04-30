@@ -1,5 +1,5 @@
 export default function ComparisonTable() {
-  const features = ['LINE予約', 'HPB連携', 'ミニモ連携', 'AIカルテ', 'AI接客スクリプト', 'AIアレルギー警告', '月額料金']
+  const features = ['LINE予約', 'HPB連携', 'ミニモ連携', 'AIカルテ', 'AI接客スクリプト', 'AIケア事項お知らせ', '月額料金']
   const competitors = [
     { name: 'SalonRink', line: '✅', hpb: '✅', minimo: '🔔', aichart: '✅', aiscript: '✅', aialert: '✅', price: '¥1,980〜' },
     { name: 'A社', line: '✅', hpb: '❌', minimo: '❌', aichart: '❌', aiscript: '❌', aialert: '❌', price: '¥2,000〜' },
