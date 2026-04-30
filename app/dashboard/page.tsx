@@ -298,6 +298,41 @@ export default function DashboardPage() {
               {stats.newCustomers}名
             </p>
           </div>
+
+          <div
+            style={{
+              background: '#fff',
+              borderRadius: 12,
+              padding: 'clamp(16px, 2.5vw, 20px)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+            }}
+          >
+            <p
+              style={{
+                fontFamily: 'var(--font-noto-sans-jp)',
+                fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)',
+                color: 'var(--text-secondary)',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                margin: 0,
+                marginBottom: '8px',
+                letterSpacing: 0.5,
+              }}
+            >
+              本日の売上見込み
+            </p>
+            <p
+              style={{
+                fontFamily: 'var(--font-noto-serif-jp)',
+                fontSize: 'clamp(2rem, 5vw, 2.5rem)',
+                fontWeight: 300,
+                color: 'var(--accent-gold)',
+                margin: 0,
+              }}
+            >
+              ¥{stats.reservations.reduce((sum, r) => sum + (r.price || 0), 0).toLocaleString()}
+            </p>
+          </div>
         </div>
 
         {/* 本日の予約一覧 - リデザイン版 */}
