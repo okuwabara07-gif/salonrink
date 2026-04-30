@@ -45,40 +45,48 @@ export default function IndustriesSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: 'clamp(24px, 3vw, 32px)',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 'clamp(20px, 3vw, 28px)',
           }}
         >
           {challenges.map((challenge, i) => (
             <div
               key={i}
               style={{
-                position: 'relative',
-                borderRadius: 16,
-                overflow: 'hidden',
-                aspectRatio: '4/3',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
-                e.currentTarget.style.transform = 'translateY(-4px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)'
-                e.currentTarget.style.transform = 'translateY(0)'
+                margin: '0 auto',
+                width: '100%',
+                maxWidth: 'min(100%, 360px)',
               }}
             >
-              <Image
-                src={challenge.image}
-                alt={challenge.alt}
-                fill
+              <div
                 style={{
-                  objectFit: 'cover',
+                  position: 'relative',
+                  borderRadius: 16,
+                  overflow: 'hidden',
+                  aspectRatio: '16/10',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.3s ease',
+                  cursor: 'pointer',
                 }}
-                priority={i === 0}
-              />
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <Image
+                  src={challenge.image}
+                  alt={challenge.alt}
+                  fill
+                  style={{
+                    objectFit: 'cover',
+                  }}
+                  priority={i === 0}
+                />
+              </div>
             </div>
           ))}
         </div>
