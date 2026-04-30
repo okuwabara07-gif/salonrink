@@ -6,18 +6,18 @@ export default function FeaturesSection() {
   const aiFeatures = [
     {
       number: '1',
-      title: '顧客サマリ自動生成',
-      description: 'AI が過去のデータを分析し、最適なサマリを生成',
+      title: 'カルテ自動生成',
+      description: '過去の情報をAIが整理し、すぐ見えるように。',
     },
     {
       number: '2',
-      title: 'アレルギー警告',
-      description: 'AI がリスクを検知し、施術前に警告',
+      title: 'ケア事項お知らせ',
+      description: '施術前にひと目でご確認いただけます。',
     },
     {
       number: '3',
-      title: '次回提案',
-      description: 'AI が最適な施術・ケアを提案',
+      title: '次回来店ご提案',
+      description: '最適な施術・ケアを、AIがご提案します。',
     },
   ]
 
@@ -59,6 +59,22 @@ export default function FeaturesSection() {
       `}</style>
 
       <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* EYEBROW */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.75rem, 1.3vw, 0.875rem)',
+            fontWeight: 600,
+            color: '#C9A961',
+            textAlign: 'center',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            letterSpacing: 0.15,
+            textTransform: 'uppercase',
+          }}
+        >
+          AI KARTE
+        </p>
+
         {/* セクションタイトル */}
         <h2
           style={{
@@ -71,7 +87,7 @@ export default function FeaturesSection() {
             letterSpacing: 0.02,
           }}
         >
-          AI が自動で記録、提案、警告
+          AIが自動で記録・提案・お知らせ。
         </h2>
 
         {/* サブタイトル */}
