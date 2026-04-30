@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import TodayWarnings from '@/components/dashboard/TodayWarnings'
+import LostCustomersList from '@/components/dashboard/LostCustomersList'
 
 export default function DashboardPage() {
   const [salon, setSalon] = useState<any>(null)
@@ -248,6 +249,9 @@ export default function DashboardPage() {
           </p>
         )}
       </div>
+
+      {/* 失客リスト */}
+      {salon && <LostCustomersList salonId={salon.id} />}
     </main>
   )
 }
