@@ -10,7 +10,7 @@ export default function Hero() {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         padding: 'clamp(80px, 12vw, 160px) clamp(20px, 5vw, 60px)',
         background: 'linear-gradient(135deg, #1A1612 0%, #2D2A28 50%, #4A4440 100%)',
         backgroundImage: 'url(/images/lp-redesign/hero-bg.jpg)',
@@ -18,6 +18,7 @@ export default function Hero() {
         backgroundPosition: 'center',
         color: '#fff',
         overflow: 'hidden',
+        minHeight: '100vh',
       }}
     >
       {/* グラデーションオーバーレイ */}
@@ -40,9 +41,9 @@ export default function Hero() {
           zIndex: 2,
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          maxWidth: 900,
+          alignItems: 'flex-start',
+          textAlign: 'left',
+          maxWidth: 700,
         }}
       >
         {/* キャッチコピー */}
@@ -54,6 +55,7 @@ export default function Hero() {
             lineHeight: 1.3,
             marginBottom: 'clamp(24px, 3vw, 40px)',
             letterSpacing: 0.05,
+            color: '#ffffff',
           }}
         >
           美容師とお客様を、<br />一生でつなぐ。
@@ -68,6 +70,7 @@ export default function Hero() {
             lineHeight: 1.6,
             marginBottom: 'clamp(12px, 2vw, 20px)',
             opacity: 0.95,
+            color: '#ffffff',
           }}
         >
           それが、SalonRink。
@@ -83,6 +86,7 @@ export default function Hero() {
             marginBottom: 'clamp(40px, 5vw, 60px)',
             maxWidth: 700,
             opacity: 0.9,
+            color: '#ffffff',
           }}
         >
           AIカルテを背に、信頼でつなぐ、<br />あなたのサロンの未来を支えます。
@@ -92,10 +96,11 @@ export default function Hero() {
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             gap: 'clamp(12px, 2vw, 20px)',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
+            alignItems: 'flex-start',
+            width: '100%',
+            maxWidth: 400,
           }}
         >
           {/* 主 CTA */}
@@ -114,6 +119,8 @@ export default function Hero() {
               border: '2px solid #1A1018',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
+              width: '100%',
+              textAlign: 'center',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#2D2A28'
@@ -145,6 +152,8 @@ export default function Hero() {
               border: '2px solid #fff',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
+              width: '100%',
+              textAlign: 'center',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(255,255,255,0.1)'

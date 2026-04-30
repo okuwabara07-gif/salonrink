@@ -19,11 +19,6 @@ export default function FeaturesSection() {
       title: '次回提案',
       description: 'AI が最適な施術・ケアを提案',
     },
-    {
-      number: '4',
-      title: '失客予兆検知',
-      description: 'AI が来店パターンから失客リスクを予測',
-    },
   ]
 
   return (
@@ -50,6 +45,7 @@ export default function FeaturesSection() {
           AI が自動で記録、提案、警告
         </h2>
 
+        {/* サブタイトル */}
         <p
           style={{
             fontFamily: 'var(--font-noto-sans-jp)',
@@ -64,48 +60,88 @@ export default function FeaturesSection() {
           サロンワークに、AI というパートナーを。
         </p>
 
-        {/* メインレイアウト: スマホ + 機能カード */}
+        {/* スマホ画像: 中央・大きく */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: 'clamp(40px, 5vw, 60px)',
-            alignItems: 'center',
+            display: 'flex',
+            justifyContent: 'center',
+            marginBottom: 'clamp(40px, 6vw, 60px)',
           }}
         >
-          {/* 左側: スマホモックアップ */}
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <div
-              style={{
-                position: 'relative',
-                width: 'clamp(280px, 100%, 450px)',
-                aspectRatio: '3/4',
-                margin: '0 auto',
-              }}
-            >
-              <Image
-                src="/images/lp-redesign/phone-mockup.jpg"
-                alt="SalonRink カルテ画面"
-                fill
-                style={{
-                  objectFit: 'contain',
-                }}
-                priority
-              />
-            </div>
-          </div>
-
-          {/* 右側: 機能カード */}
           <div
             style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'clamp(16px, 2vw, 24px)',
+              position: 'relative',
+              width: 'clamp(280px, 80%, 360px)',
+              aspectRatio: '3/4',
             }}
           >
-            {aiFeatures.map((feature) => (
+            <Image
+              src="/images/lp-redesign/phone-mockup.jpg"
+              alt="SalonRink カルテ画面"
+              fill
+              style={{
+                objectFit: 'contain',
+              }}
+              priority
+            />
+          </div>
+        </div>
+
+        {/* 機能カード: 縦並び + 矢印で繋ぐ */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: 0,
+          }}
+        >
+          {aiFeatures.map((feature, index) => (
+            <div
+              key={feature.number}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '100%',
+              }}
+            >
+              {/* 矢印(1番目を除く) */}
+              {index > 0 && (
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    height: '32px',
+                    marginBottom: 'clamp(16px, 2vw, 24px)',
+                  }}
+                >
+                  {/* 縦線 */}
+                  <div
+                    style={{
+                      width: '2px',
+                      height: '16px',
+                      background: 'var(--accent-gold)',
+                    }}
+                  />
+                  {/* 下向き三角 */}
+                  <div
+                    style={{
+                      width: 0,
+                      height: 0,
+                      borderLeft: '6px solid transparent',
+                      borderRight: '6px solid transparent',
+                      borderTop: '8px solid var(--accent-gold)',
+                      marginTop: '2px',
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* カード */}
               <div
-                key={feature.number}
                 style={{
                   background: '#FFFFFF',
                   border: '1px solid var(--sr-border)',
@@ -115,6 +151,7 @@ export default function FeaturesSection() {
                   gap: 'clamp(12px, 2vw, 16px)',
                   transition: 'all 0.3s ease',
                   cursor: 'pointer',
+                  width: 'clamp(280px, 90%, 500px)',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
@@ -174,19 +211,9 @@ export default function FeaturesSection() {
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-
-        {/* モバイル対応 */}
-        <style>{`
-          @media (max-width: 768px) {
-            div[style*="grid-template-columns: 1fr 1fr"] {
-              grid-template-columns: 1fr !important;
-              gap: 32px !important;
-            }
-          }
-        `}</style>
       </div>
     </section>
   )

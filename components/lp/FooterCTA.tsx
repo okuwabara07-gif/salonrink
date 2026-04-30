@@ -79,17 +79,19 @@ export default function FooterCTA() {
         <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             gap: 'clamp(12px, 2vw, 20px)',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
             alignItems: 'center',
+            maxWidth: 320,
+            margin: '0 auto',
           }}
         >
           {/* 主 CTA */}
           <Link
             href="/register"
             style={{
-              display: 'inline-block',
+              display: 'block',
+              width: '100%',
               background: '#1A1018',
               color: '#fff',
               padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
@@ -101,6 +103,7 @@ export default function FooterCTA() {
               border: '2px solid #1A1018',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
+              textAlign: 'center',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = '#2D2A28'
@@ -120,7 +123,8 @@ export default function FooterCTA() {
           <Link
             href="#features"
             style={{
-              display: 'inline-block',
+              display: 'block',
+              width: '100%',
               background: 'transparent',
               color: '#fff',
               padding: 'clamp(14px, 2vw, 18px) clamp(32px, 5vw, 48px)',
@@ -132,6 +136,7 @@ export default function FooterCTA() {
               border: '2px solid #fff',
               transition: 'all 0.3s ease',
               cursor: 'pointer',
+              textAlign: 'center',
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
