@@ -6,15 +6,21 @@ export default function IndustriesSection() {
   const challenges = [
     {
       image: '/images/lp-redesign/challenge-1.jpg',
-      alt: '顧客の好みを覚えきれない',
+      alt: 'お客様の好みを、思い出すのが大変',
+      title: 'お客様の好みを、思い出すのが大変',
+      subtitle: '前回の会話、覚えておきたいから',
     },
     {
       image: '/images/lp-redesign/challenge-2.jpg',
-      alt: 'アレルギー情報の見落とし',
+      alt: 'ケア情報、安心して見たい',
+      title: 'ケア情報、安心して見たい',
+      subtitle: '施術前にひと目で確認できたら',
     },
     {
       image: '/images/lp-redesign/challenge-3.jpg',
-      alt: '失客の原因が分からない',
+      alt: 'お客様の傾向を、もっと知りたい',
+      title: 'お客様の傾向を、もっと知りたい',
+      subtitle: '"なぜ"をデータで見えるように',
     },
   ]
 
@@ -37,6 +43,22 @@ export default function IndustriesSection() {
       `}</style>
 
       <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+        {/* EYEBROW */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.75rem, 1.3vw, 0.875rem)',
+            fontWeight: 600,
+            color: '#C9A961',
+            textAlign: 'center',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
+            letterSpacing: 0.15,
+            textTransform: 'uppercase',
+          }}
+        >
+          CHALLENGE
+        </p>
+
         {/* セクションタイトル */}
         <h2
           style={{
@@ -45,12 +67,27 @@ export default function IndustriesSection() {
             fontWeight: 400,
             color: 'var(--text-primary)',
             textAlign: 'center',
-            marginBottom: 'clamp(40px, 5vw, 60px)',
+            marginBottom: 'clamp(12px, 2vw, 16px)',
             letterSpacing: 0.02,
           }}
         >
-          こんな悩み、ありませんか?
+          サロンには、こんな"小さなお悩み"が。
         </h2>
+
+        {/* サブタイトル */}
+        <p
+          style={{
+            fontFamily: 'var(--font-noto-sans-jp)',
+            fontSize: 'clamp(0.95rem, 1.8vw, 1.125rem)',
+            fontWeight: 300,
+            color: 'var(--text-secondary)',
+            textAlign: 'center',
+            marginBottom: 'clamp(60px, 8vw, 80px)',
+            letterSpacing: 0.01,
+          }}
+        >
+          SalonRinkは、美容師の想いに寄り添う機能を揃えています。
+        </p>
 
         {/* カード グリッド */}
         <div
@@ -71,12 +108,9 @@ export default function IndustriesSection() {
               }}
             >
               <div
-                className="industries-card-image"
                 style={{
-                  position: 'relative',
                   borderRadius: 16,
                   overflow: 'hidden',
-                  aspectRatio: '16/10',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
                   transition: 'all 0.3s ease',
                   cursor: 'pointer',
@@ -90,15 +124,57 @@ export default function IndustriesSection() {
                   e.currentTarget.style.transform = 'translateY(0)'
                 }}
               >
-                <Image
-                  src={challenge.image}
-                  alt={challenge.alt}
-                  fill
+                {/* 画像部分 */}
+                <div
+                  className="industries-card-image"
                   style={{
-                    objectFit: 'cover',
+                    position: 'relative',
+                    aspectRatio: '16/10',
                   }}
-                  priority={i === 0}
-                />
+                >
+                  <Image
+                    src={challenge.image}
+                    alt={challenge.alt}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                    }}
+                    priority={i === 0}
+                  />
+                </div>
+
+                {/* テキスト部分 */}
+                <div
+                  style={{
+                    padding: 'clamp(16px, 2.5vw, 20px)',
+                    background: '#FFFFFF',
+                  }}
+                >
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                      fontSize: 'clamp(0.95rem, 1.8vw, 1.0625rem)',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                      margin: '0 0 8px 0',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {challenge.title}
+                  </h3>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                      fontWeight: 400,
+                      color: 'var(--text-secondary)',
+                      margin: 0,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {challenge.subtitle}
+                  </p>
+                </div>
               </div>
             </div>
           ))}
