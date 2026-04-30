@@ -73,6 +73,7 @@ export default function Hero() {
               marginBottom: 'clamp(24px, 3vw, 40px)',
               letterSpacing: 0.05,
               color: '#ffffff',
+              textShadow: '0 4px 32px rgba(0,0,0,0.95), 0 2px 12px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.7)',
             }}
           >
             美容師とお客様を、<br />一生でつなぐ。
@@ -88,6 +89,7 @@ export default function Hero() {
               marginBottom: 'clamp(12px, 2vw, 20px)',
               opacity: 0.95,
               color: '#ffffff',
+              textShadow: '0 4px 24px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.85)',
             }}
           >
             それが、SalonRink。
@@ -104,6 +106,7 @@ export default function Hero() {
               maxWidth: 700,
               opacity: 0.9,
               color: '#ffffff',
+              textShadow: '0 2px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.7)',
             }}
           >
             AIカルテを背に、信頼でつなぐ、<br />あなたのサロンの未来を支えます。
@@ -118,6 +121,7 @@ export default function Hero() {
               color: 'rgba(255, 255, 255, 0.9)',
               marginBottom: 'clamp(40px, 5vw, 60px)',
               flexWrap: 'wrap',
+              textShadow: '0 2px 12px rgba(0,0,0,0.9)',
             }}
           >
             <span>✓ 初期費用 0円</span>
