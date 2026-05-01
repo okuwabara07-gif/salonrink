@@ -62,7 +62,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={pending || !email || !password}
-            style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:pending?'#E0D8D0':'#1A1018',color:pending?'#999':'#FAF6EE',fontSize:14,fontWeight:500,cursor:pending?'not-allowed':'pointer',transition:'all 0.2s ease'}}
+            style={{width:'100%',padding:'14px',borderRadius:10,border:'none',background:pending?'#D4B884':'#C9A961',color:pending?'#999':'#FAF6EE',fontSize:14,fontWeight:500,cursor:pending?'not-allowed':'pointer',transition:'all 0.2s ease'}}
           >
             {pending ? 'ログイン中...' : 'ログイン'}
           </button>
@@ -82,6 +82,11 @@ export default function LoginPage() {
             {formState.message}
           </p>
         )}
+      </div>
+      <div style={{textAlign:'center', marginTop:'24px'}}>
+        <a href="/" style={{fontSize:13, color:'#C9A961', textDecoration:'none'}}>
+          ← ホームに戻る
+        </a>
       </div>
     </main>
   )
