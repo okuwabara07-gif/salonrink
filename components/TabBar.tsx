@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { tabs } from './tabs'
+import { iconMap } from '@/lib/iconMap'
 import styles from './TabBar.module.css'
 
 export default function TabBar() {
@@ -29,7 +30,7 @@ export default function TabBar() {
             href={tab.path}
             className={`${styles.tab} ${isActive ? styles.active : ''}`}
           >
-            <span className={styles.icon}>{tab.icon}</span>
+            <span className={styles.icon}>{iconMap[tab.icon] || tab.icon}</span>
             <span className={styles.label}>{tab.label}</span>
           </Link>
         )
