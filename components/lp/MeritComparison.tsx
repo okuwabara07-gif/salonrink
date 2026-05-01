@@ -9,7 +9,7 @@ export default function MeritComparison() {
       items: [
         'AIカルテで顧客を完璧に記憶',
         'AI接客スクリプトで自信を持って提案',
-        'AIアレルギー警告で施術失敗を防止',
+        'AIアレルギー注意で施術失敗を防止',
         'ファンに囲まれる美容師へ',
       ],
     },

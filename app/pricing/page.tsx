@@ -31,7 +31,7 @@ export default function PricingPage() {
       features: [
         'AIカルテ全機能',
         'AIサマリー生成',
-        'アレルギー警告',
+        'アレルギー注意',
         '顧客管理(無制限)',
         'HPB連携',
         '予約統計',

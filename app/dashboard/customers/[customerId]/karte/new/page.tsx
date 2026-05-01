@@ -285,7 +285,7 @@ export default function NewKartePage() {
         </button>
 
         <p style={{ fontSize: 12, color: '#888', textAlign: 'center', marginTop: 12 }}>
-          保存後、AI が自動でサマリー・警告を生成します
+          保存後、AI が自動でサマリー・注意を生成します
         </p>
       </div>
     </div>
