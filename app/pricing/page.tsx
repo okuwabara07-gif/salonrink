@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Header from '@/components/lp/Header'
 import ComparisonTable from '@/components/lp/ComparisonTable'
 import Footer from '@/components/lp/Footer'
+import { iconMap } from '@/lib/iconMap'
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(false)
@@ -446,7 +447,7 @@ export default function PricingPage() {
                     alignItems: 'flex-start',
                   }}
                 >
-                  <div style={{ fontSize: '2rem' }}>{addon.icon}</div>
+                  <div style={{ fontSize: '2rem' }}>{iconMap[addon.icon] || addon.icon}</div>
                   <div style={{ flex: 1 }}>
                     <h4
                       style={{
