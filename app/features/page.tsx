@@ -227,6 +227,8 @@ export default function FeaturesPage() {
                       textAlign: 'center',
                       transition: 'all 0.3s ease',
                       cursor: 'pointer',
+                      position: 'relative',
+                      opacity: feature.opacity || 1,
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.12)'
@@ -237,6 +239,26 @@ export default function FeaturesPage() {
                       e.currentTarget.style.transform = 'translateY(0)'
                     }}
                   >
+                    {/* Badge */}
+                    {feature.badge && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '10px',
+                          background: '#FAF0E0',
+                          color: '#C9A961',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
+                          fontWeight: 600,
+                          fontFamily: 'var(--font-noto-sans-jp)',
+                        }}
+                      >
+                        {feature.badge}
+                      </div>
+                    )}
+
                     {/* アイコン枠 */}
                     <div
                       style={{
