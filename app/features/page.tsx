@@ -15,8 +15,8 @@ export default function FeaturesPage() {
           icon: '💬',
         },
         {
-          title: 'アレルギー警告',
-          description: 'リスク情報を察知し、施術前に通知',
+          title: 'アレルギー注意',
+          description: '大切なケア情報を、施術前にお知らせ',
           icon: '⚠️',
         },
         {
