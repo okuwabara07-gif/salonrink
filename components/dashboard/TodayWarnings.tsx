@@ -101,15 +101,15 @@ export default function TodayWarnings({ salonId }: Props) {
 
   return (
     <section style={{
-      background: '#fff5f5',
-      border: '2px solid #fecaca',
+      background: '#faf0e0',
+      border: '2px solid #C9A961',
       borderRadius: 16,
       padding: 24,
       marginBottom: 24,
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
         <span style={{ fontSize: 20 }}>⚠️</span>
-        <h2 style={{ fontSize: 18, fontWeight: 600, color: '#991b1b', margin: 0 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 600, color: '#C9A961', margin: 0 }}>
           今日の注意 ({warnings.length}名)
         </h2>
       </div>
@@ -124,11 +124,7 @@ export default function TodayWarnings({ salonId }: Props) {
               background: '#fff',
               borderRadius: 10,
               padding: 16,
-              borderLeft: `4px solid ${
-                w.riskLevel === 'critical' ? '#dc2626' :
-                w.riskLevel === 'high' ? '#ef4444' :
-                '#f59e0b'
-              }`,
+              borderLeft: '4px solid #C9A961',
               textDecoration: 'none',
               color: '#1A1018',
             }}
