@@ -186,7 +186,7 @@ export default function FeaturesPage() {
                     fontSize: 'clamp(2rem, 4vw, 2.5rem)',
                   }}
                 >
-                  {category.icon}
+                  {iconMap[category.icon] || category.icon}
                 </div>
                 <div>
                   <h2
