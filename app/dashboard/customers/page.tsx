@@ -319,6 +319,7 @@ export default function CustomersPage() {
                   </p>
 
                   {/* メモ/タグ表示 */}
+                  {/* 一時無効化: notes column 追加後に復活
                   {customer.notes && (
                     <p
                       style={{
@@ -332,7 +333,9 @@ export default function CustomersPage() {
                       メモ: {customer.notes}
                     </p>
                   )}
+                  */}
 
+                  {/* 一時無効化: tags column 追加後に復活
                   {customer.tags && customer.tags.length > 0 && (
                     <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
                       {customer.tags.map((tag, idx) => (
@@ -353,6 +356,7 @@ export default function CustomersPage() {
                       ))}
                     </div>
                   )}
+                  */}
                 </div>
               </Link>
             ))}

@@ -309,6 +309,7 @@ export default function CustomerDetailPage() {
             {customer.name || '—'}様
           </h1>
 
+          {/* 一時無効化: tags column 追加後に復活
           {customer.tags && customer.tags.length > 0 && (
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginTop: '12px', flexWrap: 'wrap' }}>
               {customer.tags.map((tag: string, idx: number) => (
@@ -329,6 +330,7 @@ export default function CustomerDetailPage() {
               ))}
             </div>
           )}
+          */}
         </div>
 
         {/* タブナビゲーション */}
@@ -565,6 +567,7 @@ export default function CustomerDetailPage() {
               >
                 総売上
               </p>
+              {/* 一時無効化: total_spent column 追加後に復活
               <p
                 style={{
                   fontSize: 'clamp(1rem, 1.8vw, 1.125rem)',
@@ -575,6 +578,7 @@ export default function CustomerDetailPage() {
               >
                 ¥{(customer.total_spent || 0).toLocaleString()}
               </p>
+              */}
             </div>
           </div>
         )}
