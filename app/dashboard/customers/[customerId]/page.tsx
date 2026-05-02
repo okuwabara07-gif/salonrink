@@ -52,7 +52,7 @@ export default function CustomerDetailPage() {
       // 顧客情報取得
       const { data: customerData } = await supabase
         .from('customers')
-        .select('*')
+        .select('id, salon_id, name, line_id, phone, last_visit, visit_count, created_at, line_user_id, line_display_name, photos')
         .eq('id', customerId)
         .maybeSingle()
 
@@ -100,8 +100,8 @@ export default function CustomerDetailPage() {
 
         setPhotos(photosData || [])
 
-        // メモ取得
-        setNotes(customerData?.notes || '')
+        // メモ取得（一時無効化: notes column 追加後に復活）
+        // setNotes(customerData?.notes || '')
       }
 
       setLoading(false)

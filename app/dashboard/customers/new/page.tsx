@@ -12,8 +12,6 @@ export default function NewKartePage() {
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
-    email: '',
-    gender: '',
     notes: '',
   })
   const [photos, setPhotos] = useState<string[]>([])
@@ -106,12 +104,8 @@ export default function NewKartePage() {
           salon_id: salon.id,
           name: formData.name,
           phone: formData.phone || null,
-          email: formData.email || null,
-          gender: formData.gender || null,
-          notes: formData.notes || null,
           photos: photos,
           visit_count: 0,
-          total_spent: 0,
         })
 
       if (error) {
@@ -166,22 +160,6 @@ export default function NewKartePage() {
             style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14 }} />
         </div>
 
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>メールアドレス</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange}
-            style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14 }} />
-        </div>
-
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>性別</label>
-          <select name="gender" value={formData.gender} onChange={handleChange}
-            style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14, background: '#fff' }}>
-            <option value="">選択</option>
-            <option value="female">女性</option>
-            <option value="male">男性</option>
-            <option value="other">その他</option>
-          </select>
-        </div>
 
         <div style={{ marginBottom: 20 }}>
           <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>

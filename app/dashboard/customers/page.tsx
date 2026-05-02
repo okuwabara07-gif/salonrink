@@ -16,10 +16,6 @@ interface Customer {
   phone: string
   last_visit: string | null
   visit_count: number
-  age?: number
-  total_spent?: number
-  tags?: string[]
-  notes?: string
 }
 
 export default function CustomersPage() {
@@ -52,7 +48,7 @@ export default function CustomersPage() {
       // 顧客一覧取得
       const { data: customersData } = await supabase
         .from('customers')
-        .select('id, name, phone, last_visit, visit_count, age, total_spent, tags, notes')
+        .select('id, name, phone, last_visit, visit_count')
         .eq('salon_id', salonData.id)
         .order('last_visit', { ascending: false, nullsFirst: false })
 
@@ -68,8 +64,9 @@ export default function CustomersPage() {
     if (activeTab === 'all') return true
     if (activeTab === 'new') return c.visit_count === 1
     if (activeTab === 'repeat') return c.visit_count > 1
-    if (activeTab === 'vip') return c.tags?.includes('VIP')
-    if (activeTab === 'caution') return c.tags?.includes('要注意')
+    // 一時無効化: tags column 追加後に復活
+    // if (activeTab === 'vip') return c.tags?.includes('VIP')
+    // if (activeTab === 'caution') return c.tags?.includes('要注意')
     return true
   })
 
@@ -78,8 +75,9 @@ export default function CustomersPage() {
     const searchLower = searchTerm.toLowerCase()
     return (
       c.name?.toLowerCase().includes(searchLower) ||
-      c.phone?.includes(searchTerm) ||
-      c.tags?.some(tag => tag.toLowerCase().includes(searchLower))
+      c.phone?.includes(searchTerm)
+      // 一時無効化: tags column 追加後に復活
+      // || c.tags?.some(tag => tag.toLowerCase().includes(searchLower))
     )
   })
 
