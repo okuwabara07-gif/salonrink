@@ -110,6 +110,50 @@ export default function CustomerDetailPage() {
     loadData()
   }, [customerId])
 
+  useEffect(() => {
+    if (!customerId || !salonId) return
+
+    const setupRealtime = async () => {
+      const supabase = await createClient()
+
+      const channel = supabase
+        .channel(`kartes:${customerId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'kartes',
+            filter: `customer_id=eq.${customerId}`,
+          },
+          (payload: any) => {
+            const updatedKarte = payload.new
+            setLatestKarte((prev: any) => {
+              if (prev && updatedKarte.id === prev.id) {
+                return updatedKarte as typeof prev
+              }
+              return prev
+            })
+          }
+        )
+        .subscribe()
+
+      return () => {
+        channel.unsubscribe()
+      }
+    }
+
+    let unsubscribe: (() => void) | null = null
+
+    setupRealtime().then((cleanup) => {
+      unsubscribe = cleanup
+    })
+
+    return () => {
+      unsubscribe?.()
+    }
+  }, [customerId, salonId])
+
   const handleSaveNotes = async () => {
     if (!customerId) return
 
