@@ -5,21 +5,21 @@ import Image from 'next/image'
 export default function CaseStudySection() {
   const testimonials = [
     {
-      image: '/images/lp-redesign/testimonial-sato.jpg',
+      image: '/images/lp-redesign/testimonial-a.jpg',
       alt: 'S.S 様 - salon Lumière オーナー',
       name: 'S.S 様',
       role: '東京都・salon Lumière オーナー',
       quote: 'お客様の好みをすぐ確認できて、カウンセリングの質が上がりました。リピート率も上がっています。',
     },
     {
-      image: '/images/lp-redesign/testimonial-tanaka.jpg',
+      image: '/images/lp-redesign/testimonial-b.jpg',
       alt: 'T.M 様 - hair design Rêve スタイリスト',
       name: 'T.M 様',
       role: '神奈川県・hair design Rêve スタイリスト',
       quote: 'ケア情報がスムーズに見れて、安心して施術できるのが本当にありがたいです。',
     },
     {
-      image: '/images/lp-redesign/testimonial-suzuki.jpg',
+      image: '/images/lp-redesign/testimonial-c.jpg',
       alt: 'S.K 様 - BARBER KEN オーナー',
       name: 'S.K 様',
       role: '大阪府・BARBER KEN オーナー',
