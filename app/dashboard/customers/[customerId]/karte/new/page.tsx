@@ -22,6 +22,7 @@ export default function NewKartePage() {
   const [allergies, setAllergies] = useState('')
   const [treatmentNote, setTreatmentNote] = useState('')
   const [nextSuggestion, setNextSuggestion] = useState('')
+  const [plannedMenu, setPlannedMenu] = useState('')
 
   useEffect(() => {
     async function loadCustomer() {
@@ -119,6 +120,28 @@ export default function NewKartePage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(aiPayload),
+      }).catch(() => {})
+
+      // 接客スクリプト
+      if (plannedMenu.trim()) {
+        fetch('/api/ai/communication-script', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...aiPayload,
+            planned_menu: plannedMenu,
+          }),
+        }).catch(() => {})
+      }
+
+      // 次回提案生成
+      fetch('/api/ai/next-recommendation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...aiPayload,
+          current_menu: menuName,
+        }),
       }).catch(() => {})
 
       // Step 4: 顧客詳細に戻る
@@ -261,6 +284,17 @@ export default function NewKartePage() {
             placeholder="例: 6週間後の同メニュー"
             value={nextSuggestion}
             onChange={(e) => setNextSuggestion(e.target.value)}
+            style={inputStyle}
+          />
+        </div>
+
+        <div style={fieldStyle}>
+          <label style={labelStyle}>計画メニュー(任意)</label>
+          <input
+            type="text"
+            placeholder="例: ハイライト + トリートメント"
+            value={plannedMenu}
+            onChange={(e) => setPlannedMenu(e.target.value)}
             style={inputStyle}
           />
         </div>
