@@ -13,7 +13,6 @@ export default function NewKartePage() {
     name: '',
     phone: '',
     email: '',
-    age: '',
     gender: '',
     notes: '',
   })
@@ -108,7 +107,6 @@ export default function NewKartePage() {
           name: formData.name,
           phone: formData.phone || null,
           email: formData.email || null,
-          age: formData.age ? parseInt(formData.age) : null,
           gender: formData.gender || null,
           notes: formData.notes || null,
           photos: photos,
@@ -174,22 +172,15 @@ export default function NewKartePage() {
             style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14 }} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-          <div>
-            <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>年齢</label>
-            <input type="number" name="age" value={formData.age} onChange={handleChange} min="0" max="150"
-              style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14 }} />
-          </div>
-          <div>
-            <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>性別</label>
-            <select name="gender" value={formData.gender} onChange={handleChange}
-              style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14, background: '#fff' }}>
-              <option value="">選択</option>
-              <option value="female">女性</option>
-              <option value="male">男性</option>
-              <option value="other">その他</option>
-            </select>
-          </div>
+        <div style={{ marginBottom: 20 }}>
+          <label style={{ display: 'block', fontSize: 12, color: '#888', marginBottom: 6 }}>性別</label>
+          <select name="gender" value={formData.gender} onChange={handleChange}
+            style={{ width: '100%', padding: 12, border: '1px solid #e0e0e0', borderRadius: 8, fontSize: 14, background: '#fff' }}>
+            <option value="">選択</option>
+            <option value="female">女性</option>
+            <option value="male">男性</option>
+            <option value="other">その他</option>
+          </select>
         </div>
 
         <div style={{ marginBottom: 20 }}>
