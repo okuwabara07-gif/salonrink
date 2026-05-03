@@ -13,6 +13,7 @@ export type ApiType =
   | 'communication_script'
   | 'allergy_warning'
   | 'next_recommendation'
+  | 'pre_counseling_analysis'
 
 export async function checkAIUsageLimit(salonId: string): Promise<{
   allowed: boolean
