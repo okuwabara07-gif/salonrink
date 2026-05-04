@@ -147,7 +147,7 @@ export default function SetupFlow() {
               className="bg-slate-800 text-white rounded-xl px-8 py-5 text-center shadow-md min-w-[160px]"
             >
               <p className="text-xs text-slate-300 mb-1">{stat.label}</p>
-              <p className="text-2xl md:text-3xl font-bold">{stat.value}</p>
+              <p className="text-2xl md:text-3xl font-extrabold text-white">{stat.value}</p>
             </div>
           ))}
         </div>
