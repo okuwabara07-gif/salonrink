@@ -29,6 +29,39 @@ async function pushMessage(userId: string, messages: any[]) {
   })
 }
 
+async function findOrCreateCustomerId(
+  supabase: ReturnType<typeof createAdminClient>,
+  reservation: any
+): Promise<string | null> {
+  if (!reservation.line_user_id) return null
+
+  const { data: customer } = await supabase
+    .from('customers')
+    .select('id')
+    .eq('line_user_id', reservation.line_user_id)
+    .eq('salon_id', reservation.salon_id)
+    .maybeSingle()
+
+  if (customer) return customer.id
+
+  const { data: newCustomer, error } = await supabase
+    .from('customers')
+    .insert({
+      salon_id: reservation.salon_id,
+      name: reservation.customer_name || 'LINE 顧客',
+      line_user_id: reservation.line_user_id,
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    console.error(`Customer auto-create failed for reservation: ${reservation.id}`)
+    return null
+  }
+
+  return newCustomer?.id || null
+}
+
 export async function GET(request: Request) {
   try {
     const supabase = createAdminClient()
@@ -41,9 +74,9 @@ export async function GET(request: Request) {
 
     const { data: reservations } = await supabase
       .from('reservations')
-      .select('*, customers(*)')
-      .gte('requested_datetime', start)
-      .lte('requested_datetime', end)
+      .select('*')
+      .gte('datetime', start)
+      .lte('datetime', end)
       .eq('status', 'confirmed')
       .eq('source', 'line')
 
@@ -59,12 +92,12 @@ export async function GET(request: Request) {
     // ========================================
     let sent = 0
     for (const reservation of reservations) {
-      if (!reservation.customers?.line_user_id) continue
+      if (!reservation.line_user_id) continue
 
-      const dt = new Date(reservation.requested_datetime)
+      const dt = new Date(reservation.datetime)
       const timeStr = `${dt.getMonth() + 1}月${dt.getDate()}日 ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
 
-      await pushMessage(reservation.customers.line_user_id, [{
+      await pushMessage(reservation.line_user_id, [{
         type: 'text',
         text: `【予約リマインド】\n\n${reservation.customer_name}様\n\n明日のご予約です。\n\n日時: ${timeStr}\n\nご来店をお待ちしております。`
       }])
@@ -90,15 +123,14 @@ export async function GET(request: Request) {
 
     if (LIFF_ID) {
       for (const reservation of reservations) {
-        if (!reservation.customers?.line_user_id) {
+        if (!reservation.line_user_id) {
           preCounselingSkipped++
           continue
         }
 
-        const customerId = reservation.customers?.id || reservation.customer_id
         const salonId = reservation.salon_id
-
-        if (!customerId || !salonId) {
+        if (!salonId) {
+          preCounselingErrors.push(`reservation ${reservation.id}: missing salon_id`)
           preCounselingSkipped++
           continue
         }
@@ -115,7 +147,15 @@ export async function GET(request: Request) {
           continue
         }
 
-        // B2: トークン生成 + INSERT（status='sent', sent_at 同時セット）
+        // B2: customer 取得 or 自動作成（pre_counselings.customer_id は NOT NULL）
+        const customerId = await findOrCreateCustomerId(supabase, reservation)
+        if (!customerId) {
+          preCounselingErrors.push(`reservation ${reservation.id}: customer not found/created`)
+          preCounselingSkipped++
+          continue
+        }
+
+        // B3: トークン生成 + INSERT（status='sent', sent_at 同時セット）
         const token = generateSecureToken()
         const { error: insertError } = await supabase
           .from('pre_counselings')
@@ -133,10 +173,10 @@ export async function GET(request: Request) {
           continue
         }
 
-        // B3: LINE push 送信（失敗時はロールバック削除）
+        // B4: LINE push 送信（失敗時はロールバック削除）
         try {
           const liffUrl = `https://liff.line.me/${LIFF_ID}?token=${token}`
-          await pushMessage(reservation.customers.line_user_id, [{
+          await pushMessage(reservation.line_user_id, [{
             type: 'text',
             text: `【ご来店前のご確認】\n\n${reservation.customer_name}様\n\n明日のご来店ありがとうございます。\nご来店前に以下のアンケートにご回答いただくと、より丁寧なご対応ができます。\n\n${liffUrl}\n\n※ご回答は任意です`,
           }])
