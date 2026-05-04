@@ -94,20 +94,24 @@ export async function GET(request: Request) {
     for (const reservation of reservations) {
       if (!reservation.line_user_id) continue
 
-      const dt = new Date(reservation.datetime)
-      const timeStr = `${dt.getMonth() + 1}月${dt.getDate()}日 ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
+      try {
+        const dt = new Date(reservation.datetime)
+        const timeStr = `${dt.getMonth() + 1}月${dt.getDate()}日 ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
 
-      await pushMessage(reservation.line_user_id, [{
-        type: 'text',
-        text: `【予約リマインド】\n\n${reservation.customer_name}様\n\n明日のご予約です。\n\n日時: ${timeStr}\n\nご来店をお待ちしております。`
-      }])
+        await pushMessage(reservation.line_user_id, [{
+          type: 'text',
+          text: `【予約リマインド】\n\n${reservation.customer_name}様\n\n明日のご予約です。\n\n日時: ${timeStr}\n\nご来店をお待ちしております。`
+        }])
 
-      await supabase
-        .from('reservations')
-        .update({ reminder_sent: true })
-        .eq('id', reservation.id)
+        await supabase
+          .from('reservations')
+          .update({ reminder_sent: true })
+          .eq('id', reservation.id)
 
-      sent++
+        sent++
+      } catch (err) {
+        console.error(`Reminder send failed for reservation: ${reservation.id}`)
+      }
     }
 
     console.log(`リマインド送信: ${sent}件`)
