@@ -205,7 +205,20 @@ const S = {
 
 function PreCounselingContent() {
   const searchParams = useSearchParams()
-  const token = searchParams.get('token')
+
+  function getTokenFromParams(params: URLSearchParams): string | null {
+    const direct = params.get('token')
+    if (direct) return direct
+
+    const liffState = params.get('liff.state')
+    if (!liffState) return null
+
+    const cleanState = liffState.startsWith('?') ? liffState.slice(1) : liffState
+    const stateParams = new URLSearchParams(cleanState)
+    return stateParams.get('token')
+  }
+
+  const token = getTokenFromParams(searchParams)
 
   const [pageState, setPageState] = useState<PageState>('loading')
   const [errorMessage, setErrorMessage] = useState<string>('')
