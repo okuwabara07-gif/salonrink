@@ -497,7 +497,7 @@ function PreCounselingContent() {
           aria-busy={submitting}
           aria-label="アンケートを送信する"
         >
-          {submitting ? '送信中...' : '回答を送信する'}
+          {submitting ? 'AI が分析中... 少々お待ちください（約10秒）' : '回答を送信する'}
         </button>
       </div>
     </div>
