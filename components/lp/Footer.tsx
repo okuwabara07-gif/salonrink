@@ -37,7 +37,7 @@ export default function Footer() {
               lineHeight: 1.6,
             }}
           >
-            美容師とお客様を、一生でつなぐ。
+            いつもの、その先へ。
           </p>
 
           {/* SNS アイコン（旧コードから移植） */}

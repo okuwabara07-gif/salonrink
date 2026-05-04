@@ -76,7 +76,7 @@ export default function Hero() {
               textShadow: '0 4px 32px rgba(0,0,0,0.95), 0 2px 12px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.7)',
             }}
           >
-            美容師とお客様を、<br />一生でつなぐ。
+            いつもの、その先へ。
           </h1>
 
           {/* サブタイトル */}
@@ -92,7 +92,7 @@ export default function Hero() {
               textShadow: '0 4px 24px rgba(0,0,0,0.95), 0 2px 8px rgba(0,0,0,0.85)',
             }}
           >
-            それが、SalonRink。
+            あなたのこだわりを、サロンが覚えている。<br />だから次回は、もっと素敵に。
           </p>
 
           {/* 説明文 */}
