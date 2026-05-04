@@ -15,7 +15,7 @@ interface Salon {
 export default function CustomerDetailPage() {
   const params = useParams()
   const customerId = params?.customerId as string
-  const [activeTab, setActiveTab] = useState<'info' | 'history' | 'recipe' | 'photos' | 'notes' | 'ai'>('info')
+  const [activeTab, setActiveTab] = useState<'info' | 'history' | 'counseling' | 'recipe' | 'photos' | 'notes' | 'ai'>('info')
   const [customer, setCustomer] = useState<any>(null)
   const [salon, setSalon] = useState<Salon | null>(null)
   const [kartes, setKartes] = useState<any[]>([])
@@ -27,6 +27,7 @@ export default function CustomerDetailPage() {
   const [saving, setSaving] = useState(false)
   const [salonId, setSalonId] = useState<string>('')
   const [latestKarte, setLatestKarte] = useState<any>(null)
+  const [preCounselings, setPreCounselings] = useState<any[]>([])
 
   useEffect(() => {
     async function loadData() {
@@ -99,6 +100,16 @@ export default function CustomerDetailPage() {
           .limit(6)
 
         setPhotos(photosData || [])
+
+        // 事前カウンセリング取得（直近5件）
+        const { data: preCounselingsData } = await supabase
+          .from('pre_counselings')
+          .select('id, status, sent_at, opened_at, submitted_at, ai_analyzed_at, answers, ai_analysis')
+          .eq('customer_id', customerId)
+          .order('created_at', { ascending: false })
+          .limit(5)
+
+        setPreCounselings(preCounselingsData || [])
 
         // メモ取得（一時無効化: notes column 追加後に復活）
         // setNotes(customerData?.notes || '')
@@ -344,7 +355,7 @@ export default function CustomerDetailPage() {
             paddingBottom: '0',
           }}
         >
-          {(['info', 'history', 'recipe', 'photos', 'notes', 'ai'] as const).map((tab) => (
+          {(['info', 'history', 'counseling', 'recipe', 'photos', 'notes', 'ai'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -366,6 +377,7 @@ export default function CustomerDetailPage() {
               {tab === 'history' && '履歴'}
               {tab === 'recipe' && '処方'}
               {tab === 'photos' && '写真'}
+              {tab === 'counseling' && '事前カウンセリング'}
               {tab === 'notes' && 'メモ'}
               {tab === 'ai' && 'AI'}
             </button>
@@ -721,6 +733,193 @@ export default function CustomerDetailPage() {
             )}
           </div>
         )}
+
+        {/* 事前カウンセリングタブ */}
+        {activeTab === 'counseling' && (() => {
+          const CONCERN_LABELS: Record<string, string> = {
+            dryness: '乾燥', frizz: '広がり・うねり', split_ends: '枝毛・切れ毛',
+            color_fade: '色落ち', thinning: '細毛・ボリューム', gray: '白髪', other: 'その他',
+          }
+          const MOOD_LABELS: Record<string, string> = {
+            excited: 'ワクワク', relaxed: 'リラックス', normal: '普通', anxious: '少し不安',
+          }
+          const ALLERGY_LABELS: Record<string, string> = {
+            hair_color: 'ヘアカラー成分', fragrance: '香り', detergent: '洗剤', none: 'なし', other: 'その他',
+          }
+          const latest = preCounselings[0] ?? null
+          const history = preCounselings.slice(1)
+
+          if (!latest) {
+            return (
+              <div style={{ background: '#fff', borderRadius: 12, padding: 'clamp(32px, 5vw, 40px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', textAlign: 'center' }}>
+                <p style={{ fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)', color: 'var(--text-secondary)', margin: '0 0 8px', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                  まだ事前カウンセリングがありません
+                </p>
+                <p style={{ fontSize: 'clamp(0.75rem, 1.3vw, 0.8rem)', color: 'var(--text-secondary)', margin: 0, fontFamily: 'var(--font-noto-sans-jp)' }}>
+                  次回予約時に LINE で送信されます
+                </p>
+              </div>
+            )
+          }
+
+          const answers = latest.answers ?? {}
+          const ai = latest.ai_analysis ?? null
+
+          return (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(16px, 2.5vw, 20px)' }}>
+
+              {/* メタ情報 */}
+              <div style={{ background: '#fff', borderRadius: 12, padding: 'clamp(20px, 3vw, 28px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                  <p style={{ fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, margin: 0, fontFamily: 'var(--font-noto-sans-jp)' }}>
+                    最新の事前カウンセリング
+                  </p>
+                  <span style={{
+                    padding: '4px 10px', borderRadius: 20, fontSize: '0.75rem', fontWeight: 600,
+                    background: latest.status === 'analyzed' ? 'rgba(34,197,94,0.12)' : 'rgba(234,179,8,0.12)',
+                    color: latest.status === 'analyzed' ? '#16a34a' : '#a16207',
+                  }}>
+                    {latest.status === 'analyzed' ? '解析済み' : '回答済み'}
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px 24px' }}>
+                  {[
+                    { label: '送信日時', val: latest.sent_at },
+                    { label: '開封日時', val: latest.opened_at },
+                    { label: '回答日時', val: latest.submitted_at },
+                    { label: '解析日時', val: latest.ai_analyzed_at },
+                  ].map(({ label, val }) => (
+                    <div key={label}>
+                      <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', margin: '0 0 2px', fontFamily: 'var(--font-noto-sans-jp)' }}>{label}</p>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-primary)', margin: 0 }}>
+                        {val ? new Date(val).toLocaleString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 顧客の回答 */}
+              <div style={{ background: '#fff', borderRadius: 12, padding: 'clamp(20px, 3vw, 28px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                <p style={{ fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 16px', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                  顧客の回答
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  {answers.concerns?.length > 0 && (
+                    <div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>髪のお悩み</p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {answers.concerns.map((c: string) => (
+                          <span key={c} style={{ background: 'rgba(201,169,97,0.12)', color: 'var(--accent-gold)', padding: '4px 10px', borderRadius: 20, fontSize: '0.8rem', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                            {CONCERN_LABELS[c] ?? c}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {answers.mood && (
+                    <div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>当日の気分</p>
+                      <span style={{ background: 'rgba(201,169,97,0.12)', color: 'var(--accent-gold)', padding: '4px 10px', borderRadius: 20, fontSize: '0.8rem', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                        {MOOD_LABELS[answers.mood] ?? answers.mood}
+                      </span>
+                    </div>
+                  )}
+                  {answers.desired_look && (
+                    <div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>仕上がりイメージ</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6, background: 'rgba(212,175,55,0.06)', padding: '10px 12px', borderRadius: 8 }}>{answers.desired_look}</p>
+                    </div>
+                  )}
+                  {answers.allergies?.length > 0 && (
+                    <div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>アレルギー・苦手</p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {answers.allergies.map((a: string) => (
+                          <span key={a} style={{ background: 'rgba(201,169,97,0.12)', color: 'var(--accent-gold)', padding: '4px 10px', borderRadius: 20, fontSize: '0.8rem', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                            {ALLERGY_LABELS[a] ?? a}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {answers.stylist_request && (
+                    <div>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>スタイリストへの要望</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6, background: 'rgba(212,175,55,0.06)', padding: '10px 12px', borderRadius: 8 }}>{answers.stylist_request}</p>
+                    </div>
+                  )}
+                  {Object.keys(answers).length === 0 && (
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', margin: 0 }}>回答データがありません</p>
+                  )}
+                </div>
+              </div>
+
+              {/* AI 解析結果（analyzed のみ） */}
+              {ai && latest.status === 'analyzed' && (
+                <div style={{ background: '#fff', borderRadius: 12, padding: 'clamp(20px, 3vw, 28px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', borderLeft: '4px solid var(--accent-gold)' }}>
+                  <p style={{ fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)', fontWeight: 600, color: 'var(--accent-gold)', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 16px', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                    サロンコンシェルジュ 解析結果
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                    {ai.summary && (
+                      <div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 4px', fontFamily: 'var(--font-noto-sans-jp)' }}>顧客の意図</p>
+                        <p style={{ fontSize: '0.9rem', color: 'var(--text-primary)', margin: 0, fontWeight: 500, lineHeight: 1.6 }}>{ai.summary}</p>
+                      </div>
+                    )}
+                    {ai.suggested_menu && (
+                      <div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 4px', fontFamily: 'var(--font-noto-sans-jp)' }}>推奨メニュー</p>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6 }}>{ai.suggested_menu}</p>
+                      </div>
+                    )}
+                    {Array.isArray(ai.preparation_notes) && ai.preparation_notes.length > 0 && (
+                      <div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>準備事項</p>
+                        <ol style={{ margin: 0, paddingLeft: 20, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          {ai.preparation_notes.map((note: string, i: number) => (
+                            <li key={i} style={{ fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>{note}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+                    {ai.communication_tips && (
+                      <div>
+                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 4px', fontFamily: 'var(--font-noto-sans-jp)' }}>接客留意点</p>
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6, background: 'rgba(212,175,55,0.06)', padding: '10px 12px', borderRadius: 8 }}>{ai.communication_tips}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 過去の履歴（2件目以降） */}
+              {history.length > 0 && (
+                <div style={{ background: '#fff', borderRadius: 12, padding: 'clamp(20px, 3vw, 28px)', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+                  <p style={{ fontSize: 'clamp(0.7rem, 1.3vw, 0.8rem)', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: 0.5, margin: '0 0 12px', fontFamily: 'var(--font-noto-sans-jp)' }}>
+                    過去の事前カウンセリング
+                  </p>
+                  {history.map((item) => (
+                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid var(--sr-border)' }}>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0 }}>
+                        {item.submitted_at ? new Date(item.submitted_at).toLocaleDateString('ja-JP') : new Date(item.sent_at ?? '').toLocaleDateString('ja-JP')}
+                      </p>
+                      <span style={{
+                        padding: '3px 8px', borderRadius: 20, fontSize: '0.75rem',
+                        background: item.status === 'analyzed' ? 'rgba(34,197,94,0.12)' : 'rgba(234,179,8,0.12)',
+                        color: item.status === 'analyzed' ? '#16a34a' : '#a16207',
+                      }}>
+                        {item.status === 'analyzed' ? '解析済み' : item.status === 'submitted' ? '回答済み' : item.status}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            </div>
+          )
+        })()}
 
         {/* 処方レシピタブ */}
         {activeTab === 'recipe' && (
