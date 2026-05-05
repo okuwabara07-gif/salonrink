@@ -57,17 +57,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ success: true }, { status: 200 })
     }
 
-    // Step 5: customer の既存アレルギー情報取得
-    const { data: customer } = await admin
-      .from('customers')
-      .select('allergies')
-      .eq('id', customer_id)
-      .maybeSingle()
-
-    // Step 6: プロンプト生成 + Claude Haiku 呼び出し
+    // Step 5: プロンプト生成 + Claude Haiku 呼び出し
     const prompt = generateWarningsPrompt(
       latestPC.answers || {},
-      customer?.allergies || null
+      null  // customers.allergies 列なし
     )
 
     let warnings: Warning[] = []
@@ -86,14 +79,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       warnings = []
     }
 
-    // Step 7: kartes を更新（customer_id の全カルテに警告を反映）
+    // Step 7: pre_counselings を更新
     const { error: updateError } = await admin
-      .from('kartes')
+      .from('pre_counselings')
       .update({
         warnings,
         warnings_updated_at: new Date().toISOString(),
       })
-      .eq('customer_id', customer_id)
+      .eq('id', latestPC.id)
 
     if (updateError) {
       console.error('Warnings API: kartes update failed:', updateError)
