@@ -3,12 +3,11 @@
  * 事前カウンセリング回答受信エンドポイント
  *
  * 責務:
- * - token 検証（validatePreCounselingToken）
+ * - token 検証
  * - answers/photos バリデーション
- * - DB UPDATE（answers, photos, submitted_at, status）
- * - Claude Haiku による AI 解析（使用量チェック後）
- * - AI 解析結果を DB に保存
- * - SubmitPreCounselingResponse 返却
+ * - DB UPDATE（answers, photos, submitted_at, status='submitted'）
+ * - AI 解析を非同期トリガー（fire-and-forget で internal API 呼び出し）
+ * - 顧客には即座にレスポンス返却（AI 解析完了を待たない）
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -20,18 +19,6 @@ import {
   PreCounselingError,
   PRE_COUNSELING_ERROR_MESSAGES,
 } from '@/types/pre-counseling'
-import type { PreCounseling } from '@/types/pre-counseling'
-import {
-  analyzePreCounseling,
-  validateAIResponse,
-  getFallbackResponse,
-} from '@/lib/ai/prompts/pre-counseling'
-import { callClaude, ClaudeResponse } from '@/lib/ai/claude-client'
-import { checkAIUsageLimit, recordAIUsage } from '@/lib/ai/usage-tracker'
-
-// ========================================
-// エラーレスポンスヘルパー
-// ========================================
 
 function errorResponse(
   error: PreCounselingError,
@@ -43,10 +30,6 @@ function errorResponse(
   )
 }
 
-// ========================================
-// ステータスコードマッピング
-// ========================================
-
 const statusCodeMap: Record<PreCounselingError, number> = {
   INVALID_TOKEN: 400,
   EXPIRED_TOKEN: 410,
@@ -57,22 +40,38 @@ const statusCodeMap: Record<PreCounselingError, number> = {
   INTERNAL_ERROR: 500,
 }
 
-// ========================================
-// POST ハンドラー
-// ========================================
+/**
+ * AI解析を非同期トリガー（fire-and-forget）
+ * 結果を待たずに即座にreturn
+ */
+function triggerAIAnalysis(preCounselingId: string, baseUrl: string): void {
+  const secret = process.env.INTERNAL_API_SECRET
+  if (!secret) {
+    console.warn('INTERNAL_API_SECRET not set; AI analysis trigger skipped')
+    return
+  }
+
+  fetch(`${baseUrl}/api/ai/pre-counseling-analysis/internal`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Internal-Auth': secret,
+    },
+    body: JSON.stringify({ pre_counseling_id: preCounselingId }),
+  }).catch((err) => {
+    console.error('AI analysis trigger failed (non-fatal):', err)
+  })
+}
 
 export async function POST(
   request: NextRequest,
   props: { params: Promise<{ token: string }> }
 ): Promise<NextResponse> {
   try {
-    // Step 1: token を動的パラメータから取得
     const { token } = await props.params
 
-    // Step 2: token 検証（形式、DB存在確認、有効期限、ステータス）
+    // Step 1: token 検証
     const validation = await validatePreCounselingToken(token)
-
-    // Step 3: 検証失敗 → エラーレスポンス
     if (!validation.valid || !validation.preCounseling) {
       const errorCode = validation.error || 'INTERNAL_ERROR'
       return errorResponse(errorCode, statusCodeMap[errorCode])
@@ -80,7 +79,7 @@ export async function POST(
 
     const preCounseling = validation.preCounseling
 
-    // Step 4: リクエスト body をパース
+    // Step 2: body パース
     let body: SubmitPreCounselingRequest
     try {
       body = await request.json()
@@ -88,31 +87,28 @@ export async function POST(
       return errorResponse('INVALID_INPUT', 400)
     }
 
-    // Step 5: answers バリデーション
+    // Step 3: answers バリデーション
     if (!body.answers || typeof body.answers !== 'object') {
       return errorResponse('INVALID_INPUT', 400)
     }
 
-    // Step 5b: photos バリデーション（オプション）
+    // Step 4: photos バリデーション（最大10枚）
     if (body.photos) {
       if (!Array.isArray(body.photos)) {
         return errorResponse('INVALID_INPUT', 400)
       }
-
       if (body.photos.length > 10) {
         return errorResponse('INVALID_INPUT', 400)
       }
-
       if (!body.photos.every((p) => typeof p === 'string')) {
         return errorResponse('INVALID_INPUT', 400)
       }
     }
 
-    // Step 6: Admin クライアント初期化（RLS バイパス）
+    // Step 5: DB UPDATE
     const admin = createAdminClient()
-
-    // Step 7: DB UPDATE（answers, photos, submitted_at, status）
     const now = new Date().toISOString()
+
     const { error: updateError } = await admin
       .from('pre_counselings')
       .update({
@@ -129,92 +125,10 @@ export async function POST(
       return errorResponse('INTERNAL_ERROR', 500)
     }
 
-    // Step 8: AI 解析（使用量チェック後に実行）
-    const salon_id = preCounseling.salon_id
-    const usageStatus = await checkAIUsageLimit(salon_id)
+    // Step 6: AI 解析を非同期トリガー（fire-and-forget・結果待たない）
+    triggerAIAnalysis(preCounseling.id, request.nextUrl.origin)
 
-    if (usageStatus.allowed) {
-      // Step 9: customer 情報取得
-      const { data: customer } = await admin
-        .from('customers')
-        .select('id, name, visit_count, last_visit')
-        .eq('id', preCounseling.customer_id)
-        .maybeSingle()
-
-      if (customer) {
-        // Step 10: 最近のカルテ取得（直近3件）
-        const { data: recentKartes } = await admin
-          .from('kartes')
-          .select('id, visit_date')
-          .eq('salon_id', salon_id)
-          .eq('customer_id', preCounseling.customer_id)
-          .order('visit_date', { ascending: false })
-          .limit(3)
-
-        const recentKarteSummaries = (recentKartes || []).map(
-          (k: { id: string; visit_date: string }) => ({
-            date: k.visit_date,
-            menu_name: '',
-            hair_condition: undefined,
-          })
-        )
-
-        // Step 11: プロンプト生成 + Claude Haiku 呼び出し
-        let analysisResult
-        let claudeResponse: ClaudeResponse | undefined
-        let usedFallback = false
-
-        try {
-          const prompt = analyzePreCounseling({
-            preCounseling: preCounseling as PreCounseling,
-            customer: {
-              id: customer.id,
-              name: customer.name,
-              visit_count: customer.visit_count,
-              last_visit: customer.last_visit,
-            },
-            recentKartes: recentKarteSummaries,
-          })
-
-          claudeResponse = await callClaude(prompt)
-          const validation = validateAIResponse(claudeResponse.content)
-
-          if (validation.valid && validation.cleaned) {
-            analysisResult = validation.cleaned
-          } else {
-            analysisResult = getFallbackResponse()
-            usedFallback = true
-          }
-        } catch {
-          analysisResult = getFallbackResponse()
-          usedFallback = true
-        }
-
-        // Step 12: AI 解析結果を DB に保存
-        await admin
-          .from('pre_counselings')
-          .update({
-            ai_analysis: analysisResult,
-            ai_analyzed_at: new Date().toISOString(),
-            status: 'analyzed',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('id', preCounseling.id)
-
-        // Step 13: 使用量記録（AI 成功時のみ）
-        if (!usedFallback && claudeResponse?.usage) {
-          await recordAIUsage(
-            salon_id,
-            'pre_counseling_analysis',
-            claudeResponse.usage.input_tokens,
-            claudeResponse.usage.output_tokens
-          ).catch(() => {})
-        }
-      }
-    }
-    // 使用量制限超過時 or customer 取得失敗時: status='submitted' のまま継続
-
-    // Step 14: レスポンス返却
+    // Step 7: 即座にレスポンス返却
     const response: SubmitPreCounselingResponse = {
       status: 'submitted',
       submitted_at: now,
