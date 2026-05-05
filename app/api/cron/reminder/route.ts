@@ -1,33 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { generateSecureToken } from '@/lib/security/token'
-import https from 'https'
-
-const LINE_CHANNEL_TOKEN = process.env.LINE_CHANNEL_TOKEN || ''
-
-// LINE push メッセージ送信
-async function pushMessage(userId: string, messages: any[]) {
-  const payload = JSON.stringify({ to: userId, messages })
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.line.biz',
-      path: '/v2/bot/message/push',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload),
-        'Authorization': `Bearer ${LINE_CHANNEL_TOKEN}`
-      }
-    }
-    const req = https.request(options, (res) => {
-      let data = ''
-      res.on('data', (chunk) => { data += chunk })
-      res.on('end', () => resolve({ status: res.statusCode, data }))
-    })
-    req.on('error', reject)
-    req.write(payload)
-    req.end()
-  })
-}
+import { pushMessage } from '@/lib/line'
 
 async function findOrCreateCustomerId(
   supabase: ReturnType<typeof createAdminClient>,
@@ -62,7 +35,7 @@ async function findOrCreateCustomerId(
   return newCustomer?.id || null
 }
 
-export async function GET(request: Request) {
+export async function GET(_request: Request) {
   try {
     const supabase = createAdminClient()
 
@@ -88,29 +61,34 @@ export async function GET(request: Request) {
     }
 
     // ========================================
-    // Step A: 既存リマインド送信
+    // Step A: 既存リマインド送信（salonごとのトークン使用）
     // ========================================
     let sent = 0
+    const reminderErrors: string[] = []
+
     for (const reservation of reservations) {
-      if (!reservation.line_user_id) continue
+      if (!reservation.line_user_id || !reservation.salon_id) continue
 
       try {
         const dt = new Date(reservation.datetime)
         const timeStr = `${dt.getMonth() + 1}月${dt.getDate()}日 ${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
 
-        await pushMessage(reservation.line_user_id, [{
-          type: 'text',
-          text: `【予約リマインド】\n\n${reservation.customer_name}様\n\n明日のご予約です。\n\n日時: ${timeStr}\n\nご来店をお待ちしております。`
-        }])
+        const result = await pushMessage(supabase, reservation.salon_id, reservation.line_user_id, [
+          {
+            type: 'text',
+            text: `【予約リマインド】\n\n${reservation.customer_name}様\n\n明日のご予約です。\n\n日時: ${timeStr}\n\nご来店をお待ちしております。`,
+          },
+        ])
 
-        await supabase
-          .from('reservations')
-          .update({ reminder_sent: true })
-          .eq('id', reservation.id)
-
-        sent++
+        if (result.success) {
+          await supabase.from('reservations').update({ reminder_sent: true }).eq('id', reservation.id)
+          sent++
+        } else {
+          reminderErrors.push(`reservation ${reservation.id}: ${result.error}`)
+        }
       } catch (err) {
-        console.error(`Reminder send failed for reservation: ${reservation.id}`)
+        console.error(`Reminder send failed for reservation: ${reservation.id}`, err)
+        reminderErrors.push(`reservation ${reservation.id}: exception`)
       }
     }
 
@@ -161,16 +139,14 @@ export async function GET(request: Request) {
 
         // B3: トークン生成 + INSERT（status='sent', sent_at 同時セット）
         const token = generateSecureToken()
-        const { error: insertError } = await supabase
-          .from('pre_counselings')
-          .insert({
-            salon_id: salonId,
-            customer_id: customerId,
-            reservation_id: reservation.id,
-            token,
-            status: 'sent',
-            sent_at: new Date().toISOString(),
-          })
+        const { error: insertError } = await supabase.from('pre_counselings').insert({
+          salon_id: salonId,
+          customer_id: customerId,
+          reservation_id: reservation.id,
+          token,
+          status: 'sent',
+          sent_at: new Date().toISOString(),
+        })
 
         if (insertError) {
           preCounselingErrors.push(`reservation ${reservation.id}: ${insertError.message}`)
@@ -178,24 +154,29 @@ export async function GET(request: Request) {
         }
 
         // B4: LINE push 送信（失敗時はロールバック削除）
-        try {
-          const liffUrl = `https://liff.line.me/${LIFF_ID}?token=${token}`
-          await pushMessage(reservation.line_user_id, [{
+        const liffUrl = `https://liff.line.me/${LIFF_ID}?token=${token}`
+        const result = await pushMessage(supabase, salonId, reservation.line_user_id, [
+          {
             type: 'text',
             text: `【ご来店前のご確認】\n\n${reservation.customer_name}様\n\n明日のご来店ありがとうございます。\nご来店前に以下のアンケートにご回答いただくと、より丁寧なご対応ができます。\n\n${liffUrl}\n\n※ご回答は任意です`,
-          }])
+          },
+        ])
+
+        if (result.success) {
           preCounselingSent++
-        } catch (err) {
+        } else {
           await supabase.from('pre_counselings').delete().eq('token', token)
-          preCounselingErrors.push(`reservation ${reservation.id}: push failed, rolled back`)
+          preCounselingErrors.push(`reservation ${reservation.id}: push failed (${result.error}), rolled back`)
         }
       }
     }
 
     console.log(`事前カウンセリング送信: ${preCounselingSent}件 / スキップ: ${preCounselingSkipped}件`)
+
     return new Response(
       JSON.stringify({
         sent,
+        reminder_errors: reminderErrors,
         pre_counseling_sent_count: preCounselingSent,
         pre_counseling_skipped_count: preCounselingSkipped,
         errors: preCounselingErrors,

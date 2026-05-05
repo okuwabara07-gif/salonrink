@@ -5,9 +5,12 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 interface PushMessageResult {
   success: boolean
   error?: string
-  fallback?: boolean
 }
 
+/**
+ * salonに紐づくLINEアカウントから、指定ユーザーへpushメッセージを送信
+ * line_accounts.line_status='active' かつ token_enc が設定されている必要あり
+ */
 export async function pushMessage(
   supabase: SupabaseClient,
   salonId: string,
@@ -20,53 +23,57 @@ export async function pushMessage(
     .eq('salon_id', salonId)
     .maybeSingle()
 
-  let token: string
-  let usedFallback = false
-
-  if (lineAccount?.line_status === 'active' && lineAccount?.channel_access_token_enc) {
-    try {
-      token = decrypt(lineAccount.channel_access_token_enc)
-    } catch {
-      console.error(`Token decrypt failed for salon: ${salonId}`)
-      token = process.env.LINE_CHANNEL_TOKEN || ''
-      usedFallback = true
-    }
-  } else {
-    token = process.env.LINE_CHANNEL_TOKEN || ''
-    usedFallback = true
+  if (!lineAccount) {
+    return { success: false, error: 'line_account_not_configured' }
   }
 
-  if (!token) {
-    return { success: false, error: 'no_token_available' }
+  if (lineAccount.line_status !== 'active') {
+    return { success: false, error: `line_account_inactive (status=${lineAccount.line_status})` }
+  }
+
+  if (!lineAccount.channel_access_token_enc) {
+    return { success: false, error: 'channel_access_token_missing' }
+  }
+
+  let token: string
+  try {
+    token = decrypt(lineAccount.channel_access_token_enc)
+  } catch (err) {
+    console.error(`Token decrypt failed for salon: ${salonId}`, err)
+    return { success: false, error: 'token_decrypt_failed' }
   }
 
   return new Promise((resolve) => {
     const payload = JSON.stringify({ to: userId, messages })
-    const req = https.request({
-      hostname: 'api.line.me',
-      path: '/v2/bot/message/push',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload),
-        'Authorization': `Bearer ${token}`,
+    const req = https.request(
+      {
+        hostname: 'api.line.me',
+        path: '/v2/bot/message/push',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+          'Authorization': `Bearer ${token}`,
+        },
       },
-    }, (res) => {
-      let data = ''
-      res.on('data', (chunk) => { data += chunk })
-      res.on('end', () => {
-        if (res.statusCode === 200) {
-          resolve({ success: true, fallback: usedFallback })
-        } else {
-          resolve({ success: false, error: `HTTP ${res.statusCode}`, fallback: usedFallback })
-        }
-      })
-    })
+      (res) => {
+        let data = ''
+        res.on('data', (chunk) => {
+          data += chunk
+        })
+        res.on('end', () => {
+          if (res.statusCode === 200) {
+            resolve({ success: true })
+          } else {
+            resolve({ success: false, error: `HTTP ${res.statusCode}: ${data}` })
+          }
+        })
+      }
+    )
     req.on('error', (err) => {
-      resolve({ success: false, error: err.message, fallback: usedFallback })
+      resolve({ success: false, error: err.message })
     })
     req.write(payload)
     req.end()
   })
 }
-
