@@ -79,25 +79,26 @@ export default function CustomerDetailPage() {
           setLatestKarte(kartesData[0])
         }
 
-        // 最新処方取得
-        const { data: recipeData } = await supabase
+        // 最新処方取得（karte_id 経由でフィルタ）
+        const karteIds = (kartesData || []).map((k: any) => k.id)
+        const { data: recipeData } = karteIds.length > 0 ? await supabase
           .from('karte_recipes')
           .select('*')
-          .eq('customer_id', customerId)
+          .in('karte_id', karteIds)
           .order('created_at', { ascending: false })
-          .limit(1)
+          .limit(1) : { data: null }
 
         if (recipeData && recipeData.length > 0) {
           setLatestRecipe(recipeData[0])
         }
 
-        // 写真取得（直近3回分）
-        const { data: photosData } = await supabase
+        // 写真取得（直近3回分・karte_id 経由でフィルタ）
+        const { data: photosData } = karteIds.length > 0 ? await supabase
           .from('karte_photos')
           .select('*')
-          .eq('customer_id', customerId)
+          .in('karte_id', karteIds)
           .order('created_at', { ascending: false })
-          .limit(6)
+          .limit(6) : { data: null }
 
         setPhotos(photosData || [])
 
