@@ -6,11 +6,12 @@
  * - token 検証
  * - answers/photos バリデーション
  * - DB UPDATE（answers, photos, submitted_at, status='submitted'）
- * - AI 解析を非同期トリガー（fire-and-forget で internal API 呼び出し）
- * - 顧客には即座にレスポンス返却（AI 解析完了を待たない）
+ * - AI 解析を after() で非同期実行（レスポンス返却後にVercelが保証実行）
+ * - 顧客には即座にレスポンス返却
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { after } from 'next/server'
 import { validatePreCounselingToken } from '@/lib/security/token'
 import { createAdminClient } from '@/lib/supabase/admin'
 import {
@@ -41,26 +42,31 @@ const statusCodeMap: Record<PreCounselingError, number> = {
 }
 
 /**
- * AI解析を非同期トリガー（fire-and-forget）
- * 結果を待たずに即座にreturn
+ * AI解析を非同期トリガー
+ * after() で囲まれた関数はレスポンス返却後にVercelが実行を保証
  */
-function triggerAIAnalysis(preCounselingId: string, baseUrl: string): void {
+async function triggerAIAnalysis(preCounselingId: string, baseUrl: string): Promise<void> {
   const secret = process.env.INTERNAL_API_SECRET
   if (!secret) {
-    console.warn('INTERNAL_API_SECRET not set; AI analysis trigger skipped')
+    console.warn('[submit/after] INTERNAL_API_SECRET not set; AI trigger skipped')
     return
   }
 
-  fetch(`${baseUrl}/api/ai/pre-counseling-analysis/internal`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Internal-Auth': secret,
-    },
-    body: JSON.stringify({ pre_counseling_id: preCounselingId }),
-  }).catch((err) => {
-    console.error('AI analysis trigger failed (non-fatal):', err)
-  })
+  console.log(`[submit/after] Triggering AI analysis for ${preCounselingId}`)
+
+  try {
+    const res = await fetch(`${baseUrl}/api/ai/pre-counseling-analysis/internal`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Internal-Auth': secret,
+      },
+      body: JSON.stringify({ pre_counseling_id: preCounselingId }),
+    })
+    console.log(`[submit/after] Internal API responded with ${res.status}`)
+  } catch (err) {
+    console.error('[submit/after] AI analysis trigger failed:', err)
+  }
 }
 
 export async function POST(
@@ -125,8 +131,11 @@ export async function POST(
       return errorResponse('INTERNAL_ERROR', 500)
     }
 
-    // Step 6: AI 解析を非同期トリガー（fire-and-forget・結果待たない）
-    triggerAIAnalysis(preCounseling.id, request.nextUrl.origin)
+    // Step 6: AI 解析を after() で非同期トリガー
+    // after() はレスポンス返却後にVercelが実行を保証する
+    after(async () => {
+      await triggerAIAnalysis(preCounseling.id, request.nextUrl.origin)
+    })
 
     // Step 7: 即座にレスポンス返却
     const response: SubmitPreCounselingResponse = {
