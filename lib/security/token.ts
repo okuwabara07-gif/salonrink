@@ -10,7 +10,7 @@
  */
 
 import crypto from 'crypto'
-import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from "@/lib/supabase/admin"
 import { PreCounseling, PreCounselingError } from '@/types/pre-counseling'
 
 // ========================================
@@ -164,7 +164,7 @@ export async function validatePreCounselingToken(
   // Step 2: DB レコード存在確認
   let supabase
   try {
-    supabase = await createClient()
+    supabase = createAdminClient()
   } catch (err) {
     console.error('Failed to create Supabase client:', err)
     return {
