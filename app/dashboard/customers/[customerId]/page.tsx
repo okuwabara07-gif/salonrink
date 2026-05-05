@@ -806,7 +806,7 @@ export default function CustomerDetailPage() {
                   顧客の回答
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  {answers.concerns?.length > 0 && (
+                  {Array.isArray(answers.concerns) && answers.concerns.length > 0 && (
                     <div>
                       <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>髪のお悩み</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -832,7 +832,7 @@ export default function CustomerDetailPage() {
                       <p style={{ fontSize: '0.875rem', color: 'var(--text-primary)', margin: 0, lineHeight: 1.6, background: 'rgba(212,175,55,0.06)', padding: '10px 12px', borderRadius: 8 }}>{answers.desired_look}</p>
                     </div>
                   )}
-                  {answers.allergies?.length > 0 && (
+                  {Array.isArray(answers.allergies) && answers.allergies.length > 0 && (
                     <div>
                       <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: '0 0 6px', fontFamily: 'var(--font-noto-sans-jp)' }}>アレルギー・苦手</p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
