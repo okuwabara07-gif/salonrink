@@ -11,7 +11,7 @@
  * - 非同期トリガー用なので失敗は silent（ログのみ）
  */
 
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { callClaude } from '@/lib/ai/claude-client'
 import {
@@ -204,6 +204,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         console.error('Internal API: usage recording failed:', err)
       })
     }
+
+    // Step 13.5: AI警告抽出を非同期トリガー
+    const customerId = (preCounseling as PreCounseling).customer_id
+    after(async () => {
+      try {
+        const url = `${process.env.NEXT_PUBLIC_APP_URL}/api/ai/warnings/internal`
+        await fetch(url, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'x-internal-secret': process.env.INTERNAL_API_SECRET!,
+          },
+          body: JSON.stringify({ customer_id: customerId }),
+        })
+      } catch (e) {
+        console.error('[ai-warnings chain] failed:', e)
+      }
+    })
 
     // Step 14: 常に 200 返却（非同期処理のため）
     return NextResponse.json(
