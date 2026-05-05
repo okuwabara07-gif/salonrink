@@ -9,12 +9,13 @@
  * - Claude Haiku で AI 解析実行
  * - 結果を DB に保存
  * - 使用量記録
+ * - kartes への連携（reservation_id 経由でカルテに ai_summary / ai_communication_scripts 反映）
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { callClaude, parseJsonResponse } from '@/lib/ai/claude-client'
+import { callClaude } from '@/lib/ai/claude-client'
 import {
   analyzePreCounseling,
   validateAIResponse,
@@ -23,17 +24,11 @@ import {
 import { checkAIUsageLimit, recordAIUsage } from '@/lib/ai/usage-tracker'
 import type { PreCounseling } from '@/types/pre-counseling'
 
-// ========================================
-// エラーレスポンスヘルパー
-// ========================================
+const MODEL_NAME = 'claude-haiku-4-5-20251001'
 
 function errorResponse(error: string, statusCode: number): NextResponse {
   return NextResponse.json({ error }, { status: statusCode })
 }
-
-// ========================================
-// POST ハンドラー
-// ========================================
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -46,7 +41,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const { pre_counseling_id } = body
-
     if (!pre_counseling_id) {
       return errorResponse('Missing required field: pre_counseling_id', 400)
     }
@@ -54,7 +48,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Step 2: 認証確認
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-
     if (!user) {
       return errorResponse('Unauthorized', 401)
     }
@@ -74,10 +67,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Pre-counseling not found', 404)
     }
 
-    // Step 5: salon_id を pre_counseling から取得
     const salon_id = (preCounseling as PreCounseling).salon_id
 
-    // Step 6: salon 所有権確認（認可）
+    // Step 5: salon 所有権確認（認可）
     const { data: salon, error: salonError } = await supabase
       .from('salons')
       .select('id, owner_user_id')
@@ -90,12 +82,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Unauthorized', 403)
     }
 
-    // Step 7: ステータスチェック（'submitted' のみ）
+    // Step 6: ステータスチェック（'submitted' のみ）
     if ((preCounseling as PreCounseling).status !== 'submitted') {
       return errorResponse('Pre-counseling status must be submitted', 409)
     }
 
-    // Step 8: AI 使用量チェック
+    // Step 7: AI 使用量チェック
     const usageStatus = await checkAIUsageLimit(salon_id)
     if (!usageStatus.allowed) {
       return NextResponse.json(
@@ -109,7 +101,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
-    // Step 9: customer 情報取得
+    // Step 8: customer 情報取得
     const { data: customer, error: customerError } = await admin
       .from('customers')
       .select('id, name, visit_count, last_visit')
@@ -121,7 +113,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Customer not found', 404)
     }
 
-    // Step 10: 最近のカルテ取得（visit_date のみ、最小限）
+    // Step 9: 最近のカルテ取得（visit_date のみ、最小限）
     const { data: recentKartes, error: kartesError } = await admin
       .from('kartes')
       .select('id, visit_date')
@@ -135,10 +127,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       // カルテ取得失敗は非致命的、続行
     }
 
-    // Step 11: プロンプト生成（maskCustomerName は analyzePreCounseling 内で適用）
+    // Step 10: プロンプト生成
     const recentKarteSummaries = (recentKartes || []).map((k: any) => ({
       date: k.visit_date,
-      menu_name: '', // karte_recipes 連携で後日対応
+      menu_name: '',
       hair_condition: undefined,
     }))
 
@@ -153,7 +145,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       recentKartes: recentKarteSummaries,
     })
 
-    // Step 12: Claude Haiku 呼び出し
+    // Step 11: Claude Haiku 呼び出し
     let claudeResponse
     let analysisResult
     let usedFallback = false
@@ -165,29 +157,24 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       if (validation.valid && validation.cleaned) {
         analysisResult = validation.cleaned
       } else {
-        // JSON パース失敗または検証失敗 → フォールバック
         console.warn('AI response validation failed:', validation.errors)
         analysisResult = getFallbackResponse()
         usedFallback = true
       }
     } catch (error) {
-      // AI 呼び出し失敗 → フォールバック
       console.error('Claude API error:', error)
       analysisResult = getFallbackResponse()
       usedFallback = true
       claudeResponse = {
         content: '',
         usage: { input_tokens: 0, output_tokens: 0 },
-        model: 'claude-haiku-4-5-20251001',
+        model: MODEL_NAME,
       }
     }
 
-    // Step 13: validateAIResponse で検証済み
-
-    // Step 14: DB UPDATE（AI 成功/フォールバック時で条件分岐）
+    // Step 12: DB UPDATE（AI 成功/フォールバック時で条件分岐）
     let updateError
     if (!usedFallback) {
-      // AI 成功時: status='analyzed', ai_analyzed_at=now
       const result = await admin
         .from('pre_counselings')
         .update({
@@ -199,13 +186,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .eq('id', pre_counseling_id)
       updateError = result.error
     } else {
-      // AI 失敗時（フォールバック）: status='submitted'のまま、ai_analyzed_at=null
       const result = await admin
         .from('pre_counselings')
         .update({
           ai_analysis: analysisResult,
-          // ai_analyzed_at は NULL のまま（再試行可能）
-          // status は 'submitted' のまま（再試行可能）
           updated_at: new Date().toISOString(),
         })
         .eq('id', pre_counseling_id)
@@ -217,7 +201,43 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Failed to save analysis', 500)
     }
 
-    // Step 15: 使用量記録（AI 成功時のみ、フォールバック時は記録しない）
+    // Step 13: kartes への連携（AI成功時のみ・対応するreservation_idのkartesがある場合）
+    let karteUpdated = false
+    if (!usedFallback && (preCounseling as any).reservation_id) {
+      const { data: matchingKarte } = await admin
+        .from('kartes')
+        .select('id')
+        .eq('reservation_id', (preCounseling as any).reservation_id)
+        .maybeSingle()
+
+      if (matchingKarte) {
+        const { error: karteError } = await admin
+          .from('kartes')
+          .update({
+            ai_summary: {
+              summary: analysisResult.summary,
+              generated_at: new Date().toISOString(),
+              model: MODEL_NAME,
+            },
+            ai_communication_scripts: {
+              pre_service: analysisResult.communication_tips,
+              confirmation_checklist: analysisResult.preparation_notes,
+              suggested_menu: analysisResult.suggested_menu,
+              generated_at: new Date().toISOString(),
+              model: MODEL_NAME,
+            },
+          })
+          .eq('id', matchingKarte.id)
+
+        if (karteError) {
+          console.error('Karte update error (non-fatal):', karteError)
+        } else {
+          karteUpdated = true
+        }
+      }
+    }
+
+    // Step 14: 使用量記録（AI 成功時のみ）
     if (!usedFallback && claudeResponse) {
       await recordAIUsage(
         salon_id,
@@ -227,7 +247,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       ).catch((err) => console.error('Usage record failed:', err))
     }
 
-    // Step 16: レスポンス返却
+    // Step 15: レスポンス返却
     return NextResponse.json(
       {
         success: true,
@@ -237,6 +257,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           output: claudeResponse?.usage.output_tokens || 0,
         },
         usedFallback,
+        karteUpdated,
       },
       { status: 200 }
     )
