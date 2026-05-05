@@ -59,11 +59,28 @@ export function validateWarningsResponse(response: string): {
   valid: boolean
   warnings?: Warning[]
   error?: string
+  raw?: string
 } {
+  const rawSnippet = response.slice(0, 500)
   try {
-    const parsed = JSON.parse(response)
+    let cleaned = response.trim()
+
+    // markdown コードフェンス除去
+    cleaned = cleaned.replace(/^```(?:json)?\s*\n?/i, '')
+    cleaned = cleaned.replace(/\n?\s*```\s*$/i, '')
+    cleaned = cleaned.trim()
+
+    // 周囲にテキストがある場合 JSON 配列を抽出
+    if (!cleaned.startsWith('[')) {
+      const arrayMatch = cleaned.match(/\[[\s\S]*\]/)
+      if (arrayMatch) {
+        cleaned = arrayMatch[0]
+      }
+    }
+
+    const parsed = JSON.parse(cleaned)
     if (!Array.isArray(parsed)) {
-      return { valid: false, error: 'Response is not an array' }
+      return { valid: false, error: 'Response is not an array', raw: rawSnippet }
     }
 
     const warnings: Warning[] = parsed.map((w: any) => ({
@@ -76,6 +93,6 @@ export function validateWarningsResponse(response: string): {
 
     return { valid: true, warnings }
   } catch (err) {
-    return { valid: false, error: String(err) }
+    return { valid: false, error: String(err), raw: rawSnippet }
   }
 }

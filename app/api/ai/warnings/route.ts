@@ -88,7 +88,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       if (validation.valid && validation.warnings) {
         warnings = validation.warnings
       } else {
-        console.warn('Warnings API: validation failed:', validation.error)
+        console.warn('Warnings API: validation failed:', validation.error, 'raw:', validation.raw)
         warnings = []
       }
     } catch (err) {
