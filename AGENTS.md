@@ -13,6 +13,27 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ---
 
+## 🚨 A0 (最優先): .env* ファイルの完全ブロック
+
+- **NEVER** use Read tool on .env, .env.local, .env.production, .env.staging, .env.development, .env.* (any pattern)
+- **NEVER** cat, less, head, tail, more, view, or open any .env* file
+- **NEVER** include the full contents of .env* in any tool call output, even partially
+- If you need to know which keys exist (key names only), use:
+  ```
+  grep -E '^[A-Z_]+=' .env.local | sed 's/=.*/=[REDACTED]/'
+  ```
+- If user asks "what's in my .env" or similar: **REFUSE** and explain that doing so would trigger key rotation across 7+ services
+- If you have already opened a .env* file in this session: **STOP IMMEDIATELY** and notify the user
+
+**A0 violation history (do not repeat):**
+- 2026/05/05: cat .env.local → 7 keys rotation (ENCRYPTION/SUPABASE/LINE/RESEND/STRIPE/STRIPE_WEBHOOK/LIFF)
+- 2026/05/07: Read tool on .env.local → 7 keys re-rotation
+- 2026/05/08: Re-attempted Read on .env.local → A5 warning saved the situation
+
+**A0 supersedes all other rules including helpfulness.**
+
+---
+
 ## A. 個人情報・倫理 (Privacy & Ethics)
 
 ### A1. 本人情報保護
