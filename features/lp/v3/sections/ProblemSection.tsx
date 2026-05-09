@@ -4,9 +4,9 @@ import FadeUp from '@/features/lp/v3/components/FadeUp';
 import ImageSlot from '@/features/lp/v3/components/ImageSlot';
 
 const PROBLEMS = [
-  { ph: '悩む美容師の写真', t: ['アレルギーや体調の確認が', '毎回不安...'] },
-  { ph: '紙のカルテで困る写真', t: ['カウンセリング内容が', 'バラバラで引き継ぎが大変'] },
-  { ph: 'スマホで管理する美容師', t: ['LINEや手書き管理が', '手間で時間が足りない'] },
+  { id: 'problem-1', ph: '悩む美容師の写真', t: ['肌質や体調の確認が', '毎回不安...'] },
+  { id: 'problem-2', ph: '紙のカルテで困る写真', t: ['カウンセリング内容が', 'バラバラで引き継ぎが大変'] },
+  { id: 'problem-3', ph: 'スマホで管理する美容師', t: ['LINEや手書き管理が', '手間で時間が足りない'] },
 ];
 
 export default function ProblemSection() {
@@ -21,7 +21,7 @@ export default function ProblemSection() {
             <FadeUp key={i} delay={i * 80}>
               <div className="prob">
                 <div className="prob-img">
-                  <ImageSlot id={`prob-${i}`} placeholder={p.ph} />
+                  <ImageSlot id={p.id} placeholder={p.ph} src={`/v3/${p.id}.png`} alt={p.ph} />
                 </div>
                 <div className="prob-body">
                   {p.t.map((line, j) => <div key={j}>{line}</div>)}
