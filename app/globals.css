@@ -47,6 +47,31 @@
   --sr-mint-pale: #E8D8C8;
   --sr-mint: #B59B78;
   --sr-orange-pale: #C19551;
+
+  /* === handoff design tokens (LP v2) === */
+  /* Colors - Light Mode */
+  --c-bg: #faf6f1;
+  --c-bg-2: #f3ece1;
+  --c-bg-card: #ffffff;
+  --c-fg: #1f1a14;
+  --c-fg-2: #3a322a;
+  --c-fg-3: #6b6256;
+  --c-fg-4: #a39888;
+  --c-border: #e8ddcc;
+  --c-border-2: #f0e6d6;
+  --c-accent: #c8a366;
+  --c-accent-2: #b08a4a;
+  --c-accent-soft: #f3e7d2;
+  --c-on-accent: #ffffff;
+  --c-danger: #b85450;
+
+  /* Radius & Layout */
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --max-w: 1200px;
+  --pad-x: 20px;
+  --section-y: 80px;
 }
 
 @theme inline {
@@ -72,6 +97,18 @@
     --warning: #D4B896;
     --error: #D46464;
     --info: #8B9FC7;
+
+    /* handoff dark mode (LP v2) */
+    --c-bg: #1a1612;
+    --c-bg-2: #221c16;
+    --c-bg-card: #221c16;
+    --c-fg: #f5ede0;
+    --c-fg-2: #d8cdb9;
+    --c-fg-3: #9d927f;
+    --c-fg-4: #6b6253;
+    --c-border: #322a21;
+    --c-border-2: #28221b;
+    --c-accent-soft: #2d2415;
   }
 }
 
@@ -91,6 +128,19 @@ body {
   line-height: 1.6;
   margin: 0;
   padding: 0;
+}
+
+/* Font utility classes (LP v2) */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-cormorant {
+  font-family: var(--font-cormorant);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
 }
 
 h1 {

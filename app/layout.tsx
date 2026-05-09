@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Noto_Serif_JP, Noto_Sans_JP, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Noto_Serif_JP, Noto_Sans_JP, Inter, Shippori_Mincho_B1, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import "./globals.css";
 
@@ -27,6 +27,25 @@ const notoSansJP = Noto_Sans_JP({
 
 const inter = Inter({
   variable: "--font-inter",
+  subsets: ["latin"],
+});
+
+const shipporiMinchoB1 = Shippori_Mincho_B1({
+  variable: "--font-serif",
+  weight: "400",
+  subsets: ["latin", "japanese"],
+});
+
+const cormorantGaramond = Cormorant_Garamond({
+  variable: "--font-cormorant",
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 });
 
@@ -109,7 +128,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${notoSansJP.variable} ${inter.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${notoSansJP.variable} ${inter.variable} ${shipporiMinchoB1.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
         {children}
         <PWAInstallPrompt />
       </body>
