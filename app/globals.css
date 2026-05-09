@@ -264,6 +264,43 @@ image-slot {
   .split.reverse > .split-img { order: 2; }
 }
 
+/* hero grid (2-column split) */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  padding-bottom: 60px;
+  padding-top: 40px;
+}
+@media (min-width: 768px) {
+  .hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 80px;
+    padding-top: 60px;
+  }
+}
+
+/* hero phone overlay */
+.hero-phone {
+  display: none;
+  position: absolute;
+  right: 8px;
+  top: 14%;
+  width: 230px;
+}
+@media (min-width: 768px) {
+  .hero-phone {
+    display: block;
+  }
+}
+@media (min-width: 1024px) {
+  .hero-phone {
+    right: -18px;
+    width: 260px;
+  }
+}
+
 /* feature pillar */
 .pillar {
   display: flex; flex-direction: column;
