@@ -22,14 +22,14 @@ export default function Hero({ onCta }: Props) {
               <span>その先へ。</span>
             </h1>
             <p className="lede" style={{ marginTop: 22, maxWidth: 520 }}>
-              AI × カルテ × LINEで、サロン運営をもっとスマートに。美容室のためのAIカルテ管理SaaS。
+              LINEで完結するAIカルテで、サロンワークをもっと安心・スマートに。
             </p>
             <div style={{ display: 'flex', gap: 14, marginTop: 28, flexWrap: 'wrap' }}>
               <span className="checkrow">
                 <span className="checkrow-dot">
                   <Icon name="check" size={12} stroke={2.4} />
                 </span>
-                初期費用 0円
+                初期費用 ¥3,000(SNS共有で無料)
               </span>
               <span className="checkrow">
                 <span className="checkrow-dot">
@@ -41,7 +41,7 @@ export default function Hero({ onCta }: Props) {
                 <span className="checkrow-dot">
                   <Icon name="check" size={12} stroke={2.4} />
                 </span>
-                クレカ不要
+                LINEだけでスタート
               </span>
             </div>
             <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
