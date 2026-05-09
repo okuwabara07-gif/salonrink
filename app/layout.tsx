@@ -33,6 +33,9 @@ const inter = Inter({
 const shipporiMinchoB1 = Shippori_Mincho_B1({
   variable: "--font-serif",
   weight: "400",
+  // @ts-expect-error Next.js 16.2 の型定義では CJK subset が削除されたが、
+  // Google Fonts API は japanese subset を受け取り日本語グリフを配信する。
+  // ランタイム動作を保持するため型チェックを一時的に無視。
   subsets: ["latin", "japanese"],
 });
 
