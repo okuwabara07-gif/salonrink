@@ -11,7 +11,7 @@ export default function AiKarteSection() {
         <div className="split">
           <FadeUp>
             <div className="split-img">
-              <ImageSlot id="karte-img" placeholder="美容師がお客様にカウンセリングしている温かい写真" />
+              <ImageSlot id="karte-img" placeholder="美容師がお客様のカルテを見ている" src="/v3/karte-img.png" alt="美容師がタブレットでお客様のカルテを確認" />
             </div>
           </FadeUp>
           <FadeUp delay={120}>
