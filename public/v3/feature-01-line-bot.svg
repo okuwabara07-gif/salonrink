@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 800 422" role="img" aria-labelledby="botTitle botDesc">
+<title id="botTitle">SalonRink チャットボット自動応答</title>
+<desc id="botDesc">サロンとお客様のチャットボット自動応答イメージ</desc>
+
+<rect x="0" y="0" width="800" height="422" fill="#faf7f2"/>
+
+<rect x="280" y="60" width="320" height="50" rx="25" fill="#9DBDDB" opacity="0.85"/>
+<path d="M 320 110 L 310 125 L 335 110 Z" fill="#9DBDDB" opacity="0.85"/>
+<text x="440" y="92" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', sans-serif" font-size="13" fill="#1a2c4f">こんにちは、ご予約はこちらから</text>
+
+<rect x="200" y="140" width="280" height="50" rx="25" fill="#C8E6D4" opacity="0.85"/>
+<path d="M 240 190 L 230 205 L 255 190 Z" fill="#C8E6D4" opacity="0.85"/>
+<text x="340" y="172" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', sans-serif" font-size="13" fill="#1a4530">明日の14時、空いていますか?</text>
+
+<rect x="320" y="220" width="340" height="50" rx="25" fill="#FBEAF0" opacity="0.95"/>
+<path d="M 360 270 L 350 285 L 375 270 Z" fill="#FBEAF0" opacity="0.95"/>
+<text x="490" y="252" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', sans-serif" font-size="13" fill="#72243E">空きあり!カットでよろしいですか?</text>
+
+<rect x="240" y="300" width="240" height="50" rx="25" fill="#F4E4D0" opacity="0.9"/>
+<path d="M 280 350 L 270 365 L 295 350 Z" fill="#F4E4D0" opacity="0.9"/>
+<text x="360" y="332" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', sans-serif" font-size="13" fill="#5a3a1a">はい、お願いします</text>
+
+<g transform="translate(80, 280)">
+<circle cx="40" cy="40" r="38" fill="#1a2c4f"/>
+<text x="40" y="46" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="14" font-weight="500" fill="#ffffff">SR</text>
+<text x="40" y="100" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="11" fill="#5a6878">SalonRink Bot</text>
+<text x="40" y="116" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="10" fill="#9da9b3">24時間自動応答</text>
+</g>
+
+<g transform="translate(680, 100)" opacity="0.7">
+<rect x="0" y="0" width="60" height="80" rx="6" fill="#ffffff" stroke="#d8b8a8" stroke-width="0.5"/>
+<rect x="5" y="55" width="50" height="20" rx="3" fill="#f4e4d0"/>
+</g>
+</svg>
