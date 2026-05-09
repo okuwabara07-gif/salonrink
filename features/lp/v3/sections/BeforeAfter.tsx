@@ -63,10 +63,10 @@ export default function BeforeAfter() {
             }}
           >
             <div className="ba-side ba-before">
-              <ImageSlot id="ba-before" placeholder="紙のカルテで作業している様子" />
+              <ImageSlot id="ba-before" placeholder="紙のカルテで作業している様子" src="/v3/ba-before.png" alt="紙のカルテで作業している様子" />
             </div>
             <div className="ba-side ba-after">
-              <ImageSlot id="ba-after" placeholder="iPadでAIカルテを使っている様子" />
+              <ImageSlot id="ba-after" placeholder="iPadでAIカルテを使っている様子" src="/v3/ba-after.png" alt="iPadでAIカルテを使っている様子" />
             </div>
             <div className="ba-label l">BEFORE 紙カルテ</div>
             <div className="ba-label r">AFTER SalonRink</div>

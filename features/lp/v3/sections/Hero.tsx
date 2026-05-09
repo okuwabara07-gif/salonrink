@@ -58,7 +58,7 @@ export default function Hero({ onCta }: Props) {
           <FadeUp delay={140}>
             <div style={{ position: 'relative' }}>
               <div className="hero-image">
-                <ImageSlot id="hero-main" placeholder="メインビジュアル: サロンで美容師とお客様がタブレットを見ている写真" />
+                <ImageSlot id="hero-main" placeholder="メインビジュアル: サロンで美容師とお客様がタブレットを見ている写真" src="/v3/hero-main.png" alt="サロンで美容師とお客様がタブレットを見ている" />
               </div>
               <div
                 style={{

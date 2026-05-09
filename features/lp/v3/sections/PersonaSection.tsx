@@ -4,9 +4,9 @@ import FadeUp from '@/features/lp/v3/components/FadeUp';
 import ImageSlot from '@/features/lp/v3/components/ImageSlot';
 
 const PERSONAS = [
-  { ph: '個人美容師がスマホを見ている写真', t: '個人事業主・面貸し美容師', d: 'シンプルなプランから始めて、自分のペースで運用できます。' },
-  { ph: '中規模サロンチームの集合写真', t: '中規模サロン（4〜10名）', d: 'スタッフ間の引き継ぎとカルテ共有を一元化。' },
-  { ph: 'コンサルが店舗運営を分析している写真', t: '経営コンサル・複数店舗', d: '店舗横断の数値比較・経営判断をサポート。' },
+  { id: 'persona-0', ph: '個人美容師がスマホを見ている写真', t: '個人事業主・面貸し美容師', d: 'シンプルなプランから始めて、自分のペースで運用できます。' },
+  { id: 'persona-1', ph: '中規模サロンチームの集合写真', t: '中規模サロン（4〜10名）', d: 'スタッフ間の引き継ぎとカルテ共有を一元化。' },
+  { id: 'persona-2', ph: 'コンサルが店舗運営を分析している写真', t: '経営コンサル・複数店舗', d: '店舗横断の数値比較・経営判断をサポート。' },
 ];
 
 export default function PersonaSection() {
@@ -27,7 +27,7 @@ export default function PersonaSection() {
             <FadeUp key={i} delay={i * 80}>
               <div className="prob">
                 <div className="prob-img">
-                  <ImageSlot id={`persona-${i}`} placeholder={p.ph} />
+                  <ImageSlot id={p.id} placeholder={p.ph} src={`/v3/${p.id}.png`} alt={p.ph} />
                 </div>
                 <div className="prob-body" style={{ textAlign: 'left', padding: 22 }}>
                   <div className="h3" style={{ fontSize: 18, marginBottom: 8 }}>

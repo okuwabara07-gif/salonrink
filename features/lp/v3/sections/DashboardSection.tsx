@@ -2,7 +2,6 @@
 
 import FadeUp from '@/features/lp/v3/components/FadeUp';
 import AnimatedNum from '@/features/lp/v3/components/AnimatedNum';
-import ImageSlot from '@/features/lp/v3/components/ImageSlot';
 
 export default function DashboardSection() {
   return (
@@ -11,7 +10,9 @@ export default function DashboardSection() {
         <div className="split">
           <FadeUp>
             <div className="split-img">
-              <ImageSlot id="dash-img" placeholder="ノートPCを見ながら経営判断する美容師オーナーの写真" />
+              <video autoPlay muted loop playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit', display: 'block' }}>
+                <source src="/v3/dashboard-demo.mp4" type="video/mp4" />
+              </video>
             </div>
           </FadeUp>
           <FadeUp delay={120}>
