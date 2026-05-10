@@ -19,11 +19,58 @@ export default function Hero({ onCta }: Props) {
           paddingRight: 0,
           paddingTop: 0,
           paddingBottom: 0,
-          overflow: 'visible',
+          overflow: 'hidden',
         }}
       >
+        {/* 写真背景層（全幅ブリード） */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '70%',
+            height: '100%',
+            zIndex: 0,
+          }}
+        >
+          <img
+            src="/v3/hero-main.png"
+            alt="美容師がタブレットを使って顧客とカウンセリングしている様子"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              objectPosition: 'center center',
+              display: 'block',
+            }}
+          />
+          {/* 左端強めグラデーション */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '50%',
+              height: '100%',
+              background: 'linear-gradient(to right, var(--c-bg) 0%, var(--c-bg) 30%, transparent 100%)',
+              pointerEvents: 'none',
+            }}
+          />
+          {/* 全体白オーバーレイ（淡化） */}
+          <div
+            aria-hidden="true"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              background: 'rgba(255, 255, 255, 0.3)',
+              pointerEvents: 'none',
+            }}
+          />
+        </div>
+
         {/* 2カラム split layout */}
-        <div className="container hero-grid">
+        <div className="container hero-grid" style={{ position: 'relative', zIndex: 1 }}>
           {/* ───────── 左: text column ───────── */}
           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
             <FadeUp>
@@ -146,7 +193,7 @@ export default function Hero({ onCta }: Props) {
             </FadeUp>
           </div>
 
-          {/* ───────── 右: photo + phone overlay ───────── */}
+          {/* ───────── 右: phone overlay のみ ───────── */}
           <div style={{
             position: 'relative',
             display: 'flex',
@@ -154,52 +201,6 @@ export default function Hero({ onCta }: Props) {
             justifyContent: 'center',
           }}>
             <FadeUp delay={120}>
-              <div style={{
-                position: 'relative',
-                width: '100%',
-                height: '100%',
-                minHeight: '600px',
-                overflow: 'hidden',
-              }}>
-                <img
-                  src="/v3/hero-main.png"
-                  alt="美容師がタブレットを使って顧客とカウンセリングしている様子"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    objectPosition: 'center center',
-                    display: 'block',
-                  }}
-                />
-                {/* 左端グラデーション: ivory → 透明 */}
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '40%',
-                    height: '100%',
-                    background: 'linear-gradient(to right, var(--c-bg) 0%, var(--c-bg) 10%, transparent 100%)',
-                    pointerEvents: 'none',
-                  }}
-                />
-                {/* 右側からも僅かにフェード */}
-                <div
-                  aria-hidden="true"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    width: '15%',
-                    height: '100%',
-                    background: 'linear-gradient(to left, var(--c-bg) 0%, transparent 100%)',
-                    pointerEvents: 'none',
-                  }}
-                />
-              </div>
-
               {/* Phone overlay: responsive via .hero-phone class */}
               <PhoneOverlay />
             </FadeUp>

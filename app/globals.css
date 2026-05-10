@@ -292,8 +292,8 @@ image-slot {
 .hero-phone {
   display: none;
   position: absolute;
-  right: 8%;
-  top: 30%;
+  right: 48px;
+  top: 35%;
   width: 240px;
 }
 @media (min-width: 768px) {
@@ -303,8 +303,8 @@ image-slot {
 }
 @media (min-width: 1024px) {
   .hero-phone {
-    right: 6%;
-    top: 25%;
+    right: 80px;
+    top: 30%;
     width: 280px;
   }
 }
