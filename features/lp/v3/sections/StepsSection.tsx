@@ -8,25 +8,25 @@ const STEPS = [
     n: '01',
     t: 'LINE追加',
     d: 'LINEで友だち追加するだけ。\nQRを読み取って簡単スタート。',
-    img: '/v3/step-01-line-add.webp',
+    img: '',
   },
   {
     n: '02',
     t: '質問に回答',
     d: 'お客様がLINEで質問に回答。\n事前カウンセリングが完了。',
-    img: '/v3/step-02-question.webp',
+    img: '',
   },
   {
     n: '03',
     t: 'AIがカルテ生成',
     d: 'AIが回答内容をもとに自動で\nカルテを作成・整理。',
-    img: '/v3/step-03-karte.webp',
+    img: '',
   },
   {
     n: '04',
     t: '提案に活用',
     d: 'カルテをもとに最適な提案が可能。\n満足度UPでリピートも促進。',
-    img: '/v3/step-04-propose.webp',
+    img: '',
   },
 ];
 
@@ -55,27 +55,29 @@ export default function StepsSection({ onCta }: Props) {
               <FadeUp delay={i * 80}>
                 <span className="step-num-circle">{s.n}</span>
 
-                {/* Image */}
-                <div style={{
-                  width: '100%',
-                  aspectRatio: '3/4',
-                  background: 'var(--c-bg-2)',
-                  marginTop: 12,
-                  overflow: 'hidden',
-                  borderRadius: 'var(--r-md)',
-                }}>
-                  <img
-                    src={s.img}
-                    alt={s.t}
-                    loading="lazy"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      display: 'block',
-                    }}
-                  />
-                </div>
+                {/* Image - temporarily hidden until files are provided */}
+                {s.img && (
+                  <div style={{
+                    width: '100%',
+                    aspectRatio: '3/4',
+                    background: 'var(--c-bg-2)',
+                    marginTop: 12,
+                    overflow: 'hidden',
+                    borderRadius: 'var(--r-md)',
+                  }}>
+                    <img
+                      src={s.img}
+                      alt={s.t}
+                      loading="lazy"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </div>
+                )}
 
                 <div className="step-card-title">{s.t}</div>
                 <div className="step-card-desc">{s.d}</div>

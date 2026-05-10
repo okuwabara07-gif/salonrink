@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Nav from './sections/Nav';
 import Hero from './sections/Hero';
-import CounterStrip from './sections/CounterStrip';
 import ProblemSection from './sections/ProblemSection';
 import SolutionSection from './sections/SolutionSection';
 import FeatureGrid from './sections/FeatureGrid';
@@ -36,7 +35,6 @@ export default function AppShell() {
     <>
       <Nav onCta={handleCta} />
       <Hero onCta={handleCta} />
-      <CounterStrip />
       <ProblemSection />
       <SolutionSection />
       <FeatureGrid />

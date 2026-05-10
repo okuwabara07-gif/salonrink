@@ -124,6 +124,7 @@ export default function FeatureGrid() {
 
                   {/* Image */}
                   <div style={{
+                    position: 'relative',
                     width: '100%',
                     maxWidth: '100%',
                     boxSizing: 'border-box',
@@ -137,9 +138,12 @@ export default function FeatureGrid() {
                       alt={f.i === 'menu' ? 'オンライン決済、リマインド配信、権限管理、口コミ収集、API連携などの機能群' : f.t}
                       loading="lazy"
                       style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
                         width: '100%',
-                        maxWidth: '100%',
                         height: '100%',
+                        maxWidth: '100%',
                         boxSizing: 'border-box',
                         objectFit: 'cover',
                         display: 'block',
