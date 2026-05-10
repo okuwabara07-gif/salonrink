@@ -7,22 +7,30 @@ const SECURITY_FEATURES = [
   {
     icon: 'lock',
     title: 'AES-256 暗号化',
-    desc: 'すべての顧客データは金融グレードの暗号化で保護。',
+    desc: '業界標準の暗号化技術で、個人情報を安全に保護します。',
+    badgeIcon: 'shield',
+    badgeLabel: '個人情報を安全に保護',
   },
   {
     icon: 'shield',
     title: 'TLS 1.3 通信',
-    desc: '保存時も転送時も最高レベルのセキュリティ。',
+    desc: '最新の TLS 1.3 プロトコルで、通信全体を暗号化します。',
+    badgeIcon: 'lock',
+    badgeLabel: '通信全体を暗号化',
   },
   {
     icon: 'folder',
-    title: 'RLS（行レベルセキュリティ）',
-    desc: '顧客情報へのアクセスを厳密に制御・監視。',
+    title: 'サロン別データ分離',
+    desc: 'RLS(Row Level Security)により、サロンごとのデータを厳格に分離。他サロンの情報は閲覧できません。',
+    badgeIcon: 'folder',
+    badgeLabel: 'RLS による厳格な分離',
   },
   {
-    icon: 'check',
-    title: 'PCI DSS準拠',
-    desc: 'Stripe統合により決済セキュリティ基準を満たす。',
+    icon: 'card',
+    title: '決済は Stripe',
+    desc: 'PCI DSS Level 1 認定取得済の Stripe を利用し、安全な決済を実現します。',
+    badgeIcon: 'shield',
+    badgeLabel: 'PCI DSS Level 1 認定済 Stripe 利用',
   },
 ];
 
@@ -50,11 +58,14 @@ export default function SecuritySection() {
             <div key={i} className="security-card">
               <FadeUp delay={i * 60}>
                 <div className="security-icon">
-                  <Icon name={feat.icon as any} size={20} />
+                  <Icon name={feat.icon as any} size={24} />
                 </div>
-                <div className="security-content">
-                  <h3 className="security-title">{feat.title}</h3>
-                  <p className="security-desc">{feat.desc}</p>
+                <h3 className="security-title">{feat.title}</h3>
+                <div className="security-divider" />
+                <p className="security-desc">{feat.desc}</p>
+                <div className="security-badge">
+                  <Icon name={feat.badgeIcon as any} size={14} />
+                  <span>{feat.badgeLabel}</span>
                 </div>
               </FadeUp>
             </div>
@@ -63,8 +74,13 @@ export default function SecuritySection() {
 
         <FadeUp delay={340}>
           <div className="security-footer" style={{ marginTop: 40 }}>
-            セキュリティに関するご質問、脆弱性報告は<br />
-            <strong>security@aokae.net</strong> までお願いします。
+            <div style={{ marginBottom: '8px', fontSize: '16px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🛡</span>
+              自社内での継続的な脆弱性チェックを実施
+            </div>
+            <p style={{ margin: '0', fontSize: '14px', color: 'var(--c-fg-2)', lineHeight: 1.6 }}>
+              キーローテーション・アクセス制御・定期的な脆弱性チェックを継続的に行い、常に安全性を高めています。
+            </p>
           </div>
         </FadeUp>
       </div>

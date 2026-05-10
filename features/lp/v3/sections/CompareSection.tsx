@@ -6,11 +6,11 @@ import FadeUp from '@/features/lp/v3/components/FadeUp';
 const COMPARE_ROWS = [
   ['AIカルテ自動生成', true, false, false],
   ['LINEカウンセリング', true, false, true],
-  ['アレルギー注意表示', true, false, false],
-  ['予約・売上一元管理', true, true, false],
-  ['初期費用', '無料', '30,000円〜', '無料'],
+  ['敏感肌情報の整理', true, false, false],
+  ['予約・売上の一元管理', true, true, false],
+  ['初期費用', '0円', '30,000円〜', '0円'],
   ['最短契約期間', 'なし', '12ヶ月', 'なし'],
-  ['月額（スタンダード）', '¥1,980〜', '¥9,800', '¥4,500'],
+  ['月額(標準プラン)', '¥1,980〜(税込¥2,178〜)', '¥9,800(税込¥10,780)', '¥4,500(税込¥4,950)'],
 ];
 
 function Cell({ v }: { v: any }) {
@@ -28,7 +28,7 @@ export default function CompareSection() {
         </FadeUp>
         <FadeUp delay={80}>
           <h2 className="h2" style={{ marginTop: 14, textAlign: 'center' }}>
-            SalonRink vs 他社サービス
+            他社サービスとの比較
           </h2>
         </FadeUp>
         <FadeUp delay={140}>
@@ -37,12 +37,9 @@ export default function CompareSection() {
               <thead>
                 <tr>
                   <th></th>
-                  <th className="col-ours">
-                    SalonRink
-                    <div className="compare-table-badge">最適化</div>
-                  </th>
-                  <th>従来型 A 社</th>
-                  <th>予約系 B 社</th>
+                  <th className="col-ours">SalonRink</th>
+                  <th>従来型A社</th>
+                  <th>予約系B社</th>
                 </tr>
               </thead>
               <tbody>
@@ -58,8 +55,8 @@ export default function CompareSection() {
             </table>
           </div>
           <div className="compare-footnote">
-            ※ 他社情報は公開情報に基づく参考値です。<br />
-            ※ 価格・機能は各社仕様変更の可能性があります。
+            ※ 他社情報は公開情報をもとにした参考値です。プラン構成は各社の改定の可能性があります。<br />
+            ※ SalonRink の月額は Light プランの料金です。Standard ¥2,980 / Premium ¥4,580 もご用意しています。
           </div>
         </FadeUp>
       </div>
