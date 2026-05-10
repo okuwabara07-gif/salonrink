@@ -125,6 +125,8 @@ export default function FeatureGrid() {
                   {/* Image */}
                   <div style={{
                     width: '100%',
+                    maxWidth: '100%',
+                    boxSizing: 'border-box',
                     aspectRatio: f.wide ? '16/9' : '4/3',
                     background: 'var(--c-bg-2)',
                     marginTop: 'auto',
@@ -136,7 +138,9 @@ export default function FeatureGrid() {
                       loading="lazy"
                       style={{
                         width: '100%',
+                        maxWidth: '100%',
                         height: '100%',
+                        boxSizing: 'border-box',
                         objectFit: 'cover',
                         display: 'block',
                       }}

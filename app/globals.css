@@ -324,9 +324,13 @@ image-slot {
 
 .features-card-wide {
   grid-column: span 1;
+  min-width: 0;
+  box-sizing: border-box;
 }
 .features-card {
   grid-column: span 1;
+  min-width: 0;
+  box-sizing: border-box;
 }
 @media (min-width: 768px) {
   .features-card-wide {
