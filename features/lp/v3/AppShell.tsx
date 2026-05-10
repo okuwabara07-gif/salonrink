@@ -15,6 +15,7 @@ import VideoDemo from './sections/VideoDemo';
 import StepsSection from './sections/StepsSection';
 import CompareSection from './sections/CompareSection';
 import Integrations from './sections/Integrations';
+import SecuritySection from './sections/SecuritySection';
 import TrustSection from './sections/TrustSection';
 import PersonaSection from './sections/PersonaSection';
 import RoiSim from './sections/RoiSim';
@@ -47,6 +48,7 @@ export default function AppShell() {
       <StepsSection onCta={handleCta} />
       <CompareSection />
       <Integrations />
+      <SecuritySection />
       <TrustSection />
       <PersonaSection />
       <RoiSim onCta={handleCta} />
