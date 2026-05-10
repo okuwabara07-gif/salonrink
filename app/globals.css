@@ -301,6 +301,34 @@ image-slot {
   }
 }
 
+/* features grid (12-column responsive) */
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+  }
+}
+
+.features-card-wide {
+  grid-column: span 1;
+}
+.features-card {
+  grid-column: span 1;
+}
+@media (min-width: 768px) {
+  .features-card-wide {
+    grid-column: span 6;
+  }
+  .features-card {
+    grid-column: span 4;
+  }
+}
+
 /* feature pillar */
 .pillar {
   display: flex; flex-direction: column;
