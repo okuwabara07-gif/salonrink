@@ -145,7 +145,8 @@ export default function FeatureGrid() {
                         height: '100%',
                         maxWidth: '100%',
                         boxSizing: 'border-box',
-                        objectFit: 'cover',
+                        objectFit: 'contain',
+                        objectPosition: 'center center',
                         display: 'block',
                       }}
                     />
