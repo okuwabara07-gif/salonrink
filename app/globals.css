@@ -1097,15 +1097,6 @@ image-slot {
   color: var(--c-fg);
 }
 .compare-table tbody tr:last-child td { border-bottom: 0; }
-.compare-table .col-ours {
-  background: var(--c-accent-soft);
-  color: var(--c-fg);
-  font-weight: 600;
-}
-.compare-table .col-ours th {
-  background: var(--c-accent-soft);
-  color: var(--c-fg);
-}
 .compare-table-badge {
   display: inline-block;
   background: var(--c-accent);
@@ -1123,6 +1114,72 @@ image-slot {
   margin-top: 20px;
   padding: 16px 0;
   border-top: 1px solid var(--c-border-2);
+}
+
+/* ─────── Compare Row Rich Layout ─────── */
+.compare-row-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+}
+.compare-row-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--c-fg);
+}
+.compare-row-sub {
+  font-size: 11px;
+  color: var(--c-fg-3);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.compare-cell-ok-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  margin-bottom: 6px;
+}
+.compare-cell-ng-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--c-bg-2);
+  color: var(--c-fg-3);
+  margin-bottom: 6px;
+}
+.compare-cell-value {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--c-fg);
+}
+.compare-cell-note {
+  font-size: 11px;
+  color: var(--c-fg-3);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+.compare-table thead th.col-ours {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-family: var(--f-display);
+  font-size: 16px;
+  font-weight: 600;
+}
+.compare-table .col-ours {
+  border-left: 2px solid var(--c-accent);
+  border-right: 2px solid var(--c-accent);
+}
+.compare-table tbody tr:last-child .col-ours {
+  border-bottom: 2px solid var(--c-accent);
 }
 
 /* ─────── Integrations Section ─────── */
