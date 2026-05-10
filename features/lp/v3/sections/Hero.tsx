@@ -157,10 +157,9 @@ export default function Hero({ onCta }: Props) {
               <div style={{
                 position: 'relative',
                 width: '100%',
-                aspectRatio: '5/6',
+                height: '100%',
+                minHeight: '600px',
                 overflow: 'hidden',
-                borderRadius: '28px',
-                backgroundColor: 'rgba(255, 255, 255, 0.4)',
               }}>
                 <img
                   src="/v3/hero-main.png"
@@ -169,16 +168,33 @@ export default function Hero({ onCta }: Props) {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center',
+                    objectPosition: 'center center',
                     display: 'block',
                   }}
                 />
-                {/* Soft highlight overlay */}
+                {/* 左端グラデーション: ivory → 透明 */}
                 <div
+                  aria-hidden="true"
                   style={{
                     position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(135deg, transparent 0%, transparent 60%, rgba(255,255,255,0.3) 100%)',
+                    top: 0,
+                    left: 0,
+                    width: '40%',
+                    height: '100%',
+                    background: 'linear-gradient(to right, var(--c-bg) 0%, var(--c-bg) 10%, transparent 100%)',
+                    pointerEvents: 'none',
+                  }}
+                />
+                {/* 右側からも僅かにフェード */}
+                <div
+                  aria-hidden="true"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    width: '15%',
+                    height: '100%',
+                    background: 'linear-gradient(to left, var(--c-bg) 0%, transparent 100%)',
                     pointerEvents: 'none',
                   }}
                 />
