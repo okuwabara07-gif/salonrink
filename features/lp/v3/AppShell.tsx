@@ -25,15 +25,19 @@ import Footer from './sections/Footer';
 import StickyCta from './sections/StickyCta';
 import FabLine from './sections/FabLine';
 import CtaModal from './components/CtaModal';
+import AIExperienceSection from './sections/AIExperienceSection';
+import AIExperienceModal from './components/AIExperienceModal';
 
 export default function AppShell() {
   const [ctaOpen, setCtaOpen] = useState(false);
+  const [aiExperienceOpen, setAiExperienceOpen] = useState(false);
   const handleCta = () => setCtaOpen(true);
 
   return (
     <>
       <Nav onCta={handleCta} />
       <Hero onCta={handleCta} />
+      <AIExperienceSection onStart={() => setAiExperienceOpen(true)} />
       <ProblemSection />
       <SolutionSection />
       <FeatureGrid />
@@ -56,6 +60,7 @@ export default function AppShell() {
       <StickyCta onCta={handleCta} />
       <FabLine onCta={handleCta} />
       <CtaModal open={ctaOpen} onClose={() => setCtaOpen(false)} />
+      <AIExperienceModal open={aiExperienceOpen} onClose={() => setAiExperienceOpen(false)} />
     </>
   );
 }
