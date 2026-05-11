@@ -1,24 +1,33 @@
 import { getPostBySlug, getAllPosts } from "@/lib/blog";
+import { getBlogPostFromDb, getAllBlogPostsFromDb, incrementPostViews } from "@/lib/blog-db";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-
-export async function generateStaticParams() {
-  return getAllPosts().map(p => ({ slug: p.slug }));
-}
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const dbPost = await getBlogPostFromDb(slug);
+  const post = dbPost || getPostBySlug(slug);
   if (!post) return {};
   return { title: `${post.title} | SalonRink`, description: post.description };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const dbPost = await getBlogPostFromDb(slug);
+  const post = dbPost || getPostBySlug(slug);
   if (!post) notFound();
-  const allPosts = getAllPosts();
+
+  // DB 記事の場合はビュー数をインクリメント
+  if (dbPost) {
+    await incrementPostViews(slug);
+  }
+  // 関連記事は DB + ファイルから取得
+  const filePostsList = getAllPosts();
+  const dbPostsList = await getAllBlogPostsFromDb();
+  const allPosts = [...filePostsList, ...dbPostsList];
   const related = allPosts.filter(p => p.slug !== slug).slice(0, 3);
 
   return (
@@ -44,7 +53,15 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
       </div>
 
       <div style={{ lineHeight:2.1, fontSize:"0.95rem", color:"#222" }}>
-        <MDXRemote source={post.content} />
+        {dbPost ? (
+          <div className="prose-custom">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {post.content}
+            </ReactMarkdown>
+          </div>
+        ) : (
+          <MDXRemote source={post.content} />
+        )}
       </div>
 
       <div style={{ background:"#f5f5f5", height:"90px", borderRadius:"4px", display:"flex", alignItems:"center", justifyContent:"center", margin:"2.5rem 0", fontSize:"0.78rem", color:"#bbb" }}>

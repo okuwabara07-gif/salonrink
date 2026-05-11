@@ -1,0 +1,111 @@
+
+> salonrink@0.1.0 build
+> next build
+
+▲ Next.js 16.2.3 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 10.6s
+  Running TypeScript ...
+  Finished TypeScript in 5.1s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/76) ...
+  Generating static pages using 7 workers (19/76) 
+  Generating static pages using 7 workers (38/76) 
+  Generating static pages using 7 workers (57/76) 
+✓ Generating static pages using 7 workers (76/76) in 260ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /agency
+├ ƒ /api/ai-experience/generate-karte
+├ ƒ /api/ai/allergy-warning
+├ ƒ /api/ai/communication-script
+├ ƒ /api/ai/customer-summary
+├ ƒ /api/ai/karte-regenerate/internal
+├ ƒ /api/ai/next-recommendation
+├ ƒ /api/ai/pre-counseling-analysis
+├ ƒ /api/ai/pre-counseling-analysis/internal
+├ ƒ /api/ai/warnings
+├ ƒ /api/ai/warnings/internal
+├ ƒ /api/checkout
+├ ƒ /api/cron/reminder
+├ ƒ /api/customer-portal
+├ ƒ /api/dashboard/kartes/[karteId]/regenerate
+├ ƒ /api/hpb/sync
+├ ƒ /api/hpb/test-connection
+├ ƒ /api/lead-request
+├ ƒ /api/line/test-connection
+├ ƒ /api/line/webhook/[salonId]
+├ ƒ /api/pre-counseling/[token]/get
+├ ƒ /api/pre-counseling/[token]/status
+├ ƒ /api/pre-counseling/[token]/submit
+├ ƒ /api/pre-counseling/create
+├ ƒ /api/salons/[salonId]/availability
+├ ƒ /api/salons/hpb-credentials
+├ ƒ /api/salons/line-credentials
+├ ƒ /api/subscription/cancel
+├ ƒ /api/subscription/reactivate
+├ ƒ /api/validate-invite-code
+├ ƒ /api/webhooks/stripe
+├ ƒ /auth/callback
+├ ƒ /auth/reset-password
+├ ƒ /auth/signout
+├ ○ /blog
+├ ● /blog/[slug]
+│ ├ /blog/comparison-reservation-systems-2026
+│ ├ /blog/salonrink-vs-repitte-individual-salon
+│ ├ /blog/what-is-ai-karte-revolution
+│ └ [+4 more paths]
+├ ○ /case-studies/kirei-tsurumi
+├ ○ /company
+├ ○ /customer
+├ ƒ /dashboard
+├ ƒ /dashboard/booking
+├ ƒ /dashboard/customers
+├ ƒ /dashboard/customers/[customerId]
+├ ƒ /dashboard/customers/[customerId]/karte/new
+├ ƒ /dashboard/customers/new
+├ ƒ /dashboard/integrations
+├ ƒ /dashboard/integrations/hotpepper
+├ ƒ /dashboard/integrations/line
+├ ƒ /dashboard/integrations/minimo
+├ ƒ /dashboard/integrations/otayori
+├ ƒ /dashboard/integrations/richmenu
+├ ƒ /dashboard/integrations/sync-status
+├ ƒ /dashboard/more
+├ ƒ /dashboard/more/plan
+├ ƒ /dashboard/more/plan/cancel
+├ ƒ /dashboard/more/plan/cancel/complete
+├ ƒ /dashboard/more/settings
+├ ○ /en/blog
+├ ○ /faq
+├ ○ /features
+├ ● /features/[slug]
+│ ├ /features/line-reservation
+│ ├ /features/customer-record
+│ ├ /features/ec-store
+│ └ [+3 more paths]
+├ ○ /liff/pre-counseling
+├ ○ /login
+├ ○ /pricing
+├ ○ /privacy
+├ ○ /register
+├ ƒ /register/complete
+├ ○ /salon
+├ ○ /salons/tsurumi
+├ ○ /sitemap.xml
+├ ○ /success
+└ ○ /tokusho
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

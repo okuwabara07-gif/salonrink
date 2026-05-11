@@ -1,7 +1,11 @@
 import { getAllPosts } from "@/lib/blog";
+import { getAllBlogPostsFromDb } from "@/lib/blog-db";
 import Link from "next/link";
-export default function BlogPage() {
-  const posts = getAllPosts();
+
+export default async function BlogPage() {
+  const filePosts = getAllPosts();
+  const dbPosts = await getAllBlogPostsFromDb();
+  const posts = [...dbPosts, ...filePosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   return (
     <main style={{ minHeight: "100vh", background: "#FAF6EE", fontFamily: "Georgia, serif", padding: "60px 40px" }}>
       <div style={{ maxWidth: 800, margin: "0 auto" }}>
