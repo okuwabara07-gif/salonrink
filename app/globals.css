@@ -1082,7 +1082,7 @@ image-slot {
 
 /* ─────── Compare Section ─────── */
 .compare-table {
-  width: 100%; border-collapse: separate; border-spacing: 0;
+  width: 100%; border-collapse: collapse;
   font-size: 13px;
 }
 .compare-table th, .compare-table td {
