@@ -25,6 +25,8 @@ export default function CustomerDetailPage() {
   const [notesEditMode, setNotesEditMode] = useState(false)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [regenerating, setRegenerating] = useState(false)
+  const [regenerationProgress, setRegenerationProgress] = useState(0)
   const [salonId, setSalonId] = useState<string>('')
   const [latestKarte, setLatestKarte] = useState<any>(null)
   const [preCounselings, setPreCounselings] = useState<any[]>([])
@@ -180,6 +182,124 @@ export default function CustomerDetailPage() {
     setSaving(false)
     if (!error) {
       setNotesEditMode(false)
+    }
+  }
+
+  const handleSaveAndRegenerate = async () => {
+    if (!customerId || !latestKarte) return
+
+    if (!confirm('メモを保存してAI再分析を実行します。Claude APIコストが発生しますがよろしいですか？')) {
+      return
+    }
+
+    // Step 1: メモ保存
+    setSaving(true)
+    const supabase = await createClient()
+
+    const { error: saveError } = await supabase
+      .from('customers')
+      .update({ notes })
+      .eq('id', customerId)
+
+    setSaving(false)
+
+    if (saveError) return
+
+    // Step 2: AI再分析トリガー
+    setNotesEditMode(false)
+    setRegenerating(true)
+    setRegenerationProgress(0)
+
+    try {
+      const startTime = Date.now()
+      const pollInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime
+        if (elapsed < 5000) {
+          setRegenerationProgress(20 + (elapsed / 5000) * 20)
+        } else if (elapsed < 10000) {
+          setRegenerationProgress(40 + ((elapsed - 5000) / 5000) * 30)
+        } else {
+          setRegenerationProgress(Math.min(70 + ((elapsed - 10000) / 10000) * 20, 90))
+        }
+      }, 300)
+
+      const response = await fetch(`/api/dashboard/kartes/${latestKarte.id}/regenerate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      clearInterval(pollInterval)
+      setRegenerationProgress(100)
+
+      if (response.ok) {
+        setTimeout(() => {
+          setRegenerating(false)
+          setRegenerationProgress(0)
+          setActiveTab('ai')
+          window.location.reload()
+        }, 500)
+      } else {
+        setRegenerating(false)
+        setRegenerationProgress(0)
+        alert('AI再分析に失敗しました。もう一度お試しください。')
+      }
+    } catch (err) {
+      console.error('handleSaveAndRegenerate error:', err)
+      setRegenerating(false)
+      setRegenerationProgress(0)
+      alert('AI再分析中にエラーが発生しました。')
+    }
+  }
+
+  const handleRegenerateOnly = async () => {
+    if (!latestKarte) return
+
+    if (!confirm('Claude APIコストが発生します。AI再分析を実行しますか？')) {
+      return
+    }
+
+    setRegenerating(true)
+    setRegenerationProgress(0)
+
+    try {
+      const startTime = Date.now()
+      const pollInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime
+        if (elapsed < 5000) {
+          setRegenerationProgress(20 + (elapsed / 5000) * 20)
+        } else if (elapsed < 10000) {
+          setRegenerationProgress(40 + ((elapsed - 5000) / 5000) * 30)
+        } else {
+          setRegenerationProgress(Math.min(70 + ((elapsed - 10000) / 10000) * 20, 90))
+        }
+      }, 300)
+
+      const response = await fetch(`/api/dashboard/kartes/${latestKarte.id}/regenerate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      clearInterval(pollInterval)
+      setRegenerationProgress(100)
+
+      if (response.ok) {
+        setTimeout(() => {
+          setRegenerating(false)
+          setRegenerationProgress(0)
+          window.location.reload()
+        }, 500)
+      } else {
+        setRegenerating(false)
+        setRegenerationProgress(0)
+        alert('AI再分析に失敗しました。')
+      }
+    } catch (err) {
+      console.error('handleRegenerateOnly error:', err)
+      setRegenerating(false)
+      setRegenerationProgress(0)
+      alert('AI再分析中にエラーが発生しました。')
     }
   }
 
@@ -1114,38 +1234,62 @@ export default function CustomerDetailPage() {
                     marginBottom: 'clamp(12px, 2vw, 16px)',
                   }}
                 />
-                <div style={{ display: 'flex', gap: 'clamp(8px, 1.5vw, 12px)' }}>
+                <div style={{ display: 'flex', gap: 'clamp(8px, 1.5vw, 12px)', flexWrap: 'wrap' }}>
                   <button
                     onClick={handleSaveNotes}
-                    disabled={saving}
+                    disabled={saving || regenerating}
                     style={{
                       flex: 1,
+                      minWidth: 100,
                       padding: 'clamp(10px, 2vw, 14px)',
                       borderRadius: 8,
                       border: 'none',
-                      background: saving ? 'var(--sr-border)' : 'var(--accent-gold)',
-                      color: saving ? 'var(--text-secondary)' : '#fff',
+                      background: saving || regenerating ? 'var(--sr-border)' : 'var(--accent-gold)',
+                      color: saving || regenerating ? 'var(--text-secondary)' : '#fff',
                       fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
                       fontWeight: 500,
-                      cursor: saving ? 'not-allowed' : 'pointer',
+                      cursor: saving || regenerating ? 'not-allowed' : 'pointer',
                       fontFamily: 'var(--font-noto-sans-jp)',
                     }}
                   >
                     {saving ? '保存中...' : '保存'}
                   </button>
                   <button
-                    onClick={() => setNotesEditMode(false)}
+                    onClick={handleSaveAndRegenerate}
+                    disabled={saving || regenerating}
                     style={{
                       flex: 1,
+                      minWidth: 140,
+                      padding: 'clamp(10px, 2vw, 14px)',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: saving || regenerating ? 'var(--sr-border)' : 'var(--accent-gold)',
+                      color: saving || regenerating ? 'var(--text-secondary)' : '#fff',
+                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                      fontWeight: 500,
+                      cursor: saving || regenerating ? 'not-allowed' : 'pointer',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                      opacity: saving || regenerating ? 0.7 : 1,
+                    }}
+                  >
+                    {regenerating ? `再分析中 ${Math.round(regenerationProgress)}%` : '保存してAI再分析'}
+                  </button>
+                  <button
+                    onClick={() => setNotesEditMode(false)}
+                    disabled={saving || regenerating}
+                    style={{
+                      flex: 1,
+                      minWidth: 100,
                       padding: 'clamp(10px, 2vw, 14px)',
                       borderRadius: 8,
                       border: '1px solid var(--sr-border)',
                       background: '#fff',
-                      color: 'var(--text-primary)',
+                      color: saving || regenerating ? 'var(--text-secondary)' : 'var(--text-primary)',
                       fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
                       fontWeight: 500,
-                      cursor: 'pointer',
+                      cursor: saving || regenerating ? 'not-allowed' : 'pointer',
                       fontFamily: 'var(--font-noto-sans-jp)',
+                      opacity: saving || regenerating ? 0.5 : 1,
                     }}
                   >
                     キャンセル
@@ -1202,6 +1346,70 @@ export default function CustomerDetailPage() {
           <div>
             {latestKarte ? (
               <div>
+                {/* AI分析ヘッダー: 最終更新時刻 + 再分析ボタン */}
+                <div
+                  style={{
+                    background: '#fff',
+                    borderRadius: 12,
+                    padding: 'clamp(20px, 3vw, 28px)',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                    marginBottom: 'clamp(16px, 2vw, 20px)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: 'clamp(12px, 2vw, 16px)',
+                  }}
+                >
+                  <div>
+                    <p
+                      style={{
+                        fontSize: 'clamp(0.75rem, 1.2vw, 0.8125rem)',
+                        color: 'var(--text-secondary)',
+                        margin: '0 0 clamp(4px, 0.8vw, 6px)',
+                        letterSpacing: '0.04em',
+                      }}
+                    >
+                      最終更新
+                    </p>
+                    <p
+                      style={{
+                        fontSize: 'clamp(0.85rem, 1.5vw, 0.9375rem)',
+                        color: 'var(--text-primary)',
+                        margin: 0,
+                        fontWeight: 500,
+                      }}
+                    >
+                      {latestKarte.ai_analyzed_at
+                        ? new Date(latestKarte.ai_analyzed_at).toLocaleString('ja-JP', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '未実行'}
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleRegenerateOnly}
+                    disabled={regenerating}
+                    style={{
+                      padding: 'clamp(10px, 2vw, 14px) clamp(16px, 2.5vw, 20px)',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: regenerating ? 'var(--sr-border)' : 'var(--accent-gold)',
+                      color: regenerating ? 'var(--text-secondary)' : '#fff',
+                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                      fontWeight: 500,
+                      cursor: regenerating ? 'not-allowed' : 'pointer',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                    }}
+                  >
+                    {regenerating ? `再分析中 ${Math.round(regenerationProgress)}%` : 'AI再分析'}
+                  </button>
+                </div>
+
                 <AIWarningsSection
                   karte={latestKarte}
                   customerId={customerId}

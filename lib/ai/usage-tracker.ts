@@ -14,6 +14,7 @@ export type ApiType =
   | 'allergy_warning'
   | 'next_recommendation'
   | 'pre_counseling_analysis'
+  | 'karte_regenerate'
 
 export async function checkAIUsageLimit(salonId: string): Promise<{
   allowed: boolean
