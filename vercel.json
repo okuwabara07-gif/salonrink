@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/score-leads",
       "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/generate-sns-posts",
+      "schedule": "0 22 * * *"
     }
   ]
 }
