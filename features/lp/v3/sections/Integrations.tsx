@@ -125,11 +125,15 @@ export default function Integrations() {
                       textAlign: 'center',
                       fontWeight: '600',
                       marginTop: 'auto',
-                      margin: '14px -20px -20px -20px',
+                      marginLeft: '-20px',
+                      marginRight: '-20px',
+                      marginBottom: '-1px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       gap: '8px',
+                      borderBottomLeftRadius: 'var(--r-lg)',
+                      borderBottomRightRadius: 'var(--r-lg)',
                     }}>
                       {integ.cta}
                       <Icon name={integ.ctaIcon as any} size={16} />
