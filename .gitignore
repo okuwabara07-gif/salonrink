@@ -48,3 +48,6 @@ next-env.d.ts
 
 # Design handoff (prototype - not for production)
 design_handoff_salonrink_lp/
+
+# Claude Code 内部ファイル
+.claude/
