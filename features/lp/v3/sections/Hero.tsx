@@ -99,15 +99,10 @@ export default function Hero({ onCta }: Props) {
                 color: 'var(--c-fg)',
                 marginTop: 0,
                 marginBottom: 28,
+                fontWeight: 'bold',
               }}>
                 <span style={{ display: 'block' }}>
-                  ちゃんと、<MarkGold>向き合える</MarkGold>。
-                </span>
-                <span style={{ display: 'block', marginTop: 8 }}>
-                  その<MarkGold>カウンセリング</MarkGold>、
-                </span>
-                <span style={{ display: 'block', marginTop: 8 }}>
-                  <span style={{ color: 'var(--c-accent)' }}>AI</span>がそっと支えます。
+                  いつもの、<MarkGold>その先へ。</MarkGold>
                 </span>
               </h1>
 
@@ -120,7 +115,7 @@ export default function Hero({ onCta }: Props) {
                 marginTop: 0,
                 marginBottom: 28,
               }}>
-                LINEで完結するAIカルテで、サロンワークをもっと安心・スマートに。
+                美容師の経験 × AI の記憶。お客様1人1人の物語を、ふたつの力で大切にする。
               </p>
 
               {/* Trust chips */}
@@ -133,7 +128,7 @@ export default function Hero({ onCta }: Props) {
                 paddingLeft: 0,
                 listStyle: 'none',
               }}>
-                {['初期費用 ¥3,000(SNS共有で無料)', '最短契約期間 なし', 'LINEだけでスタート'].map((label) => (
+                {['初期費用 0円', '最短契約期間 なし', 'AIカルテで、お客様を覚える'].map((label) => (
                   <li
                     key={label}
                     style={{
@@ -170,25 +165,25 @@ export default function Hero({ onCta }: Props) {
 
               {/* CTAs */}
               <div style={{ display: 'flex', gap: 10, marginTop: 28, flexWrap: 'wrap' }}>
-                <button
+                <a
+                  href="/signup"
                   className="btn btn-primary btn-lg"
-                  onClick={onCta}
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 8,
                   }}
                 >
-                  <span className="btn-line-icon">L</span> LINEでデモを見る <Icon name="arrowRight" size={14} />
-                </button>
-                <button className="btn btn-ghost btn-lg">
-                  14日間無料で試す
+                  14日間無料で試す <Icon name="arrowRight" size={14} />
+                </a>
+                <button className="btn btn-line btn-lg" onClick={onCta}>
+                  <span className="btn-line-icon">L</span> LINEで相談する
                 </button>
               </div>
 
               {/* Caption */}
               <p style={{ marginTop: 12, fontSize: 12, color: 'var(--c-fg-3)', marginBottom: 0 }}>
-                約 5分でセットアップ。導入サポート
+                クレジット不要 / 最短5分で開始 / 解約はいつでも
               </p>
             </FadeUp>
           </div>

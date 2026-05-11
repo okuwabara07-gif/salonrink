@@ -20,9 +20,9 @@ export default function Nav({ onCta }: Props) {
           <a href="#pricing">料金</a>
           <a href="#faq">FAQ</a>
         </nav>
-        <button className="btn btn-line btn-sm" onClick={onCta}>
-          <span className="btn-line-icon">L</span> LINEでデモを見る
-        </button>
+        <a href="/signup" className="btn btn-primary btn-sm">
+          14日間無料で試す
+        </a>
       </div>
     </header>
   );
