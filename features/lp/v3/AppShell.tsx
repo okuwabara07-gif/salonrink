@@ -27,10 +27,13 @@ import FabLine from './sections/FabLine';
 import CtaModal from './components/CtaModal';
 import AIExperienceSection from './sections/AIExperienceSection';
 import AIExperienceModal from './components/AIExperienceModal';
+import CustomerExperienceSection from './sections/CustomerExperienceSection';
+import CustomerExperienceModal from './components/CustomerExperienceModal';
 
 export default function AppShell() {
   const [ctaOpen, setCtaOpen] = useState(false);
   const [aiExperienceOpen, setAiExperienceOpen] = useState(false);
+  const [customerExperienceOpen, setCustomerExperienceOpen] = useState(false);
   const handleCta = () => setCtaOpen(true);
 
   return (
@@ -38,6 +41,7 @@ export default function AppShell() {
       <Nav onCta={handleCta} />
       <Hero onCta={handleCta} />
       <AIExperienceSection onStart={() => setAiExperienceOpen(true)} />
+      <CustomerExperienceSection onStart={() => setCustomerExperienceOpen(true)} />
       <ProblemSection />
       <SolutionSection />
       <FeatureGrid />
@@ -61,6 +65,7 @@ export default function AppShell() {
       <FabLine onCta={handleCta} />
       <CtaModal open={ctaOpen} onClose={() => setCtaOpen(false)} />
       <AIExperienceModal open={aiExperienceOpen} onClose={() => setAiExperienceOpen(false)} />
+      <CustomerExperienceModal open={customerExperienceOpen} onClose={() => setCustomerExperienceOpen(false)} />
     </>
   );
 }
