@@ -139,11 +139,12 @@ export default function FeatureGrid() {
                       alt={f.i === 'menu' ? 'オンライン決済、リマインド配信、権限管理、口コミ収集、API連携などの機能群' : f.t}
                       loading="lazy"
                       style={{
-                        width: '100%',
+                        width: 'auto',
                         height: 'auto',
                         maxWidth: '100%',
+                        maxHeight: '100%',
                         boxSizing: 'border-box',
-                        objectFit: 'cover',
+                        objectFit: 'contain',
                         objectPosition: 'center center',
                         display: 'block',
                       }}
