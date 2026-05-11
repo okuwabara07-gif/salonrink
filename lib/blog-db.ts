@@ -21,8 +21,11 @@ export async function getBlogPostFromDb(slug: string): Promise<BlogPost | null> 
       .single()
 
     if (error || !data) {
+      console.error('[blog-db] Query error:', error?.message)
       return null
     }
+
+    console.log('[blog-db] Retrieved article data:', { slug: data.slug, image_url: data.image_url })
 
     return {
       slug: data.slug,

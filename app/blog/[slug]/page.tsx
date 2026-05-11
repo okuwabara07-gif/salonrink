@@ -6,6 +6,8 @@ import Link from "next/link";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
+export const revalidate = 0;
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const dbPost = await getBlogPostFromDb(slug);
@@ -18,6 +20,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const dbPost = await getBlogPostFromDb(slug);
   const post = dbPost || getPostBySlug(slug);
+  console.log('[PostPage] Debug:', { slug, dbPost: dbPost ? { slug: dbPost.slug, hasImage: !!dbPost.image_url } : null, postHasImage: post ? !!post.image_url : null });
   if (!post) notFound();
 
   // DB 記事の場合はビュー数をインクリメント
