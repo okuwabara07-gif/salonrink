@@ -1179,8 +1179,6 @@ image-slot {
   font-weight: 600;
 }
 .compare-table .col-ours {
-  border-left: 2px solid var(--c-accent);
-  border-right: 2px solid var(--c-accent);
 }
 .compare-table tbody tr:last-child .col-ours {
   border-bottom: 2px solid var(--c-accent);
