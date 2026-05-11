@@ -147,6 +147,7 @@ export default function FeatureGrid() {
                         objectFit: 'contain',
                         objectPosition: 'center center',
                         display: 'block',
+                        margin: '0 auto',
                       }}
                     />
                   </div>
