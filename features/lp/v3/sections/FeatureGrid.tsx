@@ -130,6 +130,9 @@ export default function FeatureGrid() {
                     background: 'var(--c-bg-2)',
                     marginTop: 'auto',
                     overflow: 'hidden',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                   }}>
                     <img
                       src={f.img}
