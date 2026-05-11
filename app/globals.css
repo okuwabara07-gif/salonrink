@@ -565,7 +565,6 @@ image-slot {
   color: var(--c-fg);
   font-weight: 600;
 }
-.compare-table tbody tr:last-child td { border-bottom: 0; }
 
 /* review */
 .review {
