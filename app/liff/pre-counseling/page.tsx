@@ -45,7 +45,7 @@ const ALLERGY_LABELS: Record<AllergyType, string> = {
 // UI ステート型
 // ========================================
 
-type PageState = 'loading' | 'error' | 'form' | 'submitted'
+type PageState = 'loading' | 'error' | 'form' | 'submitted' | 'analyzing'
 
 // ========================================
 // スタイル定数
@@ -225,6 +225,8 @@ function PreCounselingContent() {
   const [counselingInfo, setCounselingInfo] = useState<GetPreCounselingResponse | null>(null)
   const [lineUserId, setLineUserId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [analysisProgress, setAnalysisProgress] = useState(0)
+  const [analysisComplete, setAnalysisComplete] = useState(false)
   const [answers, setAnswers] = useState<PreCounselingAnswersHint>({
     concerns: [],
     mood: undefined,
@@ -286,6 +288,48 @@ function PreCounselingContent() {
     init()
   }, [token])
 
+  // AI分析進捗をポーリング
+  useEffect(() => {
+    if (pageState !== 'analyzing' || !token) return
+
+    let pollInterval: NodeJS.Timeout | null = null
+    let timeoutId: NodeJS.Timeout | null = null
+
+    const pollStatus = async () => {
+      try {
+        const res = await fetch(`/api/pre-counseling/${token}/status`)
+        if (!res.ok) return
+
+        const data = await res.json()
+        setAnalysisProgress(data.progress || 0)
+
+        if (data.status === 'complete') {
+          setAnalysisComplete(true)
+          setPageState('submitted')
+          if (pollInterval) clearInterval(pollInterval)
+          if (timeoutId) clearTimeout(timeoutId)
+        }
+      } catch {
+        console.error('Failed to poll analysis status')
+      }
+    }
+
+    // ポーリング開始（1秒ごと）
+    pollInterval = setInterval(pollStatus, 1000)
+
+    // 60秒でタイムアウト
+    timeoutId = setTimeout(() => {
+      if (pollInterval) clearInterval(pollInterval)
+      setPageState('submitted')
+      setAnalysisComplete(true)
+    }, 60000)
+
+    return () => {
+      if (pollInterval) clearInterval(pollInterval)
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [pageState, token])
+
   // フォーム送信
   const handleSubmit = async () => {
     if (!token || submitting) return
@@ -309,7 +353,8 @@ function PreCounselingContent() {
         return
       }
 
-      setPageState('submitted')
+      setPageState('analyzing')
+      setAnalysisProgress(10)
     } catch {
       setErrorMessage(PRE_COUNSELING_ERROR_MESSAGES['INTERNAL_ERROR'])
       setPageState('error')
@@ -356,6 +401,87 @@ function PreCounselingContent() {
     )
   }
 
+  // 画面: AI分析中
+  if (pageState === 'analyzing') {
+    const steps = [
+      { label: '回答を保存しました', icon: '✓', complete: analysisProgress >= 20 },
+      { label: 'AI分析を開始しました', icon: '✓', complete: analysisProgress >= 40 },
+      { label: 'AI結果を待機中...', icon: analysisProgress >= 95 ? '✓' : '⏳', complete: analysisProgress >= 95 },
+      { label: 'サロンに通知予定', icon: analysisProgress === 100 ? '✓' : '○', complete: analysisProgress === 100 },
+    ]
+
+    return (
+      <div style={S.center} role="status">
+        <div style={{ fontSize: '40px', marginBottom: '24px' }} aria-hidden="true">🤖</div>
+        <p style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-primary)', marginBottom: '24px' }}>
+          AIサロンコンシェルジュが準備中です
+        </p>
+
+        {/* プログレスバー */}
+        <div style={{
+          width: '100%',
+          maxWidth: '280px',
+          height: '8px',
+          backgroundColor: 'var(--sr-border)',
+          borderRadius: '4px',
+          overflow: 'hidden',
+          marginBottom: '24px',
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${analysisProgress}%`,
+            backgroundColor: 'var(--accent-gold)',
+            transition: 'width 0.3s ease',
+          }} />
+        </div>
+
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '24px' }}>
+          {Math.round(analysisProgress)}% — 約{Math.max(1, Math.ceil((100 - analysisProgress) / 20))}秒お待ちください
+        </p>
+
+        {/* ステップ表示 */}
+        <div style={{
+          width: '100%',
+          maxWidth: '280px',
+          textAlign: 'left' as const,
+          marginBottom: '24px',
+        }}>
+          {steps.map((step, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginBottom: i < steps.length - 1 ? '12px' : '0',
+              opacity: step.complete || analysisProgress >= (i + 1) * 25 ? 1 : 0.5,
+            }}>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                backgroundColor: step.complete ? 'var(--accent-gold)' : 'var(--sr-border)',
+                color: step.complete ? 'white' : 'var(--text-secondary)',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                flexShrink: 0,
+              }}>
+                {step.icon}
+              </span>
+              <span style={{
+                fontSize: '13px',
+                color: 'var(--text-primary)',
+              }}>
+                {step.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   // 画面: 送信完了
   if (pageState === 'submitted') {
     return (
@@ -365,7 +491,9 @@ function PreCounselingContent() {
           ご回答ありがとうございました
         </p>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-          {counselingInfo?.salon_name ?? 'サロン'}でお待ちしております
+          AIサロンコンシェルジュが{counselingInfo?.salon_name ?? 'サロン'}スタイリストに<br />
+          ご提案内容をお渡ししました。<br />
+          ご来店をお待ちしております。
         </p>
       </div>
     )
