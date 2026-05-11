@@ -139,7 +139,7 @@ export default function FeatureGrid() {
                       alt={f.i === 'menu' ? 'オンライン決済、リマインド配信、権限管理、口コミ収集、API連携などの機能群' : f.t}
                       loading="lazy"
                       style={{
-                        width: 'auto',
+                        width: '100%',
                         height: 'auto',
                         maxWidth: '100%',
                         maxHeight: '100%',
