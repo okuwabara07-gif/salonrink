@@ -124,11 +124,9 @@ export default function FeatureGrid() {
 
                   {/* Image */}
                   <div style={{
-                    position: 'relative',
                     width: '100%',
                     maxWidth: '100%',
                     boxSizing: 'border-box',
-                    aspectRatio: f.wide ? '16/9' : '4/3',
                     background: 'var(--c-bg-2)',
                     marginTop: 'auto',
                     overflow: 'hidden',
@@ -138,14 +136,11 @@ export default function FeatureGrid() {
                       alt={f.i === 'menu' ? 'オンライン決済、リマインド配信、権限管理、口コミ収集、API連携などの機能群' : f.t}
                       loading="lazy"
                       style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
                         width: '100%',
-                        height: '100%',
+                        height: 'auto',
                         maxWidth: '100%',
                         boxSizing: 'border-box',
-                        objectFit: 'contain',
+                        objectFit: 'cover',
                         objectPosition: 'center center',
                         display: 'block',
                       }}
