@@ -136,7 +136,14 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
     throw new Error('Unexpected response type from Claude')
   }
 
-  const generatedPosts = JSON.parse(content.text) as GeneratedPosts
+  let jsonText = content.text.trim()
+  if (jsonText.startsWith('```json')) {
+    jsonText = jsonText.replace(/^```json\s*/, '').replace(/```\s*$/, '').trim()
+  } else if (jsonText.startsWith('```')) {
+    jsonText = jsonText.replace(/^```\s*/, '').replace(/```\s*$/, '').trim()
+  }
+
+  const generatedPosts = JSON.parse(jsonText) as GeneratedPosts
   return generatedPosts
 }
 
