@@ -48,6 +48,26 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         </p>
       </div>
 
+      {post.image_url && (
+        <div style={{
+          width: "100%",
+          aspectRatio: "16/9",
+          overflow: "hidden",
+          borderRadius: "8px",
+          margin: "1.5rem 0 2rem",
+        }}>
+          <img
+            src={post.image_url}
+            alt={post.title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+            }}
+          />
+        </div>
+      )}
+
       <div style={{ lineHeight:2.1, fontSize:"0.95rem", color:"#222" }}>
         {dbPost ? (
           <div className="prose-custom">

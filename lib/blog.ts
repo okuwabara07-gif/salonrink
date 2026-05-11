@@ -4,7 +4,7 @@ import matter from "gray-matter";
 const postsDir = path.join(process.cwd(), "content/blog");
 const enPostsDir = path.join(process.cwd(), "content/en/blog");
 export interface Post {
-  slug: string; title: string; date: string; description: string; category: string; content: string;
+  slug: string; title: string; date: string; description: string; category: string; content: string; image_url?: string;
 }
 
 function getPosts(dir: string): Post[] {
