@@ -1310,3 +1310,141 @@ image-slot {
   color: var(--c-fg-2);
   line-height: 1.6;
 }
+
+/* Blog Markdown Prose Styling */
+.prose-custom {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--c-fg);
+}
+
+.prose-custom h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin: 2.5rem 0 1.5rem;
+  color: var(--c-fg);
+  font-family: var(--f-display);
+}
+
+.prose-custom h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 2rem 0 1rem;
+  color: var(--c-fg);
+  border-left: 4px solid var(--c-accent);
+  padding-left: 1rem;
+  font-family: var(--f-display);
+}
+
+.prose-custom h3 {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--c-fg-2);
+  font-family: var(--f-display);
+}
+
+.prose-custom h4,
+.prose-custom h5,
+.prose-custom h6 {
+  font-weight: 600;
+  margin: 1rem 0 0.5rem;
+  color: var(--c-fg-2);
+}
+
+.prose-custom p {
+  margin: 1rem 0;
+  line-height: 1.8;
+}
+
+.prose-custom ul,
+.prose-custom ol {
+  margin: 1rem 0;
+  padding-left: 2rem;
+  line-height: 1.8;
+}
+
+.prose-custom li {
+  margin: 0.5rem 0;
+  line-height: 1.8;
+}
+
+.prose-custom strong {
+  font-weight: 600;
+  color: var(--c-accent-2);
+}
+
+.prose-custom em {
+  font-style: italic;
+  color: var(--c-fg-2);
+}
+
+.prose-custom blockquote {
+  border-left: 4px solid var(--c-accent-soft);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  color: var(--c-fg-3);
+  font-style: italic;
+  background: var(--c-bg-2);
+  padding: 1rem;
+  border-radius: var(--r-md);
+}
+
+.prose-custom code {
+  background: var(--c-bg-2);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-size: 0.95em;
+  color: var(--c-fg-2);
+}
+
+.prose-custom pre {
+  background: var(--c-bg-2);
+  padding: 1.5rem;
+  border-radius: var(--r-lg);
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  line-height: 1.5;
+}
+
+.prose-custom pre code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: var(--c-fg);
+}
+
+.prose-custom hr {
+  border: none;
+  border-top: 1px solid var(--c-border);
+  margin: 2rem 0;
+}
+
+.prose-custom a {
+  color: var(--c-accent-2);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.prose-custom a:hover {
+  color: var(--c-accent);
+}
+
+.prose-custom table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+.prose-custom th,
+.prose-custom td {
+  border: 1px solid var(--c-border);
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.prose-custom th {
+  background: var(--c-bg-2);
+  font-weight: 600;
+}
