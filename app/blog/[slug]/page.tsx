@@ -48,10 +48,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         </p>
       </div>
 
-      <div style={{ background:"#f5f5f5", height:"90px", borderRadius:"4px", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"2.5rem", fontSize:"0.78rem", color:"#bbb" }}>
-        広告
-      </div>
-
       <div style={{ lineHeight:2.1, fontSize:"0.95rem", color:"#222" }}>
         {dbPost ? (
           <div className="prose-custom">
@@ -62,10 +58,6 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         ) : (
           <MDXRemote source={post.content} />
         )}
-      </div>
-
-      <div style={{ background:"#f5f5f5", height:"90px", borderRadius:"4px", display:"flex", alignItems:"center", justifyContent:"center", margin:"2.5rem 0", fontSize:"0.78rem", color:"#bbb" }}>
-        広告
       </div>
 
       <div style={{ background:"#1a1a1a", borderRadius:"4px", padding:"2rem", margin:"3rem 0", textAlign:"center" }}>
