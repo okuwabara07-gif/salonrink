@@ -1207,7 +1207,6 @@ image-slot {
   align-items: center;
   gap: 14px;
   position: relative;
-  min-height: 180px;
   overflow: hidden;
 }
 .integration-name {
