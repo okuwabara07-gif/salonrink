@@ -8,25 +8,25 @@ const STEPS = [
     n: '01',
     t: 'LINE追加',
     d: 'LINEで友だち追加するだけ。\nQRを読み取って簡単スタート。',
-    img: '',
+    img: '/v3/step-01-line-qr.webp',
   },
   {
     n: '02',
     t: '質問に回答',
     d: 'お客様がLINEで質問に回答。\n事前カウンセリングが完了。',
-    img: '',
+    img: '/v3/step-02-chat.webp',
   },
   {
     n: '03',
     t: 'AIがカルテ生成',
     d: 'AIが回答内容をもとに自動で\nカルテを作成・整理。',
-    img: '',
+    img: '/v3/step-03-tablet.webp',
   },
   {
     n: '04',
     t: '提案に活用',
     d: 'カルテをもとに最適な提案が可能。\n満足度UPでリピートも促進。',
-    img: '',
+    img: '/v3/step-04-staff.webp',
   },
 ];
 
