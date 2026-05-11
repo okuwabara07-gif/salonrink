@@ -7,8 +7,11 @@ const INTEGRATIONS = [
   {
     name: 'LINE',
     icon: 'chat',
-    badge: null,
-    cta: null,
+    color: '#06C755',
+    bgSoft: '#E8F8EC',
+    badge: 'Messaging API 対応',
+    cta: '対応済み',
+    ctaIcon: 'check',
     features: [
       'LINE公式アカウントと連携',
       'メッセージ・顧客情報を自動同期',
@@ -18,8 +21,11 @@ const INTEGRATIONS = [
   {
     name: 'Stripe',
     icon: 'card',
-    badge: null,
-    cta: null,
+    color: '#7B5FE6',
+    bgSoft: '#EEEAFC',
+    badge: '決済プロバイダ',
+    cta: '対応済み',
+    ctaIcon: 'check',
     features: [
       'オンライン決済に対応',
       '売上データを自動で同期',
@@ -29,8 +35,11 @@ const INTEGRATIONS = [
   {
     name: 'ホットペッパーBeauty',
     icon: 'folder',
+    color: '#E8716C',
+    bgSoft: '#FCEAE9',
     badge: 'ベータ連携中',
     cta: 'お試し申込',
+    ctaIcon: 'arrow',
     features: [
       '予約情報を自動で同期',
       'お客様情報を一元管理',
@@ -40,8 +49,11 @@ const INTEGRATIONS = [
   {
     name: 'minimo',
     icon: 'star',
+    color: '#6FB1DD',
+    bgSoft: '#E6F1F8',
     badge: 'COMING SOON',
-    cta: null,
+    cta: '近日サポート予定',
+    ctaIcon: 'calendar',
     features: [
       '予約情報を自動で同期(予定)',
       'メニュー・顧客情報を一元管理(予定)',
@@ -59,29 +71,68 @@ export default function Integrations() {
         </FadeUp>
         <FadeUp delay={80}>
           <h2 className="h2" style={{ marginTop: 14, textAlign: 'center' }}>
-            いま使っているツールと、<br />シームレスに連携。
+            いま使っているツールと、<br />シームレスに。
           </h2>
+          <p style={{ textAlign: 'center', marginTop: 12, fontSize: '14px', color: 'var(--c-fg-2)' }}>
+            主要サービスと連携して、予約・顧客・カルテ情報を自動で同期。
+          </p>
         </FadeUp>
         <FadeUp delay={140}>
           <div className="integrations-grid" style={{ marginTop: 40 }}>
             {INTEGRATIONS.map((integ, i) => (
               <div key={integ.name} className="integration-card">
                 <FadeUp delay={i * 60}>
-                  <div className="integration-icon">
-                    <Icon name={integ.icon as any} size={24} />
+                  <div style={{
+                    width: '72px',
+                    height: '72px',
+                    borderRadius: '50%',
+                    background: integ.color,
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: '0 auto 12px',
+                  }}>
+                    <Icon name={integ.icon as any} size={32} />
                   </div>
                   <div className="integration-name">{integ.name}</div>
                   {integ.badge && (
-                    <div className="integration-badge">{integ.badge}</div>
+                    <div style={{
+                      background: integ.bgSoft,
+                      color: integ.color,
+                      padding: '4px 12px',
+                      borderRadius: '999px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      display: 'inline-block',
+                      marginTop: '8px',
+                    }}>
+                      {integ.badge}
+                    </div>
                   )}
                   <ul style={{ margin: '12px 0 0', padding: '0', listStyle: 'none', fontSize: '12px', color: 'var(--c-fg-2)' }}>
                     {integ.features.map((f) => (
-                      <li key={f} style={{ marginBottom: '6px' }}>✓ {f}</li>
+                      <li key={f} style={{ marginBottom: '6px' }}>
+                        <span style={{ color: integ.color }}>✓</span> {f}
+                      </li>
                     ))}
                   </ul>
                   {integ.cta && (
-                    <div className="integration-cta" style={{ marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--c-border)', width: '100%' }}>
+                    <div style={{
+                      background: integ.color,
+                      color: 'white',
+                      padding: '14px',
+                      textAlign: 'center',
+                      fontWeight: '600',
+                      marginTop: 'auto',
+                      margin: '14px -20px -20px -20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                    }}>
                       {integ.cta}
+                      <Icon name={integ.ctaIcon as any} size={16} />
                     </div>
                   )}
                 </FadeUp>
