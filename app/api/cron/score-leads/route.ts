@@ -10,12 +10,18 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { sendHotLeadEmail } from '@/lib/email/hot-lead'
+import { notifySlackHotLead } from '@/lib/notification/slack-hot-lead'
 
 interface Lead {
   id: string
   created_at: string
   score: number
   score_grade: string
+  email: string
+  contact_name?: string | null
+  salon_name?: string | null
+  hot_lead_notified_at?: string | null
 }
 
 interface LeadEvent {
@@ -136,7 +142,7 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
     console.log('[score-leads] Fetching all active leads...')
     const { data: leads, error: leadsError } = await supabase
       .from('lp_leads')
-      .select('id, created_at, score, score_grade')
+      .select('id, created_at, score, score_grade, email, contact_name, salon_name, hot_lead_notified_at')
       .eq('opted_out', false)
 
     if (leadsError) {
@@ -173,6 +179,8 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
     console.log(`[score-leads] Processing ${leads.length} leads for scoring...`)
 
     // Step 4: 各リードをスコアリング + 更新
+    const salesEnabled = process.env.SALES_AGENTS_ENABLED === 'true'
+
     for (const lead of leads) {
       try {
         const events = eventsByLeadId.get(lead.id) || []
@@ -192,6 +200,33 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
           console.error(`[score-leads] Update failed for lead ${lead.id}: ${updateError.message}`)
           // 継続（個別エラーで全体を止めない）
           continue
+        }
+
+        // ホットリード判定(70点を初めて超えた場合)
+        if (newScore >= 70 && !lead.hot_lead_notified_at && salesEnabled) {
+          console.log(`[score-leads] Hot lead detected: ${lead.email} (score: ${newScore})`)
+
+          const emailSent = await sendHotLeadEmail({
+            email: lead.email,
+            contact_name: lead.contact_name,
+            salon_name: lead.salon_name,
+            score: newScore,
+          })
+
+          if (emailSent) {
+            await notifySlackHotLead({
+              leadId: lead.id,
+              email: lead.email,
+              contact_name: lead.contact_name,
+              salon_name: lead.salon_name,
+              score: newScore,
+            })
+
+            // 送信済みフラグを更新(重複送信防止)
+            await supabase.from('lp_leads')
+              .update({ hot_lead_notified_at: new Date().toISOString() })
+              .eq('id', lead.id)
+          }
         }
 
         result.scored++
