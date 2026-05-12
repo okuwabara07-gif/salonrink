@@ -155,7 +155,6 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       • 施術後も継続的に「覚えてくれる」関係を構築<br>
       <br>
       • 14日間無料お試し<br>
-      • クレジットカード不要<br>
       • 解約はいつでも</p>
 
       <p><a href="https://salonrink.com/signup" class="cta">今すぐ14日間無料で試す</a></p>
@@ -265,7 +264,6 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <p>だからこそ、SalonRinkは<strong>14日間の完全無料お試し</strong>をご用意しました。</p>
 
       <div class="feature-list">
-        <strong>✓ クレジットカード不要</strong><br>
         <strong>✓ 14日後、自動課金なし</strong><br>
         <strong>✓ いつでも解約可能</strong><br>
         <strong>✓ 専門サポートチーム対応</strong>
@@ -281,7 +279,7 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <br>
       こうしたご質問も、無料期間中にサポートチームがサポートいたします。</p>
 
-      <p><a href="https://salonrink.com/signup" class="cta">今すぐ始める(クレカ不要)</a></p>
+      <p><a href="https://salonrink.com/signup" class="cta">今すぐ始める</a></p>
 
       <p>何かご質問があれば、本メールへのご返信でお気軽にお問い合わせください。</p>
     </div>

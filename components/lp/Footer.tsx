@@ -329,6 +329,23 @@ export default function Footer() {
                   特定商取引法
                 </a>
               </li>
+              <li style={{ marginBottom: 'clamp(8px, 1.5vw, 10px)' }}>
+                <a
+                  href="/terms"
+                  style={{
+                    fontFamily: 'var(--font-noto-sans-jp)',
+                    fontSize: 'clamp(0.8rem, 1.3vw, 0.875rem)',
+                    color: '#FAF6EE',
+                    opacity: 0.75,
+                    textDecoration: 'none',
+                    transition: 'opacity 0.3s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.75')}
+                >
+                  利用規約
+                </a>
+              </li>
             </ul>
           </div>
         </div>

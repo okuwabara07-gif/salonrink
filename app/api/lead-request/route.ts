@@ -83,7 +83,7 @@ function buildUserEmailHtml(name: string): string {
       月額¥1,980〜(税込¥2,178〜)<br>
       • LINE × AIカルテで、美容師さんの仕事を支えます<br>
       • お客様1人1人を、ちゃんと「覚えている」サロンへ<br>
-      • 14日間無料お試し / クレジットカード不要</p>
+      • 14日間無料お試し</p>
 
       <p><strong>【次の一歩】</strong><br>
       <a href="https://salonrink.com/signup" class="cta">14日間無料で試す</a></p>
