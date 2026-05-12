@@ -418,7 +418,6 @@ export default function KireiturumiPage() {
           14日無料で始める
         </a>
         <p style={styles.ctaSubText}>
-          クレジットカード登録不要。<br />
           14日後に自動で Small プランに移行します。
         </p>
         <p style={styles.ctaFooter}>
