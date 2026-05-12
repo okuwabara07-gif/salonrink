@@ -96,6 +96,32 @@ export default function CustomersPage() {
     return `${Math.floor(diffDays / 30)}ヶ月前`
   }
 
+  // ステータス判定
+  const getCustomerStatus = (customer: Customer): { label: string; color: string; bgColor: string } => {
+    // 新規顧客(来店1回)
+    if (customer.visit_count === 1) {
+      return {
+        label: '新規',
+        color: '#059669',
+        bgColor: '#D1FAE5',
+      }
+    }
+    // 再来店(来店2回以上)
+    if (customer.visit_count > 1) {
+      return {
+        label: '再来店',
+        color: '#3B82F6',
+        bgColor: '#DBEAFE',
+      }
+    }
+    // デフォルト: ラベルなし
+    return {
+      label: '未分類',
+      color: '#6B7280',
+      bgColor: '#F3F4F6',
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ padding: '40px', textAlign: 'center' }}>
@@ -248,118 +274,158 @@ export default function CustomersPage() {
               gap: 'clamp(12px, 2vw, 16px)',
             }}
           >
-            {filteredCustomers.map((customer) => (
-              <Link
-                key={customer.id}
-                href={`/dashboard/customers/${customer.id}`}
-                style={{
-                  background: '#fff',
-                  borderRadius: 12,
-                  padding: 'clamp(16px, 2.5vw, 20px)',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'all 0.2s ease',
-                  display: 'flex',
-                  gap: 'clamp(12px, 2vw, 16px)',
-                  alignItems: 'flex-start',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
-                {/* アバター */}
+            {filteredCustomers.map((customer) => {
+              const status = getCustomerStatus(customer)
+              return (
                 <div
+                  key={customer.id}
                   style={{
-                    flex: '0 0 clamp(48px, 10vw, 56px)',
-                    width: 'clamp(48px, 10vw, 56px)',
-                    height: 'clamp(48px, 10vw, 56px)',
-                    borderRadius: '50%',
-                    background: 'var(--accent-gold)',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#fff',
-                    fontWeight: 600,
-                    fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
+                    gap: 'clamp(8px, 1.5vw, 12px)',
+                    alignItems: 'stretch',
                   }}
                 >
-                  {customer.name?.charAt(0) || '—'}
-                </div>
-
-                {/* 情報 */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p
+                  {/* ステータスバッジカード（装飾のみ、クリック不可） */}
+                  <div
                     style={{
-                      fontFamily: 'var(--font-noto-serif-jp)',
-                      fontSize: 'clamp(0.95rem, 1.8vw, 1.0625rem)',
-                      fontWeight: 500,
-                      color: 'var(--text-primary)',
-                      margin: 0,
-                      marginBottom: '4px',
+                      flex: '0 0 clamp(80px, 15vw, 100px)',
+                      background: status.bgColor,
+                      borderRadius: 12,
+                      padding: 'clamp(12px, 2vw, 16px)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      pointerEvents: 'none',
                     }}
                   >
-                    {customer.name || '—'}様
-                  </p>
-
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-noto-sans-jp)',
-                      fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
-                      color: 'var(--text-secondary)',
-                      margin: '4px 0 0 0',
-                    }}
-                  >
-                    前回: {getDaysAgo(customer.last_visit)}
-                  </p>
-
-                  {/* メモ/タグ表示 */}
-                  {/* 一時無効化: notes column 追加後に復活
-                  {customer.notes && (
-                    <p
+                    <span
                       style={{
+                        fontSize: 'clamp(0.8rem, 1.3vw, 0.9rem)',
+                        fontWeight: 600,
+                        color: status.color,
+                        textAlign: 'center',
                         fontFamily: 'var(--font-noto-sans-jp)',
-                        fontSize: 'clamp(0.75rem, 1.3vw, 0.8rem)',
-                        color: 'var(--text-secondary)',
-                        margin: '6px 0 0 0',
-                        fontStyle: 'italic',
                       }}
                     >
-                      メモ: {customer.notes}
-                    </p>
-                  )}
-                  */}
+                      {status.label}
+                    </span>
+                  </div>
 
-                  {/* 一時無効化: tags column 追加後に復活
-                  {customer.tags && customer.tags.length > 0 && (
-                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
-                      {customer.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
+                  {/* 顧客情報カード（クリック可） */}
+                  <Link
+                    href={`/dashboard/customers/${customer.id}`}
+                    style={{
+                      flex: 1,
+                      background: '#fff',
+                      borderRadius: 12,
+                      padding: 'clamp(16px, 2.5vw, 20px)',
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'all 0.2s ease',
+                      display: 'flex',
+                      gap: 'clamp(12px, 2vw, 16px)',
+                      alignItems: 'flex-start',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)'
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.06)'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    {/* アバター */}
+                    <div
+                      style={{
+                        flex: '0 0 clamp(48px, 10vw, 56px)',
+                        width: 'clamp(48px, 10vw, 56px)',
+                        height: 'clamp(48px, 10vw, 56px)',
+                        borderRadius: '50%',
+                        background: 'var(--accent-gold)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: '#fff',
+                        fontWeight: 600,
+                        fontSize: 'clamp(1.2rem, 2vw, 1.5rem)',
+                      }}
+                    >
+                      {customer.name?.charAt(0) || '—'}
+                    </div>
+
+                    {/* 情報 */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p
+                        style={{
+                          fontFamily: 'var(--font-noto-serif-jp)',
+                          fontSize: 'clamp(0.95rem, 1.8vw, 1.0625rem)',
+                          fontWeight: 500,
+                          color: 'var(--text-primary)',
+                          margin: 0,
+                          marginBottom: '4px',
+                        }}
+                      >
+                        {customer.name || '—'}様
+                      </p>
+
+                      <p
+                        style={{
+                          fontFamily: 'var(--font-noto-sans-jp)',
+                          fontSize: 'clamp(0.8rem, 1.4vw, 0.875rem)',
+                          color: 'var(--text-secondary)',
+                          margin: '4px 0 0 0',
+                        }}
+                      >
+                        前回: {getDaysAgo(customer.last_visit)}
+                      </p>
+
+                      {/* メモ/タグ表示 */}
+                      {/* 一時無効化: notes column 追加後に復活
+                      {customer.notes && (
+                        <p
                           style={{
-                            background: 'var(--accent-gold)',
-                            color: '#fff',
-                            padding: '2px 8px',
-                            borderRadius: 12,
-                            fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
-                            fontWeight: 500,
                             fontFamily: 'var(--font-noto-sans-jp)',
+                            fontSize: 'clamp(0.75rem, 1.3vw, 0.8rem)',
+                            color: 'var(--text-secondary)',
+                            margin: '6px 0 0 0',
+                            fontStyle: 'italic',
                           }}
                         >
-                          {tag}
-                        </span>
-                      ))}
+                          メモ: {customer.notes}
+                        </p>
+                      )}
+                      */}
+
+                      {/* 一時無効化: tags column 追加後に復活
+                      {customer.tags && customer.tags.length > 0 && (
+                        <div style={{ display: 'flex', gap: '6px', marginTop: '8px', flexWrap: 'wrap' }}>
+                          {customer.tags.map((tag, idx) => (
+                            <span
+                              key={idx}
+                              style={{
+                                background: 'var(--accent-gold)',
+                                color: '#fff',
+                                padding: '2px 8px',
+                                borderRadius: 12,
+                                fontSize: 'clamp(0.65rem, 1.2vw, 0.75rem)',
+                                fontWeight: 500,
+                                fontFamily: 'var(--font-noto-sans-jp)',
+                              }}
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      */}
                     </div>
-                  )}
-                  */}
+                  </Link>
                 </div>
-              </Link>
-            ))}
+              )
+            })}
           </div>
         ) : (
           <div
