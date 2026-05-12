@@ -5,7 +5,7 @@ export default function NumbersSection() {
     { label: 'Core 価格', value: '¥1,980', description: 'コーヒー1杯分' },
     { label: 'AIカルテ', value: 'AI', description: '業界唯一・標準装備' },
     { label: 'データ保護', value: '100%', description: 'RLS 個人情報完全分離' },
-    { label: '無料期間', value: '14', description: 'クレジットカード不要' },
+    { label: '無料期間', value: '14', description: '日間' },
     { label: '登録時間', value: '3分', description: '最短で始められる' },
     { label: '初期費用', value: '¥0', description: '完全無料スタート' },
   ]

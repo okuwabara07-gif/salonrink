@@ -127,8 +127,6 @@ export default function Hero() {
             <span>✓ 初期費用 0円</span>
             <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>|</span>
             <span>✓ 最短 3分で登録</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.4)' }}>|</span>
-            <span>✓ クレカ登録不要</span>
           </div>
 
           {/* CTA ボタン */}

@@ -34,7 +34,7 @@ export async function sendHotLeadEmail(params: HotLeadEmailParams): Promise<bool
 
     <h3>ご検討に役立つかもしれません</h3>
     <ul>
-      <li><strong>14日間無料トライアル</strong>(クレジットカード不要、すぐ始められます)</li>
+      <li><strong>14日間無料トライアル</strong>(すぐ始められます)</li>
       <li><strong>個別オンライン相談</strong>(30分・無料)</li>
       <li><strong>AIカルテのご案内</strong></li>
     </ul>

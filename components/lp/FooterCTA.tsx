@@ -156,7 +156,7 @@ export default function FooterCTA() {
               margin: 0,
             }}
           >
-            ✓ クレカ登録不要 | ✓ いつでも解約OK | ✓ しつこい営業なし
+            ✓ いつでも解約OK | ✓ しつこい営業なし
           </p>
         </div>
       </div>
