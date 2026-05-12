@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { getEyecatchUrl } from '@/lib/blog/eyecatch'
 
 interface ArticleTitle {
   id: string
@@ -263,7 +264,16 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
     // excerpt を自動抽出(最初の120-150字)
     const excerpt = content.substring(0, 150).replace(/\n/g, ' ').trim() + '...'
 
-    // Step 3: Supabase に保存
+    // Step 3: Pollinations.ai で eyecatch を生成
+    console.log('[generate-blog-post] Generating eyecatch with Pollinations.ai...')
+    const imageUrl = getEyecatchUrl({
+      title: article.title,
+      cluster: article.cluster,
+      id: article.id,
+    })
+    console.log(`[generate-blog-post] Eyecatch URL: ${imageUrl}`)
+
+    // Step 4: Supabase に保存
     console.log('[generate-blog-post] Saving to Supabase...')
     const { data: inserted, error: insertError } = await supabase
       .from('blog_articles')
@@ -273,7 +283,7 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
         cluster: article.cluster,
         excerpt: excerpt,
         content: content,
-        image_url: `https://picsum.photos/800/450?random=${article.id}`,
+        image_url: imageUrl,
         published_at: new Date().toISOString(),
       })
       .select()
@@ -284,7 +294,7 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
 
     console.log(`[generate-blog-post] Article saved: ${article.id}`)
 
-    // Step 4: Slack に通知
+    // Step 5: Slack に通知
     console.log('[generate-blog-post] Sending Slack notification...')
     const slackSent = await sendToSlack(article.title, article.id, article.cluster, excerpt)
 
