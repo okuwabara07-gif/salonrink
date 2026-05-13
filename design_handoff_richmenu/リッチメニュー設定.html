@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>リッチメニュー設定 — 中身</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3ede1;
+    --bg-2: #ebe3d3;
+    --card: #fbf7ee;
+    --ink: #1a1418;
+    --ink-2: #3a2f33;
+    --muted: #8a7d72;
+    --line: #d9cfbc;
+    --line-2: #c7bca6;
+    --gold: #b48a55;
+    --gold-soft: #d9bf95;
+    --accent: #2a6b5a;
+    --sidebar: #15101a;
+    --sidebar-active: #2a1f2d;
+    --danger: #b34a3a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif;
+    font-feature-settings: "palt";
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  .serif { font-family: "Noto Serif JP", serif; letter-spacing: 0.04em; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select, textarea { font-family: inherit; }
+
+  /* Layout */
+  .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--sidebar);
+    color: #efe7d8;
+    padding: 28px 0 24px;
+    display: flex; flex-direction: column;
+    position: sticky; top: 0; height: 100vh;
+  }
+  .sidebar .brand { padding: 0 28px 32px; }
+  .brand-title { font-family: "Noto Serif JP", serif; font-weight: 500; font-size: 22px; letter-spacing: 0.18em; }
+  .brand-sub { font-size: 11px; color: var(--gold-soft); letter-spacing: 0.24em; margin-top: 6px; }
+  .nav { display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; flex: 1; }
+  .nav a {
+    color: #b5a698; text-decoration: none; font-size: 13.5px;
+    padding: 11px 16px; border-radius: 6px; letter-spacing: 0.08em;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .nav a .dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.35; }
+  .nav a:hover { background: #1f1825; color: #efe7d8; }
+  .nav a.active { background: var(--sidebar-active); color: #f4ead7; }
+  .nav a.active .dot { background: var(--gold); opacity: 1; }
+  .user { padding: 18px 28px; border-top: 1px solid #2a2230; color: #b5a698; font-size: 12.5px; letter-spacing: 0.06em; }
+  .user .who { color: #efe7d8; font-size: 13.5px; margin-top: 4px; }
+  .logout {
+    margin: 14px 20px 0; padding: 9px; width: calc(100% - 40px);
+    background: transparent; color: #efe7d8; border: 1px solid #3a2f3a;
+    border-radius: 4px; font-size: 12.5px; letter-spacing: 0.12em;
+  }
+
+  /* Main */
+  .main { padding: 36px 48px 64px; max-width: 1440px; }
+  .crumbs { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; letter-spacing: 0.1em; margin-bottom: 14px; }
+  .crumbs .sep { opacity: 0.5; }
+  .crumbs .here { color: var(--ink-2); }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 28px; gap: 24px; }
+  .head h1 { font-family: "Noto Serif JP", serif; font-weight: 500; font-size: 36px; letter-spacing: 0.06em; margin: 0; }
+  .head .sub { color: var(--muted); font-size: 13px; margin-top: 8px; letter-spacing: 0.04em; }
+  .head .actions { display: flex; gap: 10px; }
+  .btn {
+    border: 1px solid var(--line-2); background: var(--card); color: var(--ink);
+    padding: 11px 18px; border-radius: 4px; font-size: 13px; letter-spacing: 0.08em;
+    transition: all 0.15s ease;
+  }
+  .btn:hover { background: #fff; border-color: var(--ink); }
+  .btn.primary { background: var(--ink); color: #f3ede1; border-color: var(--ink); }
+  .btn.primary:hover { background: #000; }
+  .btn.ghost { background: transparent; }
+
+  /* Two-column workspace */
+  .workspace { display: grid; grid-template-columns: 1fr 420px; gap: 28px; align-items: start; }
+
+  /* Section card */
+  .section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; }
+  .section + .section { margin-top: 18px; }
+  .section-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--line); }
+  .section-head h2 { font-family: "Noto Serif JP", serif; font-weight: 500; font-size: 18px; letter-spacing: 0.1em; margin: 0; display: flex; align-items: center; gap: 12px; }
+  .section-head .step { font-family: "JetBrains Mono", monospace; font-size: 11px; color: var(--gold); border: 1px solid var(--gold-soft); padding: 3px 8px; border-radius: 2px; letter-spacing: 0.1em; }
+  .section-head .hint { color: var(--muted); font-size: 12px; letter-spacing: 0.06em; }
+  .section-body { padding: 22px; }
+
+  /* Sticky preview */
+  .preview-col { position: sticky; top: 28px; }
+
+  /* Form bits */
+  .field-label { font-size: 12px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 6px; }
+  .text-input, .select-input {
+    width: 100%; padding: 10px 12px; background: #fff;
+    border: 1px solid var(--line); border-radius: 4px;
+    font-size: 13.5px; color: var(--ink);
+  }
+  .text-input:focus, .select-input:focus { outline: 1px solid var(--ink); border-color: var(--ink); }
+
+  /* Mode switch tabs */
+  .mode-tabs { display: inline-flex; padding: 4px; background: var(--bg-2); border-radius: 6px; gap: 2px; }
+  .mode-tab {
+    padding: 9px 18px; border: 0; background: transparent; border-radius: 4px;
+    font-size: 13px; letter-spacing: 0.06em; color: var(--muted);
+  }
+  .mode-tab.active { background: var(--ink); color: #f3ede1; }
+
+  /* Empty slot pulse */
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(180, 138, 85, 0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(180, 138, 85, 0); }
+  }
+  .pulse { animation: pulse 1.8s ease-in-out infinite; }
+
+  /* Drag hint */
+  .drag-hint { font-size: 11.5px; color: var(--muted); letter-spacing: 0.06em; }
+
+  /* Mini icon */
+  .mini-ic { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+
+  /* Hover scale on chips */
+  .preset-card { transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease; }
+  .preset-card:hover { transform: translateY(-1px); border-color: var(--ink); }
+
+  /* tweak panel root */
+  #tweaks-root { position: fixed; right: 18px; bottom: 18px; z-index: 100; }
+
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="app.jsx"></script>
+
+</body>
+</html>
