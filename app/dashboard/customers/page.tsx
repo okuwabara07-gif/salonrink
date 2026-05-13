@@ -16,6 +16,7 @@ interface Customer {
   phone: string
   last_visit: string | null
   visit_count: number
+  tags?: string[] // 将来的に tags column 追加時に使用
 }
 
 export default function CustomersPage() {
@@ -96,9 +97,25 @@ export default function CustomersPage() {
     return `${Math.floor(diffDays / 30)}ヶ月前`
   }
 
-  // ステータス判定
+  // ステータス判定（優先度順）
   const getCustomerStatus = (customer: Customer): { label: string; color: string; bgColor: string } => {
-    // 新規顧客(来店1回)
+    // 優先度 1: 要注意（赤）- VIP より優先
+    if (customer.tags?.includes('要注意')) {
+      return {
+        label: '要注意',
+        color: '#991B1B',
+        bgColor: '#FEE2E2',
+      }
+    }
+    // 優先度 2: VIP（ゴールド）
+    if (customer.tags?.includes('VIP')) {
+      return {
+        label: 'VIP',
+        color: '#92400E',
+        bgColor: '#FEF3C7',
+      }
+    }
+    // 優先度 3: 新規顧客(来店1回 - 緑)
     if (customer.visit_count === 1) {
       return {
         label: '新規',
@@ -106,15 +123,15 @@ export default function CustomersPage() {
         bgColor: '#D1FAE5',
       }
     }
-    // 再来店(来店2回以上)
+    // 優先度 4: 再来店(来店2回以上 - 青)
     if (customer.visit_count > 1) {
       return {
         label: '再来店',
-        color: '#3B82F6',
+        color: '#1E40AF',
         bgColor: '#DBEAFE',
       }
     }
-    // デフォルト: ラベルなし
+    // デフォルト: 未分類（グレー）
     return {
       label: '未分類',
       color: '#6B7280',
