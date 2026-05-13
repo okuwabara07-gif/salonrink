@@ -30,6 +30,8 @@ export default function CustomerDetailPage() {
   const [salonId, setSalonId] = useState<string>('')
   const [latestKarte, setLatestKarte] = useState<any>(null)
   const [preCounselings, setPreCounselings] = useState<any[]>([])
+  const [isVip, setIsVip] = useState(false)
+  const [needsAttention, setNeedsAttention] = useState(false)
 
   useEffect(() => {
     async function loadData() {
@@ -55,13 +57,15 @@ export default function CustomerDetailPage() {
       // 顧客情報取得
       const { data: customerData } = await supabase
         .from('customers')
-        .select('id, salon_id, name, line_id, phone, last_visit, visit_count, created_at, line_user_id, line_display_name, photos')
+        .select('id, salon_id, name, line_id, phone, last_visit, visit_count, created_at, line_user_id, line_display_name, photos, is_vip, needs_attention')
         .eq('id', customerId)
         .maybeSingle()
 
       setCustomer(customerData)
 
       if (customerData) {
+        setIsVip(customerData.is_vip || false)
+        setNeedsAttention(customerData.needs_attention || false)
         // サロンID取得 (顧客テーブルから)
         if (customerData.salon_id) {
           setSalonId(customerData.salon_id)
@@ -183,6 +187,46 @@ export default function CustomerDetailPage() {
     if (!error) {
       setNotesEditMode(false)
     }
+  }
+
+  const handleToggleVip = async () => {
+    if (!customerId) return
+
+    setSaving(true)
+    const supabase = await createClient()
+    const newValue = !isVip
+
+    const { error } = await supabase
+      .from('customers')
+      .update({ is_vip: newValue })
+      .eq('id', customerId)
+
+    if (!error) {
+      setIsVip(newValue)
+    } else {
+      setIsVip(isVip)
+    }
+    setSaving(false)
+  }
+
+  const handleToggleAttention = async () => {
+    if (!customerId) return
+
+    setSaving(true)
+    const supabase = await createClient()
+    const newValue = !needsAttention
+
+    const { error } = await supabase
+      .from('customers')
+      .update({ needs_attention: newValue })
+      .eq('id', customerId)
+
+    if (!error) {
+      setNeedsAttention(newValue)
+    } else {
+      setNeedsAttention(needsAttention)
+    }
+    setSaving(false)
   }
 
   const handleSaveAndRegenerate = async () => {
@@ -712,6 +756,121 @@ export default function CustomerDetailPage() {
                 ¥{(customer.total_spent || 0).toLocaleString()}
               </p>
               */}
+            </div>
+
+            {/* ステータス管理 */}
+            <div
+              style={{
+                borderTop: '1px solid var(--sr-border)',
+                paddingTop: 'clamp(16px, 2vw, 20px)',
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 'clamp(0.75rem, 1.3vw, 0.85rem)',
+                  fontWeight: 700,
+                  color: 'var(--text-secondary)',
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.5,
+                  margin: '0 0 12px 0',
+                  fontFamily: 'var(--font-noto-sans-jp)',
+                }}
+              >
+                ⚙️ ステータス管理
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'clamp(8px, 1.5vw, 12px)' }}>
+                {/* VIP チェックボックス */}
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'clamp(8px, 1.5vw, 12px)',
+                    padding: 'clamp(10px, 1.5vw, 12px)',
+                    background: isVip ? 'rgba(212, 175, 55, 0.1)' : '#f9f9f9',
+                    borderRadius: 8,
+                    border: isVip ? '1px solid rgba(212, 175, 55, 0.3)' : '1px solid var(--sr-border)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = isVip ? 'rgba(212, 175, 55, 0.15)' : '#fafafa'
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = isVip ? 'rgba(212, 175, 55, 0.1)' : '#f9f9f9'
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={isVip}
+                    onChange={handleToggleVip}
+                    disabled={saving}
+                    style={{
+                      width: 'clamp(16px, 2vw, 18px)',
+                      height: 'clamp(16px, 2vw, 18px)',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      accentColor: 'var(--accent-gold)',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                    }}
+                  >
+                    ⭐ VIP 顧客
+                  </span>
+                </label>
+
+                {/* 要注意 チェックボックス */}
+                <label
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 'clamp(8px, 1.5vw, 12px)',
+                    padding: 'clamp(10px, 1.5vw, 12px)',
+                    background: needsAttention ? 'rgba(220, 38, 38, 0.1)' : '#f9f9f9',
+                    borderRadius: 8,
+                    border: needsAttention ? '1px solid rgba(220, 38, 38, 0.3)' : '1px solid var(--sr-border)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = needsAttention ? 'rgba(220, 38, 38, 0.15)' : '#fafafa'
+                  }}
+                  onMouseLeave={(e) => {
+                    const el = e.currentTarget as HTMLElement
+                    el.style.background = needsAttention ? 'rgba(220, 38, 38, 0.1)' : '#f9f9f9'
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={needsAttention}
+                    onChange={handleToggleAttention}
+                    disabled={saving}
+                    style={{
+                      width: 'clamp(16px, 2vw, 18px)',
+                      height: 'clamp(16px, 2vw, 18px)',
+                      cursor: saving ? 'not-allowed' : 'pointer',
+                      accentColor: '#DC2626',
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontSize: 'clamp(0.9rem, 1.6vw, 1rem)',
+                      fontWeight: 500,
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-noto-sans-jp)',
+                    }}
+                  >
+                    ⚠️ 要注意 顧客
+                  </span>
+                </label>
+              </div>
             </div>
           </div>
         )}

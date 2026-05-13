@@ -16,6 +16,8 @@ interface Customer {
   phone: string
   last_visit: string | null
   visit_count: number
+  is_vip: boolean
+  needs_attention: boolean
 }
 
 export default function CustomersPage() {
@@ -48,7 +50,7 @@ export default function CustomersPage() {
       // 顧客一覧取得
       const { data: customersData } = await supabase
         .from('customers')
-        .select('id, name, phone, last_visit, visit_count')
+        .select('id, name, phone, last_visit, visit_count, is_vip, needs_attention')
         .eq('salon_id', salonData.id)
         .order('last_visit', { ascending: false, nullsFirst: false })
 
@@ -64,9 +66,8 @@ export default function CustomersPage() {
     if (activeTab === 'all') return true
     if (activeTab === 'new') return c.visit_count === 1
     if (activeTab === 'repeat') return c.visit_count > 1
-    // 一時無効化: tags column 追加後に復活
-    // if (activeTab === 'vip') return c.tags?.includes('VIP')
-    // if (activeTab === 'caution') return c.tags?.includes('要注意')
+    if (activeTab === 'vip') return c.is_vip === true
+    if (activeTab === 'caution') return c.needs_attention === true
     return true
   })
 
@@ -96,10 +97,25 @@ export default function CustomersPage() {
     return `${Math.floor(diffDays / 30)}ヶ月前`
   }
 
-  // ステータス判定
-  // TODO: VIP / 要注意 対応待ち: customers テーブルに tags column 追加後に有効化
+  // ステータス判定（優先順位: 要注意 > VIP > 新規 > 再来店 > 未分類）
   const getCustomerStatus = (customer: Customer): { label: string; color: string; bgColor: string } => {
-    // 新規顧客(来店1回)
+    // 1. 要注意（赤）- 最優先
+    if (customer.needs_attention) {
+      return {
+        label: '要注意',
+        color: '#DC2626',
+        bgColor: '#FEE2E2',
+      }
+    }
+    // 2. VIP（ゴールド）
+    if (customer.is_vip) {
+      return {
+        label: 'VIP',
+        color: '#D97706',
+        bgColor: '#FEF3C7',
+      }
+    }
+    // 3. 新規顧客(来店1回)
     if (customer.visit_count === 1) {
       return {
         label: '新規',
@@ -107,7 +123,7 @@ export default function CustomersPage() {
         bgColor: '#D1FAE5',
       }
     }
-    // 再来店(来店2回以上)
+    // 4. 再来店(来店2回以上)
     if (customer.visit_count > 1) {
       return {
         label: '再来店',
@@ -115,8 +131,7 @@ export default function CustomersPage() {
         bgColor: '#DBEAFE',
       }
     }
-    // デフォルト: ラベルなし
-    // 将来: VIP (ゴールド #FEF3C7) / 要注意 (赤 #FEE2E2) をここに追加
+    // 5. デフォルト: 未分類
     return {
       label: '未分類',
       color: '#6B7280',
