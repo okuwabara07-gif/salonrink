@@ -1448,3 +1448,49 @@ image-slot {
   background: var(--c-bg-2);
   font-weight: 600;
 }
+
+/* ==========================================
+   LINE Rich Menu — Scoped CSS Variables
+   ========================================== */
+
+[data-page="rich-menu"] {
+  --bg: #f3ede1;
+  --bg-2: #ebe3d3;
+  --card: #fbf7ee;
+  --ink: #1a1418;
+  --ink-2: #3a2f33;
+  --muted: #8a7d72;
+  --line: #d9cfbc;
+  --line-2: #c7bca6;
+  --gold: #b48a55;
+  --gold-soft: #d9bf95;
+  --accent-rm: #2a6b5a;
+  --danger-rm: #b34a3a;
+
+  font-family: "Noto Sans JP", system-ui, -apple-system, sans-serif;
+  font-feature-settings: "palt";
+  -webkit-font-smoothing: antialiased;
+}
+
+[data-page="rich-menu"] .serif-rm {
+  font-family: "Noto Serif JP", serif;
+  letter-spacing: 0.04em;
+  font-feature-settings: "palt";
+}
+
+[data-page="rich-menu"] .mono-rm {
+  font-family: "JetBrains Mono", monospace;
+}
+
+@keyframes rich-menu-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(180, 138, 85, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(180, 138, 85, 0);
+  }
+}
+
+[data-page="rich-menu"] .pulse {
+  animation: rich-menu-pulse 1.8s ease-in-out infinite;
+}
