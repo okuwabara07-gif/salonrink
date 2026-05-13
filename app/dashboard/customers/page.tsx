@@ -97,6 +97,7 @@ export default function CustomersPage() {
   }
 
   // ステータス判定
+  // TODO: VIP / 要注意 対応待ち: customers テーブルに tags column 追加後に有効化
   const getCustomerStatus = (customer: Customer): { label: string; color: string; bgColor: string } => {
     // 新規顧客(来店1回)
     if (customer.visit_count === 1) {
@@ -115,6 +116,7 @@ export default function CustomersPage() {
       }
     }
     // デフォルト: ラベルなし
+    // 将来: VIP (ゴールド #FEF3C7) / 要注意 (赤 #FEE2E2) をここに追加
     return {
       label: '未分類',
       color: '#6B7280',
