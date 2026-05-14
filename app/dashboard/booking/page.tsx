@@ -54,23 +54,54 @@ export default function BookingPage() {
       to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
     }
 
-    let query = supabase
+    // reservations テーブル(LINE/手動分)
+    let resvQuery = supabase
       .from('reservations')
       .select('*')
       .eq('salon_id', id)
       .gte('scheduled_at', from.toISOString().split('T')[0])
       .lt('scheduled_at', to.toISOString().split('T')[0])
 
-    if (filterSource !== 'all') {
-      query = query.eq('source', filterSource)
+    if (filterSource !== 'all' && filterSource !== 'hotpepper') {
+      resvQuery = resvQuery.eq('source', filterSource)
     }
+    if (filterStatus !== 'all') {
+      resvQuery = resvQuery.eq('status', filterStatus)
+    }
+
+    // hpb_reservations テーブル(HPB同期分)
+    let hpbQuery = supabase
+      .from('hpb_reservations')
+      .select('*')
+      .eq('salon_id', id)
+      .gte('start_time', from.toISOString())
+      .lt('start_time', to.toISOString())
 
     if (filterStatus !== 'all') {
-      query = query.eq('status', filterStatus)
+      hpbQuery = hpbQuery.eq('status', filterStatus)
     }
 
-    const { data } = await query.order('scheduled_at', { ascending: true })
-    setReservations(data || [])
+    const [resvResult, hpbResult] = await Promise.all([
+      resvQuery.order('scheduled_at', { ascending: true }),
+      filterSource === 'hotpepper' || filterSource === 'all' ? hpbQuery.order('start_time', { ascending: true }) : Promise.resolve({ data: [] }),
+    ])
+
+    // hpb_reservations を reservations のスキーマに正規化
+    const hpbNormalized = ((hpbResult as any).data || []).map((r: any) => ({
+      id: 'hpb_' + r.id,
+      scheduled_at: r.start_time,
+      customer_name: r.customer_name,
+      menu: r.menu_name || '',
+      status: r.status || 'confirmed',
+      source: 'hotpepper',
+      price: null,
+      raw_data: r.raw_data,
+    }))
+
+    const all = [...(resvResult.data || []), ...hpbNormalized]
+      .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
+
+    setReservations(all)
     setLoading(false)
   }
 
