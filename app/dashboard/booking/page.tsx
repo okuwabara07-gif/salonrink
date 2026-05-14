@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Icon,
   Avatar,
@@ -11,25 +11,29 @@ import {
   STAFF,
   ADDABLE_STAFF,
   SERVICES,
-  todayBookings,
   fmtTime,
   type Booking,
 } from '@/lib/srkMockData';
+import {
+  fetchBookingsForDay,
+  fetchBookingsForWeek,
+  fetchBookingsForMonth,
+} from '@/lib/booking/fetchBookings';
 
 /* ============================================================
-   Schedule — 予約スケジュール
+   Schedule — 予約スケジュール (Phase 3B: Supabase 実データ)
    ============================================================
 
-   Phase 3A: 新デザイン + モックデータ。
-   Phase 3B で Supabase hpb_reservations を統合(現状の commit a07ddf0 の
-   データ取得層を移植)。
-
-   モックの bookingsForDate() は ユーザー閲覧体験のため、表示日付ベースで
-   安定した擬似ランダム値を返す。本実装では Supabase クエリに置換。
+   - hpb_reservations + reservations から指定範囲を取得
+   - Day/Week/Month で取得範囲が変わる
+   - 取得失敗時は警告バナー、空配列で継続
+   - 認証されていないユーザーは middleware で /login に弾かれる前提
    ============================================================ */
 
 const WD_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
 const WD_LABELS_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+type ViewMode = 'day' | 'week' | 'month';
 
 interface DayForecast {
   count: number;
@@ -37,33 +41,34 @@ interface DayForecast {
   closed: boolean;
 }
 
-function bookingsForDate(d: Date): DayForecast {
-  const day = d.getDate();
-  const wd = d.getDay();
-  if (wd === 0) return { count: 0, revenue: 0, closed: true };
-  const seed = (d.getFullYear() * 100 + d.getMonth() * 30 + day) % 17;
-  const base =
-    wd === 2 ? 14 :
-    wd === 6 ? 13 :
-    wd === 5 ? 12 :
-    wd === 4 ? 10 :
-    wd === 1 ?  8 : 9;
-  const count = Math.max(0, base + (seed % 5) - 2);
-  const revenue = count * (6800 + (seed % 4) * 1100);
-  return { count, revenue, closed: false };
+/** Aggregate real bookings into per-date forecast shape for month view. */
+function aggregateByDate(bookings: Booking[], dates: Date[]): Map<string, DayForecast> {
+  const map = new Map<string, DayForecast>();
+  for (const d of dates) {
+    const key = d.toDateString();
+    map.set(key, { count: 0, revenue: 0, closed: d.getDay() === 0 });
+  }
+  // bookings は単日内の minutes-from-midnight しか持たないため
+  // 月ビューでは日付ごとに集計するには別取得した「日付ごとの内訳」が必要。
+  // fetchBookingsForMonth は範囲全部を flat に返すので、ここで日別に振り分けるには
+  // 各 booking の元 datetime が必要 → 現状 Booking 型に持たせていないので
+  // 月ビューは件数集計のみ、forecast から実数置換は次フェーズ。
+  return map;
 }
 
-type ViewMode = 'day' | 'week' | 'month';
-
 export default function SchedulePage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
   const [selected, setSelected] = useState<Booking | null>(null);
   const [view, setView] = useState<ViewMode>('day');
 
-  // SSR-safe date state: initialize on client only.
   const [today0, setToday0] = useState<Date | null>(null);
   const [currentDate, setCurrentDate] = useState<Date | null>(null);
   const [now, setNow] = useState<Date | null>(null);
 
+  /* ── client init ────────────────────────────────────────── */
   useEffect(() => {
     const t = new Date();
     t.setHours(0, 0, 0, 0);
@@ -74,19 +79,54 @@ export default function SchedulePage() {
     return () => clearInterval(tick);
   }, []);
 
+  /* ── data fetch (re-run on view/date change) ────────────── */
+  useEffect(() => {
+    if (!currentDate) return;
+    let cancelled = false;
+    setLoading(true);
+    setFetchError(null);
+
+    const fetcher =
+      view === 'week'
+        ? fetchBookingsForWeek
+        : view === 'month'
+          ? fetchBookingsForMonth
+          : fetchBookingsForDay;
+
+    fetcher(currentDate)
+      .then((res) => {
+        if (cancelled) return;
+        setBookings(res.bookings);
+        if (res.error) setFetchError(res.error);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        console.error('[Schedule] fetch failed:', e);
+        setFetchError(String(e?.message || e));
+        setBookings([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentDate, view]);
+
   if (!today0 || !currentDate || !now) {
-    // Loading skeleton — minimal flash while client hydrates
     return <div className="srk-page" />;
   }
 
   const isToday = currentDate.toDateString() === today0.toDateString();
-  const isShowingTodaysBookings = isToday;
 
   const HOUR_START = 10;
   const HOUR_END = 19;
   const hours = HOUR_END - HOUR_START;
-  const COL_W = 84;
-  const totalW = hours * COL_W;
+  const SLOT_MIN = 30;
+  const SLOT_W = 64; // px per 30-min slot
+  const slots = (hours * 60) / SLOT_MIN;
+  const totalW = slots * SLOT_W;
 
   const nowMin = now.getHours() * 60 + now.getMinutes();
   const nowX = ((nowMin - HOUR_START * 60) / (hours * 60)) * totalW;
@@ -101,18 +141,22 @@ export default function SchedulePage() {
     d.setMonth(d.getMonth() + delta);
     setCurrentDate(d);
   };
-  const goToday = () => setToday0((t) => t && (setCurrentDate(new Date(t)), t));
 
   const _tom = new Date(today0);
   _tom.setDate(_tom.getDate() + 1);
   const tomorrowMonth = _tom.getMonth() + 1;
   const tomorrowDay = _tom.getDate();
 
+  /* Day view: filter to bookings on currentDate.
+     fetchBookingsForDay は単日範囲なので bookings は既に絞り済み。
+     Week/Month view では bookings は範囲全部 → 各 view 内で日付ごとに分配する。 */
+  const dayBookings = view === 'day' ? bookings : [];
+
   return (
     <div className="srk-page">
       <div className="srk-schedule">
 
-        {/* ─── Toolbar ───────────────────────────────── */}
+        {/* ─── Toolbar ──────────────────────────────────────── */}
         <div className="srk-sch-toolbar">
           <div className="srk-sch-date">
             <button
@@ -151,6 +195,11 @@ export default function SchedulePage() {
                     {isToday && (
                       <span>
                         {' '}· <b style={{ color: 'var(--plum)' }}>本日</b>
+                      </span>
+                    )}
+                    {loading && (
+                      <span style={{ marginLeft: 8, color: 'var(--muted)', fontSize: 11 }}>
+                        · 取得中…
                       </span>
                     )}
                   </span>
@@ -217,23 +266,17 @@ export default function SchedulePage() {
                 className={view === 'day' ? 'is-on' : ''}
                 onClick={() => setView('day')}
                 type="button"
-              >
-                日
-              </button>
+              >日</button>
               <button
                 className={view === 'week' ? 'is-on' : ''}
                 onClick={() => setView('week')}
                 type="button"
-              >
-                週
-              </button>
+              >週</button>
               <button
                 className={view === 'month' ? 'is-on' : ''}
                 onClick={() => setView('month')}
                 type="button"
-              >
-                月
-              </button>
+              >月</button>
             </div>
             <button className="srk-btn ghost" type="button">
               <Icon name="filter" size={12} /> 絞り込み
@@ -244,18 +287,37 @@ export default function SchedulePage() {
           </div>
         </div>
 
-        {/* ─── Views ─────────────────────────────────── */}
+        {/* ─── Error banner ─────────────────────────────────── */}
+        {fetchError && (
+          <div
+            style={{
+              padding: '10px 14px',
+              margin: '0 0 12px',
+              borderRadius: 8,
+              background: '#f6e3e3',
+              color: '#7a3030',
+              border: '1px solid #d9aeae',
+              fontSize: 12.5,
+            }}
+          >
+            データ取得エラー: {fetchError} — モックデータ無しで表示しています。
+          </div>
+        )}
+
+        {/* ─── Views ────────────────────────────────────────── */}
         {view === 'day' && (
           <DayView
             currentDate={currentDate}
-            showBookings={isShowingTodaysBookings}
+            bookings={dayBookings}
             HOUR_START={HOUR_START}
             HOUR_END={HOUR_END}
-            COL_W={COL_W}
+            SLOT_MIN={SLOT_MIN}
+            SLOT_W={SLOT_W}
             totalW={totalW}
             nowX={isToday ? nowX : -1}
             now={now}
             setSelected={setSelected}
+            loading={loading}
           />
         )}
 
@@ -267,6 +329,8 @@ export default function SchedulePage() {
               setView('day');
             }}
             today0={today0}
+            bookings={bookings}
+            loading={loading}
           />
         )}
 
@@ -278,6 +342,8 @@ export default function SchedulePage() {
               setView('day');
             }}
             today0={today0}
+            bookings={bookings}
+            loading={loading}
           />
         )}
       </div>
@@ -297,49 +363,54 @@ export default function SchedulePage() {
 
 interface DayViewProps {
   currentDate: Date;
-  showBookings: boolean;
+  bookings: Booking[];
   HOUR_START: number;
   HOUR_END: number;
-  COL_W: number;
+  SLOT_MIN: number;
+  SLOT_W: number;
   totalW: number;
   nowX: number;
   now: Date;
   setSelected: (b: Booking) => void;
+  loading: boolean;
 }
 
 function DayView({
   currentDate,
-  showBookings,
+  bookings,
   HOUR_START,
   HOUR_END,
-  COL_W,
+  SLOT_MIN,
+  SLOT_W,
   totalW,
   nowX,
   now,
   setSelected,
+  loading,
 }: DayViewProps) {
   const hours = HOUR_END - HOUR_START;
-  const bookings = showBookings ? todayBookings : [];
-  const forecast = bookingsForDate(currentDate);
+  const slots = (hours * 60) / SLOT_MIN;
 
+  // density bar: per-hour count (1-hour buckets for readability)
   const perHour = Array.from({ length: hours }, (_, i) => {
     const startMin = (HOUR_START + i) * 60;
     const endMin = startMin + 60;
     return bookings.filter((b) => b.start < endMin && b.end > startMin).length;
   });
   const maxPer = Math.max(...perHour, 1);
+  const HOUR_W = (60 / SLOT_MIN) * SLOT_W; // density bar uses hourly bins
 
   const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const hasBookings = bookings.length > 0;
 
   return (
     <>
       <div className="srk-sch-scroll">
-        {/* density bar */}
         <div className="srk-sch-density">
           <div className="srk-sch-density-label">時間帯別予約数</div>
           <div className="srk-sch-density-inner" style={{ width: totalW }}>
             {perHour.map((n, i) => (
-              <div key={i} className="srk-sch-density-cell" style={{ width: COL_W }}>
+              <div key={i} className="srk-sch-density-cell" style={{ width: HOUR_W }}>
                 <div className="srk-sch-density-bar">
                   <span style={{ height: `${(n / maxPer) * 100}%` }} />
                 </div>
@@ -349,28 +420,63 @@ function DayView({
           </div>
         </div>
 
-        {/* time axis */}
         <div className="srk-sch-axis">
           <div className="srk-sch-staffcol srk-sch-axis-head">時間 →</div>
           <div className="srk-sch-axis-inner" style={{ width: totalW }}>
-            {Array.from({ length: hours + 1 }).map((_, i) => (
-              <div key={i} className="srk-sch-axis-tick" style={{ left: i * COL_W }}>
-                <span className="num">{HOUR_START + i}:00</span>
-              </div>
-            ))}
+            {Array.from({ length: slots + 1 }).map((_, i) => {
+              const totalMins = HOUR_START * 60 + i * SLOT_MIN;
+              const h = Math.floor(totalMins / 60);
+              const m = totalMins % 60;
+              const isHour = m === 0;
+              return (
+                <div
+                  key={i}
+                  className={`srk-sch-axis-tick ${isHour ? '' : 'is-half'}`}
+                  style={{
+                    left: i * SLOT_W,
+                    opacity: isHour ? 1 : 0.45,
+                  }}
+                >
+                  <span className="num" style={{ fontSize: isHour ? undefined : '10px' }}>
+                    {isHour ? `${h}:00` : `:${String(m).padStart(2, '0')}`}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* grid */}
         <div className="srk-sch-grid">
           {STAFF.map((st) => {
             const list = bookings.filter((b) => b.staff === st.id);
             const minutesBooked = list.reduce((s, b) => s + (b.end - b.start), 0);
-            const util = showBookings
-              ? Math.min(1, minutesBooked / (hours * 60))
-              : 0;
+            const util = Math.min(1, minutesBooked / (hours * 60));
+
+            // ── 時間重複する予約を track に振り分け(縦に積む) ──
+            const sorted = [...list].sort((a, b) => a.start - b.start);
+            const trackEnds: number[] = [];
+            const placed: Array<{ b: Booking; track: number }> = [];
+            for (const b of sorted) {
+              let track = trackEnds.findIndex((e) => e <= b.start);
+              if (track === -1) {
+                track = trackEnds.length;
+                trackEnds.push(b.end);
+              } else {
+                trackEnds[track] = b.end;
+              }
+              placed.push({ b, track });
+            }
+            const trackCount = Math.max(1, trackEnds.length);
+            const TRACK_H = 62;
+            const ROW_PAD_V = 12;
+            const rowMinHeight = trackCount * TRACK_H + ROW_PAD_V;
+
             return (
-              <div key={st.id} className="srk-sch-row">
+              <div
+                key={st.id}
+                className="srk-sch-row"
+                style={{ minHeight: rowMinHeight }}
+              >
                 <div className="srk-sch-staffcol">
                   <Avatar char={st.initial} color={st.color} size={32} />
                   <div>
@@ -383,29 +489,42 @@ function DayView({
                         />
                       </div>
                       <em>
-                        {showBookings ? (
-                          <>
-                            稼働 <b className="num">{Math.round(util * 100)}%</b>
-                          </>
-                        ) : (
-                          <>受付可</>
+                        稼働 <b className="num">{Math.round(util * 100)}%</b>
+                        {trackCount > 1 && (
+                          <span style={{ marginLeft: 6, color: 'var(--muted)' }}>
+                            · {trackCount}重
+                          </span>
                         )}
                       </em>
                     </div>
                   </div>
                 </div>
-                <div className="srk-sch-track" style={{ width: totalW }}>
-                  {Array.from({ length: hours }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="srk-sch-cell"
-                      style={{ left: i * COL_W, width: COL_W }}
-                    />
-                  ))}
-                  {list.map((b) => {
-                    const left = ((b.start - HOUR_START * 60) / 60) * COL_W;
-                    const width = ((b.end - b.start) / 60) * COL_W;
-                    const svc = SERVICES[b.tags[0]];
+                <div
+                  className="srk-sch-track"
+                  style={{ width: totalW, minHeight: rowMinHeight }}
+                >
+                  {Array.from({ length: slots }).map((_, i) => {
+                    const totalMins = HOUR_START * 60 + i * SLOT_MIN;
+                    const isHourEdge = totalMins % 60 === 0;
+                    return (
+                      <div
+                        key={i}
+                        className={`srk-sch-cell ${isHourEdge ? 'is-hour' : ''}`}
+                        style={{ left: i * SLOT_W, width: SLOT_W }}
+                      />
+                    );
+                  })}
+                  {placed.map(({ b, track }) => {
+                    const left = ((b.start - HOUR_START * 60) / SLOT_MIN) * SLOT_W;
+                    const width = ((b.end - b.start) / SLOT_MIN) * SLOT_W;
+                    const top = track * TRACK_H + 6;
+                    const height = TRACK_H - 6;
+                    const svc = b.tags[0] ? SERVICES[b.tags[0]] : null;
+                    const bg = svc
+                      ? `linear-gradient(180deg, ${svc.color}26, ${svc.color}14)`
+                      : 'linear-gradient(180deg, var(--bg-soft), var(--paper))';
+                    const border = svc ? `${svc.color}66` : 'var(--line-2)';
+                    const isShort = width < 80;
                     return (
                       <button
                         key={b.id}
@@ -415,8 +534,10 @@ function DayView({
                         style={{
                           left: left + 2,
                           width: width - 4,
-                          background: `linear-gradient(180deg, ${svc.color}26, ${svc.color}14)`,
-                          borderColor: `${svc.color}66`,
+                          top,
+                          height,
+                          background: bg,
+                          borderColor: border,
                         }}
                       >
                         <div className="srk-sch-block-h">
@@ -429,15 +550,24 @@ function DayView({
                           </span>
                           {b.isNew && <span className="srk-sch-block-new">新</span>}
                         </div>
-                        <div className="srk-sch-block-name">
+                        <div
+                          className="srk-sch-block-name"
+                          style={{
+                            fontSize: isShort ? '11px' : undefined,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {b.customer} <em>様</em>
                         </div>
-                        <div className="srk-sch-block-meta">
-                          <span className="num">
-                            {fmtTime(b.start)}–{fmtTime(b.end)}
-                          </span>
-                          {b.note && <em>· {b.note}</em>}
-                        </div>
+                        {!isShort && (
+                          <div className="srk-sch-block-meta">
+                            <span className="num">
+                              {fmtTime(b.start)}–{fmtTime(b.end)}
+                            </span>
+                          </div>
+                        )}
                       </button>
                     );
                   })}
@@ -462,15 +592,19 @@ function DayView({
               </div>
             </div>
             <div className="srk-sch-track" style={{ width: totalW }}>
-              {Array.from({ length: hours }).map((_, i) => (
-                <div
-                  key={i}
-                  className="srk-sch-cell srk-sch-cell-free"
-                  style={{ left: i * COL_W, width: COL_W }}
-                >
-                  <span className="srk-sch-free-slot">＋</span>
-                </div>
-              ))}
+              {Array.from({ length: slots }).map((_, i) => {
+                const totalMins = HOUR_START * 60 + i * SLOT_MIN;
+                const isHourEdge = totalMins % 60 === 0;
+                return (
+                  <div
+                    key={i}
+                    className={`srk-sch-cell srk-sch-cell-free ${isHourEdge ? 'is-hour' : ''}`}
+                    style={{ left: i * SLOT_W, width: SLOT_W }}
+                  >
+                    {isHourEdge && <span className="srk-sch-free-slot">＋</span>}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -489,19 +623,16 @@ function DayView({
         </div>
       </div>
 
-      {/* future forecast banner (non-today only) */}
-      {!showBookings && (
+      {/* empty state for future/empty days */}
+      {!hasBookings && !loading && (
         <div className="srk-sch-future">
           <div>
             <Icon name="calendar" size={20} />
             <h3>
-              {currentDate.getMonth() + 1}月{currentDate.getDate()}日の予約見込み
+              {currentDate.getMonth() + 1}月{currentDate.getDate()}日の予約
             </h3>
-            <p>
-              予測予約 <b className="num">{forecast.count}</b> 件 · 予測売上{' '}
-              <b className="num">¥{(forecast.revenue / 1000).toFixed(0)}k</b>
-            </p>
-            <span>※ プロト用ダミー予測</span>
+            <p>現在この日の予約はありません</p>
+            <span>HPB同期は30分ごとに自動更新されます</span>
           </div>
         </div>
       )}
@@ -515,9 +646,11 @@ interface WeekViewProps {
   currentDate: Date;
   setCurrentDate: (d: Date) => void;
   today0: Date;
+  bookings: Booking[]; // full week range
+  loading: boolean;
 }
 
-function WeekView({ currentDate, setCurrentDate, today0 }: WeekViewProps) {
+function WeekView({ currentDate, setCurrentDate, today0, bookings }: WeekViewProps) {
   const weekStart = new Date(currentDate);
   const dayDiff = (currentDate.getDay() + 6) % 7;
   weekStart.setDate(currentDate.getDate() - dayDiff);
@@ -532,6 +665,12 @@ function WeekView({ currentDate, setCurrentDate, today0 }: WeekViewProps) {
   const HOUR_END = 19;
   const hours = HOUR_END - HOUR_START;
 
+  // Booking 型は単日内の minutes しか持たないので、日付ベースの仕分けはせず
+  // 全件を全日に表示する設計だと不正確。週ビューでは表示日が今日と一致する場合のみ
+  // 全件を表示する暫定処理。本実装は Booking 型に元の datetime を持たせる必要あり。
+  // 現状は週合計の件数表示のみ正確、日別ブロック表示は省略(forecast 風に)。
+  const totalCount = bookings.length;
+
   return (
     <div className="srk-week">
       <div className="srk-week-axis">
@@ -545,8 +684,7 @@ function WeekView({ currentDate, setCurrentDate, today0 }: WeekViewProps) {
       {days.map((d, i) => {
         const isThisDay = d.toDateString() === today0.toDateString();
         const isCurrent = d.toDateString() === currentDate.toDateString();
-        const fc = bookingsForDate(d);
-        const bookings = isThisDay ? todayBookings : [];
+        const closed = d.getDay() === 0;
         return (
           <div
             key={i}
@@ -559,43 +697,32 @@ function WeekView({ currentDate, setCurrentDate, today0 }: WeekViewProps) {
             >
               <em>{WD_LABELS_EN[d.getDay()]}</em>
               <b className="num">{d.getDate()}</b>
-              <span>{fc.closed ? '休' : `${fc.count}件`}</span>
+              <span>{closed ? '休' : '—'}</span>
             </button>
             <div className="srk-week-track">
               {Array.from({ length: hours }).map((_, j) => (
                 <div key={j} className="srk-week-cell" />
               ))}
-              {!fc.closed && !bookings.length && (
+              {!closed && (
                 <div className="srk-week-forecast">
-                  <span>
-                    予測 {fc.count}件 / ¥{(fc.revenue / 1000).toFixed(0)}k
-                  </span>
+                  <span>日表示で詳細確認</span>
                 </div>
               )}
-              {bookings.map((b) => {
-                const left = ((b.start - HOUR_START * 60) / (hours * 60)) * 100;
-                const width = ((b.end - b.start) / (hours * 60)) * 100;
-                const svc = SERVICES[b.tags[0]];
-                return (
-                  <div
-                    key={b.id}
-                    className="srk-week-block"
-                    style={{
-                      left: `${left}%`,
-                      width: `${width}%`,
-                      background: `linear-gradient(180deg, ${svc.color}30, ${svc.color}15)`,
-                      borderColor: `${svc.color}66`,
-                    }}
-                  >
-                    <span>{b.customer}</span>
-                  </div>
-                );
-              })}
-              {fc.closed && <div className="srk-week-closed">定休日</div>}
+              {closed && <div className="srk-week-closed">定休日</div>}
             </div>
           </div>
         );
       })}
+      <div
+        style={{
+          padding: '12px 16px',
+          fontSize: 12,
+          color: 'var(--muted)',
+          textAlign: 'center',
+        }}
+      >
+        週合計 <b className="num" style={{ color: 'var(--ink)' }}>{totalCount}</b> 件 · 日付をクリックで日次詳細
+      </div>
     </div>
   );
 }
@@ -606,9 +733,11 @@ interface MonthViewProps {
   currentDate: Date;
   setCurrentDate: (d: Date) => void;
   today0: Date;
+  bookings: Booking[]; // full month range
+  loading: boolean;
 }
 
-function MonthView({ currentDate, setCurrentDate, today0 }: MonthViewProps) {
+function MonthView({ currentDate, setCurrentDate, today0, bookings }: MonthViewProps) {
   const y = currentDate.getFullYear();
   const m = currentDate.getMonth();
   const first = new Date(y, m, 1);
@@ -622,13 +751,10 @@ function MonthView({ currentDate, setCurrentDate, today0 }: MonthViewProps) {
     return { d, isCur };
   });
 
-  const monthBookings = cells
-    .filter((c) => c.isCur)
-    .map((c) => bookingsForDate(c.d));
-  const maxC = Math.max(...monthBookings.map((b) => b.count), 1);
-  const totalRevenue = monthBookings.reduce((s, b) => s + b.revenue, 0);
-  const totalBookings = monthBookings.reduce((s, b) => s + b.count, 0);
-  const workingDays = monthBookings.filter((b) => !b.closed).length;
+  // 月合計(全予約)
+  const totalBookings = bookings.length;
+  const totalRevenue = bookings.reduce((s, b) => s + (b.amount || 0), 0);
+  const workingDays = cells.filter((c) => c.isCur && c.d.getDay() !== 0).length;
 
   return (
     <div className="srk-month">
@@ -678,15 +804,18 @@ function MonthView({ currentDate, setCurrentDate, today0 }: MonthViewProps) {
 
       <div className="srk-month-grid">
         {cells.map((c, i) => {
-          const fc = bookingsForDate(c.d);
           const isTodayCell = c.d.toDateString() === today0.toDateString();
-          const intensity = fc.closed ? 0 : Math.ceil((fc.count / maxC) * 5);
+          const closed = c.d.getDay() === 0;
+          // 月ビューの日別件数表示は、Booking 型に元 datetime を保持後の次フェーズで
+          // 完全対応。現状は今日にのみ実件数、それ以外は空表示。
+          const todayCount = isTodayCell ? totalBookings : 0;
+          const intensity = closed ? 0 : Math.min(5, Math.ceil(todayCount / 2));
           const wd = c.d.getDay();
           return (
             <button
               key={i}
               type="button"
-              className={`srk-month-cell ${c.isCur ? '' : 'is-out'} ${isTodayCell ? 'is-today' : ''} ${fc.closed ? 'is-closed' : ''} srk-heat-${intensity}`}
+              className={`srk-month-cell ${c.isCur ? '' : 'is-out'} ${isTodayCell ? 'is-today' : ''} ${closed ? 'is-closed' : ''} srk-heat-${intensity}`}
               onClick={() => setCurrentDate(c.d)}
             >
               <div className="srk-month-cell-h">
@@ -696,30 +825,31 @@ function MonthView({ currentDate, setCurrentDate, today0 }: MonthViewProps) {
                   {c.d.getDate()}
                 </span>
                 {isTodayCell && <span className="srk-month-today">今日</span>}
-                {fc.closed && c.isCur && (
+                {closed && c.isCur && (
                   <span className="srk-month-closed">休</span>
                 )}
               </div>
-              {!fc.closed && c.isCur && (
+              {!closed && c.isCur && isTodayCell && todayCount > 0 && (
                 <div className="srk-month-cell-body">
                   <div className="srk-month-count">
-                    <b className="num">{fc.count}</b>
+                    <b className="num">{todayCount}</b>
                     <em>件</em>
-                  </div>
-                  <div className="srk-month-revenue num">
-                    ¥{Math.round(fc.revenue / 1000)}k
-                  </div>
-                  <div className="srk-month-bars">
-                    {[...Array(Math.min(6, fc.count))].map((_, b) => (
-                      <i key={b} />
-                    ))}
-                    {fc.count > 6 && <em>+{fc.count - 6}</em>}
                   </div>
                 </div>
               )}
             </button>
           );
         })}
+      </div>
+      <div
+        style={{
+          padding: '12px 16px',
+          fontSize: 11.5,
+          color: 'var(--muted)',
+          textAlign: 'center',
+        }}
+      >
+        ※ 日付クリックで詳細表示 · 日別ヒートマップは次回更新で対応
       </div>
     </div>
   );
@@ -738,7 +868,13 @@ function ReservationDetail({ booking }: { booking: Booking }) {
             {booking.isNew && <span className="srk-tag-new">新規</span>}
           </div>
           <div className="srk-detail-meta">
-            {booking.ageBand} · 来店 {booking.repeat}回目
+            {booking.ageBand || '—'} · 来店 {booking.repeat}回目
+            {booking.source && (
+              <>
+                {' · '}
+                <span style={{ color: 'var(--muted)' }}>経路: {booking.source}</span>
+              </>
+            )}
           </div>
         </div>
         <div className="srk-detail-time">
@@ -752,7 +888,11 @@ function ReservationDetail({ booking }: { booking: Booking }) {
         <div>
           <label>メニュー</label>
           <div>
-            <ServicePills tags={booking.tags} />
+            {booking.tags.length > 0 ? (
+              <ServicePills tags={booking.tags} />
+            ) : (
+              <span style={{ color: 'var(--muted)', fontSize: 12 }}>—</span>
+            )}
           </div>
         </div>
         <div>
@@ -765,7 +905,7 @@ function ReservationDetail({ booking }: { booking: Booking }) {
         <div>
           <label>料金</label>
           <div className="num" style={{ fontSize: '18px' }}>
-            ¥{booking.amount.toLocaleString()}
+            {booking.amount > 0 ? `¥${booking.amount.toLocaleString()}` : '—'}
           </div>
         </div>
         <div>
@@ -773,12 +913,16 @@ function ReservationDetail({ booking }: { booking: Booking }) {
           <div>
             <span className={`srk-status srk-status-${booking.status}`}>
               <i />
-              {booking.status === 'confirmed' ? '確定' : '仮予約'}
+              {booking.status === 'confirmed' ? '確定' :
+               booking.status === 'tentative' ? '仮予約' :
+               booking.status === 'inprogress' ? '来店中' :
+               booking.status === 'done' ? '完了' :
+               '見送り'}
             </span>
           </div>
         </div>
         <div className="full">
-          <label>メモ</label>
+          <label>メニュー詳細 / メモ</label>
           <div>{booking.note || '—'}</div>
         </div>
       </div>

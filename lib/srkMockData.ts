@@ -1,9 +1,8 @@
 /**
- * srkMockData.ts — Typed mock data for SalonRink prototype views.
+ * srkMockData.ts — Typed mock data + shared types for SalonRink views.
  *
- * 注: 本番では Supabase クエリに置換予定。Phase 3 の予約画面では
- * すでに `hpb_reservations` テーブルから実データ取得する経路がある。
- * このファイルはホーム画面・顧客・カルテ・DM配信の暫定データ用。
+ * Phase 3B 更新: Booking 型に status 値を追加(confirmed/tentative/inprogress/done/canceled)、
+ * source フィールド追加。実データ(Supabase)とモックデータ両方で同じ型を使う。
  */
 
 /* ─── Types ─────────────────────────────────────────────────────────── */
@@ -28,6 +27,23 @@ export interface AddableStaff extends Staff {
   monthly: number;
 }
 
+export type BookingStatus =
+  | 'confirmed'
+  | 'tentative'
+  | 'inprogress'
+  | 'done'
+  | 'canceled';
+
+export type BookingSource =
+  | 'hpb'
+  | 'hotpepper'
+  | 'web'
+  | 'phone'
+  | 'walkin'
+  | 'repeat'
+  | 'line'
+  | 'manual';
+
 export interface Booking {
   id: string;
   staff: string;
@@ -36,13 +52,16 @@ export interface Booking {
   customer: string;
   ageBand: string;
   tags: ServiceKey[];
-  status: 'confirmed' | 'tentative';
+  status: BookingStatus;
   repeat: number;
   amount: number;
   isNew?: boolean;
   lastVisit?: string;
   lineDigest?: string;
   note?: string;
+  source?: BookingSource;
+  /** Underlying source-specific id (e.g. hpb_xxx, resv_xxx). Optional. */
+  rawId?: string;
 }
 
 export interface MessageItem {
@@ -171,6 +190,27 @@ export const SERVICES: Record<ServiceKey, Service> = {
   S: { label: '白髪染め',         short: 'S', color: '#7a4a2b' },
 };
 
+/* Status display labels (UI fallback) */
+export const STATUS_LABEL: Record<BookingStatus, string> = {
+  confirmed:  '確定',
+  tentative:  '仮予約',
+  inprogress: '来店中',
+  done:       '完了',
+  canceled:   '見送り',
+};
+
+/* Source display labels */
+export const SOURCE_LABEL: Record<BookingSource, { short: string; color: string }> = {
+  hpb:       { short: 'HPB',  color: '#c84a4a' },
+  hotpepper: { short: 'HPB',  color: '#c84a4a' },
+  web:       { short: 'WEB',  color: '#5a7a8f' },
+  phone:     { short: 'TEL',  color: '#8a6e4d' },
+  walkin:    { short: '店頭', color: '#7a8f5a' },
+  repeat:    { short: 'RPT',  color: '#a3727f' },
+  line:      { short: 'LINE', color: '#06c755' },
+  manual:    { short: '手動', color: '#7a7064' },
+};
+
 export const todayBookings: Booking[] = [
   { id:'b1', staff:'s1', start: 10*60,    end: 11*60+30, customer:'菊地 照子', ageBand:'60s', tags:['L','S'], status:'confirmed', repeat:8,  amount:9800,
     lastVisit:'2026/03/15（60日前）',
@@ -199,7 +239,7 @@ export const messages: MessageItem[] = [
 ];
 
 export const weekTrend: number[]    = [3,5,4,6,8,7,5, 6,4,7,9,8,10,12];
-export const revenueTrend: number[] = [42,55,48,61,72,68,58, 62,49,71,84,79,92,108]; // ×1000円
+export const revenueTrend: number[] = [42,55,48,61,72,68,58, 62,49,71,84,79,92,108];
 
 export const customerSegments: CustomerSegment[] = [
   { label: '新規',          value: 12, color: '#b89564' },
