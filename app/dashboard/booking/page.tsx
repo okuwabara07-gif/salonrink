@@ -54,13 +54,13 @@ export default function BookingPage() {
       to = new Date(now.getFullYear(), now.getMonth() + 1, 1)
     }
 
-    // reservations テーブル(LINE/手動分)
+    // reservations テーブル(LINE/手動分) - カラム名は datetime
     let resvQuery = supabase
       .from('reservations')
       .select('*')
       .eq('salon_id', id)
-      .gte('scheduled_at', from.toISOString().split('T')[0])
-      .lt('scheduled_at', to.toISOString().split('T')[0])
+      .gte('datetime', from.toISOString())
+      .lt('datetime', to.toISOString())
 
     if (filterSource !== 'all' && filterSource !== 'hotpepper') {
       resvQuery = resvQuery.eq('source', filterSource)
@@ -82,7 +82,7 @@ export default function BookingPage() {
     }
 
     // 両テーブルを独立してfetch、片方が失敗しても他方は反映する
-    const resvPromise = resvQuery.order('scheduled_at', { ascending: true })
+    const resvPromise = resvQuery.order('datetime', { ascending: true })
       .then(r => r)
       .catch(e => { console.warn('reservations fetch failed:', e); return { data: [] } })
     const hpbPromise = (filterSource === 'hotpepper' || filterSource === 'all')
@@ -92,6 +92,12 @@ export default function BookingPage() {
       : Promise.resolve({ data: [] })
 
     const [resvResult, hpbResult] = await Promise.all([resvPromise, hpbPromise])
+
+    // reservations テーブルは datetime カラム→ scheduled_at に正規化
+    const resvNormalized = ((resvResult as any).data || []).map((r: any) => ({
+      ...r,
+      scheduled_at: r.datetime,
+    }))
 
     // hpb_reservations を reservations のスキーマに正規化
     const hpbNormalized = ((hpbResult as any).data || []).map((r: any) => ({
@@ -105,7 +111,7 @@ export default function BookingPage() {
       raw_data: r.raw_data,
     }))
 
-    const all = [...(resvResult.data || []), ...hpbNormalized]
+    const all = [...resvNormalized, ...hpbNormalized]
       .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
 
     setReservations(all)
