@@ -1,53 +1,107 @@
-import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import Sidebar from '@/components/Sidebar'
-import TabBar from '@/components/TabBar'
+'use client';
 
-export const metadata: Metadata = {
-  title: 'ダッシュボード | SalonRink',
-  description: 'サロン管理ダッシュボード',
-  robots: { index: false, follow: false },
+import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
+import { Sidebar, TopHeader } from '@/components/srk';
+
+/**
+ * /dashboard 配下の全画面に共通のクロム(サイドバー + トップヘッダー)。
+ *
+ * Sidebar / TopHeader は client component なのでこの layout 自体も client。
+ * ページ本体(children)は server / client どちらでも OK。
+ */
+
+interface TitleEntry {
+  title: string;
+  sub: string;
 }
 
-export default async function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+const TITLE_MAP: Record<string, TitleEntry> = {
+  '/dashboard':                 { title: 'おはようございます、テスト太郎さん', sub: 'キレイ 鶴見店' },
+  '/dashboard/booking':         { title: '予約スケジュール',                     sub: 'タイムテーブル / 予約管理' },
+  '/dashboard/customers':       { title: '顧客一覧',                             sub: '顧客データベース' },
+  '/dashboard/messages':        { title: 'DM配信',                                sub: '自動リマインダー · 来店促進' },
+  '/dashboard/integrations':    { title: '連携サービス',                         sub: '外部システムとの連携' },
+  '/dashboard/more':            { title: 'その他',                                sub: '設定 · ヘルプ · お知らせ' },
+};
 
-  // サロン情報取得（owner_user_id で検索）
-  const { data: salon } = await supabase
-    .from('salons')
-    .select('id, name, owner_name, plan')
-    .eq('owner_user_id', user.id)
-    .maybeSingle()
+function resolveTitle(pathname: string): TitleEntry {
+  // exact match
+  if (TITLE_MAP[pathname]) return TITLE_MAP[pathname];
+  // customer detail page (/dashboard/customers/[id])
+  if (pathname.startsWith('/dashboard/customers/')) {
+    return { title: 'カルテ', sub: '施術履歴 · 顧客カルテ' };
+  }
+  // fallback
+  return { title: 'SalonRink', sub: 'サロン管理' };
+}
 
-  if (!salon) redirect('/dashboard')
+/* ─── Demo seed: sample customer photos on first run ─────────────────── */
+/* キレイ鶴見店をデモとして見せるための初回シード。本番運用で要らなくなったら
+   NEXT_PUBLIC_SALONRINK_DEMO=0 を環境変数に入れる。 */
+function useSamplePhotoSeed() {
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_SALONRINK_DEMO === '0') return;
+    if (typeof window === 'undefined') return;
+    if (localStorage.getItem('srk-photos-seeded') === '1') return;
+
+    const seeds = [
+      { id: 'cust:青山 真理', src: '/sample-photos/1.png' },
+      { id: 'cust:柳田 友香', src: '/sample-photos/2.png' },
+      { id: 'cust:浅野 節子', src: '/sample-photos/3.png' },
+      { id: 'cust:矢野 玲子', src: '/sample-photos/4.png' },
+    ];
+
+    Promise.all(
+      seeds.map((s) =>
+        fetch(s.src)
+          .then((r) => r.blob())
+          .then(
+            (b) =>
+              new Promise<void>((res) => {
+                const fr = new FileReader();
+                fr.onload = () => {
+                  if (typeof fr.result === 'string') {
+                    window.__srkPhotoStore?.set(s.id, fr.result);
+                  }
+                  res();
+                };
+                fr.readAsDataURL(b);
+              })
+          )
+      )
+    )
+      .then(() => {
+        localStorage.setItem('srk-photos-seeded', '1');
+      })
+      .catch(() => {});
+  }, []);
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const { title, sub } = resolveTitle(pathname);
+
+  useSamplePhotoSeed();
+
+  // Apply theme/density to body (matches prototype TWEAK_DEFAULTS)
+  useEffect(() => {
+    document.body.setAttribute('data-theme', 'dark');
+    document.body.setAttribute('data-density', 'regular');
+  }, []);
 
   return (
-    <html lang="ja">
-      <body style={{ margin: 0, fontFamily: 'Georgia, serif', background: '#F8F4EF' }}>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-          {/* PC用サイドバー（768px以上で表示） */}
-          <Sidebar salonName={salon.name} ownerName={salon.owner_name} />
-
-          {/* メインコンテンツ */}
-          <main style={{
-            flex: 1,
-            overflowY: 'auto',
-            paddingBottom: 'max(80px, env(safe-area-inset-bottom))',
-          }}>
-            {children}
-          </main>
-        </div>
-
-        {/* モバイル用タブバー（768px未満で表示） */}
-        <TabBar />
-      </body>
-    </html>
-  )
+    <div className="srk-app">
+      <Sidebar collapsed={collapsed} />
+      <main className="srk-main">
+        <TopHeader
+          title={title}
+          subtitle={sub}
+          onToggleSide={() => setCollapsed((c) => !c)}
+        />
+        {children}
+      </main>
+    </div>
+  );
 }
