@@ -1,1121 +1,798 @@
-'use client'
-import { useEffect, useMemo, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+'use client';
 
-// === 時間軸 ===
-const TIME_START_MIN = 10 * 60
-const TIME_END_MIN = 20 * 60
-const TOTAL_MIN = TIME_END_MIN - TIME_START_MIN
-const HOUR_WIDTH_PX = 160
-const STAFF_COL_WIDTH_PX = 196
+import React, { useState, useEffect } from 'react';
+import {
+  Icon,
+  Avatar,
+  Modal,
+  ServicePills,
+} from '@/components/srk';
+import {
+  STAFF,
+  ADDABLE_STAFF,
+  SERVICES,
+  todayBookings,
+  fmtTime,
+  type Booking,
+} from '@/lib/srkMockData';
 
-// === デザイントークン ===
-const C = {
-  bg: '#f4ede1', bgTint: '#efe6d4', surface: '#fefcf7', surface2: '#f9f3e7',
-  line: '#e2d6bd', lineSoft: '#ece2cb',
-  ink: '#1f1612', ink2: '#4a4239', ink3: '#7a7064', ink4: '#aaa094',
-  accent: '#5a6b3f', accentInk: '#3a4628', accentSoft: '#eaeed8',
-  danger: '#a85555', warn: '#b08840', info: '#4a6b80',
-}
-const FONT_SERIF = '"Noto Serif JP", serif'
-const FONT_SANS = '"Noto Sans JP", -apple-system, BlinkMacSystemFont, sans-serif'
-const FONT_MONO = '"JetBrains Mono", ui-monospace, monospace'
+/* ============================================================
+   Schedule — 予約スケジュール
+   ============================================================
 
-const STATUS_STYLE: Record<string, { ja: string; color: string; bg: string; border: string }> = {
-  confirmed:  { ja: '確定',   color: '#5a7a52', bg: '#eaf1e1', border: '#bcc9a8' },
-  tentative:  { ja: '仮予約', color: '#a08036', bg: '#f6efde', border: '#d9c89a' },
-  inprogress: { ja: '来店中', color: '#4a6b80', bg: '#e3ecf3', border: '#a8c2d2' },
-  done:       { ja: '完了',   color: '#6b6357', bg: '#eee9df', border: '#cabfaa' },
-  canceled:   { ja: '見送り', color: '#a85555', bg: '#f3e3e3', border: '#d9aeae' },
-}
-const SOURCE_STYLE: Record<string, { ja: string; short: string; color: string }> = {
-  web:       { ja: 'ウェブ予約',     short: 'WEB',  color: '#5a7a8f' },
-  phone:     { ja: '電話',           short: 'TEL',  color: '#8a6e4d' },
-  walkin:    { ja: '直接来店',       short: '店頭', color: '#7a8f5a' },
-  repeat:    { ja: 'リピーター',     short: 'RPT',  color: '#a3727f' },
-  hpb:       { ja: 'HotPepper',      short: 'HPB',  color: '#c84a4a' },
-  hotpepper: { ja: 'HotPepper',      short: 'HPB',  color: '#c84a4a' },
-  line:      { ja: 'LINE',           short: 'LINE', color: '#06c755' },
-  manual:    { ja: '手動',           short: '手動', color: '#7a7064' },
-}
-const STAFF_COLORS = ['#7a8f5a', '#a6794d', '#6e7fa3', '#a3727f', '#9a9285', '#8a7a5a']
+   Phase 3A: 新デザイン + モックデータ。
+   Phase 3B で Supabase hpb_reservations を統合(現状の commit a07ddf0 の
+   データ取得層を移植)。
 
-function hashColor(s: string): string {
-  let sum = 0
-  for (let i = 0; i < s.length; i++) sum += s.charCodeAt(i)
-  return STAFF_COLORS[sum % STAFF_COLORS.length]
-}
-function initials(name: string): string {
-  if (!name) return '—'
-  const t = name.trim()
-  if (t.length === 0) return '—'
-  return t.slice(0, 2)
-}
-function fmtMin(min: number): string {
-  const h = Math.floor(min / 60), m = min % 60
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
-}
-function isoToMin(iso: string): number {
-  const d = new Date(iso)
-  return d.getHours() * 60 + d.getMinutes()
-}
-function fmtDateJa(d: Date): string {
-  return `${d.getMonth() + 1}月${d.getDate()}日 (${'日月火水木金土'[d.getDay()]})`
+   モックの bookingsForDate() は ユーザー閲覧体験のため、表示日付ベースで
+   安定した擬似ランダム値を返す。本実装では Supabase クエリに置換。
+   ============================================================ */
+
+const WD_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
+const WD_LABELS_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+interface DayForecast {
+  count: number;
+  revenue: number;
+  closed: boolean;
 }
 
-interface Booking {
-  id: string
-  staffId: string
-  staffName: string
-  startMin: number
-  endMin: number
-  customerName: string
-  phone: string
-  menu: string
-  price: number
-  status: string
-  source: string
-  tags: string[]
-  memo: string
-}
-interface StaffInfo {
-  id: string
-  name: string
-  role: string
-  count: number
-  totalMin: number
+function bookingsForDate(d: Date): DayForecast {
+  const day = d.getDate();
+  const wd = d.getDay();
+  if (wd === 0) return { count: 0, revenue: 0, closed: true };
+  const seed = (d.getFullYear() * 100 + d.getMonth() * 30 + day) % 17;
+  const base =
+    wd === 2 ? 14 :
+    wd === 6 ? 13 :
+    wd === 5 ? 12 :
+    wd === 4 ? 10 :
+    wd === 1 ?  8 : 9;
+  const count = Math.max(0, base + (seed % 5) - 2);
+  const revenue = count * (6800 + (seed % 4) * 1100);
+  return { count, revenue, closed: false };
 }
 
-export default function BookingPage() {
-  const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [date, setDate] = useState<Date>(() => new Date())
-  const [view, setView] = useState<'day' | 'week' | 'month'>('day')
-  const [filterSource, setFilterSource] = useState<string>('all')
-  const [filterStatus, setFilterStatus] = useState<string>('all')
-  const [filterStaff, setFilterStaff] = useState<string>('all')
-  const [query, setQuery] = useState<string>('')
-  const [showNewModal, setShowNewModal] = useState(false)
-  const [shopName, setShopName] = useState<string>('')
-  const [userName, setUserName] = useState<string>('')
-  const [nowMin, setNowMin] = useState<number>(() => {
-    const n = new Date()
-    return n.getHours() * 60 + n.getMinutes()
-  })
+type ViewMode = 'day' | 'week' | 'month';
+
+export default function SchedulePage() {
+  const [selected, setSelected] = useState<Booking | null>(null);
+  const [view, setView] = useState<ViewMode>('day');
+
+  // SSR-safe date state: initialize on client only.
+  const [today0, setToday0] = useState<Date | null>(null);
+  const [currentDate, setCurrentDate] = useState<Date | null>(null);
+  const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      const n = new Date()
-      setNowMin(n.getHours() * 60 + n.getMinutes())
-    }, 60000)
-    return () => clearInterval(id)
-  }, [])
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    setToday0(t);
+    setCurrentDate(new Date(t));
+    setNow(new Date());
+    const tick = setInterval(() => setNow(new Date()), 60 * 1000);
+    return () => clearInterval(tick);
+  }, []);
 
-  useEffect(() => {
-    async function load() {
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setLoading(false)
-        return
-      }
-      setUserName((user.user_metadata as any)?.name || user.email?.split('@')[0] || 'ユーザー')
-      const { data: salon } = await supabase
-        .from('salons')
-        .select('id, name')
-        .eq('owner_user_id', user.id)
-        .maybeSingle()
-      if (!salon) {
-        setLoading(false)
-        return
-      }
-      setShopName(salon.name || 'サロン')
-      await fetchBookings(salon.id, date)
-    }
-    load()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    async function refetch() {
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
-      const { data: salon } = await supabase
-        .from('salons').select('id').eq('owner_user_id', user.id).maybeSingle()
-      if (!salon) return
-      await fetchBookings(salon.id, date)
-    }
-    refetch()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [date])
-
-  async function fetchBookings(salonId: string, targetDate: Date) {
-    setLoading(true)
-    const supabase = await createClient()
-    const dayStart = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate(), 0, 0, 0)
-    const dayEnd = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate() + 1, 0, 0, 0)
-
-    let hpbData: any[] = []
-    try {
-      const r = await supabase
-        .from('hpb_reservations')
-        .select('*')
-        .eq('salon_id', salonId)
-        .gte('start_time', dayStart.toISOString())
-        .lt('start_time', dayEnd.toISOString())
-        .order('start_time', { ascending: true })
-      hpbData = r.data || []
-    } catch (e) {
-      console.warn('hpb_reservations fetch failed:', e)
-    }
-
-    let resvData: any[] = []
-    try {
-      const r = await supabase
-        .from('reservations')
-        .select('*')
-        .eq('salon_id', salonId)
-        .gte('datetime', dayStart.toISOString())
-        .lt('datetime', dayEnd.toISOString())
-        .order('datetime', { ascending: true })
-      resvData = r.data || []
-    } catch (e) {
-      console.warn('reservations fetch failed:', e)
-    }
-
-    const all: Booking[] = []
-    for (const r of hpbData) {
-      if (!r.start_time) continue
-      const startMin = isoToMin(r.start_time)
-      const endMin = r.end_time ? isoToMin(r.end_time) : startMin + 60
-      const staffId = (r.raw_data && r.raw_data.staff_id) || 'unknown'
-      const staffSuffix = staffId !== 'unknown' ? staffId.slice(-4) : '未'
-      all.push({
-        id: 'hpb_' + r.id,
-        staffId,
-        staffName: staffId === 'unknown' ? '未割当' : `スタッフ ${staffSuffix}`,
-        startMin, endMin,
-        customerName: r.customer_name || 'ゲスト',
-        phone: '',
-        menu: r.menu_name || '(メニュー未取得)',
-        price: 0,
-        status: r.status || 'confirmed',
-        source: 'hpb',
-        tags: [],
-        memo: '',
-      })
-    }
-    for (const r of resvData) {
-      if (!r.datetime) continue
-      const startMin = isoToMin(r.datetime)
-      all.push({
-        id: 'resv_' + r.id,
-        staffId: r.staff_id || 'unknown',
-        staffName: '未割当',
-        startMin, endMin: startMin + 60,
-        customerName: r.customer_name || 'ゲスト',
-        phone: r.customer_line_id || '',
-        menu: r.menu || '',
-        price: 0,
-        status: r.status || 'confirmed',
-        source: r.source || 'manual',
-        tags: [],
-        memo: '',
-      })
-    }
-    setBookings(all.sort((a, b) => a.startMin - b.startMin))
-    setLoading(false)
+  if (!today0 || !currentDate || !now) {
+    // Loading skeleton — minimal flash while client hydrates
+    return <div className="srk-page" />;
   }
 
-  // フィルタ適用
-  const filteredBookings = useMemo(() => {
-    return bookings.filter(b => {
-      if (filterStatus !== 'all' && b.status !== filterStatus) return false
-      if (filterSource !== 'all' && b.source !== filterSource) return false
-      if (filterStaff !== 'all' && b.staffId !== filterStaff) return false
-      if (query.trim()) {
-        const q = query.trim().toLowerCase()
-        if (!b.customerName.toLowerCase().includes(q) && !b.menu.toLowerCase().includes(q)) return false
-      }
-      return true
-    })
-  }, [bookings, filterStatus, filterSource, filterStaff, query])
+  const isToday = currentDate.toDateString() === today0.toDateString();
+  const isShowingTodaysBookings = isToday;
 
-  // スタッフ集計
-  const staffList = useMemo<StaffInfo[]>(() => {
-    const map = new Map<string, StaffInfo>()
-    for (const b of filteredBookings) {
-      if (!map.has(b.staffId)) {
-        map.set(b.staffId, { id: b.staffId, name: b.staffName, role: '', count: 0, totalMin: 0 })
-      }
-      const s = map.get(b.staffId)!
-      s.count += 1
-      s.totalMin += (b.endMin - b.startMin)
-    }
-    if (map.size === 0) {
-      map.set('unknown', { id: 'unknown', name: 'スタッフ未割当', role: '', count: 0, totalMin: 0 })
-    }
-    return Array.from(map.values()).sort((a, b) => a.id.localeCompare(b.id))
-  }, [filteredBookings])
+  const HOUR_START = 10;
+  const HOUR_END = 19;
+  const hours = HOUR_END - HOUR_START;
+  const COL_W = 84;
+  const totalW = hours * COL_W;
 
-  // 全スタッフ(フィルタ前、フィルタUI用)
-  const allStaffOptions = useMemo<StaffInfo[]>(() => {
-    const map = new Map<string, StaffInfo>()
-    for (const b of bookings) {
-      if (!map.has(b.staffId)) {
-        map.set(b.staffId, { id: b.staffId, name: b.staffName, role: '', count: 0, totalMin: 0 })
-      }
-    }
-    return Array.from(map.values()).sort((a, b) => a.id.localeCompare(b.id))
-  }, [bookings])
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+  const nowX = ((nowMin - HOUR_START * 60) / (hours * 60)) * totalW;
 
-  // KPI 計算
-  const kpis = useMemo(() => {
-    const total = filteredBookings.length
-    const confirmed = filteredBookings.filter(b => b.status === 'confirmed').length
-    const inprogress = filteredBookings.filter(b => b.status === 'inprogress').length
-    const newCount = filteredBookings.filter(b => b.tags.includes('新規')).length
-    const revenue = filteredBookings.reduce((sum, b) => sum + (b.price || 0), 0)
-    return { total, confirmed, inprogress, newCount, revenue }
-  }, [filteredBookings])
+  const moveDay = (delta: number) => {
+    const d = new Date(currentDate);
+    d.setDate(d.getDate() + delta);
+    setCurrentDate(d);
+  };
+  const moveMonth = (delta: number) => {
+    const d = new Date(currentDate);
+    d.setMonth(d.getMonth() + delta);
+    setCurrentDate(d);
+  };
+  const goToday = () => setToday0((t) => t && (setCurrentDate(new Date(t)), t));
 
-  const hours = useMemo(() => {
-    const arr: number[] = []
-    for (let t = TIME_START_MIN; t < TIME_END_MIN; t += 60) arr.push(t)
-    return arr
-  }, [])
-
-  const halfSlots = useMemo(() => {
-    const arr: number[] = []
-    for (let t = TIME_START_MIN; t < TIME_END_MIN; t += 30) arr.push(t)
-    return arr
-  }, [])
-
-  function countAt(slotStart: number): number {
-    const slotEnd = slotStart + 30
-    return filteredBookings.filter(b =>
-      b.status !== 'canceled' && b.startMin < slotEnd && b.endMin > slotStart
-    ).length
-  }
-
-  // 同じスタッフ行内で時間重なりを検出してレーン分けする
-  function assignLanes(rowBookings: Booking[]): { booking: Booking; lane: number; totalLanes: number }[] {
-    const sorted = [...rowBookings].sort((a, b) => a.startMin - b.startMin)
-    const lanes: number[] = []
-    const result: { booking: Booking; lane: number }[] = []
-    for (const b of sorted) {
-      let assigned = -1
-      for (let i = 0; i < lanes.length; i++) {
-        if (lanes[i] <= b.startMin) {
-          assigned = i
-          lanes[i] = b.endMin
-          break
-        }
-      }
-      if (assigned === -1) {
-        lanes.push(b.endMin)
-        assigned = lanes.length - 1
-      }
-      result.push({ booking: b, lane: assigned })
-    }
-    const totalLanes = lanes.length
-    return result.map(r => ({ ...r, totalLanes }))
-  }
-
-  const selectedBooking = bookings.find(b => b.id === selectedId)
-  const nowInRange = nowMin >= TIME_START_MIN && nowMin <= TIME_END_MIN
-  const nowLeftPx = ((nowMin - TIME_START_MIN) / 60) * HOUR_WIDTH_PX
-
-  const isToday = (() => {
-    const today = new Date()
-    return date.getFullYear() === today.getFullYear() &&
-           date.getMonth() === today.getMonth() &&
-           date.getDate() === today.getDate()
-  })()
-
-  function shiftDate(days: number) {
-    const d = new Date(date)
-    d.setDate(d.getDate() + days)
-    setDate(d)
-    setSelectedId(null)
-  }
-  function goToday() {
-    setDate(new Date())
-    setSelectedId(null)
-  }
-
-  async function updateStatus(bookingId: string, newStatus: string) {
-    // 楽観的更新
-    setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, status: newStatus } : b))
-    const isHpb = bookingId.startsWith('hpb_')
-    const realId = bookingId.replace(/^(hpb_|resv_)/, '')
-    try {
-      const supabase = await createClient()
-      const table = isHpb ? 'hpb_reservations' : 'reservations'
-      await supabase.from(table).update({ status: newStatus }).eq('id', realId)
-    } catch (e) {
-      console.warn('status update failed:', e)
-    }
-  }
+  const _tom = new Date(today0);
+  _tom.setDate(_tom.getDate() + 1);
+  const tomorrowMonth = _tom.getMonth() + 1;
+  const tomorrowDay = _tom.getDate();
 
   return (
-    <main style={{
-      background: C.bg, minHeight: '100vh', color: C.ink,
-      fontFamily: FONT_SANS, fontFeatureSettings: '"palt"',
-    }}>
-      {/* ============ トップバー ============ */}
-      <header style={{
-        height: 56, display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr', alignItems: 'center',
-        padding: '0 22px', borderBottom: `1px solid ${C.lineSoft}`,
-        background: C.surface,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-          <span style={{
-            fontFamily: FONT_SERIF, fontSize: 16, fontWeight: 500,
-            letterSpacing: '0.08em', color: C.ink,
-          }}>サロンリンク</span>
-          <span style={{
-            fontSize: 11, color: C.ink3, letterSpacing: '0.08em',
-          }}>管理 / 予約</span>
-        </div>
-        <div style={{
-          textAlign: 'center', fontSize: 11, color: C.ink3,
-          letterSpacing: '0.12em',
-        }}>
-          {shopName || '店舗名'}
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'flex-end' }}>
-          <button style={{
-            padding: '6px 14px', border: `1px solid ${C.line}`, borderRadius: 6,
-            background: C.surface, color: C.ink2, fontSize: 11,
-            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4,
-          }}>
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="6.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M6 6.5C6 5.5 6.8 5 8 5C9.2 5 10 5.7 10 6.5C10 7.3 9 7.5 9 8.5M9 11h0" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-            ヘルプ
-          </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <div style={{
-              width: 28, height: 28, borderRadius: 999, background: C.accent,
-              color: '#fdf6e8', display: 'grid', placeItems: 'center',
-              fontFamily: FONT_SERIF, fontSize: 12, fontWeight: 500,
-            }}>{initials(userName)}</div>
-            <span style={{ fontSize: 11, color: C.ink2 }}>{userName}</span>
-          </div>
-        </div>
-      </header>
+    <div className="srk-page">
+      <div className="srk-schedule">
 
-      {/* ============ コントロールバー ============ */}
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 16,
-        padding: '20px 28px 12px', flexWrap: 'wrap',
-      }}>
-        <div style={{ minWidth: 0 }}>
-          <div style={{
-            fontSize: 10, letterSpacing: '0.16em', color: C.ink3,
-            textTransform: 'uppercase', marginBottom: 4,
-          }}>RESERVATIONS</div>
-          <h1 style={{
-            fontFamily: FONT_SERIF, fontSize: 28, fontWeight: 500,
-            letterSpacing: '0.06em', color: C.ink, margin: 0,
-          }}>予約管理</h1>
-        </div>
-
-        {/* 日付ナビ */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginLeft: 8 }}>
-          <button onClick={() => shiftDate(-1)} style={ghostIconBtn}>
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M10 4l-4 4 4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          <div style={{
-            fontFamily: FONT_SERIF, fontSize: 18, fontWeight: 500,
-            letterSpacing: '0.04em', color: C.ink, padding: '0 10px',
-          }}>{fmtDateJa(date)}</div>
-          <button onClick={() => shiftDate(1)} style={ghostIconBtn}>
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-          <button onClick={goToday} style={{
-            padding: '4px 12px', borderRadius: 999,
-            border: `1px solid ${isToday ? C.accent : C.line}`,
-            background: isToday ? C.accentSoft : C.surface,
-            color: isToday ? C.accentInk : C.ink2,
-            fontSize: 11, cursor: 'pointer', marginLeft: 4,
-          }}>今日</button>
-        </div>
-
-        {/* セグメントコントロール 日/週/月 */}
-        <div role="tablist" style={{
-          display: 'inline-flex', border: `1px solid ${C.line}`, borderRadius: 8,
-          overflow: 'hidden',
-        }}>
-          {(['day', 'week', 'month'] as const).map(v => (
-            <button key={v} role="tab" onClick={() => setView(v)} style={{
-              padding: '6px 14px', border: 'none', cursor: 'pointer',
-              background: view === v ? C.ink : C.surface,
-              color: view === v ? '#fdf6e8' : C.ink2,
-              fontFamily: FONT_SERIF, fontSize: 12, fontWeight: 500,
-              letterSpacing: '0.06em',
-            }}>{v === 'day' ? '日' : v === 'week' ? '週' : '月'}</button>
-          ))}
-        </div>
-
-        {/* フィルタ群 */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <div style={{ position: 'relative' }}>
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" style={{ position: 'absolute', left: 10, top: 8, color: C.ink4 }}>
-              <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.3"/>
-              <path d="M10.5 10.5l3 3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
-            </svg>
-            <input value={query} onChange={e => setQuery(e.target.value)}
-              placeholder="お客様名 / メニュー" style={{
-                padding: '6px 12px 6px 28px', borderRadius: 6,
-                border: `1px solid ${C.line}`, background: C.surface,
-                fontFamily: FONT_SANS, fontSize: 12, color: C.ink, width: 180,
-                outline: 'none',
-              }} />
-          </div>
-          <select value={filterStaff} onChange={e => setFilterStaff(e.target.value)} style={selectStyle}>
-            <option value="all">担当: 全員</option>
-            {allStaffOptions.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-          <select value={filterSource} onChange={e => setFilterSource(e.target.value)} style={selectStyle}>
-            <option value="all">経路: 全て</option>
-            {Object.entries(SOURCE_STYLE).map(([k, v]) => <option key={k} value={k}>{v.ja}</option>)}
-          </select>
-          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={selectStyle}>
-            <option value="all">状態: 全て</option>
-            {Object.entries(STATUS_STYLE).map(([k, v]) => <option key={k} value={k}>{v.ja}</option>)}
-          </select>
-          <button onClick={() => window.print()} style={ghostBtn}>印刷</button>
-          <button onClick={() => setShowNewModal(true)} style={primaryBtn}>+ 新規予約</button>
-        </div>
-      </div>
-
-      {/* ============ KPIサマリーストリップ ============ */}
-      <div style={{
-        display: 'flex', gap: 0, padding: '0 28px', alignItems: 'stretch',
-        flexWrap: 'wrap',
-      }}>
-        {[
-          { label: '本日の予約数', value: kpis.total, suffix: '件' },
-          { label: '確定', value: kpis.confirmed, suffix: '件' },
-          { label: '来店中', value: kpis.inprogress, suffix: '件', color: C.info },
-          { label: '新規顧客', value: kpis.newCount, suffix: '名' },
-          { label: '見込み売上', value: '¥' + kpis.revenue.toLocaleString(), suffix: '', mono: true },
-        ].map((k, i) => (
-          <div key={i} style={{
-            padding: '14px 22px', borderRight: `1px solid ${C.lineSoft}`,
-            minWidth: 100,
-          }}>
-            <div style={{
-              fontSize: 10, letterSpacing: '0.14em', color: C.ink3,
-              textTransform: 'uppercase', marginBottom: 4,
-            }}>{k.label}</div>
-            <div style={{
-              fontSize: 20, fontWeight: 500,
-              color: k.color || C.ink,
-              fontFamily: k.mono ? FONT_MONO : FONT_SANS,
-            }}>
-              {k.value}<span style={{ fontSize: 11, color: C.ink3, marginLeft: 4, fontWeight: 400 }}>{k.suffix}</span>
+        {/* ─── Toolbar ───────────────────────────────── */}
+        <div className="srk-sch-toolbar">
+          <div className="srk-sch-date">
+            <button
+              className="srk-iconbtn ghost"
+              onClick={() => (view === 'month' ? moveMonth(-1) : moveDay(-1))}
+              title="前へ"
+              type="button"
+            >
+              <Icon name="chev_l" size={14} />
+            </button>
+            <div>
+              <div className="srk-sch-day">
+                {view === 'month' ? (
+                  <>
+                    <span className="num">{currentDate.getFullYear()}</span>
+                    <em>年</em>
+                    <span className="num">{currentDate.getMonth() + 1}</span>
+                    <em>月</em>
+                  </>
+                ) : (
+                  <>
+                    <span className="num">{currentDate.getDate()}</span>
+                    {' '}
+                    <em>
+                      {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][currentDate.getMonth()]}
+                    </em>
+                  </>
+                )}
+              </div>
+              <div className="srk-sch-sub" key={`sub-${currentDate.toDateString()}`}>
+                {view === 'month' ? (
+                  `${currentDate.getFullYear()}年${currentDate.getMonth() + 1}月`
+                ) : (
+                  <span>
+                    {`${currentDate.getMonth() + 1}月${currentDate.getDate()}日（${WD_LABELS[currentDate.getDay()]}）`}
+                    {isToday && (
+                      <span>
+                        {' '}· <b style={{ color: 'var(--plum)' }}>本日</b>
+                      </span>
+                    )}
+                  </span>
+                )}
+              </div>
             </div>
+            <button
+              className="srk-iconbtn ghost"
+              onClick={() => (view === 'month' ? moveMonth(1) : moveDay(1))}
+              title="次へ"
+              type="button"
+            >
+              <Icon name="chev_r" size={14} />
+            </button>
+            {!isToday && view !== 'month' && (
+              <button
+                className="srk-btn ghost"
+                style={{ marginLeft: 6 }}
+                onClick={() => setCurrentDate(new Date(today0))}
+                type="button"
+              >
+                今日
+              </button>
+            )}
           </div>
-        ))}
-        <div style={{
-          padding: '14px 22px', marginLeft: 'auto',
-        }}>
-          <div style={{
-            fontSize: 10, letterSpacing: '0.14em', color: C.ink3,
-            textTransform: 'uppercase', marginBottom: 4,
-          }}>現在時刻</div>
-          <div style={{
-            fontSize: 20, fontWeight: 500, color: C.danger,
-            fontFamily: FONT_MONO,
-          }}>{fmtMin(nowMin)}</div>
-        </div>
-      </div>
 
-      {/* ============ メイン領域(タイムライン + 詳細パネル) ============ */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: selectedBooking ? '1fr 380px' : '1fr',
-        gap: 0, transition: 'grid-template-columns 0.2s ease',
-      }}>
-        <div style={{ padding: '12px 28px 32px' }}>
-          {loading ? (
-            <div style={{ padding: 60, textAlign: 'center', color: C.ink3 }}>読み込み中...</div>
-          ) : view === 'day' ? (
-            <DayTimeline
-              hours={hours}
-              halfSlots={halfSlots}
-              staffList={staffList}
-              bookings={filteredBookings}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              nowMin={nowMin}
-              nowInRange={nowInRange}
-              nowLeftPx={nowLeftPx}
-              countAt={countAt}
-              assignLanes={assignLanes}
-            />
-          ) : (
-            <div style={{
-              background: C.surface, borderRadius: 18, padding: 60,
-              border: `1px solid ${C.lineSoft}`, textAlign: 'center',
-              color: C.ink3, fontSize: 13,
-            }}>
-              {view === 'week' ? '週ビュー' : '月ビュー'}は近日実装予定です
+          <div className="srk-sch-tools">
+            {view !== 'month' && (
+              <div className="srk-day-quick">
+                <button
+                  className="srk-day-quick-btn"
+                  type="button"
+                  onClick={() => {
+                    setCurrentDate(new Date(today0));
+                    setView('day');
+                  }}
+                >
+                  <em>今日</em>
+                  <b>
+                    {today0.getMonth() + 1}/{today0.getDate()}
+                    <span>（{WD_LABELS[today0.getDay()]}）</span>
+                  </b>
+                </button>
+                <button
+                  className="srk-day-quick-btn"
+                  type="button"
+                  onClick={() => {
+                    const d = new Date(today0);
+                    d.setDate(d.getDate() + 1);
+                    setCurrentDate(d);
+                    setView('day');
+                  }}
+                >
+                  <em>明日</em>
+                  <b>
+                    {tomorrowMonth}/{tomorrowDay}
+                    <span>（{WD_LABELS[(today0.getDay() + 1) % 7]}）</span>
+                  </b>
+                </button>
+              </div>
+            )}
+            <div className="srk-seg-ctrl">
+              <button
+                className={view === 'day' ? 'is-on' : ''}
+                onClick={() => setView('day')}
+                type="button"
+              >
+                日
+              </button>
+              <button
+                className={view === 'week' ? 'is-on' : ''}
+                onClick={() => setView('week')}
+                type="button"
+              >
+                週
+              </button>
+              <button
+                className={view === 'month' ? 'is-on' : ''}
+                onClick={() => setView('month')}
+                type="button"
+              >
+                月
+              </button>
             </div>
-          )}
+            <button className="srk-btn ghost" type="button">
+              <Icon name="filter" size={12} /> 絞り込み
+            </button>
+            <button className="srk-cta" type="button">
+              <Icon name="plus" size={12} /> 新規予約
+            </button>
+          </div>
         </div>
 
-        {selectedBooking && (
-          <DetailPanel
-            booking={selectedBooking}
-            onClose={() => setSelectedId(null)}
-            onStatusChange={updateStatus}
+        {/* ─── Views ─────────────────────────────────── */}
+        {view === 'day' && (
+          <DayView
+            currentDate={currentDate}
+            showBookings={isShowingTodaysBookings}
+            HOUR_START={HOUR_START}
+            HOUR_END={HOUR_END}
+            COL_W={COL_W}
+            totalW={totalW}
+            nowX={isToday ? nowX : -1}
+            now={now}
+            setSelected={setSelected}
+          />
+        )}
+
+        {view === 'week' && (
+          <WeekView
+            currentDate={currentDate}
+            setCurrentDate={(d) => {
+              setCurrentDate(d);
+              setView('day');
+            }}
+            today0={today0}
+          />
+        )}
+
+        {view === 'month' && (
+          <MonthView
+            currentDate={currentDate}
+            setCurrentDate={(d) => {
+              setCurrentDate(d);
+              setView('day');
+            }}
+            today0={today0}
           />
         )}
       </div>
 
-      {/* ============ 新規予約モーダル ============ */}
-      {showNewModal && (
-        <NewBookingModal
-          onClose={() => setShowNewModal(false)}
-          allStaff={allStaffOptions}
-          onAdd={(newB) => {
-            setBookings(prev => [...prev, newB].sort((a, b) => a.startMin - b.startMin))
-            setShowNewModal(false)
-          }}
-        />
-      )}
-    </main>
-  )
+      <Modal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title="予約詳細"
+      >
+        {selected && <ReservationDetail booking={selected} />}
+      </Modal>
+    </div>
+  );
 }
 
-// === タイムライン本体 ===
-function DayTimeline(props: {
-  hours: number[]
-  halfSlots: number[]
-  staffList: StaffInfo[]
-  bookings: Booking[]
-  selectedId: string | null
-  onSelect: (id: string | null) => void
-  nowMin: number
-  nowInRange: boolean
-  nowLeftPx: number
-  countAt: (slot: number) => number
-  assignLanes: (rowBookings: Booking[]) => { booking: Booking; lane: number; totalLanes: number }[]
-}) {
-  const { hours, halfSlots, staffList, bookings, selectedId, onSelect, nowInRange, nowLeftPx, countAt, assignLanes } = props
-  const totalCap = Math.max(1, staffList.length)
+/* ─── DAY VIEW ───────────────────────────────────────── */
+
+interface DayViewProps {
+  currentDate: Date;
+  showBookings: boolean;
+  HOUR_START: number;
+  HOUR_END: number;
+  COL_W: number;
+  totalW: number;
+  nowX: number;
+  now: Date;
+  setSelected: (b: Booking) => void;
+}
+
+function DayView({
+  currentDate,
+  showBookings,
+  HOUR_START,
+  HOUR_END,
+  COL_W,
+  totalW,
+  nowX,
+  now,
+  setSelected,
+}: DayViewProps) {
+  const hours = HOUR_END - HOUR_START;
+  const bookings = showBookings ? todayBookings : [];
+  const forecast = bookingsForDate(currentDate);
+
+  const perHour = Array.from({ length: hours }, (_, i) => {
+    const startMin = (HOUR_START + i) * 60;
+    const endMin = startMin + 60;
+    return bookings.filter((b) => b.start < endMin && b.end > startMin).length;
+  });
+  const maxPer = Math.max(...perHour, 1);
+
+  const nowHHMM = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
   return (
-    <div style={{
-      background: C.surface, borderRadius: 18,
-      border: `1px solid ${C.lineSoft}`,
-      boxShadow: '0 1px 0 rgba(60,40,20,.04), 0 6px 22px -10px rgba(60,40,20,.10)',
-      overflow: 'hidden',
-    }}>
-      <div style={{ overflowX: 'auto' }}>
-        <div style={{ minWidth: STAFF_COL_WIDTH_PX + hours.length * HOUR_WIDTH_PX }}>
-          {/* ヘッダー行 */}
-          <div style={{
-            display: 'grid', gridTemplateColumns: `${STAFF_COL_WIDTH_PX}px 1fr`,
-            borderBottom: `1px solid ${C.line}`, background: C.surface2,
-          }}>
-            <div style={{
-              padding: '12px 16px', fontSize: 10, letterSpacing: '0.16em',
-              color: C.ink3, textTransform: 'uppercase',
-              borderRight: `1px solid ${C.line}`,
-            }}>時間</div>
-            <div style={{ display: 'flex' }}>
-              {hours.map(h => {
-                const slotCount = bookings.filter(b => b.status !== 'canceled' && b.startMin < h + 60 && b.endMin > h).length
-                return (
-                  <div key={h} style={{
-                    width: HOUR_WIDTH_PX, padding: '10px 12px',
-                    borderRight: `1px solid ${C.lineSoft}`,
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
-                  }}>
-                    <span style={{ fontFamily: FONT_MONO, fontSize: 12, fontWeight: 500, color: C.ink2 }}>
-                      {fmtMin(h)}
-                    </span>
-                    <span style={{ fontSize: 9, color: C.ink3 }}>
-                      予約<strong style={{ marginLeft: 2, color: C.ink2 }}>{slotCount}</strong>
-                    </span>
-                  </div>
-                )
-              })}
-            </div>
+    <>
+      <div className="srk-sch-scroll">
+        {/* density bar */}
+        <div className="srk-sch-density">
+          <div className="srk-sch-density-label">時間帯別予約数</div>
+          <div className="srk-sch-density-inner" style={{ width: totalW }}>
+            {perHour.map((n, i) => (
+              <div key={i} className="srk-sch-density-cell" style={{ width: COL_W }}>
+                <div className="srk-sch-density-bar">
+                  <span style={{ height: `${(n / maxPer) * 100}%` }} />
+                </div>
+                <em className="num">{n}</em>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* サマリー行(30分単位) */}
-          <div style={{
-            display: 'grid', gridTemplateColumns: `${STAFF_COL_WIDTH_PX}px 1fr`,
-            borderBottom: `1px solid ${C.line}`, background: C.surface2,
-          }}>
-            <div style={{
-              padding: '8px 16px', borderRight: `1px solid ${C.line}`,
-            }}>
-              <div style={{ fontSize: 10, fontWeight: 600, color: C.ink2, letterSpacing: '0.1em' }}>受付状況</div>
-              <div style={{ fontSize: 9, color: C.ink3, marginTop: 2 }}>30分単位 / 全{totalCap}席</div>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${halfSlots.length}, ${HOUR_WIDTH_PX / 2}px)`,
-            }}>
-              {halfSlots.map(s => {
-                const used = countAt(s)
-                const cap = totalCap
-                const remain = Math.max(0, cap - used)
-                const isFull = remain === 0
-                const isEmpty = used === 0
-                return (
-                  <div key={s} style={{
-                    padding: '6px 4px', textAlign: 'center',
-                    borderRight: `1px solid ${C.lineSoft}`,
-                    background: isFull ? '#f3e3e3' : 'transparent',
-                  }}>
-                    <div style={{ fontSize: 9, color: isFull ? C.danger : C.ink3 }}>残{remain}</div>
-                    <div style={{
-                      fontFamily: FONT_MONO, fontSize: 14, fontWeight: 600,
-                      color: isFull ? C.danger : isEmpty ? C.ink4 : C.ink,
-                    }}>{used}</div>
-                  </div>
-                )
-              })}
-            </div>
+        {/* time axis */}
+        <div className="srk-sch-axis">
+          <div className="srk-sch-staffcol srk-sch-axis-head">時間 →</div>
+          <div className="srk-sch-axis-inner" style={{ width: totalW }}>
+            {Array.from({ length: hours + 1 }).map((_, i) => (
+              <div key={i} className="srk-sch-axis-tick" style={{ left: i * COL_W }}>
+                <span className="num">{HOUR_START + i}:00</span>
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* スタッフ行 */}
-          {staffList.map(staff => {
-            const rowBookings = bookings.filter(b => b.staffId === staff.id)
-            const laneAssignments = assignLanes(rowBookings)
-            const totalLanes = Math.max(1, laneAssignments[0]?.totalLanes || 1)
-            const rowHeight = Math.max(76, totalLanes * 70)
+        {/* grid */}
+        <div className="srk-sch-grid">
+          {STAFF.map((st) => {
+            const list = bookings.filter((b) => b.staff === st.id);
+            const minutesBooked = list.reduce((s, b) => s + (b.end - b.start), 0);
+            const util = showBookings
+              ? Math.min(1, minutesBooked / (hours * 60))
+              : 0;
             return (
-              <div key={staff.id} style={{
-                display: 'grid', gridTemplateColumns: `${STAFF_COL_WIDTH_PX}px 1fr`,
-                borderBottom: `1px solid ${C.lineSoft}`, minHeight: rowHeight,
-              }}>
-                <div style={{
-                  padding: '12px 16px', borderRight: `1px solid ${C.line}`,
-                  display: 'flex', alignItems: 'center', gap: 10, background: C.surface,
-                }}>
-                  <div style={{
-                    width: 32, height: 32, borderRadius: 999,
-                    background: hashColor(staff.id), color: '#fdf6e8',
-                    display: 'grid', placeItems: 'center',
-                    fontSize: 11, fontWeight: 600, fontFamily: FONT_SERIF,
-                    flexShrink: 0,
-                  }}>{initials(staff.name)}</div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontFamily: FONT_SERIF, fontSize: 13, fontWeight: 500,
-                      letterSpacing: '0.04em', color: C.ink,
-                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                    }}>{staff.name}</div>
-                    <div style={{ fontSize: 10, color: C.ink3, fontFamily: FONT_MONO, marginTop: 2 }}>
-                      {staff.count}件 / {(staff.totalMin / 60).toFixed(1)}h
+              <div key={st.id} className="srk-sch-row">
+                <div className="srk-sch-staffcol">
+                  <Avatar char={st.initial} color={st.color} size={32} />
+                  <div>
+                    <div className="srk-sch-staff-name">{st.name}</div>
+                    <div className="srk-sch-staff-role">{st.role}</div>
+                    <div className="srk-sch-util">
+                      <div className="srk-sch-util-bar">
+                        <span
+                          style={{ width: `${util * 100}%`, background: st.color }}
+                        />
+                      </div>
+                      <em>
+                        {showBookings ? (
+                          <>
+                            稼働 <b className="num">{Math.round(util * 100)}%</b>
+                          </>
+                        ) : (
+                          <>受付可</>
+                        )}
+                      </em>
                     </div>
                   </div>
                 </div>
-                <div style={{
-                  position: 'relative',
-                  background: `repeating-linear-gradient(to right, transparent 0 ${HOUR_WIDTH_PX - 1}px, ${C.lineSoft} ${HOUR_WIDTH_PX - 1}px ${HOUR_WIDTH_PX}px), repeating-linear-gradient(to right, transparent 0 ${HOUR_WIDTH_PX / 2 - 1}px, ${C.lineSoft}66 ${HOUR_WIDTH_PX / 2 - 1}px ${HOUR_WIDTH_PX / 2}px)`,
-                  backgroundSize: `${HOUR_WIDTH_PX}px 100%, ${HOUR_WIDTH_PX / 2}px 100%`,
-                  minHeight: rowHeight,
-                }}>
-                  {laneAssignments.map(({ booking: b, lane }) => {
-                    const leftPct = ((b.startMin - TIME_START_MIN) / TOTAL_MIN) * 100
-                    const widthPct = ((b.endMin - b.startMin) / TOTAL_MIN) * 100
-                    const st = STATUS_STYLE[b.status] || STATUS_STYLE.confirmed
-                    const src = SOURCE_STYLE[b.source] || SOURCE_STYLE.manual
-                    const isShort = (b.endMin - b.startMin) < 60
-                    const isSelected = selectedId === b.id
-                    const laneHeight = (rowHeight - 12) / totalLanes
+                <div className="srk-sch-track" style={{ width: totalW }}>
+                  {Array.from({ length: hours }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="srk-sch-cell"
+                      style={{ left: i * COL_W, width: COL_W }}
+                    />
+                  ))}
+                  {list.map((b) => {
+                    const left = ((b.start - HOUR_START * 60) / 60) * COL_W;
+                    const width = ((b.end - b.start) / 60) * COL_W;
+                    const svc = SERVICES[b.tags[0]];
                     return (
-                      <div key={b.id}
-                        onClick={() => onSelect(isSelected ? null : b.id)}
+                      <button
+                        key={b.id}
+                        className="srk-sch-block"
+                        type="button"
+                        onClick={() => setSelected(b)}
                         style={{
-                          position: 'absolute',
-                          left: `${leftPct}%`, width: `${widthPct}%`,
-                          top: 6 + lane * laneHeight,
-                          height: laneHeight - 4,
-                          background: C.surface, borderRadius: 6,
-                          border: `1px solid ${C.line}`,
-                          borderLeft: `3px solid ${st.color}`,
-                          outline: isSelected ? `2px solid ${C.ink}` : 'none',
-                          outlineOffset: -2,
-                          padding: '6px 8px', cursor: 'pointer', overflow: 'hidden',
-                          transition: 'transform 0.1s ease, box-shadow 0.1s ease',
-                          boxShadow: '0 1px 2px rgba(60,40,20,.04)',
-                          opacity: b.status === 'canceled' ? 0.5 : 1,
-                        }}
-                        onMouseEnter={e => {
-                          e.currentTarget.style.transform = 'translateY(-1px)'
-                          e.currentTarget.style.boxShadow = '0 4px 12px rgba(60,40,20,.10)'
-                        }}
-                        onMouseLeave={e => {
-                          e.currentTarget.style.transform = 'translateY(0)'
-                          e.currentTarget.style.boxShadow = '0 1px 2px rgba(60,40,20,.04)'
+                          left: left + 2,
+                          width: width - 4,
+                          background: `linear-gradient(180deg, ${svc.color}26, ${svc.color}14)`,
+                          borderColor: `${svc.color}66`,
                         }}
                       >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6, marginBottom: 2 }}>
-                          <span style={{ fontFamily: FONT_MONO, fontSize: 10, fontWeight: 500, color: C.ink2 }}>
-                            {fmtMin(b.startMin)}–{fmtMin(b.endMin)}
+                        <div className="srk-sch-block-h">
+                          <span className="srk-sch-block-tags">
+                            {b.tags.map((t) => (
+                              <i key={t} style={{ background: SERVICES[t].color }}>
+                                {SERVICES[t].short}
+                              </i>
+                            ))}
                           </span>
-                          <span style={{
-                            fontSize: 9, padding: '1px 6px', borderRadius: 3,
-                            background: st.bg, color: st.color,
-                            border: `1px solid ${st.border}`, flexShrink: 0,
-                          }}>{st.ja}</span>
+                          {b.isNew && <span className="srk-sch-block-new">新</span>}
                         </div>
-                        <div style={{
-                          fontFamily: FONT_SERIF, fontSize: 13, fontWeight: 500, color: C.ink,
-                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                          marginBottom: 2,
-                        }}>
-                          {b.customerName} <span style={{ fontSize: 10, color: C.ink3 }}>様</span>
+                        <div className="srk-sch-block-name">
+                          {b.customer} <em>様</em>
                         </div>
-                        {!isShort && (
-                          <>
-                            <div style={{
-                              fontSize: 10, color: C.ink3,
-                              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                              marginBottom: 4,
-                            }}>{b.menu}</div>
-                            <div style={{ display: 'flex', gap: 4 }}>
-                              <span style={{
-                                fontSize: 9, padding: '1px 5px', borderRadius: 3,
-                                background: '#fff', color: src.color,
-                                border: `1px solid ${src.color}`, fontFamily: FONT_MONO, fontWeight: 500,
-                              }}>{src.short}</span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    )
+                        <div className="srk-sch-block-meta">
+                          <span className="num">
+                            {fmtTime(b.start)}–{fmtTime(b.end)}
+                          </span>
+                          {b.note && <em>· {b.note}</em>}
+                        </div>
+                      </button>
+                    );
                   })}
-                  {nowInRange && (
-                    <div style={{
-                      position: 'absolute', left: nowLeftPx, top: 0, bottom: 0,
-                      width: 1, background: C.danger, pointerEvents: 'none', zIndex: 10,
-                    }}>
-                      <div style={{
-                        position: 'absolute', top: -4, left: -4,
-                        width: 9, height: 9, background: C.danger, borderRadius: 999,
-                      }} />
+                  {nowX >= 0 && nowX <= totalW && (
+                    <div className="srk-sch-now" style={{ left: nowX }}>
+                      <span />
+                      <em className="num">{nowHHMM}</em>
                     </div>
                   )}
                 </div>
               </div>
-            )
+            );
           })}
 
-          {bookings.length === 0 && (
-            <div style={{ padding: 60, textAlign: 'center', color: C.ink3, fontSize: 13 }}>
-              本日の予約はありません
+          {/* free row */}
+          <div className="srk-sch-row srk-sch-row-free">
+            <div className="srk-sch-staffcol">
+              <div className="srk-sch-free-mark">空</div>
+              <div>
+                <div className="srk-sch-staff-name">フリー枠</div>
+                <div className="srk-sch-staff-role">指名なし受付可能</div>
+              </div>
             </div>
-          )}
+            <div className="srk-sch-track" style={{ width: totalW }}>
+              {Array.from({ length: hours }).map((_, i) => (
+                <div
+                  key={i}
+                  className="srk-sch-cell srk-sch-cell-free"
+                  style={{ left: i * COL_W, width: COL_W }}
+                >
+                  <span className="srk-sch-free-slot">＋</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* add staff row */}
+          <div className="srk-sch-row srk-sch-row-add">
+            <button
+              className="srk-sch-add-btn"
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('srk-open-add-staff'))}
+            >
+              <Icon name="plus" size={14} />
+              <span>スタッフ枠を追加</span>
+              <em>+¥3,300/月（1名）</em>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  )
+
+      {/* future forecast banner (non-today only) */}
+      {!showBookings && (
+        <div className="srk-sch-future">
+          <div>
+            <Icon name="calendar" size={20} />
+            <h3>
+              {currentDate.getMonth() + 1}月{currentDate.getDate()}日の予約見込み
+            </h3>
+            <p>
+              予測予約 <b className="num">{forecast.count}</b> 件 · 予測売上{' '}
+              <b className="num">¥{(forecast.revenue / 1000).toFixed(0)}k</b>
+            </p>
+            <span>※ プロト用ダミー予測</span>
+          </div>
+        </div>
+      )}
+    </>
+  );
 }
 
-// === 詳細パネル ===
-function DetailPanel(props: {
-  booking: Booking
-  onClose: () => void
-  onStatusChange: (id: string, status: string) => void
-}) {
-  const { booking, onClose, onStatusChange } = props
-  const st = STATUS_STYLE[booking.status] || STATUS_STYLE.confirmed
-  const src = SOURCE_STYLE[booking.source] || SOURCE_STYLE.manual
-  const otherStatuses = ['confirmed', 'inprogress', 'done', 'canceled'].filter(s => s !== booking.status)
+/* ─── WEEK VIEW ──────────────────────────────────────── */
+
+interface WeekViewProps {
+  currentDate: Date;
+  setCurrentDate: (d: Date) => void;
+  today0: Date;
+}
+
+function WeekView({ currentDate, setCurrentDate, today0 }: WeekViewProps) {
+  const weekStart = new Date(currentDate);
+  const dayDiff = (currentDate.getDay() + 6) % 7;
+  weekStart.setDate(currentDate.getDate() - dayDiff);
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+
+  const HOUR_START = 10;
+  const HOUR_END = 19;
+  const hours = HOUR_END - HOUR_START;
 
   return (
-    <aside style={{
-      background: C.surface, borderLeft: `1px solid ${C.lineSoft}`,
-      padding: '20px 24px', minHeight: '100vh',
-    }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <div style={{
-          fontFamily: FONT_SERIF, fontSize: 16, fontWeight: 500,
-          letterSpacing: '0.06em', color: C.ink,
-        }}>予約詳細</div>
-        <button onClick={onClose} aria-label="閉じる" style={{
-          background: 'transparent', border: 'none', cursor: 'pointer',
-          padding: 6, color: C.ink3,
-        }}>
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-          </svg>
+    <div className="srk-week">
+      <div className="srk-week-axis">
+        <div className="srk-week-axis-corner" />
+        {Array.from({ length: hours + 1 }).map((_, i) => (
+          <div key={i} className="srk-week-axis-tick num">
+            {HOUR_START + i}:00
+          </div>
+        ))}
+      </div>
+      {days.map((d, i) => {
+        const isThisDay = d.toDateString() === today0.toDateString();
+        const isCurrent = d.toDateString() === currentDate.toDateString();
+        const fc = bookingsForDate(d);
+        const bookings = isThisDay ? todayBookings : [];
+        return (
+          <div
+            key={i}
+            className={`srk-week-row ${isThisDay ? 'is-today' : ''} ${isCurrent ? 'is-current' : ''}`}
+          >
+            <button
+              className="srk-week-daycol"
+              type="button"
+              onClick={() => setCurrentDate(d)}
+            >
+              <em>{WD_LABELS_EN[d.getDay()]}</em>
+              <b className="num">{d.getDate()}</b>
+              <span>{fc.closed ? '休' : `${fc.count}件`}</span>
+            </button>
+            <div className="srk-week-track">
+              {Array.from({ length: hours }).map((_, j) => (
+                <div key={j} className="srk-week-cell" />
+              ))}
+              {!fc.closed && !bookings.length && (
+                <div className="srk-week-forecast">
+                  <span>
+                    予測 {fc.count}件 / ¥{(fc.revenue / 1000).toFixed(0)}k
+                  </span>
+                </div>
+              )}
+              {bookings.map((b) => {
+                const left = ((b.start - HOUR_START * 60) / (hours * 60)) * 100;
+                const width = ((b.end - b.start) / (hours * 60)) * 100;
+                const svc = SERVICES[b.tags[0]];
+                return (
+                  <div
+                    key={b.id}
+                    className="srk-week-block"
+                    style={{
+                      left: `${left}%`,
+                      width: `${width}%`,
+                      background: `linear-gradient(180deg, ${svc.color}30, ${svc.color}15)`,
+                      borderColor: `${svc.color}66`,
+                    }}
+                  >
+                    <span>{b.customer}</span>
+                  </div>
+                );
+              })}
+              {fc.closed && <div className="srk-week-closed">定休日</div>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ─── MONTH VIEW ─────────────────────────────────────── */
+
+interface MonthViewProps {
+  currentDate: Date;
+  setCurrentDate: (d: Date) => void;
+  today0: Date;
+}
+
+function MonthView({ currentDate, setCurrentDate, today0 }: MonthViewProps) {
+  const y = currentDate.getFullYear();
+  const m = currentDate.getMonth();
+  const first = new Date(y, m, 1);
+  const last = new Date(y, m + 1, 0);
+  const startPad = (first.getDay() + 6) % 7;
+  const totalCells = Math.ceil((startPad + last.getDate()) / 7) * 7;
+
+  const cells = Array.from({ length: totalCells }, (_, i) => {
+    const d = new Date(y, m, i - startPad + 1);
+    const isCur = d.getMonth() === m;
+    return { d, isCur };
+  });
+
+  const monthBookings = cells
+    .filter((c) => c.isCur)
+    .map((c) => bookingsForDate(c.d));
+  const maxC = Math.max(...monthBookings.map((b) => b.count), 1);
+  const totalRevenue = monthBookings.reduce((s, b) => s + b.revenue, 0);
+  const totalBookings = monthBookings.reduce((s, b) => s + b.count, 0);
+  const workingDays = monthBookings.filter((b) => !b.closed).length;
+
+  return (
+    <div className="srk-month">
+      <div className="srk-month-summary">
+        <div>
+          <label>月間予約合計</label>
+          <b className="num">{totalBookings}</b>
+          <em>件</em>
+        </div>
+        <div>
+          <label>月間売上見込み</label>
+          <b className="num">¥{(totalRevenue / 1000).toFixed(0)}k</b>
+        </div>
+        <div>
+          <label>営業日</label>
+          <b className="num">{workingDays}</b>
+          <em>日</em>
+        </div>
+        <div>
+          <label>1日平均</label>
+          <b className="num">
+            {(totalBookings / Math.max(1, workingDays)).toFixed(1)}
+          </b>
+          <em>件</em>
+        </div>
+        <div className="srk-month-legend">
+          <span>少</span>
+          <i className="srk-heat-1" />
+          <i className="srk-heat-2" />
+          <i className="srk-heat-3" />
+          <i className="srk-heat-4" />
+          <i className="srk-heat-5" />
+          <span>多</span>
+        </div>
+      </div>
+
+      <div className="srk-month-head">
+        {['月', '火', '水', '木', '金', '土', '日'].map((d, i) => (
+          <div
+            key={i}
+            className={`srk-month-dow ${i === 5 ? 'sat' : i === 6 ? 'sun' : ''}`}
+          >
+            {d}
+          </div>
+        ))}
+      </div>
+
+      <div className="srk-month-grid">
+        {cells.map((c, i) => {
+          const fc = bookingsForDate(c.d);
+          const isTodayCell = c.d.toDateString() === today0.toDateString();
+          const intensity = fc.closed ? 0 : Math.ceil((fc.count / maxC) * 5);
+          const wd = c.d.getDay();
+          return (
+            <button
+              key={i}
+              type="button"
+              className={`srk-month-cell ${c.isCur ? '' : 'is-out'} ${isTodayCell ? 'is-today' : ''} ${fc.closed ? 'is-closed' : ''} srk-heat-${intensity}`}
+              onClick={() => setCurrentDate(c.d)}
+            >
+              <div className="srk-month-cell-h">
+                <span
+                  className={`srk-month-date num ${wd === 6 ? 'sat' : wd === 0 ? 'sun' : ''}`}
+                >
+                  {c.d.getDate()}
+                </span>
+                {isTodayCell && <span className="srk-month-today">今日</span>}
+                {fc.closed && c.isCur && (
+                  <span className="srk-month-closed">休</span>
+                )}
+              </div>
+              {!fc.closed && c.isCur && (
+                <div className="srk-month-cell-body">
+                  <div className="srk-month-count">
+                    <b className="num">{fc.count}</b>
+                    <em>件</em>
+                  </div>
+                  <div className="srk-month-revenue num">
+                    ¥{Math.round(fc.revenue / 1000)}k
+                  </div>
+                  <div className="srk-month-bars">
+                    {[...Array(Math.min(6, fc.count))].map((_, b) => (
+                      <i key={b} />
+                    ))}
+                    {fc.count > 6 && <em>+{fc.count - 6}</em>}
+                  </div>
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Reservation Detail (modal body) ──────────────────── */
+
+function ReservationDetail({ booking }: { booking: Booking }) {
+  const st = STAFF.find((s) => s.id === booking.staff)!;
+  return (
+    <div className="srk-detail">
+      <div className="srk-detail-head">
+        <div>
+          <div className="srk-detail-name">
+            {booking.customer}{' '}
+            {booking.isNew && <span className="srk-tag-new">新規</span>}
+          </div>
+          <div className="srk-detail-meta">
+            {booking.ageBand} · 来店 {booking.repeat}回目
+          </div>
+        </div>
+        <div className="srk-detail-time">
+          <span className="num">{fmtTime(booking.start)}</span>
+          <span>
+            {' '}〜 {fmtTime(booking.end)} ({booking.end - booking.start}分)
+          </span>
+        </div>
+      </div>
+      <div className="srk-detail-grid">
+        <div>
+          <label>メニュー</label>
+          <div>
+            <ServicePills tags={booking.tags} />
+          </div>
+        </div>
+        <div>
+          <label>担当</label>
+          <div className="srk-rsv-staff">
+            <Avatar char={st.initial} color={st.color} size={22} />
+            <span>{st.name}</span>
+          </div>
+        </div>
+        <div>
+          <label>料金</label>
+          <div className="num" style={{ fontSize: '18px' }}>
+            ¥{booking.amount.toLocaleString()}
+          </div>
+        </div>
+        <div>
+          <label>状態</label>
+          <div>
+            <span className={`srk-status srk-status-${booking.status}`}>
+              <i />
+              {booking.status === 'confirmed' ? '確定' : '仮予約'}
+            </span>
+          </div>
+        </div>
+        <div className="full">
+          <label>メモ</label>
+          <div>{booking.note || '—'}</div>
+        </div>
+      </div>
+      <div className="srk-detail-actions">
+        <button className="srk-btn ghost" type="button">
+          メッセージ
+        </button>
+        <button className="srk-btn ghost" type="button">
+          編集
+        </button>
+        <button className="srk-btn primary" type="button">
+          受付開始
         </button>
       </div>
-
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 12,
-        padding: '12px 0', borderBottom: `1px solid ${C.lineSoft}`,
-        marginBottom: 8,
-      }}>
-        <div style={{
-          width: 44, height: 44, borderRadius: 999,
-          background: hashColor(booking.staffId), color: '#fdf6e8',
-          display: 'grid', placeItems: 'center',
-          fontSize: 16, fontFamily: FONT_SERIF, fontWeight: 500,
-          flexShrink: 0,
-        }}>{booking.customerName.charAt(0)}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontFamily: FONT_SERIF, fontSize: 16, fontWeight: 500, color: C.ink,
-          }}>
-            {booking.customerName} <span style={{ fontSize: 12, color: C.ink3 }}>様</span>
-          </div>
-          {booking.phone && (
-            <div style={{ fontFamily: FONT_MONO, fontSize: 11, color: C.ink3, marginTop: 2 }}>{booking.phone}</div>
-          )}
-        </div>
-      </div>
-
-      <DetailRow label="ステータス">
-        <span style={{
-          padding: '3px 10px', borderRadius: 4,
-          background: st.bg, color: st.color,
-          border: `1px solid ${st.border}`, fontSize: 11,
-        }}>{st.ja}</span>
-        <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-          {otherStatuses.map(s => (
-            <button key={s} onClick={() => onStatusChange(booking.id, s)} style={{
-              padding: '4px 10px', height: 26, fontSize: 11,
-              borderRadius: 6, border: `1px solid ${C.line}`,
-              background: C.surface, color: C.ink2, cursor: 'pointer',
-            }}>→ {STATUS_STYLE[s].ja}</button>
-          ))}
-        </div>
-      </DetailRow>
-      <DetailRow label="時間">
-        <span style={{ fontFamily: FONT_MONO, fontSize: 13 }}>
-          {fmtMin(booking.startMin)} – {fmtMin(booking.endMin)}
-          <span style={{ color: C.ink3, marginLeft: 8, fontSize: 11 }}>
-            ({booking.endMin - booking.startMin}分)
-          </span>
-        </span>
-      </DetailRow>
-      <DetailRow label="担当">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{
-            width: 20, height: 20, borderRadius: 999, background: hashColor(booking.staffId),
-            color: '#fdf6e8', display: 'grid', placeItems: 'center',
-            fontSize: 9, fontWeight: 600,
-          }}>{initials(booking.staffName)}</span>
-          {booking.staffName}
-        </div>
-      </DetailRow>
-      <DetailRow label="メニュー">
-        <span style={{ fontSize: 12 }}>{booking.menu || '—'}</span>
-      </DetailRow>
-      {booking.price > 0 && (
-        <DetailRow label="料金">
-          <span style={{ fontFamily: FONT_MONO, fontSize: 16, fontWeight: 600 }}>
-            ¥{booking.price.toLocaleString()}
-          </span>
-          <span style={{ color: C.ink3, fontSize: 11, marginLeft: 6 }}>税込</span>
-        </DetailRow>
-      )}
-      <DetailRow label="予約経路">
-        <span style={{
-          padding: '2px 6px', borderRadius: 3,
-          background: '#fff', color: src.color,
-          border: `1px solid ${src.color}`, fontSize: 10, fontFamily: FONT_MONO,
-        }}>{src.short}</span>
-        <span style={{ marginLeft: 8, fontSize: 12 }}>{src.ja}</span>
-      </DetailRow>
-      {booking.memo && (
-        <DetailRow label="メモ">
-          <div style={{
-            background: C.surface2, padding: '8px 10px', borderRadius: 6,
-            fontSize: 12, color: C.ink2, lineHeight: 1.5,
-          }}>{booking.memo}</div>
-        </DetailRow>
-      )}
-
-      <div style={{
-        display: 'flex', gap: 8, marginTop: 20, paddingTop: 16,
-        borderTop: `1px solid ${C.lineSoft}`,
-      }}>
-        <button style={{ ...ghostBtn, flex: 1 }}>編集</button>
-        <button onClick={() => onStatusChange(booking.id, 'inprogress')} style={{ ...primaryBtn, flex: 1 }}>来店受付</button>
-      </div>
-    </aside>
-  )
-}
-
-function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div style={{
-      display: 'grid', gridTemplateColumns: '86px 1fr',
-      padding: '12px 0',
-      borderBottom: `1px dotted ${C.lineSoft}`,
-      alignItems: 'start',
-    }}>
-      <div style={{
-        fontSize: 10, letterSpacing: '0.12em', color: C.ink3,
-        textTransform: 'uppercase', paddingTop: 2,
-      }}>{label}</div>
-      <div style={{ fontSize: 13, color: C.ink }}>{children}</div>
     </div>
-  )
-}
-
-// === 新規予約モーダル ===
-function NewBookingModal(props: {
-  onClose: () => void
-  allStaff: StaffInfo[]
-  onAdd: (b: Booking) => void
-}) {
-  const { onClose, allStaff, onAdd } = props
-  const [form, setForm] = useState({
-    customer: '', phone: '', staffId: allStaff[0]?.id || 'unknown',
-    source: 'phone', hour: '10', minute: '00', durMin: 60,
-    menu: '', memo: '',
-  })
-
-  function submit() {
-    if (!form.customer.trim()) {
-      alert('お客様名を入力してください')
-      return
-    }
-    const startMin = parseInt(form.hour) * 60 + parseInt(form.minute)
-    const staff = allStaff.find(s => s.id === form.staffId)
-    const newB: Booking = {
-      id: 'manual_' + Date.now(),
-      staffId: form.staffId,
-      staffName: staff?.name || '未割当',
-      startMin, endMin: startMin + form.durMin,
-      customerName: form.customer.trim(),
-      phone: form.phone.trim(),
-      menu: form.menu.trim(),
-      price: 0,
-      status: 'tentative',
-      source: form.source,
-      tags: [],
-      memo: form.memo.trim(),
-    }
-    onAdd(newB)
-  }
-
-  return (
-    <div onClick={onClose} style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: 'rgba(31,22,18,0.4)',
-      display: 'grid', placeItems: 'center', zIndex: 1000, padding: 20,
-    }}>
-      <div onClick={e => e.stopPropagation()} style={{
-        background: C.surface, borderRadius: 18, padding: 28,
-        maxWidth: 520, width: '100%',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-      }}>
-        <div style={{
-          fontFamily: FONT_SERIF, fontSize: 18, fontWeight: 500,
-          letterSpacing: '0.06em', color: C.ink, marginBottom: 20,
-        }}>新規予約</div>
-
-        <div style={{ display: 'grid', gap: 14 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <Field label="お客様名"><input value={form.customer} onChange={e => setForm({ ...form, customer: e.target.value })} style={inputStyle} /></Field>
-            <Field label="電話番号"><input value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} style={inputStyle} /></Field>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            <Field label="担当スタッフ">
-              <select value={form.staffId} onChange={e => setForm({ ...form, staffId: e.target.value })} style={inputStyle}>
-                {allStaff.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
-            </Field>
-            <Field label="予約経路">
-              <select value={form.source} onChange={e => setForm({ ...form, source: e.target.value })} style={inputStyle}>
-                <option value="phone">電話</option><option value="web">ウェブ予約</option>
-                <option value="walkin">直接来店</option><option value="repeat">リピーター</option>
-              </select>
-            </Field>
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-            <Field label="開始 (時)">
-              <select value={form.hour} onChange={e => setForm({ ...form, hour: e.target.value })} style={inputStyle}>
-                {Array.from({ length: 14 }, (_, i) => i + 8).map(h => <option key={h} value={String(h)}>{h}</option>)}
-              </select>
-            </Field>
-            <Field label="開始 (分)">
-              <select value={form.minute} onChange={e => setForm({ ...form, minute: e.target.value })} style={inputStyle}>
-                <option value="00">00</option><option value="15">15</option>
-                <option value="30">30</option><option value="45">45</option>
-              </select>
-            </Field>
-            <Field label="所要時間 (分)">
-              <select value={form.durMin} onChange={e => setForm({ ...form, durMin: parseInt(e.target.value) })} style={inputStyle}>
-                {[30, 45, 60, 75, 90, 105, 120, 150, 180].map(m => <option key={m} value={m}>{m}分</option>)}
-              </select>
-            </Field>
-          </div>
-          <Field label="メニュー"><input value={form.menu} onChange={e => setForm({ ...form, menu: e.target.value })} style={inputStyle} /></Field>
-          <Field label="メモ"><textarea value={form.memo} onChange={e => setForm({ ...form, memo: e.target.value })} rows={3} style={{ ...inputStyle, resize: 'vertical' as const }} /></Field>
-        </div>
-
-        <div style={{ display: 'flex', gap: 10, marginTop: 24, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} style={ghostBtn}>キャンセル</button>
-          <button onClick={submit} style={primaryBtn}>仮予約として追加</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div style={{
-        fontSize: 10, letterSpacing: '0.12em', color: C.ink3,
-        textTransform: 'uppercase', marginBottom: 4,
-      }}>{label}</div>
-      {children}
-    </div>
-  )
-}
-
-// === ボタンスタイル ===
-const ghostIconBtn: React.CSSProperties = {
-  width: 28, height: 28, padding: 0, borderRadius: 6,
-  border: `1px solid ${C.line}`, background: C.surface,
-  color: C.ink2, cursor: 'pointer',
-  display: 'grid', placeItems: 'center',
-}
-const ghostBtn: React.CSSProperties = {
-  padding: '7px 14px', borderRadius: 6,
-  border: `1px solid ${C.line}`, background: C.surface,
-  color: C.ink2, fontSize: 12, cursor: 'pointer',
-  fontFamily: FONT_SANS,
-}
-const primaryBtn: React.CSSProperties = {
-  padding: '7px 14px', borderRadius: 6, border: 'none',
-  background: C.ink, color: '#fdf6e8',
-  fontSize: 12, fontWeight: 500, cursor: 'pointer',
-  fontFamily: FONT_SANS,
-}
-const selectStyle: React.CSSProperties = {
-  padding: '6px 24px 6px 10px', borderRadius: 6,
-  border: `1px solid ${C.line}`, background: C.surface,
-  fontSize: 11, color: C.ink2, cursor: 'pointer',
-  fontFamily: FONT_SANS, appearance: 'none' as const,
-  backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 16 16' fill='none'><path d='M4 6l4 4 4-4' stroke='%237a7064' stroke-width='1.3' stroke-linecap='round'/></svg>")`,
-  backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center',
-}
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '8px 10px', borderRadius: 6,
-  border: `1px solid ${C.line}`, background: C.surface,
-  fontFamily: FONT_SANS, fontSize: 13, color: C.ink, outline: 'none',
+  );
 }
