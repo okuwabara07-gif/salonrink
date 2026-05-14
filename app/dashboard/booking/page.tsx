@@ -81,10 +81,17 @@ export default function BookingPage() {
       hpbQuery = hpbQuery.eq('status', filterStatus)
     }
 
-    const [resvResult, hpbResult] = await Promise.all([
-      resvQuery.order('scheduled_at', { ascending: true }),
-      filterSource === 'hotpepper' || filterSource === 'all' ? hpbQuery.order('start_time', { ascending: true }) : Promise.resolve({ data: [] }),
-    ])
+    // 両テーブルを独立してfetch、片方が失敗しても他方は反映する
+    const resvPromise = resvQuery.order('scheduled_at', { ascending: true })
+      .then(r => r)
+      .catch(e => { console.warn('reservations fetch failed:', e); return { data: [] } })
+    const hpbPromise = (filterSource === 'hotpepper' || filterSource === 'all')
+      ? hpbQuery.order('start_time', { ascending: true })
+        .then(r => r)
+        .catch(e => { console.warn('hpb_reservations fetch failed:', e); return { data: [] } })
+      : Promise.resolve({ data: [] })
+
+    const [resvResult, hpbResult] = await Promise.all([resvPromise, hpbPromise])
 
     // hpb_reservations を reservations のスキーマに正規化
     const hpbNormalized = ((hpbResult as any).data || []).map((r: any) => ({
