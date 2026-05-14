@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const VPS_SCRAPER_URL = process.env.VPS_SCRAPER_URL || 'http://160.251.213.197'
 const VPS_SYNC_ENDPOINT = `${VPS_SCRAPER_URL}/sync`
-const VPS_REQUEST_TIMEOUT = 30000 // 30秒
+const VPS_REQUEST_TIMEOUT = 90000 // 30秒
 
 export async function POST(req: NextRequest) {
   try {
