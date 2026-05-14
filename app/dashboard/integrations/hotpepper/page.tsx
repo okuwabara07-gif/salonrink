@@ -388,6 +388,37 @@ export default function HotpepperPage() {
                 </p>
               </div>
             )}
+
+            {/* Cookie期限切れ専用警告バナー */}
+            {integration.last_sync_error && /Cookie expired|Cookie invalid/i.test(integration.last_sync_error) && (
+              <div style={{
+                marginTop: 20,
+                padding: '20px 24px',
+                borderRadius: 12,
+                background: '#FFF4E5',
+                border: '2px solid #F5A623',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+                  <div style={{ fontSize: 24 }}>⚠️</div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 15, fontWeight: 600, color: '#8B5A00', margin: '0 0 8px 0' }}>
+                      SALON BOARD ログインセッションの再認証が必要です
+                    </p>
+                    <p style={{ fontSize: 13, color: '#6B4500', margin: '0 0 12px 0', lineHeight: 1.6 }}>
+                      ホットペッパー側のログインセッション(Cookie)が期限切れになりました。お手数ですが、SALON BOARD で再ログインして Cookie を更新してください。手順:
+                    </p>
+                    <ol style={{ fontSize: 13, color: '#6B4500', margin: '0 0 12px 0', paddingLeft: 20, lineHeight: 1.8 }}>
+                      <li>SALON BOARD(<a href="https://salonboard.com" target="_blank" rel="noopener noreferrer" style={{ color: '#8B5A00', textDecoration: 'underline' }}>salonboard.com</a>)に手動でログイン</li>
+                      <li>ログイン後、Cookie 更新を担当者に依頼(運用担当 Osamu まで)</li>
+                      <li>更新完了後、このページで「手動同期」を試して動作確認</li>
+                    </ol>
+                    <p style={{ fontSize: 11, color: '#8B5A00', margin: 0, fontStyle: 'italic' }}>
+                      ※ この期間中も予約データはダッシュボードで確認可能です(最後の同期時点の情報)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
