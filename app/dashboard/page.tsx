@@ -57,46 +57,110 @@ export default function DashboardPage() {
 
       setSalon(salonData)
 
-      const today = new Date().toISOString().split('T')[0]
-      const { data: todayReservations } = await supabase
-        .from('reservations')
-        .select('id')
-        .eq('salon_id', salonData.id)
-        .gte('scheduled_at', today)
-        .lt('scheduled_at', new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0])
-
-      const weekStart = new Date()
+      const now = new Date()
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).toISOString()
+      const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0).toISOString()
+      const weekStart = new Date(now)
       weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+      weekStart.setHours(0, 0, 0, 0)
       const weekEnd = new Date(weekStart)
       weekEnd.setDate(weekEnd.getDate() + 7)
 
-      const { data: weekReservations } = await supabase
-        .from('reservations')
-        .select('id')
-        .eq('salon_id', salonData.id)
-        .gte('scheduled_at', weekStart.toISOString().split('T')[0])
-        .lt('scheduled_at', weekEnd.toISOString().split('T')[0])
+      let todayResvCount = 0
+      let weekResvCount = 0
+      let todayResvDetails: any[] = []
+      try {
+        const r1 = await supabase
+          .from('reservations')
+          .select('id')
+          .eq('salon_id', salonData.id)
+          .gte('datetime', todayStart)
+          .lt('datetime', todayEnd)
+        todayResvCount = r1.data?.length || 0
+      } catch (e) { console.warn('resv today fetch failed:', e) }
+      try {
+        const r2 = await supabase
+          .from('reservations')
+          .select('id')
+          .eq('salon_id', salonData.id)
+          .gte('datetime', weekStart.toISOString())
+          .lt('datetime', weekEnd.toISOString())
+        weekResvCount = r2.data?.length || 0
+      } catch (e) { console.warn('resv week fetch failed:', e) }
+      try {
+        const r3 = await supabase
+          .from('reservations')
+          .select('id, customer_name, datetime, menu, status, price')
+          .eq('salon_id', salonData.id)
+          .gte('datetime', todayStart)
+          .lt('datetime', todayEnd)
+          .order('datetime', { ascending: true })
+          .limit(50)
+        todayResvDetails = (r3.data || []).map((r: any) => ({
+          id: 'resv_' + r.id,
+          customer_name: r.customer_name,
+          scheduled_at: r.datetime,
+          menu: r.menu,
+          status: r.status,
+          price: r.price || 0,
+        }))
+      } catch (e) { console.warn('resv detail fetch failed:', e) }
+
+      let todayHpbCount = 0
+      let weekHpbCount = 0
+      let todayHpbDetails: any[] = []
+      try {
+        const h1 = await supabase
+          .from('hpb_reservations')
+          .select('id')
+          .eq('salon_id', salonData.id)
+          .gte('start_time', todayStart)
+          .lt('start_time', todayEnd)
+        todayHpbCount = h1.data?.length || 0
+      } catch (e) { console.warn('hpb today fetch failed:', e) }
+      try {
+        const h2 = await supabase
+          .from('hpb_reservations')
+          .select('id')
+          .eq('salon_id', salonData.id)
+          .gte('start_time', weekStart.toISOString())
+          .lt('start_time', weekEnd.toISOString())
+        weekHpbCount = h2.data?.length || 0
+      } catch (e) { console.warn('hpb week fetch failed:', e) }
+      try {
+        const h3 = await supabase
+          .from('hpb_reservations')
+          .select('id, customer_name, start_time, menu_name, status')
+          .eq('salon_id', salonData.id)
+          .gte('start_time', todayStart)
+          .lt('start_time', todayEnd)
+          .order('start_time', { ascending: true })
+          .limit(50)
+        todayHpbDetails = (h3.data || []).map((r: any) => ({
+          id: 'hpb_' + r.id,
+          customer_name: r.customer_name,
+          scheduled_at: r.start_time,
+          menu: r.menu_name || '',
+          status: r.status,
+          price: 0,
+        }))
+      } catch (e) { console.warn('hpb detail fetch failed:', e) }
 
       const { data: newCustomers } = await supabase
         .from('customers')
         .select('id')
         .eq('salon_id', salonData.id)
-        .gte('created_at', today)
+        .gte('created_at', todayStart)
 
-      const { data: reservations } = await supabase
-        .from('reservations')
-        .select('id, customer_name, scheduled_at, menu, status, price')
-        .eq('salon_id', salonData.id)
-        .gte('scheduled_at', today)
-        .lt('scheduled_at', new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0])
-        .order('scheduled_at', { ascending: true })
-        .limit(10)
+      const allReservations = [...todayResvDetails, ...todayHpbDetails]
+        .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
+        .slice(0, 20)
 
       setStats({
-        todayCount: todayReservations?.length || 0,
-        weekCount: weekReservations?.length || 0,
+        todayCount: todayResvCount + todayHpbCount,
+        weekCount: weekResvCount + weekHpbCount,
         newCustomers: newCustomers?.length || 0,
-        reservations: reservations || [],
+        reservations: allReservations,
       })
 
       setLoading(false)
