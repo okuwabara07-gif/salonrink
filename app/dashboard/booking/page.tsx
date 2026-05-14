@@ -82,16 +82,24 @@ export default function BookingPage() {
     }
 
     // 両テーブルを独立してfetch、片方が失敗しても他方は反映する
-    const resvPromise = resvQuery.order('datetime', { ascending: true })
-      .then(r => r)
-      .catch(e => { console.warn('reservations fetch failed:', e); return { data: [] } })
-    const hpbPromise = (filterSource === 'hotpepper' || filterSource === 'all')
-      ? hpbQuery.order('start_time', { ascending: true })
-        .then(r => r)
-        .catch(e => { console.warn('hpb_reservations fetch failed:', e); return { data: [] } })
-      : Promise.resolve({ data: [] })
+    let resvResult: { data: any[] | null } = { data: [] }
+    let hpbResult: { data: any[] | null } = { data: [] }
 
-    const [resvResult, hpbResult] = await Promise.all([resvPromise, hpbPromise])
+    try {
+      const r = await resvQuery.order('datetime', { ascending: true })
+      resvResult = { data: r.data }
+    } catch (e) {
+      console.warn('reservations fetch failed:', e)
+    }
+
+    if (filterSource === 'hotpepper' || filterSource === 'all') {
+      try {
+        const r = await hpbQuery.order('start_time', { ascending: true })
+        hpbResult = { data: r.data }
+      } catch (e) {
+        console.warn('hpb_reservations fetch failed:', e)
+      }
+    }
 
     // reservations テーブルは datetime カラム→ scheduled_at に正規化
     const resvNormalized = ((resvResult as any).data || []).map((r: any) => ({
