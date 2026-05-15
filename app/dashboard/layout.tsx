@@ -18,7 +18,7 @@ interface TitleEntry {
 }
 
 const TITLE_MAP: Record<string, TitleEntry> = {
-  '/dashboard':                 { title: 'おはようございます、テスト太郎さん', sub: 'キレイ 鶴見店' },
+  '/dashboard':                 { title: 'ホーム', sub: '本日のサロン状況' },
   '/dashboard/booking':         { title: '予約スケジュール',                     sub: 'タイムテーブル / 予約管理' },
   '/dashboard/customers':       { title: '顧客一覧',                             sub: '顧客データベース' },
   '/dashboard/messages':        { title: 'DM配信',                                sub: '自動リマインダー · 来店促進' },
