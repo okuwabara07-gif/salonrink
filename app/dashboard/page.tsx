@@ -1,640 +1,776 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import {
-  Icon,
-  Card,
-  Sparkline,
-  ServicePills,
-  Avatar,
-  Modal,
-  CustomerPhoto,
-  type IconName,
-} from '@/components/srk';
-import {
-  STAFF,
-  ADDABLE_STAFF,
-  SERVICES,
-  todayBookings,
-  messages,
-  weekTrend,
-  revenueTrend,
-  todos,
-  reachoutCandidates,
-  fmtTime,
-  type Booking,
-} from '@/lib/srkMockData';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import styles from './page.module.css';
 
 /* ============================================================
-   Dashboard — Home view
-   ============================================================
-
-   Phase 2 implementation. Mock data driven; Phase 3 will swap in
-   Supabase queries for `todayBookings` and KPI metrics.
-
-   Layout:
-     1. KPI row (4 cards w/ sparkline + progress)
-     2. 本日のタイムライン (30-min slots, horizontal scroll, now-line)
-     3. 本日の予約 (card list w/ photo + LINE digest + receipt CTA)
-     4. 3-col bottom: 来店促進候補 / 今日のタスク / メッセージ
-     5. Reservation detail modal
+   /dashboard — ホーム画面
+   挨拶 / KPI 4枚 / タイムライン / 本日予約 / 来店促進 / タスク / メッセージ
    ============================================================ */
 
+// メニュー名 → duration/price の lookup
+const MENU_LOOKUP: Record<string, { duration: number; price: number }> = {
+  'カット': { duration: 60, price: 4800 },
+  'カラー': { duration: 90, price: 6800 },
+  '白髪染め': { duration: 90, price: 7200 },
+  'パーマ': { duration: 120, price: 8800 },
+  'トリートメント': { duration: 30, price: 2800 },
+  'ヘッドスパ': { duration: 30, price: 3500 },
+  'ハイライト': { duration: 120, price: 9800 },
+};
+
+const DEFAULT_DURATION = 60;
+const DEFAULT_PRICE = 5000;
+
+interface Salon {
+  id: string;
+  name: string | null;
+  owner_name: string | null;
+}
+
+interface Reservation {
+  id: string;
+  salon_id: string | null;
+  customer_name: string | null;
+  customer_line_id: string | null;
+  datetime: string;
+  menu: string | null;
+  status: string | null;
+  line_user_id: string | null;
+}
+
+interface Customer {
+  id: string;
+  salon_id: string | null;
+  name: string | null;
+  last_visit: string | null;
+  visit_count: number | null;
+  line_display_name: string | null;
+  line_user_id: string | null;
+  created_at: string | null;
+}
+
+interface PreCounseling {
+  id: string;
+  customer_id: string;
+  salon_id: string;
+  reservation_id: string | null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  answers: any;
+  status: string | null;
+  created_at: string | null;
+}
+
+interface Task {
+  id: string;
+  salon_id: string;
+  title: string;
+  completed: boolean;
+  is_urgent: boolean;
+  due_at: string | null;
+  created_at: string;
+}
+
+// メニューを分解して duration/price を集計
+function parseMenuInfo(menu: string | null): { items: string[]; duration: number; price: number } {
+  if (!menu) return { items: [], duration: DEFAULT_DURATION, price: DEFAULT_PRICE };
+  const items = menu.split(/[,、+＋\s]/).map(s => s.trim()).filter(Boolean);
+  let duration = 0;
+  let price = 0;
+  for (const item of items) {
+    const lookup = MENU_LOOKUP[item];
+    if (lookup) {
+      duration += lookup.duration;
+      price += lookup.price;
+    } else {
+      // Partial match
+      const matched = Object.keys(MENU_LOOKUP).find(k => item.includes(k));
+      if (matched) {
+        duration += MENU_LOOKUP[matched].duration;
+        price += MENU_LOOKUP[matched].price;
+      } else {
+        duration += DEFAULT_DURATION;
+        price += DEFAULT_PRICE;
+      }
+    }
+  }
+  if (items.length === 0) {
+    duration = DEFAULT_DURATION;
+    price = DEFAULT_PRICE;
+  }
+  return { items, duration, price };
+}
+
+function getGreeting(): string {
+  const h = new Date().getHours();
+  if (h < 5) return 'お疲れさまです';
+  if (h < 11) return 'おはようございます';
+  if (h < 17) return 'こんにちは';
+  return 'こんばんは';
+}
+
+function formatJpDate(d: Date): string {
+  const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+  return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日(${day})`;
+}
+
+function formatHHMM(d: Date): string {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+function diffDays(from: Date | string, to: Date = new Date()): number {
+  const f = typeof from === 'string' ? new Date(from) : from;
+  return Math.floor((to.getTime() - f.getTime()) / (1000 * 60 * 60 * 24));
+}
+
 export default function DashboardHomePage() {
-  const router = useRouter();
-  const [selected, setSelected] = useState<Booking | null>(null);
-  // Use a stable "now" on the client to avoid SSR hydration mismatch.
-  // 1-minute tick to advance the now-line and "対応中" badge.
-  const [now, setNow] = useState<Date | null>(null);
+  // === Core state ===
+  const [salon, setSalon] = useState<Salon | null>(null);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [preCounselings, setPreCounselings] = useState<PreCounseling[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  // === Task add modal ===
+  const [showTaskModal, setShowTaskModal] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [newTaskUrgent, setNewTaskUrgent] = useState(false);
+  const [addingTask, setAddingTask] = useState(false);
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // === Refresh time every minute for "現在 HH:MM" indicator ===
   useEffect(() => {
-    setNow(new Date());
-    const t = setInterval(() => setNow(new Date()), 60 * 1000);
+    const t = setInterval(() => setCurrentTime(new Date()), 60_000);
     return () => clearInterval(t);
   }, []);
 
-  const goTo = (path: string) => router.push(path);
-  const openChart = (id: string) => router.push(`/dashboard/customers/${id}`);
+  // === Data load ===
+  const loadAll = useCallback(async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoadError('ログインが必要です');
+        setLoading(false);
+        return;
+      }
 
-  // KPI calculations
-  const totalToday = todayBookings.length;
-  const totalRevenue = todayBookings.reduce((s, b) => s + b.amount, 0);
-  const weekTotal = weekTrend.slice(-7).reduce((a, b) => a + b, 0);
-  const weekDelta = weekTotal - weekTrend.slice(0, 7).reduce((a, b) => a + b, 0);
+      // salon
+      const { data: salonRow, error: salonErr } = await supabase
+        .from('salons')
+        .select('id, name, owner_name')
+        .eq('owner_user_id', user.id)
+        .maybeSingle();
 
-  // Visible time scale — 30-minute slots, horizontally scrollable
-  const HOUR_START = 10;
-  const HOUR_END = 21;
-  const SLOT_MIN = 30;
-  const SLOT_W = 64;
-  const slots = ((HOUR_END - HOUR_START) * 60) / SLOT_MIN;
-  const totalMin = (HOUR_END - HOUR_START) * 60;
-  const totalW = slots * SLOT_W;
+      if (salonErr || !salonRow) {
+        setLoadError('サロン情報が取得できません');
+        setLoading(false);
+        return;
+      }
+      setSalon(salonRow as Salon);
 
-  const nowMin = now ? now.getHours() * 60 + now.getMinutes() : 0;
-  const nowPctRaw = (nowMin - HOUR_START * 60) / totalMin;
-  const nowX = Math.max(0, Math.min(1, nowPctRaw)) * totalW;
-  const showNow = !!now && nowPctRaw >= 0 && nowPctRaw <= 1;
+      // 過去7日 + 未来7日の予約を取得(タイムライン/KPI 双方の為)
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 7);
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 7);
 
-  const nowHHMM = now
-    ? `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
-    : '--:--';
+      const [resRes, custRes, preRes, taskRes] = await Promise.all([
+        supabase
+          .from('reservations')
+          .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
+          .eq('salon_id', salonRow.id)
+          .gte('datetime', startDate.toISOString())
+          .lte('datetime', endDate.toISOString())
+          .order('datetime', { ascending: true }),
+        supabase
+          .from('customers')
+          .select('id, salon_id, name, last_visit, visit_count, line_display_name, line_user_id, created_at')
+          .eq('salon_id', salonRow.id),
+        supabase
+          .from('pre_counselings')
+          .select('id, customer_id, salon_id, reservation_id, answers, status, created_at')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('tasks')
+          .select('id, salon_id, title, completed, is_urgent, due_at, created_at')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      if (resRes.error) console.error('reservations:', resRes.error);
+      if (custRes.error) console.error('customers:', custRes.error);
+      if (preRes.error) console.error('pre_counselings:', preRes.error);
+      if (taskRes.error) console.error('tasks:', taskRes.error);
+
+      setReservations((resRes.data as Reservation[]) ?? []);
+      setCustomers((custRes.data as Customer[]) ?? []);
+      setPreCounselings((preRes.data as PreCounseling[]) ?? []);
+      setTasks((taskRes.data as Task[]) ?? []);
+    } catch (e) {
+      console.error(e);
+      setLoadError('予期しないエラー');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadAll();
+  }, [loadAll]);
+
+  // === Derived data ===
+
+  const now = currentTime;
+  const startOfToday = useMemo(() => {
+    const d = new Date(now);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [now]);
+  const endOfToday = useMemo(() => {
+    const d = new Date(now);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }, [now]);
+
+  const todayReservations = useMemo(
+    () =>
+      reservations.filter(r => {
+        const d = new Date(r.datetime);
+        return d >= startOfToday && d <= endOfToday;
+      }),
+    [reservations, startOfToday, endOfToday],
+  );
+
+  const yesterdayCount = useMemo(() => {
+    const yStart = new Date(startOfToday);
+    yStart.setDate(yStart.getDate() - 1);
+    const yEnd = new Date(endOfToday);
+    yEnd.setDate(yEnd.getDate() - 1);
+    return reservations.filter(r => {
+      const d = new Date(r.datetime);
+      return d >= yStart && d <= yEnd;
+    }).length;
+  }, [reservations, startOfToday, endOfToday]);
+
+  const weekCount = useMemo(() => {
+    const startOfWeek = new Date(startOfToday);
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    const endOfWeek = new Date(endOfToday);
+    endOfWeek.setDate(endOfWeek.getDate() + (6 - endOfWeek.getDay()));
+    return reservations.filter(r => {
+      const d = new Date(r.datetime);
+      return d >= startOfWeek && d <= endOfWeek;
+    }).length;
+  }, [reservations, startOfToday, endOfToday]);
+
+  const lastWeekCount = useMemo(() => {
+    const startOfLastWeek = new Date(startOfToday);
+    startOfLastWeek.setDate(startOfLastWeek.getDate() - startOfLastWeek.getDay() - 7);
+    const endOfLastWeek = new Date(endOfToday);
+    endOfLastWeek.setDate(endOfLastWeek.getDate() + (6 - endOfLastWeek.getDay()) - 7);
+    return reservations.filter(r => {
+      const d = new Date(r.datetime);
+      return d >= startOfLastWeek && d <= endOfLastWeek;
+    }).length;
+  }, [reservations, startOfToday, endOfToday]);
+
+  const newCustomersThisMonth = useMemo(() => {
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    return customers.filter(c => c.created_at && new Date(c.created_at) >= startOfMonth).length;
+  }, [customers, now]);
+
+  const newCustomersLastMonth = useMemo(() => {
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59);
+    return customers.filter(c => {
+      if (!c.created_at) return false;
+      const d = new Date(c.created_at);
+      return d >= startOfLastMonth && d <= endOfLastMonth;
+    }).length;
+  }, [customers, now]);
+
+  const todayRevenue = useMemo(() => {
+    return todayReservations.reduce((sum, r) => sum + parseMenuInfo(r.menu).price, 0);
+  }, [todayReservations]);
+
+  const REVENUE_TARGET = 80000;
+
+  // === Promotion candidates ===
+  const promoCandidates = useMemo(() => {
+    const candidates = customers
+      .filter(c => c.last_visit && c.name)
+      .map(c => {
+        const days = diffDays(c.last_visit!);
+        let category: string | null = null;
+        if (days >= 90) category = `休眠(90日超)`;
+        else if (days >= 60) category = `カット周期`;
+        else if (days >= 45) category = `カラー周期`;
+        if (!category) return null;
+        return { ...c, daysSinceVisit: days, category };
+      })
+      .filter((c): c is Customer & { daysSinceVisit: number; category: string } => c !== null)
+      .sort((a, b) => b.daysSinceVisit - a.daysSinceVisit)
+      .slice(0, 5);
+    return candidates;
+  }, [customers]);
+
+  // === Recent messages from pre_counselings ===
+  const recentMessages = useMemo(() => {
+    return preCounselings
+      .filter(pc => pc.answers && (pc.status === 'submitted' || pc.status === 'answered' || pc.status === 'opened'))
+      .slice(0, 3)
+      .map(pc => {
+        const customer = customers.find(c => c.id === pc.customer_id);
+        const answersStr = (() => {
+          try {
+            const a = pc.answers;
+            if (typeof a === 'string') return a.slice(0, 50);
+            if (a?.message) return String(a.message).slice(0, 50);
+            if (a?.note) return String(a.note).slice(0, 50);
+            if (a?.request) return String(a.request).slice(0, 50);
+            const firstVal = Object.values(a)[0];
+            return firstVal ? String(firstVal).slice(0, 50) : '内容を確認...';
+          } catch {
+            return '内容を確認...';
+          }
+        })();
+        return {
+          id: pc.id,
+          customerName: customer?.name || customer?.line_display_name || '顧客',
+          text: answersStr,
+          createdAt: pc.created_at,
+          isUrgent: false,
+        };
+      });
+  }, [preCounselings, customers]);
+
+  // === Tasks computed ===
+  const taskCompletion = useMemo(() => {
+    if (tasks.length === 0) return 0;
+    return Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100);
+  }, [tasks]);
+
+  const taskRemaining = tasks.filter(t => !t.completed).length;
+
+  // === Handlers ===
+
+  const handleToggleTask = async (taskId: string, completed: boolean) => {
+    setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, completed: !completed } : t)));
+    try {
+      const supabase = createClient();
+      await supabase.from('tasks').update({ completed: !completed }).eq('id', taskId);
+    } catch (e) {
+      console.error('task toggle:', e);
+      setTasks(prev => prev.map(t => (t.id === taskId ? { ...t, completed: completed } : t)));
+    }
+  };
+
+  const handleAddTask = async () => {
+    if (!newTaskTitle.trim() || !salon) return;
+    setAddingTask(true);
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({
+          salon_id: salon.id,
+          title: newTaskTitle.trim(),
+          is_urgent: newTaskUrgent,
+          completed: false,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      setTasks(prev => [data as Task, ...prev]);
+      setNewTaskTitle('');
+      setNewTaskUrgent(false);
+      setShowTaskModal(false);
+    } catch (e) {
+      console.error(e);
+      alert('タスクの追加に失敗しました');
+    } finally {
+      setAddingTask(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.page}>
+        <p style={{ color: '#8a7860', fontSize: 14, padding: 40 }}>読み込み中...</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className={styles.page}>
+        <div style={{
+          padding: '14px 18px',
+          background: '#fdf5f3',
+          border: '1px solid #e8b8b0',
+          borderRadius: 8,
+          color: '#c4392e',
+          fontSize: 13,
+        }}>
+          ⚠ {loadError}
+        </div>
+      </div>
+    );
+  }
+
+  const ownerName = salon?.owner_name || 'オーナー';
+  const salonName = salon?.name || 'サロン';
+
+  // Compute timeline range
+  const TIMELINE_START_HOUR = 10;
+  const TIMELINE_END_HOUR = 21;
+  const TIMELINE_HOURS = TIMELINE_END_HOUR - TIMELINE_START_HOUR;
 
   return (
-    <div className="srk-page">
+    <div className={styles.page}>
+      {/* Greeting */}
+      <header className={styles.greeting}>
+        <h1 className={styles.greetingTitle}>
+          {getGreeting()}、{ownerName}さん
+        </h1>
+        <p className={styles.greetingMeta}>
+          {salonName} · {formatJpDate(now)}
+        </p>
+      </header>
 
-      {/* ─── KPI ROW ─────────────────────────────────────────── */}
-      <section className="srk-kpis">
-        <KPI title="本日の予約" value={totalToday} unit="件"
-             delta={`+${totalToday - 5} 件 vs 昨日`} positive
-             trend={weekTrend} color="var(--gold)" icon="calendar" />
-        <KPI title="今週の予約" value={weekTotal} unit="件"
-             delta={`${weekDelta >= 0 ? '+' : ''}${weekDelta} 件 vs 先週`} positive={weekDelta >= 0}
-             trend={weekTrend} color="var(--plum)" icon="users" />
-        <KPI title="新規顧客（今月）" value={12} unit="名"
-             delta="+4 名 vs 先月" positive
-             trend={[2, 3, 1, 4, 3, 5, 3, 4, 6, 5, 7, 8, 6, 12]}
-             color="var(--moss)" icon="sparkle" />
-        <KPI title="本日の売上見込み" value={`¥${(totalRevenue / 1000).toFixed(1)}k`}
-             delta={`目標 ¥80k に対して ${Math.round(totalRevenue / 80000 * 100)}%`}
-             trend={revenueTrend} color="var(--sky)" icon="yen"
-             progress={totalRevenue / 80000} />
+      {/* KPI cards */}
+      <section className={styles.kpiGrid}>
+        <div className={styles.kpiCard}>
+          <p className={styles.kpiLabel}>本日の予約</p>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiIcon}>📅</span>
+            <span className={styles.kpiValue}>{todayReservations.length}<span className={styles.kpiUnit}>件</span></span>
+          </div>
+          <p className={styles.kpiDelta}>
+            {todayReservations.length >= yesterdayCount ? '↗' : '↘'} {todayReservations.length - yesterdayCount >= 0 ? '+' : ''}{todayReservations.length - yesterdayCount} 件 vs 昨日
+          </p>
+        </div>
+
+        <div className={styles.kpiCard}>
+          <p className={styles.kpiLabel}>今週の予約</p>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiIcon}>👥</span>
+            <span className={styles.kpiValue}>{weekCount}<span className={styles.kpiUnit}>件</span></span>
+          </div>
+          <p className={styles.kpiDelta}>
+            {weekCount >= lastWeekCount ? '↗' : '↘'} {weekCount - lastWeekCount >= 0 ? '+' : ''}{weekCount - lastWeekCount} 件 vs 先週
+          </p>
+        </div>
+
+        <div className={styles.kpiCard}>
+          <p className={styles.kpiLabel}>新規顧客(今月)</p>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiIcon}>✨</span>
+            <span className={styles.kpiValue}>{newCustomersThisMonth}<span className={styles.kpiUnit}>名</span></span>
+          </div>
+          <p className={styles.kpiDelta}>
+            {newCustomersThisMonth >= newCustomersLastMonth ? '↗' : '↘'} {newCustomersThisMonth - newCustomersLastMonth >= 0 ? '+' : ''}{newCustomersThisMonth - newCustomersLastMonth} 名 vs 先月
+          </p>
+        </div>
+
+        <div className={styles.kpiCard}>
+          <p className={styles.kpiLabel}>本日の売上見込み</p>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiIcon}>¥</span>
+            <span className={styles.kpiValue}>
+              {(todayRevenue / 1000).toFixed(1)}<span className={styles.kpiUnit}>k</span>
+            </span>
+          </div>
+          <p className={styles.kpiDelta} style={{ color: todayRevenue >= REVENUE_TARGET ? '#7a8a5c' : '#c4392e' }}>
+            目標 ¥{(REVENUE_TARGET / 1000).toFixed(0)}k に対して {Math.round((todayRevenue / REVENUE_TARGET) * 100)}%
+          </p>
+        </div>
       </section>
 
-      {/* ─── TIMELINE ────────────────────────────────────────── */}
-      <section className="srk-row">
-        <Card
-          title="本日のタイムライン"
-          action={
-            <div className="srk-hd-actions">
-              <span className="srk-hd-meta">
-                <span className="srk-now-dot" />
-                現在 {nowHHMM}
-              </span>
-              <button className="srk-linkbtn" onClick={() => goTo('/dashboard/booking')}>
-                スケジュール全画面 <Icon name="arrow_r" size={12} />
-              </button>
-            </div>
-          }
-        >
-          <div className="srk-timeline">
-            <div className="srk-tl-scroll">
-              <div className="srk-tl-axis" style={{ width: totalW }}>
-                {Array.from({ length: slots + 1 }).map((_, i) => {
-                  const totalMins = HOUR_START * 60 + i * SLOT_MIN;
-                  const h = Math.floor(totalMins / 60);
-                  const m = totalMins % 60;
-                  const isHour = m === 0;
-                  return (
-                    <div
-                      key={i}
-                      className={`srk-tl-tick ${isHour ? 'is-hour' : ''}`}
-                      style={{ left: i * SLOT_W }}
-                    >
-                      <span>{isHour ? `${h}:00` : `:${String(m).padStart(2, '0')}`}</span>
-                    </div>
-                  );
-                })}
-              </div>
+      {/* Timeline */}
+      <section className={styles.card}>
+        <div className={styles.cardHead}>
+          <h2 className={styles.cardTitle}>本日のタイムライン</h2>
+          <span className={styles.cardSub}>● 現在 {formatHHMM(now)}</span>
+          <Link href="/dashboard/booking" className={styles.cardAction}>スケジュール全画面 →</Link>
+        </div>
+        <div className={styles.timelineWrap}>
+          <div className={styles.timelineHours}>
+            {Array.from({ length: TIMELINE_HOURS + 1 }, (_, i) => TIMELINE_START_HOUR + i).map(h => (
+              <span key={h} className={styles.timelineHour}>{String(h).padStart(2, '0')}:00</span>
+            ))}
+          </div>
+          <div className={styles.timelineTrack}>
+            {todayReservations.map(r => {
+              const dt = new Date(r.datetime);
+              const startMin = dt.getHours() * 60 + dt.getMinutes() - TIMELINE_START_HOUR * 60;
+              const info = parseMenuInfo(r.menu);
+              const widthMin = info.duration;
+              const left = (startMin / (TIMELINE_HOURS * 60)) * 100;
+              const width = (widthMin / (TIMELINE_HOURS * 60)) * 100;
+              if (left < 0 || left > 100) return null;
+              return (
+                <div
+                  key={r.id}
+                  className={styles.timelineBlock}
+                  style={{ left: `${left}%`, width: `${width}%` }}
+                  title={`${r.customer_name || '名前なし'} - ${r.menu || ''}`}
+                >
+                  <span className={styles.timelineBlockTime}>
+                    {formatHHMM(dt)}–{formatHHMM(new Date(dt.getTime() + widthMin * 60_000))}
+                  </span>
+                  <span className={styles.timelineBlockMenu}>{info.items[0] || r.menu || 'メニュー'}</span>
+                </div>
+              );
+            })}
+            {/* Now indicator */}
+            {(() => {
+              const nowMin = now.getHours() * 60 + now.getMinutes() - TIMELINE_START_HOUR * 60;
+              if (nowMin < 0 || nowMin > TIMELINE_HOURS * 60) return null;
+              return (
+                <div
+                  className={styles.timelineNow}
+                  style={{ left: `${(nowMin / (TIMELINE_HOURS * 60)) * 100}%` }}
+                />
+              );
+            })()}
+          </div>
+          <p className={styles.timelineHint}>→ 30分刻み・横にスクロール可能</p>
+        </div>
+      </section>
 
-              {STAFF.map((st) => {
-                const bookings = todayBookings.filter((b) => b.staff === st.id);
-                return (
-                  <div key={st.id} className="srk-tl-row" style={{ width: totalW }}>
-                    {/* slot background grid */}
-                    {Array.from({ length: slots }).map((_, i) => {
-                      const totalMins = HOUR_START * 60 + i * SLOT_MIN;
-                      const isHourEdge = totalMins % 60 === 0;
-                      return (
-                        <div
-                          key={i}
-                          className={`srk-tl-slot ${isHourEdge ? 'is-hour' : ''}`}
-                          style={{ left: i * SLOT_W, width: SLOT_W }}
-                        />
-                      );
-                    })}
-                    {bookings.map((b) => {
-                      const left = ((b.start - HOUR_START * 60) / SLOT_MIN) * SLOT_W;
-                      const width = ((b.end - b.start) / SLOT_MIN) * SLOT_W;
-                      const svc = SERVICES[b.tags[0]];
-                      return (
-                        <button
-                          key={b.id}
-                          className="srk-tl-block"
-                          onClick={() => setSelected(b)}
-                          style={{
-                            left: left + 1,
-                            width: width - 2,
-                            background: `linear-gradient(180deg, ${svc.color}26, ${svc.color}10)`,
-                            borderColor: `${svc.color}66`,
-                          }}
-                          type="button"
-                        >
-                          <div className="srk-tl-block-h">
-                            <span className="srk-tl-block-time num">
-                              {fmtTime(b.start)}–{fmtTime(b.end)}
-                            </span>
-                            {b.isNew && <span className="srk-tl-new">新</span>}
-                          </div>
-                          <div className="srk-tl-block-name">
-                            {b.customer} <em>様</em>
-                          </div>
-                          <div className="srk-tl-block-menu">
-                            {b.tags.map((t) => (
-                              <span
-                                key={t}
-                                className="srk-tl-menu-tag"
-                                style={{
-                                  background: `${SERVICES[t].color}1a`,
-                                  color: SERVICES[t].color,
-                                  borderColor: `${SERVICES[t].color}50`,
-                                }}
-                              >
-                                {SERVICES[t].label}
-                              </span>
-                            ))}
-                          </div>
-                        </button>
-                      );
-                    })}
-                    {showNow && (
-                      <div className="srk-tl-now" style={{ left: nowX }}>
-                        <span />
-                        <em className="num">{nowHHMM}</em>
+      {/* Today's Reservations List */}
+      <section className={styles.card}>
+        <div className={styles.cardHead}>
+          <h2 className={styles.cardTitle}>本日の予約</h2>
+          <span className={styles.cardCount}>全て {todayReservations.length}</span>
+        </div>
+        {todayReservations.length === 0 ? (
+          <p className={styles.emptyMsg}>本日の予約はありません</p>
+        ) : (
+          <div className={styles.reservationList}>
+            {todayReservations.map(r => {
+              const dt = new Date(r.datetime);
+              const customer = customers.find(c => 
+                c.line_user_id && r.line_user_id && c.line_user_id === r.line_user_id
+                || c.name === r.customer_name
+              );
+              const info = parseMenuInfo(r.menu);
+              const preCounseling = preCounselings.find(pc => pc.reservation_id === r.id);
+              return (
+                <div key={r.id} className={styles.reservationRow}>
+                  <div className={styles.resTime}>
+                    <div className={styles.resTimeMain}>{formatHHMM(dt)}</div>
+                    <div className={styles.resTimeSub}>{info.duration}分</div>
+                  </div>
+                  <div className={styles.resAvatar}>
+                    {(r.customer_name || customer?.name || '?').charAt(0)}
+                  </div>
+                  <div className={styles.resBody}>
+                    <div className={styles.resCustomer}>
+                      <span className={styles.resName}>{r.customer_name || customer?.name || '名前なし'} 様</span>
+                      {r.status && (
+                        <span className={styles.resStatus}>● {r.status === 'confirmed' ? '確定' : r.status}</span>
+                      )}
+                    </div>
+                    <div className={styles.resMeta}>
+                      {customer?.visit_count != null && `${customer.visit_count + 1}回目`}
+                      {customer?.last_visit && ` · 前回 ${new Date(customer.last_visit).toLocaleDateString('ja-JP')}(${diffDays(customer.last_visit)}日前)`}
+                    </div>
+                    <div className={styles.resMenuRow}>
+                      <span className={styles.resMenuLabel}>メニュー</span>
+                      {info.items.length > 0 ? (
+                        info.items.map((it, i) => (
+                          <span key={i} className={styles.resMenuChip}>{it}</span>
+                        ))
+                      ) : (
+                        <span className={styles.resMenuChip}>{r.menu || '—'}</span>
+                      )}
+                    </div>
+                    {preCounseling && (
+                      <div className={styles.resCounseling}>
+                        <div className={styles.resCounselingHead}>○ LINE 事前カウンセリング</div>
+                        <div className={styles.resCounselingBody}>
+                          「{(() => {
+                            try {
+                              const a = preCounseling.answers;
+                              if (typeof a === 'string') return a.slice(0, 100);
+                              if (a?.message) return String(a.message).slice(0, 100);
+                              if (a?.note) return String(a.note).slice(0, 100);
+                              if (a?.request) return String(a.request).slice(0, 100);
+                              const firstVal = Object.values(a || {})[0];
+                              return firstVal ? String(firstVal).slice(0, 100) : '内容を確認...';
+                            } catch {
+                              return '内容を確認...';
+                            }
+                          })()}」
+                        </div>
                       </div>
                     )}
                   </div>
-                );
-              })}
-
-              {ADDABLE_STAFF.length > 0 && (
-                <div className="srk-tl-add-staff" style={{ width: totalW }}>
-                  <button
-                    className="srk-tl-add-btn"
-                    type="button"
-                    onClick={() =>
-                      window.dispatchEvent(new CustomEvent('srk-open-add-staff'))
-                    }
-                  >
-                    <Icon name="plus" size={14} />
-                    <span>スタッフ枠を追加</span>
-                    <em>+¥3,300/月（1名）</em>
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="srk-tl-hint">
-              <Icon name="arrow_r" size={11} /> 30分刻み · 横にスクロール可能
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* ─── RESERVATIONS LIST ───────────────────────────────── */}
-      <section className="srk-row">
-        <Card
-          title="本日の予約"
-          action={
-            <div className="srk-hd-actions">
-              <button className="srk-chip is-active" type="button">
-                全て {totalToday}
-              </button>
-              <button className="srk-chip" type="button">
-                確定 {todayBookings.filter((b) => b.status === 'confirmed').length}
-              </button>
-              <button className="srk-chip" type="button">
-                仮 {todayBookings.filter((b) => b.status === 'tentative').length}
-              </button>
-              <button className="srk-iconbtn ghost" type="button">
-                <Icon name="filter" size={14} />
-              </button>
-            </div>
-          }
-          pad={false}
-        >
-          <div className="srk-rsv-list">
-            {todayBookings
-              .slice()
-              .sort((a, b) => a.start - b.start)
-              .map((b) => {
-                const isPast = b.end <= nowMin;
-                const isNow = b.start <= nowMin && b.end > nowMin;
-                return (
-                  <article
-                    key={b.id}
-                    className={`srk-rsv-card ${isPast ? 'is-past' : ''} ${isNow ? 'is-now' : ''} ${b.status === 'tentative' ? 'is-tentative' : ''}`}
-                    onClick={() => setSelected(b)}
-                  >
-                    <div className="srk-rsv-time">
-                      <span className="num">{fmtTime(b.start)}</span>
-                      <em>{b.end - b.start}分</em>
-                      {isNow && <span className="srk-rsv-livetag">対応中</span>}
-                    </div>
-
-                    <CustomerPhoto
-                      id={`cust:${b.customer}`}
-                      name={b.customer}
-                      variant="rsv"
-                    />
-
-                    <div className="srk-rsv-main">
-                      <header>
-                        <div className="srk-rsv-cust-text">
-                          <div className="srk-rsv-name-row">
-                            <span className="srk-rsv-name">
-                              {b.customer} <em>様</em>
-                            </span>
-                            {b.isNew && <span className="srk-tag-new">新規</span>}
-                            <span className={`srk-status srk-status-${b.status}`}>
-                              <i />
-                              {b.status === 'confirmed' ? '確定' : '仮予約'}
-                            </span>
-                          </div>
-                          <div className="srk-rsv-meta">
-                            <span>{b.ageBand}</span>
-                            <em>·</em>
-                            <span>
-                              来店 <b className="num">{b.repeat}</b>回目
-                            </span>
-                            <em>·</em>
-                            <span className="srk-rsv-lastvisit">
-                              <Icon name="clock" size={10} /> 前回 {b.lastVisit}
-                            </span>
-                          </div>
-                        </div>
-                      </header>
-
-                      <div className="srk-rsv-menu-row">
-                        <span className="srk-rsv-label">メニュー</span>
-                        <ServicePills tags={b.tags} />
-                        <span className="srk-rsv-price num">
-                          ¥{b.amount.toLocaleString()}
-                        </span>
-                      </div>
-
-                      {b.lineDigest && (
-                        <div className="srk-rsv-digest">
-                          <span className="srk-rsv-digest-label">
-                            <Icon name="msg" size={10} /> LINE 事前カウンセリング
-                          </span>
-                          <p>「{b.lineDigest}」</p>
-                        </div>
-                      )}
-                    </div>
-
-                    <div
-                      className="srk-rsv-actions"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button className="srk-iconbtn ghost" title="メッセージ" type="button">
-                        <Icon name="msg" size={14} />
-                      </button>
-                      <button
-                        className="srk-iconbtn ghost"
-                        title="カルテ"
-                        type="button"
-                        onClick={() => openChart('c_aoyama')}
-                      >
-                        <Icon name="users" size={14} />
-                      </button>
-                      <button className="srk-btn primary" type="button">
-                        受付開始
-                      </button>
-                    </div>
-                  </article>
-                );
-              })}
-          </div>
-        </Card>
-      </section>
-
-      {/* ─── BOTTOM 3-COLUMN ─────────────────────────────────── */}
-      <section className="srk-grid-3">
-        {/* Reachout */}
-        <Card
-          title="来店促進候補"
-          action={<span className="srk-hd-meta">{reachoutCandidates.length}名</span>}
-          pad={false}
-        >
-          <ul className="srk-reach">
-            {reachoutCandidates.map((r) => {
-              const isDormant = r.daysSince >= 90;
-              const colorCue =
-                r.daysSince > 90 ? '#a85a3e' : r.daysSince > 60 ? '#c8983e' : '#5a6b3c';
-              return (
-                <li key={r.id}>
-                  <div
-                    className="srk-reach-row srk-reach-row-compact"
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => openChart('c_aoyama')}
-                  >
-                    <span className="srk-reach-avatar">
-                      <CustomerPhoto
-                        id={`cust:${r.name}`}
-                        name={r.name}
-                        variant="circle-sm"
-                      />
-                      {isDormant && <i className="srk-reach-dormant" title="休眠" />}
-                    </span>
-                    <div className="srk-reach-body">
-                      <div className="srk-reach-h">
-                        <b>
-                          {r.name} <em>様</em>
-                        </b>
-                      </div>
-                      <div className="srk-reach-meta">
-                        <span className="srk-reach-days" style={{ color: colorCue }}>
-                          <Icon name="clock" size={10} /> {r.daysSince}日前
-                        </span>
-                        <em>·</em>
-                        <span>{r.reason}</span>
-                      </div>
-                    </div>
-                    <div
-                      className="srk-reach-actions"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        className="srk-btn primary"
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (confirm(`${r.name}様にLINEで来店促進メッセージを送信しますか?`)) {
-                            // TODO: Phase 4 で /api/messages/send にPOST
-                            alert(`✅ ${r.name}様 にメッセージを送信しました(モック)`);
-                          }
-                        }}
-                      >
-                        <Icon name="plus" size={10} /> 招待
-                      </button>
-                    </div>
+                  <div className={styles.resRight}>
+                    <div className={styles.resPrice}>¥{info.price.toLocaleString()}</div>
+                    <button type="button" className={styles.resCta}>受付開始</button>
                   </div>
-                </li>
+                </div>
               );
             })}
-          </ul>
-          <div className="srk-card-footlink">
-            <button
-              className="srk-linkbtn"
-              type="button"
-              onClick={() => goTo('/dashboard/messages')}
-            >
-              DM一括配信 <Icon name="arrow_r" size={12} />
-            </button>
           </div>
-        </Card>
-
-        {/* Todos */}
-        <Card
-          title="今日のタスク"
-          action={
-            <button className="srk-linkbtn" type="button">
-              <Icon name="plus" size={12} /> 追加
-            </button>
-          }
-        >
-          <ul className="srk-todos">
-            {todos.map((t) => (
-              <li key={t.id} className={t.done ? 'is-done' : ''}>
-                <label>
-                  <input type="checkbox" defaultChecked={t.done} />
-                  <span className="srk-todo-check">
-                    <Icon name="check" size={11} />
-                  </span>
-                  <span className="srk-todo-text">{t.label}</span>
-                  {t.urgent && !t.done && (
-                    <span className="srk-todo-urgent">急ぎ</span>
-                  )}
-                </label>
-              </li>
-            ))}
-          </ul>
-          <div className="srk-todo-foot">
-            残り {todos.filter((t) => !t.done).length} 件 · 完了率{' '}
-            {Math.round((todos.filter((t) => t.done).length / todos.length) * 100)}%
-          </div>
-        </Card>
-
-        {/* Messages */}
-        <Card
-          title="メッセージ"
-          action={
-            <span className="srk-badge-inline">
-              {messages.filter((m) => m.unread).length}
-            </span>
-          }
-        >
-          <ul className="srk-msgs">
-            {messages.map((m) => (
-              <li key={m.id} className={m.unread ? 'is-unread' : ''}>
-                <CustomerPhoto
-                  id={`cust:${m.from}`}
-                  name={m.from}
-                  variant="circle-sm"
-                />
-                <div className="srk-msg-body">
-                  <div className="srk-msg-h">
-                    <b>{m.from}</b>
-                    <em>{m.time}</em>
-                  </div>
-                  <p>{m.preview}</p>
-                </div>
-                {m.unread && <span className="srk-msg-dot" />}
-              </li>
-            ))}
-          </ul>
-          <div className="srk-card-footlink">
-            <button
-              className="srk-linkbtn"
-              type="button"
-              onClick={() => goTo('/dashboard/messages')}
-            >
-              全てのメッセージ <Icon name="arrow_r" size={12} />
-            </button>
-          </div>
-        </Card>
+        )}
       </section>
 
-      {/* ─── DETAIL MODAL ────────────────────────────────────── */}
-      <Modal
-        open={!!selected}
-        onClose={() => setSelected(null)}
-        title="予約詳細"
-      >
-        {selected && <ReservationDetail booking={selected} />}
-      </Modal>
-    </div>
-  );
-}
-
-/* ─── KPI sub-component ─────────────────────────────────────── */
-
-interface KPIProps {
-  title: string;
-  value: string | number;
-  unit?: string;
-  delta: string;
-  positive?: boolean;
-  trend: number[];
-  color: string;
-  icon: IconName;
-  progress?: number;
-}
-
-function KPI({
-  title,
-  value,
-  unit,
-  delta,
-  positive,
-  trend,
-  color,
-  icon,
-  progress,
-}: KPIProps) {
-  return (
-    <div className="srk-kpi">
-      <span
-        className="srk-kpi-icon"
-        style={{ background: `${color}1a`, color }}
-      >
-        <Icon name={icon} size={15} />
-      </span>
-      <div className="srk-kpi-body">
-        <span className="srk-kpi-title">{title}</span>
-        <div className="srk-kpi-val">
-          <span className="num">{value}</span>
-          {unit && <em>{unit}</em>}
+      {/* Bottom row: Promo candidates / Tasks / Messages */}
+      <section className={styles.bottomGrid}>
+        {/* Promo candidates */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <h2 className={styles.cardTitle}>来店促進候補</h2>
+            <span className={styles.cardCount}>{promoCandidates.length}名</span>
+          </div>
+          {promoCandidates.length === 0 ? (
+            <p className={styles.emptyMsg}>該当する顧客はいません</p>
+          ) : (
+            <>
+              <div className={styles.promoList}>
+                {promoCandidates.map(c => (
+                  <div key={c.id} className={styles.promoRow}>
+                    <div className={styles.promoAvatar}>{(c.name || '?').charAt(0)}</div>
+                    <div className={styles.promoBody}>
+                      <div className={styles.promoName}>{c.name} 様</div>
+                      <div className={styles.promoMeta}>● {c.daysSinceVisit}日前 · {c.category}</div>
+                    </div>
+                    <Link href="/dashboard/messages" className={styles.promoCta}>+ 招待</Link>
+                  </div>
+                ))}
+              </div>
+              <Link href="/dashboard/messages" className={styles.promoFooter}>DM一括配信 →</Link>
+            </>
+          )}
         </div>
-        <div className={`srk-kpi-delta ${positive ? 'pos' : 'neg'}`}>
-          <Icon name={positive ? 'arrow_ur' : 'arrow_dr'} size={10} />
-          <span>{delta}</span>
+
+        {/* Tasks */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <h2 className={styles.cardTitle}>今日のタスク</h2>
+            <button type="button" className={styles.cardAction} onClick={() => setShowTaskModal(true)}>+ 追加</button>
+          </div>
+          {tasks.length === 0 ? (
+            <p className={styles.emptyMsg}>タスクはありません</p>
+          ) : (
+            <>
+              <div className={styles.taskList}>
+                {tasks.map(t => (
+                  <label key={t.id} className={styles.taskRow}>
+                    <input
+                      type="checkbox"
+                      checked={t.completed}
+                      onChange={() => handleToggleTask(t.id, t.completed)}
+                      className={styles.taskCheckbox}
+                    />
+                    <span className={`${styles.taskTitle} ${t.completed ? styles.taskTitleDone : ''}`}>
+                      {t.title}
+                    </span>
+                    {t.is_urgent && !t.completed && (
+                      <span className={styles.taskBadge}>急ぎ</span>
+                    )}
+                  </label>
+                ))}
+              </div>
+              <p className={styles.taskSummary}>
+                残り {taskRemaining} 件 · 完了率 {taskCompletion}%
+              </p>
+            </>
+          )}
         </div>
-      </div>
-      <div className="srk-kpi-spark" aria-hidden="true">
-        {progress !== undefined ? (
-          <div className="srk-kpi-progress-bar">
-            <span
-              style={{ width: `${Math.min(100, progress * 100)}%`, background: color }}
+
+        {/* Messages */}
+        <div className={styles.card}>
+          <div className={styles.cardHead}>
+            <h2 className={styles.cardTitle}>メッセージ</h2>
+            <span className={styles.cardCount}>{recentMessages.length}</span>
+          </div>
+          {recentMessages.length === 0 ? (
+            <p className={styles.emptyMsg}>新着メッセージはありません</p>
+          ) : (
+            <>
+              <div className={styles.msgList}>
+                {recentMessages.map(m => (
+                  <div key={m.id} className={styles.msgRow}>
+                    <div className={styles.msgAvatar}>{m.customerName.charAt(0)}</div>
+                    <div className={styles.msgBody}>
+                      <div className={styles.msgHead}>
+                        <span className={styles.msgName}>{m.customerName} 様</span>
+                        <span className={styles.msgTime}>
+                          {m.createdAt ? (
+                            new Date(m.createdAt).toDateString() === now.toDateString()
+                              ? formatHHMM(new Date(m.createdAt))
+                              : '昨日'
+                          ) : ''}
+                        </span>
+                      </div>
+                      <div className={styles.msgText}>{m.text}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link href="/dashboard/messages" className={styles.msgFooter}>全てのメッセージ →</Link>
+            </>
+          )}
+        </div>
+      </section>
+
+      {/* Add Task Modal */}
+      {showTaskModal && (
+        <div className={styles.modalOverlay} onClick={() => !addingTask && setShowTaskModal(false)}>
+          <div className={styles.modal} onClick={e => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>新規タスク追加</h3>
+            <input
+              type="text"
+              className={styles.modalInput}
+              value={newTaskTitle}
+              onChange={e => setNewTaskTitle(e.target.value)}
+              placeholder="例: 在庫: カラー剤発注確認"
+              autoFocus
             />
-          </div>
-        ) : (
-          <Sparkline values={trend} w={90} h={22} color={color} />
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ─── Reservation Detail (modal body) ───────────────────────── */
-
-function ReservationDetail({ booking }: { booking: Booking }) {
-  const st = STAFF.find((s) => s.id === booking.staff)!;
-  return (
-    <div className="srk-detail">
-      <div className="srk-detail-head">
-        <div>
-          <div className="srk-detail-name">
-            {booking.customer}{' '}
-            {booking.isNew && <span className="srk-tag-new">新規</span>}
-          </div>
-          <div className="srk-detail-meta">
-            {booking.ageBand} · 来店 {booking.repeat}回目
-          </div>
-        </div>
-        <div className="srk-detail-time">
-          <span className="num">{fmtTime(booking.start)}</span>
-          <span>
-            {' '}〜 {fmtTime(booking.end)} ({booking.end - booking.start}分)
-          </span>
-        </div>
-      </div>
-      <div className="srk-detail-grid">
-        <div>
-          <label>メニュー</label>
-          <div>
-            <ServicePills tags={booking.tags} />
+            <label className={styles.modalCheckbox}>
+              <input
+                type="checkbox"
+                checked={newTaskUrgent}
+                onChange={e => setNewTaskUrgent(e.target.checked)}
+              />
+              急ぎ
+            </label>
+            <div className={styles.modalActions}>
+              <button
+                type="button"
+                className={styles.modalCancel}
+                onClick={() => setShowTaskModal(false)}
+                disabled={addingTask}
+              >
+                キャンセル
+              </button>
+              <button
+                type="button"
+                className={styles.modalSubmit}
+                onClick={handleAddTask}
+                disabled={addingTask || !newTaskTitle.trim()}
+              >
+                {addingTask ? '追加中...' : '追加'}
+              </button>
+            </div>
           </div>
         </div>
-        <div>
-          <label>担当</label>
-          <div className="srk-rsv-staff">
-            <Avatar char={st.initial} color={st.color} size={22} />
-            <span>{st.name}</span>
-          </div>
-        </div>
-        <div>
-          <label>料金</label>
-          <div className="num" style={{ fontSize: '18px' }}>
-            ¥{booking.amount.toLocaleString()}
-          </div>
-        </div>
-        <div>
-          <label>状態</label>
-          <div>
-            <span className={`srk-status srk-status-${booking.status}`}>
-              <i />
-              {booking.status === 'confirmed' ? '確定' : '仮予約'}
-            </span>
-          </div>
-        </div>
-        <div className="full">
-          <label>メモ</label>
-          <div>{booking.note || '—'}</div>
-        </div>
-      </div>
-      <div className="srk-detail-actions">
-        <button className="srk-btn ghost" type="button">
-          メッセージ
-        </button>
-        <button className="srk-btn ghost" type="button">
-          編集
-        </button>
-        <button className="srk-btn primary" type="button">
-          受付開始
-        </button>
-      </div>
+      )}
     </div>
   );
 }

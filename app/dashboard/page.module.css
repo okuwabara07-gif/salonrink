@@ -1,0 +1,617 @@
+/* /dashboard/ home page styles */
+
+.page {
+  padding: 8px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: "Zen Kaku Gothic New", "Noto Sans JP", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+  color: #2a1f15;
+  font-feature-settings: "palt" 1;
+  letter-spacing: 0.01em;
+}
+
+/* ========== GREETING ========== */
+.greeting {
+  padding: 4px 0 8px;
+}
+.greetingTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2a1f15;
+  letter-spacing: 0.02em;
+}
+.greetingMeta {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: #8a7860;
+}
+
+/* ========== KPI GRID ========== */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.kpiCard {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.kpiLabel {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: #8a7860;
+}
+.kpiValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.kpiIcon {
+  font-size: 16px;
+  color: #8a7860;
+}
+.kpiValue {
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 26px;
+  font-weight: 500;
+  color: #2a1f15;
+  font-variant-numeric: tabular-nums;
+}
+.kpiUnit {
+  font-size: 14px;
+  color: #4a3a28;
+  margin-left: 2px;
+}
+.kpiDelta {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: #7a8a5c;
+}
+
+/* ========== CARD COMMON ========== */
+.card {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  padding: 18px 22px;
+}
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.cardTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.cardSub {
+  font-size: 12px;
+  color: #4a3a28;
+}
+.cardCount {
+  background: #ede2cf;
+  color: #4a3a28;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+.cardAction {
+  margin-left: auto;
+  font-size: 12px;
+  color: #4a3a28;
+  background: transparent;
+  border: 0;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+}
+.cardAction:hover { color: #2a1f15; }
+
+.emptyMsg {
+  margin: 8px 0;
+  padding: 16px;
+  text-align: center;
+  font-size: 12.5px;
+  color: #8a7860;
+  background: #fbf6e8;
+  border-radius: 7px;
+}
+
+/* ========== TIMELINE ========== */
+.timelineWrap {
+  margin-top: 4px;
+}
+.timelineHours {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 10.5px;
+  color: #8a7860;
+  font-variant-numeric: tabular-nums;
+}
+.timelineHour { flex: 1; text-align: left; }
+.timelineHour:last-child { text-align: right; flex: 0; }
+
+.timelineTrack {
+  position: relative;
+  height: 72px;
+  background: #fbf6e8;
+  border: 1px solid #e4d5b8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.timelineBlock {
+  position: absolute;
+  top: 8px;
+  height: 56px;
+  background: #f5ddd1;
+  border: 1px solid #e8b8a0;
+  border-radius: 6px;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+  min-width: 60px;
+}
+.timelineBlockTime {
+  font-size: 10px;
+  color: #5e2a2a;
+  font-variant-numeric: tabular-nums;
+  font-family: "JetBrains Mono", monospace;
+}
+.timelineBlockMenu {
+  font-size: 11px;
+  color: #2a1f15;
+  font-family: "Shippori Mincho", serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.timelineNow {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #c4392e;
+  z-index: 2;
+}
+.timelineNow::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #c4392e;
+}
+.timelineHint {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: #8a7860;
+  background: #fbf6e8;
+  border: 1px dashed #d9c8a8;
+  border-radius: 6px;
+  text-align: center;
+}
+
+/* ========== RESERVATION LIST ========== */
+.reservationList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.reservationRow {
+  display: grid;
+  grid-template-columns: 80px 56px 1fr 120px;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 14px 12px;
+  background: #ffffff;
+  border: 1px solid #e4d5b8;
+  border-radius: 8px;
+}
+.resTime {
+  text-align: center;
+}
+.resTimeMain {
+  font-family: "Shippori Mincho", serif;
+  font-size: 18px;
+  color: #2a1f15;
+  font-variant-numeric: tabular-nums;
+}
+.resTimeSub {
+  font-size: 10.5px;
+  color: #8a7860;
+  margin-top: 2px;
+}
+.resAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e8d9b8;
+  color: #4a3a28;
+  display: grid;
+  place-items: center;
+  font-family: "Shippori Mincho", serif;
+  font-size: 18px;
+}
+.resBody { min-width: 0; }
+.resCustomer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.resName {
+  font-family: "Shippori Mincho", serif;
+  font-size: 14px;
+  color: #2a1f15;
+}
+.resStatus {
+  font-size: 10.5px;
+  color: #4a6a3a;
+  background: #d8eed1;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.resMeta {
+  font-size: 11.5px;
+  color: #8a7860;
+  margin-bottom: 8px;
+}
+.resMenuRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.resMenuLabel {
+  font-size: 11px;
+  color: #8a7860;
+  margin-right: 4px;
+}
+.resMenuChip {
+  font-size: 11.5px;
+  color: #4a3a28;
+  background: #ede2cf;
+  border: 1px solid #d9c8a8;
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+.resCounseling {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: #ecf0d8;
+  border-left: 3px solid #7a8a5c;
+  border-radius: 4px;
+}
+.resCounselingHead {
+  font-size: 11px;
+  color: #5a6b3c;
+  margin-bottom: 4px;
+}
+.resCounselingBody {
+  font-size: 12px;
+  color: #2a1f15;
+  line-height: 1.6;
+}
+.resRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.resPrice {
+  font-family: "Shippori Mincho", serif;
+  font-size: 16px;
+  color: #2a1f15;
+  font-variant-numeric: tabular-nums;
+}
+.resCta {
+  padding: 7px 14px;
+  border: 1px solid #d9c8a8;
+  border-radius: 6px;
+  background: #ede2cf;
+  color: #4a3a28;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.resCta:hover { background: #e0d4ba; }
+
+/* ========== BOTTOM 3-COL GRID ========== */
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+/* PROMO */
+.promoList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.promoRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #e4d5b8;
+  border-radius: 7px;
+}
+.promoAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e8d9b8;
+  color: #4a3a28;
+  display: grid;
+  place-items: center;
+  font-family: "Shippori Mincho", serif;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.promoBody { flex: 1; min-width: 0; }
+.promoName {
+  font-size: 12.5px;
+  color: #2a1f15;
+}
+.promoMeta {
+  font-size: 10.5px;
+  color: #8a7860;
+  margin-top: 2px;
+}
+.promoCta {
+  padding: 5px 10px;
+  border: 1px solid #d9c8a8;
+  border-radius: 5px;
+  background: #ede2cf;
+  color: #4a3a28;
+  font-size: 11px;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.promoCta:hover { background: #e0d4ba; }
+.promoFooter {
+  display: block;
+  text-align: left;
+  font-size: 12px;
+  color: #4a3a28;
+  padding: 4px 0;
+  margin-top: 4px;
+  text-decoration: none;
+}
+.promoFooter:hover { color: #2a1f15; }
+
+/* TASKS */
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+.taskRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+.taskRow:hover { background: rgba(217, 200, 168, 0.15); }
+.taskCheckbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #5e2a2a;
+  cursor: pointer;
+}
+.taskTitle {
+  flex: 1;
+  font-size: 12.5px;
+  color: #2a1f15;
+}
+.taskTitleDone {
+  color: #8a7860;
+  text-decoration: line-through;
+}
+.taskBadge {
+  background: #f5ddd1;
+  color: #c4392e;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10.5px;
+}
+.taskSummary {
+  text-align: center;
+  font-size: 11.5px;
+  color: #8a7860;
+  margin: 6px 0 0;
+}
+
+/* MESSAGES */
+.msgList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.msgRow {
+  display: flex;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #e4d5b8;
+  border-radius: 7px;
+}
+.msgAvatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #e8d9b8;
+  color: #4a3a28;
+  display: grid;
+  place-items: center;
+  font-family: "Shippori Mincho", serif;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.msgBody { flex: 1; min-width: 0; }
+.msgHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.msgName {
+  font-size: 12px;
+  color: #2a1f15;
+  font-family: "Shippori Mincho", serif;
+}
+.msgTime {
+  font-size: 10.5px;
+  color: #8a7860;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.msgText {
+  font-size: 11.5px;
+  color: #4a3a28;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.msgFooter {
+  display: block;
+  text-align: left;
+  font-size: 12px;
+  color: #4a3a28;
+  padding: 4px 0;
+  text-decoration: none;
+}
+.msgFooter:hover { color: #2a1f15; }
+
+/* ========== MODAL ========== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  max-width: 420px;
+  width: 100%;
+  padding: 24px;
+}
+.modalTitle {
+  margin: 0 0 16px;
+  font-family: "Shippori Mincho", serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.modalInput {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d9c8a8;
+  border-radius: 7px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #2a1f15;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.modalInput:focus {
+  outline: none;
+  border-color: #5e2a2a;
+  box-shadow: 0 0 0 3px rgba(94, 42, 42, 0.1);
+}
+.modalCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: #4a3a28;
+  cursor: pointer;
+}
+.modalActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.modalCancel {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid #d9c8a8;
+  background: transparent;
+  color: #4a3a28;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.modalSubmit {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 0;
+  background: #2a1f15;
+  color: #f0e6d2;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.modalSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+  .bottomGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .kpiGrid { grid-template-columns: 1fr; }
+  .reservationRow {
+    grid-template-columns: 60px 40px 1fr;
+    gap: 10px;
+  }
+  .resAvatar { width: 36px; height: 36px; font-size: 14px; }
+  .resRight {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
