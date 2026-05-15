@@ -436,7 +436,7 @@ function FeatureCards({
         cta="設定を開く →"
         ctaBg="rgba(184,149,100,0.18)"
         ctaFg="#7a5e3a"
-        onClick={onOpenSettings}
+        href="/dashboard/settings"
       />
       <FeatureCard
         title="アカウント"
@@ -453,7 +453,7 @@ function FeatureCards({
         cta="編集する →"
         ctaBg="rgba(184,149,100,0.18)"
         ctaFg="#7a5e3a"
-        href="/dashboard/more/account"
+        href="/dashboard/account"
       />
       <FeatureCard
         title="ログアウト"
