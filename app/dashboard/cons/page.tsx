@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 /* ============================================================
@@ -75,6 +76,14 @@ function KpiSpark({ d, color }: { d: string; color: string }) {
 }
 
 export default function ConsPage() {
+  const router = useRouter();
+
+  const handleDeepDive = () => alert('AI対話機能は Phase 4 で実装予定です(Claude Haiku 接続)');
+  const handleMonthlyReport = () => alert('月次レポート機能は Phase 4 で実装予定です(Pro プラン限定)');
+  const handleSeeAll = () => alert('全提案表示は Pro プラン限定機能です');
+  const handleCreateMenuCoupon = () => alert('メニュー券生成は Phase 4 で実装予定です');
+  const goToMessages = () => router.push('/dashboard/messages');
+
   const today = new Date();
   const dateStr = `${today.getFullYear()}年 ${today.getMonth() + 1}月 ${today.getDate()}日(${'日月火水木金土'[today.getDay()]})`;
 
@@ -103,8 +112,8 @@ export default function ConsPage() {
             下記に優先度順で 3 つの打ち手を整理しました。
           </p>
           <div className={styles.greetingActions}>
-            <button type="button" className={styles.btn}>対話で深掘りする</button>
-            <button type="button" className={styles.btnGhost}>月次レポートを見る</button>
+            <button type="button" className={styles.btn} onClick={handleDeepDive}>対話で深掘りする</button>
+            <button type="button" className={styles.btnGhost} onClick={handleMonthlyReport}>月次レポートを見る</button>
             <span className={styles.greetingTime}>最終更新 10:49</span>
           </div>
         </div>
@@ -159,7 +168,7 @@ export default function ConsPage() {
         <div className={styles.cardHead}>
           <h2 className={styles.cardTitle}>本日からの提案</h2>
           <span className={styles.cardSub}>優先度順 · AIが売上・予約・顧客データから抽出</span>
-          <button type="button" className={styles.cardAction}>すべて表示 →</button>
+          <button type="button" className={styles.cardAction} onClick={handleSeeAll}>すべて表示 →</button>
         </div>
         {RECOMMENDATIONS.map((r, i) => (
           <div key={i} className={`${styles.rec} ${i > 0 ? styles.recBorder : ''}`}>
@@ -180,7 +189,19 @@ export default function ConsPage() {
               ))}
             </div>
             <div className={styles.recCtaWrap}>
-              <button type="button" className={styles.btn}>{r.cta}</button>
+              <button
+                type="button"
+                className={styles.btn}
+                onClick={() => {
+                  if (r.cta.includes('DM') || r.cta.includes('LINE')) {
+                    goToMessages();
+                  } else if (r.cta.includes('メニュー券')) {
+                    handleCreateMenuCoupon();
+                  } else {
+                    alert(`「${r.cta}」は Phase 4 で実装予定です`);
+                  }
+                }}
+              >{r.cta}</button>
             </div>
           </div>
         ))}
