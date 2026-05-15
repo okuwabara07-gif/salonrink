@@ -1,0 +1,328 @@
+/* SalonRink Concierge LP v3 — with imagery */
+
+.page {
+  min-height: 100vh;
+  background: #f5f0e6;
+  color: #1f1813;
+  font-family: var(--font-noto-sans-jp), "Hiragino Sans", system-ui, sans-serif;
+  font-feature-settings: "palt" 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* LAUNCH BAR */
+.launchBar { position: sticky; top: 0; z-index: 100; width: 100%; background: #1a1410; color: #f0e6d2; font-size: 13px; border-bottom: 1px solid rgba(184, 149, 100, 0.3); }
+.launchBarInner { max-width: 1200px; margin: 0 auto; padding: 10px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.launchBarDot { color: #b89564; font-size: 10px; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
+.launchBarLabel { background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; font-weight: 700; font-size: 11px; padding: 3px 9px; border-radius: 4px; letter-spacing: 0.04em; flex-shrink: 0; }
+.launchBarSep { color: rgba(240, 230, 210, 0.3); flex-shrink: 0; }
+.launchBarText { flex: 1; min-width: 200px; font-weight: 500; }
+.launchBarCta { color: #d4ad6e; text-decoration: none; font-weight: 600; font-size: 12.5px; padding: 4px 12px; border: 1px solid rgba(212, 173, 110, 0.4); border-radius: 6px; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+.launchBarCta:hover { background: rgba(212, 173, 110, 0.1); border-color: #d4ad6e; }
+.launchBarClose { background: transparent; border: 0; color: rgba(240, 230, 210, 0.55); cursor: pointer; padding: 4px 6px; font-size: 14px; border-radius: 4px; flex-shrink: 0; transition: color 0.15s; }
+.launchBarClose:hover { color: #f0e6d2; }
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+/* HEADER */
+.header { background: rgba(245, 240, 230, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 1px solid rgba(184, 149, 100, 0.15); position: sticky; top: 0; z-index: 50; }
+.headerInner { max-width: 1200px; margin: 0 auto; padding: 18px 24px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.brand { text-decoration: none; display: inline-flex; align-items: baseline; gap: 6px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; font-weight: 500; color: #1f1813; letter-spacing: 0.02em; }
+.brandWord1 { color: #1f1813; }
+.brandDot { color: #b89564; font-size: 14px; }
+.brandWord2 { color: #7a5e3a; font-style: italic; }
+.nav { display: flex; align-items: center; gap: 24px; }
+.nav a { color: #4a3d31; text-decoration: none; font-size: 13.5px; font-weight: 500; letter-spacing: 0.02em; transition: color 0.15s; }
+.nav a:hover { color: #1f1813; }
+.headerCta { background: #1a1410; color: #f0e6d2; text-decoration: none; font-size: 13px; font-weight: 600; padding: 9px 18px; border-radius: 8px; transition: transform 0.15s, box-shadow 0.15s; letter-spacing: 0.02em; }
+.headerCta:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26, 20, 16, 0.2); }
+
+/* HERO */
+.hero { position: relative; overflow: hidden; padding: 80px 24px 100px; background: linear-gradient(180deg, #fbf7ef 0%, #f5f0e6 100%); }
+.heroBg { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.heroBg::before { content: ""; position: absolute; top: -100px; right: -160px; width: 480px; height: 480px; background: radial-gradient(circle, rgba(184, 149, 100, 0.08) 0%, transparent 60%); }
+.heroBg::after { content: ""; position: absolute; bottom: -120px; left: -120px; width: 360px; height: 360px; background: radial-gradient(circle, rgba(107, 45, 58, 0.05) 0%, transparent 65%); }
+.heroInner { position: relative; z-index: 1; max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; }
+.heroText { display: flex; flex-direction: column; align-items: flex-start; }
+.heroKicker { display: inline-flex; align-items: center; padding: 6px 14px; background: rgba(184, 149, 100, 0.12); border: 1px solid rgba(184, 149, 100, 0.3); border-radius: 999px; margin-bottom: 24px; }
+.heroKickerText { font-size: 10.5px; font-weight: 600; letter-spacing: 0.15em; color: #7a5e3a; }
+.heroTitle { margin: 0 0 22px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: clamp(36px, 5.2vw, 54px); font-weight: 500; line-height: 1.25; letter-spacing: 0.005em; color: #1f1813; }
+.heroTitleAccent { color: #1f1813; position: relative; display: inline-block; }
+.heroTitleAccent::after { content: ""; position: absolute; bottom: -4px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, rgba(184, 149, 100, 0) 0%, rgba(184, 149, 100, 0.55) 50%, rgba(184, 149, 100, 0) 100%); }
+.heroSub { margin: 0 0 30px; font-size: 15.5px; font-weight: 400; line-height: 1.8; color: #42352a; max-width: 520px; }
+.heroBullets { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 10px; }
+.heroBullets li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #2a2018; font-weight: 500; }
+.heroBulletMark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: rgba(184, 149, 100, 0.2); color: #7a5e3a; border-radius: 50%; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.heroCtas { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.heroCtaPrimary { display: inline-flex; align-items: center; gap: 8px; background: #1a1410; color: #f0e6d2; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-size: 14.5px; font-weight: 600; letter-spacing: 0.02em; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 14px rgba(26, 20, 16, 0.18); }
+.heroCtaPrimary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(26, 20, 16, 0.25); }
+.heroArrow { transition: transform 0.15s; }
+.heroCtaPrimary:hover .heroArrow { transform: translateX(3px); }
+.heroCtaSecondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #2a2018; padding: 14px 24px; border: 1px solid rgba(42, 32, 24, 0.2); border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.15s, border-color 0.15s; }
+.heroCtaSecondary:hover { background: rgba(42, 32, 24, 0.04); border-color: rgba(42, 32, 24, 0.4); }
+.lineIcon { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: #06c755; color: #fff; border-radius: 4px; font-size: 11px; font-weight: 700; }
+.heroMeta { margin: 0; font-size: 11.5px; color: #8a7c6b; letter-spacing: 0.02em; }
+.heroVisual { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.heroLogo { width: 100%; max-width: 460px; height: auto; object-fit: contain; filter: drop-shadow(0 12px 32px rgba(26, 20, 16, 0.18)); }
+.heroVisualCaption { margin: 18px 0 0; display: inline-flex; align-items: baseline; gap: 4px; padding: 6px 16px; background: rgba(26, 20, 16, 0.04); border: 1px solid rgba(184, 149, 100, 0.25); border-radius: 999px; }
+.heroVisualCapEm { font-size: 12px; font-weight: 600; color: #7a5e3a; letter-spacing: 0.04em; }
+.heroVisualCapDate { font-size: 11px; color: #8a7c6b; letter-spacing: 0.02em; }
+
+/* COMMON SECTION */
+.sectionInner { max-width: 1180px; margin: 0 auto; padding: 80px 24px; }
+.sectionHead { text-align: center; margin-bottom: 56px; }
+.sectionKicker { font-size: 11px; font-weight: 600; color: #7a5e3a; letter-spacing: 0.2em; margin: 0 0 12px; }
+.sectionTitle { margin: 0 0 16px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: clamp(28px, 3.8vw, 40px); font-weight: 500; line-height: 1.4; color: #1f1813; letter-spacing: 0.01em; }
+.sectionSub { margin: 0; font-size: 14.5px; line-height: 1.7; color: #4a3d31; }
+
+/* EXPERIENCE */
+.experience { background: #ffffff; }
+.expGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.expCard { background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.15); border-radius: 14px; padding: 32px 24px; display: flex; flex-direction: column; gap: 14px; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; }
+.expCard:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(26, 20, 16, 0.08); border-color: rgba(184, 149, 100, 0.35); }
+.expNum { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 28px; font-weight: 400; color: #b89564; letter-spacing: 0.04em; line-height: 1; }
+.expTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 19px; font-weight: 500; color: #1f1813; }
+.expDesc { margin: 0; font-size: 13.5px; line-height: 1.75; color: #4a3d31; }
+
+/* CONCEPT */
+.concept { background: linear-gradient(180deg, #fbf7ef 0%, #f0e8d8 100%); padding: 100px 24px; }
+.conceptInner { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: auto 1fr; gap: 56px; align-items: center; }
+.conceptLogo { width: 100%; max-width: 280px; height: auto; object-fit: contain; filter: drop-shadow(0 8px 24px rgba(26, 20, 16, 0.15)); }
+.conceptText { display: flex; flex-direction: column; gap: 18px; }
+.conceptEm { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: clamp(24px, 3vw, 32px); font-weight: 500; font-style: italic; color: #7a5e3a; letter-spacing: 0.02em; }
+.conceptBody { margin: 0; font-size: 15.5px; line-height: 2; color: #2a2018; }
+
+/* PROBLEM with images */
+.problem { background: #f5f0e6; }
+.problemGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 48px; }
+.problemCard { background: #ffffff; border: 1px solid rgba(107, 45, 58, 0.08); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(107, 45, 58, 0.04); transition: transform 0.2s, box-shadow 0.2s; }
+.problemCard:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(107, 45, 58, 0.08); }
+.problemImageWrap { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #f5f0e6; }
+.problemImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.problemBody { padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+.problemTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 17px; font-weight: 500; color: #1f1813; line-height: 1.5; }
+.problemDesc { margin: 0; font-size: 13px; line-height: 1.85; color: #4a3d31; }
+.problemSolution { text-align: center; padding: 28px; background: linear-gradient(135deg, rgba(184, 149, 100, 0.08), rgba(184, 149, 100, 0.03)); border: 1px solid rgba(184, 149, 100, 0.25); border-radius: 14px; }
+.problemSolutionText { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; line-height: 1.7; color: #2a2018; }
+.problemSolutionText strong { color: #7a5e3a; font-weight: 600; }
+
+/* OWNERS */
+.owners { background: #ffffff; }
+.ownerGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+.ownerCard { background: #fbf7ef; border-radius: 14px; padding: 36px 28px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 2px 8px rgba(26, 20, 16, 0.04); transition: transform 0.2s, box-shadow 0.2s; }
+.ownerCard:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(26, 20, 16, 0.10); }
+.ownerIcon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; background: linear-gradient(135deg, rgba(184, 149, 100, 0.18), rgba(184, 149, 100, 0.08)); color: #7a5e3a; border-radius: 12px; font-size: 22px; }
+.ownerTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 20px; font-weight: 500; color: #1f1813; }
+.ownerDesc { margin: 0; font-size: 13.5px; line-height: 1.85; color: #4a3d31; }
+
+/* FEATURES with images */
+.features { background: #f5f0e6; }
+.featuresGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.featureCard { background: #ffffff; border: 1px solid rgba(184, 149, 100, 0.12); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.15s, box-shadow 0.15s; }
+.featureCard:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26, 20, 16, 0.06); }
+.featureImageWrap { width: 100%; aspect-ratio: 16 / 10; overflow: hidden; background: #fbf7ef; }
+.featureImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.featureBody { padding: 18px 18px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.featureTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 15.5px; font-weight: 500; color: #1f1813; line-height: 1.4; }
+.featureDesc { margin: 0; font-size: 12.5px; line-height: 1.7; color: #4a3d31; }
+
+/* AI KARTE deep dive */
+.aiKarte { background: #ffffff; padding: 100px 24px; }
+.aiKarteInner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: center; }
+.aiKarteImageCol { display: flex; align-items: center; justify-content: center; }
+.aiKarteImage { width: 100%; max-width: 560px; height: auto; border-radius: 16px; box-shadow: 0 16px 40px rgba(26, 20, 16, 0.1); object-fit: cover; }
+.aiKarteTextCol { display: flex; flex-direction: column; gap: 16px; }
+.aiKarteNum { margin: 0; font-size: 11px; font-weight: 600; color: #7a5e3a; letter-spacing: 0.2em; }
+.aiKarteTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: clamp(28px, 3.6vw, 40px); font-weight: 500; line-height: 1.35; color: #1f1813; }
+.aiKarteSub { margin: 0; font-size: 14.5px; line-height: 1.85; color: #42352a; }
+.aiKarteBullets { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.aiKarteBullets li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: #2a2018; font-weight: 500; }
+.aiKarteBulletMark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: rgba(184, 149, 100, 0.2); color: #7a5e3a; border-radius: 50%; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+
+/* BEFORE / AFTER */
+.beforeAfter { background: #fbf7ef; }
+.baGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 48px; }
+.baCard { background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 14px rgba(26, 20, 16, 0.05); position: relative; }
+.baCardAfter { box-shadow: 0 8px 24px rgba(184, 149, 100, 0.2); border: 2px solid #d4ad6e; }
+.baLabel { position: absolute; top: 14px; left: 14px; z-index: 2; padding: 6px 14px; background: rgba(26, 20, 16, 0.85); color: #fff; font-size: 11px; font-weight: 700; border-radius: 6px; letter-spacing: 0.06em; }
+.baLabelAfter { background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; }
+.baImageWrap { width: 100%; aspect-ratio: 4 / 3; overflow: hidden; }
+.baImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.baStats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 32px; background: linear-gradient(135deg, rgba(184, 149, 100, 0.08), rgba(184, 149, 100, 0.03)); border-radius: 14px; }
+.baStat { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.baStatNum { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 38px; font-weight: 500; color: #1f1813; line-height: 1; }
+.baStatUnit { font-size: 18px; color: #7a5e3a; margin-left: 2px; }
+.baStatLabel { font-size: 12px; color: #4a3d31; letter-spacing: 0.04em; }
+.baFootnote { margin: 24px 0 0; text-align: center; font-size: 11.5px; color: #8a7c6b; }
+
+/* STEPS with images */
+.steps { background: #ffffff; }
+.stepsRow { display: flex; align-items: stretch; justify-content: space-between; gap: 12px; }
+.stepCard { flex: 1; background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.18); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+.stepImageWrap { width: 100%; aspect-ratio: 3 / 2; overflow: hidden; background: #f5f0e6; }
+.stepImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.stepNum { padding: 18px 22px 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 28px; font-weight: 400; color: #b89564; letter-spacing: 0.04em; line-height: 1; }
+.stepTitle { margin: 6px 0 0; padding: 0 22px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; font-weight: 500; color: #1f1813; }
+.stepDesc { margin: 8px 0 22px; padding: 0 22px; font-size: 12.5px; line-height: 1.75; color: #4a3d31; }
+.stepArrow { display: flex; align-items: center; justify-content: center; color: #b89564; font-size: 24px; padding: 0 4px; flex-shrink: 0; }
+
+/* COMPARE TABLE */
+.compare { background: #f5f0e6; }
+.compareTableWrap { max-width: 900px; margin: 0 auto; overflow-x: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 4px 16px rgba(26, 20, 16, 0.05); }
+.compareTable { width: 100%; border-collapse: collapse; min-width: 600px; }
+.compareTable thead th { padding: 22px 16px; background: #fbf7ef; border-bottom: 1px solid rgba(184, 149, 100, 0.2); font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 14px; font-weight: 500; color: #4a3d31; text-align: center; }
+.compareThSrk { background: linear-gradient(135deg, #2a2018, #1a1410) !important; color: #f0e6d2 !important; }
+.compareSrkLabel { display: inline-block; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; line-height: 1.3; }
+.compareTable tbody tr { border-bottom: 1px solid rgba(184, 149, 100, 0.1); }
+.compareTable tbody tr:last-child { border-bottom: 0; }
+.compareTable td { padding: 18px 16px; font-size: 13.5px; text-align: center; color: #2a2018; }
+.compareFeatureCell { text-align: left !important; font-weight: 500; color: #1f1813 !important; }
+.compareSrkCell { background: rgba(184, 149, 100, 0.04); }
+.compareYes { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.compareNo { color: #b89c84; font-size: 12.5px; }
+.compareValue { color: #2a2018; font-weight: 500; }
+
+/* INTEGRATIONS */
+.integrations { background: #ffffff; }
+.integGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.integCard { background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.15); border-radius: 14px; padding: 24px 22px; display: flex; flex-direction: column; gap: 16px; }
+.integHeader { display: flex; flex-direction: column; gap: 8px; }
+.integName { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; font-weight: 500; color: #1f1813; }
+.integTag { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid; letter-spacing: 0.02em; width: fit-content; }
+.integDesc { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.integDesc li { display: flex; align-items: flex-start; gap: 8px; font-size: 12.5px; color: #4a3d31; line-height: 1.6; }
+.integCheck { font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.integStatus { display: block; text-align: center; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.02em; }
+
+/* SECURITY */
+.security { background: linear-gradient(180deg, #f5f0e6 0%, #fbf7ef 100%); }
+.securityGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.securityCard { background: #ffffff; border-radius: 14px; padding: 28px 22px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 2px 8px rgba(26, 20, 16, 0.04); border: 1px solid rgba(184, 149, 100, 0.1); transition: transform 0.15s; }
+.securityCard:hover { transform: translateY(-2px); }
+.securityIcon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: rgba(184, 149, 100, 0.12); color: #7a5e3a; border-radius: 10px; font-size: 20px; }
+.securityTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 16px; font-weight: 500; color: #1f1813; }
+.securityDesc { margin: 0; font-size: 12.5px; line-height: 1.75; color: #4a3d31; }
+
+/* PLANS */
+.plans { background: #ffffff; }
+.planGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1080px; margin: 0 auto; }
+.planCard { position: relative; background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.2); border-radius: 18px; padding: 36px 30px; display: flex; flex-direction: column; gap: 18px; }
+.planCardFeatured { background: linear-gradient(180deg, #ffffff 0%, #fff8e8 100%); border-color: #b89564; border-width: 2px; transform: scale(1.04); box-shadow: 0 16px 40px rgba(184, 149, 100, 0.18); }
+.planBadge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; font-size: 11px; font-weight: 700; padding: 5px 14px; border-radius: 999px; letter-spacing: 0.06em; }
+.planName { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 26px; font-weight: 500; color: #1f1813; }
+.planFor { margin: 0; font-size: 13px; color: #8a7c6b; letter-spacing: 0.02em; }
+.planPrice { margin: 8px 0 0; display: flex; align-items: baseline; gap: 2px; color: #1f1813; }
+.planPriceYen { font-size: 18px; font-weight: 500; }
+.planPriceNum { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 42px; font-weight: 500; line-height: 1; }
+.planPriceUnit { font-size: 12px; color: #8a7c6b; margin-left: 4px; }
+.planFeatures { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.planFeatures li { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: #2a2018; line-height: 1.6; }
+.planCheck { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: rgba(184, 149, 100, 0.2); color: #7a5e3a; border-radius: 50%; font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+.planCta { display: block; margin-top: auto; padding: 12px 20px; background: transparent; color: #1f1813; border: 1px solid #1f1813; border-radius: 10px; text-align: center; text-decoration: none; font-size: 13.5px; font-weight: 600; letter-spacing: 0.02em; transition: background 0.15s, color 0.15s; }
+.planCta:hover { background: #1f1813; color: #f0e6d2; }
+.planCtaFeatured { background: #1a1410; color: #f0e6d2; border-color: #1a1410; box-shadow: 0 4px 14px rgba(26, 20, 16, 0.18); }
+.planCtaFeatured:hover { background: #2a2018; color: #fff; }
+.plansFootnote { margin: 40px 0 0; text-align: center; font-size: 12px; color: #8a7c6b; }
+
+/* FAQ */
+.faq { background: #f5f0e6; }
+.faqList { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.faqItem { background: #ffffff; border: 1px solid rgba(184, 149, 100, 0.15); border-radius: 12px; overflow: hidden; }
+.faqQ { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; background: transparent; border: 0; cursor: pointer; text-align: left; font-family: inherit; transition: background 0.15s; }
+.faqQ:hover { background: rgba(184, 149, 100, 0.04); }
+.faqQOpen { background: rgba(184, 149, 100, 0.06); }
+.faqQText { font-size: 14px; font-weight: 500; color: #1f1813; line-height: 1.5; }
+.faqQMark { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-size: 18px; color: #7a5e3a; flex-shrink: 0; transition: transform 0.2s; }
+.faqA { padding: 0 22px 22px 22px; font-size: 13.5px; line-height: 1.85; color: #4a3d31; display: flex; gap: 8px; }
+.faqAMark { color: #7a5e3a; font-weight: 600; flex-shrink: 0; }
+
+/* FINAL CTA */
+.finalCta { background: linear-gradient(180deg, #1f1813 0%, #1a1410 100%); padding: 100px 24px; color: #f0e6d2; }
+.finalCtaInner { max-width: 720px; margin: 0 auto; text-align: center; }
+.finalCtaKicker { margin: 0 0 16px; font-size: 11px; font-weight: 600; color: #d4ad6e; letter-spacing: 0.2em; }
+.finalCtaTitle { margin: 0 0 18px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: clamp(30px, 4.4vw, 44px); font-weight: 500; line-height: 1.35; color: #f0e6d2; letter-spacing: 0.01em; }
+.finalCtaSub { margin: 0 0 36px; font-size: 14px; line-height: 1.8; color: rgba(240, 230, 210, 0.75); }
+.finalCtaButtons { display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap; }
+.finalCtaPrimary { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; padding: 15px 32px; border-radius: 10px; text-decoration: none; font-size: 15px; font-weight: 700; letter-spacing: 0.02em; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 6px 20px rgba(212, 173, 110, 0.3); }
+.finalCtaPrimary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(212, 173, 110, 0.4); }
+.finalCtaSecondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #f0e6d2; padding: 15px 28px; border: 1px solid rgba(240, 230, 210, 0.3); border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; transition: background 0.15s, border-color 0.15s; }
+.finalCtaSecondary:hover { background: rgba(240, 230, 210, 0.08); border-color: rgba(240, 230, 210, 0.55); }
+
+/* FOOTER */
+.footer { background: #0f0c08; color: rgba(240, 230, 210, 0.7); padding: 56px 24px 40px; }
+.footerInner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 1.2fr 2fr 1.4fr; gap: 48px; align-items: start; }
+.footerBrand { display: flex; flex-direction: column; gap: 8px; }
+.footerBrandWord { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 17px; font-weight: 500; color: #f0e6d2; letter-spacing: 0.02em; }
+.footerBrandTagline { margin: 0; font-size: 12px; color: rgba(240, 230, 210, 0.5); line-height: 1.6; }
+.footerLinks { display: flex; flex-wrap: wrap; gap: 16px 24px; font-size: 12.5px; }
+.footerLinks a { color: rgba(240, 230, 210, 0.7); text-decoration: none; transition: color 0.15s; }
+.footerLinks a:hover { color: #d4ad6e; }
+.footerLegal { display: flex; flex-direction: column; gap: 6px; font-size: 11px; color: rgba(240, 230, 210, 0.45); line-height: 1.7; }
+.footerLegal p { margin: 0; }
+.footerLegalNote { margin-top: 6px !important; font-size: 10.5px; color: rgba(240, 230, 210, 0.35); line-height: 1.6; }
+
+/* VIDEO TOUR */
+.videoTour { background: #ffffff; }
+.videoWrap { max-width: 980px; margin: 0 auto; border-radius: 18px; overflow: hidden; box-shadow: 0 16px 48px rgba(26, 20, 16, 0.15); background: #1a1410; aspect-ratio: 16/9; }
+.video { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+/* RESPONSIVE — Tablet */
+@media (max-width: 1100px) {
+  .expGrid { grid-template-columns: repeat(2, 1fr); }
+  .featuresGrid { grid-template-columns: repeat(2, 1fr); }
+  .integGrid { grid-template-columns: repeat(2, 1fr); }
+  .securityGrid { grid-template-columns: repeat(2, 1fr); }
+  .ownerGrid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .problemGrid { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .stepsRow { flex-direction: column; }
+  .stepArrow { transform: rotate(90deg); padding: 4px 0; }
+  .aiKarteInner { grid-template-columns: 1fr; gap: 32px; }
+  .footerInner { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+
+@media (max-width: 980px) {
+  .hero { padding: 56px 20px 64px; }
+  .heroInner { grid-template-columns: 1fr; gap: 40px; }
+  .heroVisual { order: -1; }
+  .heroLogo { max-width: 320px; }
+  .nav { display: none; }
+  .conceptInner { grid-template-columns: 1fr; text-align: center; gap: 32px; }
+  .conceptLogo { margin: 0 auto; max-width: 220px; }
+  .ownerGrid { grid-template-columns: 1fr; gap: 16px; }
+  .baGrid { grid-template-columns: 1fr; }
+  .baStats { grid-template-columns: 1fr; gap: 16px; }
+  .planGrid { grid-template-columns: 1fr; max-width: 460px; gap: 20px; }
+  .planCardFeatured { transform: none; }
+  .footerInner { grid-template-columns: 1fr; gap: 28px; }
+}
+
+/* RESPONSIVE — Mobile */
+@media (max-width: 700px) {
+  .launchBarText { font-size: 12px; min-width: 0; flex-basis: 100%; order: 2; }
+  .launchBarCta { order: 3; font-size: 11.5px; }
+  .launchBarClose { order: 4; }
+  .headerInner { padding: 14px 18px; }
+  .brand { font-size: 15.5px; }
+  .headerCta { padding: 7px 12px; font-size: 11.5px; }
+  .hero { padding: 40px 18px 56px; }
+  .heroTitle { font-size: 32px; }
+  .heroSub { font-size: 14px; }
+  .heroCtas { flex-direction: column; align-items: stretch; width: 100%; }
+  .heroCtaPrimary, .heroCtaSecondary { justify-content: center; }
+  .heroLogo { max-width: 240px; }
+  .sectionInner { padding: 56px 18px; }
+  .sectionTitle { font-size: 26px; }
+  .expGrid { grid-template-columns: 1fr; }
+  .featuresGrid { grid-template-columns: 1fr; }
+  .integGrid { grid-template-columns: 1fr; }
+  .securityGrid { grid-template-columns: 1fr; }
+  .concept { padding: 64px 18px; }
+  .conceptEm { font-size: 22px; }
+  .conceptBody { font-size: 14px; }
+  .aiKarte { padding: 64px 18px; }
+  .aiKarteTitle { font-size: 26px; }
+  .planCard { padding: 28px 22px; }
+  .finalCta { padding: 64px 20px; }
+  .finalCtaButtons { flex-direction: column; align-items: stretch; }
+  .finalCtaPrimary, .finalCtaSecondary { justify-content: center; }
+  .baStatNum { font-size: 32px; }
+}
