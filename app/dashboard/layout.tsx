@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar, TopHeader } from '@/components/srk';
+import NewReservationModal from '@/components/dashboard/NewReservationModal';
 
 /**
  * /dashboard 配下の全画面に共通のクロム(サイドバー + トップヘッダー)。
@@ -81,7 +82,15 @@ function useSamplePhotoSeed() {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const [resModalOpen, setResModalOpen] = useState(false);
   const { title, sub } = resolveTitle(pathname);
+
+  // 他ページの「+ 新規予約」ボタンからの起動イベント受信
+  useEffect(() => {
+    const handler = () => setResModalOpen(true);
+    window.addEventListener('srk:open-new-reservation', handler as EventListener);
+    return () => window.removeEventListener('srk:open-new-reservation', handler as EventListener);
+  }, []);
 
   useSamplePhotoSeed();
 
@@ -99,9 +108,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           title={title}
           subtitle={sub}
           onToggleSide={() => setCollapsed((c) => !c)}
+          onNewBooking={() => setResModalOpen(true)}
         />
         {children}
       </main>
+      <NewReservationModal
+        open={resModalOpen}
+        onClose={() => setResModalOpen(false)}
+        onSubmit={async (draft) => {
+          console.log('新規予約:', draft);
+          alert('予約を作成しました(モックです。Supabase 接続は後日)');
+        }}
+      />
     </div>
   );
 }

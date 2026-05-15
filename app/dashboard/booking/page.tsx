@@ -281,7 +281,11 @@ export default function SchedulePage() {
             <button className="srk-btn ghost" type="button">
               <Icon name="filter" size={12} /> 絞り込み
             </button>
-            <button className="srk-cta" type="button">
+            <button
+              className="srk-cta"
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('srk:open-new-reservation'))}
+            >
               <Icon name="plus" size={12} /> 新規予約
             </button>
           </div>
