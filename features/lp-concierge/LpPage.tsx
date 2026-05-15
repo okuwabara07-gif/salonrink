@@ -164,7 +164,7 @@ export default function LpPage() {
                 <span className={styles.lineIcon} aria-hidden>L</span>LINEで相談する
               </a>
             </div>
-            <p className={styles.heroMeta}>クレジットカード不要 / 最短5分で開始 / 解約はいつでも</p>
+            <p className={styles.heroMeta}>メアド登録のみ / 最短5分で開始 / 解約はいつでも</p>
           </div>
           <div className={styles.heroVisual}>
             <Image
@@ -596,7 +596,7 @@ export default function LpPage() {
         <div className={styles.finalCtaInner}>
           <p className={styles.finalCtaKicker}>START FREE</p>
           <h2 className={styles.finalCtaTitle}>サロンの未来を、<br/>いま、はじめる。</h2>
-          <p className={styles.finalCtaSub}>14日間の無料トライアル。クレジットカード不要・最短契約期間なし。</p>
+          <p className={styles.finalCtaSub}>14日間の無料トライアル。最短5分で開始・最短契約期間なし。</p>
           <div className={styles.finalCtaButtons}>
             <a href="/signup" className={styles.finalCtaPrimary}>14日間無料で試す<span className={styles.heroArrow} aria-hidden>→</span></a>
             <a href="https://line.me/R/ti/p/@545fncvi" target="_blank" rel="noopener noreferrer" className={styles.finalCtaSecondary}>
