@@ -213,7 +213,7 @@ export default function LpPage() {
             className={styles.conceptLogo}
           />
           <div className={styles.conceptText}>
-            <p className={styles.conceptEm}>「いつもの、その先へ。」</p>
+            <p className={styles.conceptEm}>「ひとりに、ひとり。」</p>
             <p className={styles.conceptBody}>
               お客様の好みも、悩みも、思い出も。<br/>
               ひとりひとりに、専属のコンシェルジュを。
