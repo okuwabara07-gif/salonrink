@@ -1,0 +1,444 @@
+/* /dashboard/cons コンシェルジュ機能 - scoped styles */
+
+.page {
+  padding: 8px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: "Zen Kaku Gothic New", "Noto Sans JP", "Hiragino Kaku Gothic ProN", system-ui, sans-serif;
+  color: #2a1f15;
+  background: transparent;
+  font-feature-settings: "palt" 1;
+  letter-spacing: 0.01em;
+}
+
+/* ============================================================
+   HEAD
+   ============================================================ */
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0 12px;
+}
+.headIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5e2a2a, #8a5a3d);
+  color: #f0e6d2;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+.headTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2a1f15;
+  letter-spacing: 0.01em;
+}
+.headSub {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: #8a7860;
+}
+.newBadge {
+  margin-left: auto;
+  background: #5e2a2a;
+  color: #f0d8c8;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.06em;
+}
+
+/* ============================================================
+   GREETING
+   ============================================================ */
+.greeting {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: #fbf6e8;
+  border: 1px solid #e6d8bf;
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+.greetingAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5e2a2a, #8a5a3d);
+  color: #f0e6d2;
+  display: grid;
+  place-items: center;
+  font-family: "Shippori Mincho", serif;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.greetingBody { flex: 1; }
+.greetingTitle {
+  margin: 0 0 6px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.greetingText {
+  margin: 0;
+  font-size: 13.5px;
+  color: #4a3a28;
+  line-height: 1.75;
+}
+.greenStrong { color: #7a8a5c; }
+.greetingActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  align-items: center;
+}
+.greetingTime {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: #8a7860;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  background: #2a1f15;
+  color: #f0e6d2;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+}
+.btn:hover { background: #3a2c1c; transform: translateY(-1px); }
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 500;
+  background: transparent;
+  color: #4a3a28;
+  border: 1px solid #d9c8a8;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btnGhost:hover { background: rgba(217, 200, 168, 0.2); border-color: #b5a684; }
+
+/* ============================================================
+   KPI GRID
+   ============================================================ */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.kpiCard {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+}
+.kpiLeft { flex: 1; min-width: 0; }
+.kpiLabel { margin: 0; font-size: 11.5px; color: #8a7860; }
+.kpiVal {
+  margin: 2px 0 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: #2a1f15;
+  font-variant-numeric: tabular-nums;
+}
+.kpiUnit { font-size: 14px; color: #4a3a28; margin-left: 1px; }
+.kpiDelta { margin: 4px 0 0; font-size: 11px; color: #7a8a5c; }
+.kpiDeltaDown { color: #5e2a2a; }
+.kpiSpark { flex: 0 0 70px; display: grid; place-items: center; }
+
+/* ============================================================
+   COMMON CARD
+   ============================================================ */
+.card {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  padding: 18px 22px;
+}
+.cardHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.cardTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.cardSub { font-size: 12px; color: #8a7860; }
+.cardAction {
+  margin-left: auto;
+  font-size: 12px;
+  color: #4a3a28;
+  background: transparent;
+  border: 0;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.cardAction:hover { color: #2a1f15; }
+
+/* ============================================================
+   RECOMMENDATIONS
+   ============================================================ */
+.rec {
+  display: grid;
+  grid-template-columns: 52px 1fr 220px 130px;
+  gap: 16px;
+  padding: 16px 4px;
+  align-items: center;
+}
+.recBorder { border-top: 1px solid #e4d5b8; }
+.recPri {
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 22px;
+  color: #b3a085;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.recMain {}
+.recTitleRow { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; flex-wrap: wrap; }
+.recTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.recBody {
+  margin: 0;
+  font-size: 12.5px;
+  color: #8a7860;
+  line-height: 1.7;
+  max-width: 720px;
+}
+.recMetrics { display: flex; gap: 14px; }
+.recMetric {}
+.recMetricLabel { margin: 0; font-size: 10.5px; color: #8a7860; }
+.recMetricValue {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 15px;
+  color: #4a3a28;
+  font-variant-numeric: tabular-nums;
+}
+.recCtaWrap { display: flex; justify-content: flex-end; }
+
+/* ============================================================
+   TAGS
+   ============================================================ */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 11.5px;
+  background: transparent;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.tagRose { border-color: #b5705e; color: #b5705e; }
+.tagSage { border-color: #7a8a5c; color: #7a8a5c; }
+.tagMocha { border-color: #8a5a3d; color: #8a5a3d; }
+.tagMauve { border-color: #9a7a8c; color: #9a7a8c; }
+
+/* ============================================================
+   BOTTOM ROW (staff + channels)
+   ============================================================ */
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 14px;
+}
+.lockBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #ede2cf;
+  color: #5e2a2a;
+  border: 1px solid #d8c4a4;
+  letter-spacing: 0.04em;
+  margin-left: auto;
+}
+
+.staffHeader {
+  display: grid;
+  grid-template-columns: 120px 1fr 80px 80px 80px;
+  gap: 8px;
+  font-size: 12px;
+  color: #8a7860;
+  padding: 6px 4px;
+}
+.staffRow {
+  display: grid;
+  grid-template-columns: 120px 1fr 80px 80px 80px;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 4px;
+  border-top: 1px solid #e4d5b8;
+  font-size: 13px;
+}
+.staffNameCell { display: flex; align-items: center; gap: 8px; }
+.staffAvatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e8d9b8;
+  color: #4a3a28;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+}
+.pbar {
+  height: 5px;
+  background: #e6d8bf;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-right: 12px;
+}
+.pbarFill { height: 100%; transition: width 0.3s; }
+.tRight { text-align: right; }
+.mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.aiNote {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: #f5ecd8;
+  border-radius: 8px;
+  font-size: 12.5px;
+  color: #4a3a28;
+  line-height: 1.6;
+}
+
+/* CHANNELS */
+.channel { padding: 12px 4px; }
+.channelHead { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.channelKpi {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: #8a7860;
+}
+.channelBody {
+  margin: 0;
+  font-size: 12.5px;
+  color: #4a3a28;
+  line-height: 1.65;
+}
+
+/* ============================================================
+   PRO UPSELL
+   ============================================================ */
+.proUpsell {
+  background: linear-gradient(135deg, #2a1f15 0%, #1d160f 100%);
+  color: #f0e6d2;
+  border-radius: 12px;
+  padding: 22px 26px;
+}
+.proUpsellInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.proKicker {
+  margin: 0 0 8px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #d4ad6e;
+  letter-spacing: 0.2em;
+}
+.proTitle {
+  margin: 0 0 6px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: #f0e6d2;
+}
+.proSub {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(240, 230, 210, 0.7);
+  line-height: 1.65;
+  max-width: 600px;
+}
+.proCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #d4ad6e, #b89564);
+  color: #1a1410;
+  padding: 12px 22px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.proCta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(212, 173, 110, 0.35);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1100px) {
+  .kpiGrid { grid-template-columns: repeat(2, 1fr); }
+  .bottomRow { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .rec {
+    grid-template-columns: 40px 1fr;
+    grid-template-areas: "pri main" "metrics metrics" "cta cta";
+    gap: 12px;
+  }
+  .recPri { grid-area: pri; }
+  .recMain { grid-area: main; }
+  .recMetrics { grid-area: metrics; flex-wrap: wrap; gap: 18px; }
+  .recCtaWrap { grid-area: cta; justify-content: stretch; }
+  .recCtaWrap > button { flex: 1; justify-content: center; }
+  .kpiGrid { grid-template-columns: 1fr; }
+  .staffHeader, .staffRow { grid-template-columns: 80px 1fr 60px; gap: 6px; }
+  .staffHeader > span:nth-child(4), .staffHeader > span:nth-child(5),
+  .staffRow > *:nth-child(4), .staffRow > *:nth-child(5) { display: none; }
+  .proUpsellInner { flex-direction: column; align-items: flex-start; }
+}

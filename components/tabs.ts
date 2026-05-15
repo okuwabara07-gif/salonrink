@@ -31,6 +31,13 @@ export const tabs: NavTab[] = [
   { id: 'messages',  icon: 'msg',      label: 'DM配信',   path: '/dashboard/messages' },
   { id: 'link',      icon: 'link',     label: '連携',     path: '/dashboard/integrations' },
   {
+    id: 'cons',
+    icon: 'sparkle',
+    label: 'コンシェルジュ',
+    path: '/dashboard/cons',
+    badge: { kind: 'badge', text: 'NEW' },
+  },
+  {
     id: 'plan',
     icon: 'sparkle',
     label: 'プラン',
