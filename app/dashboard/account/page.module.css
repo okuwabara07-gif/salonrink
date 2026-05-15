@@ -1,0 +1,240 @@
+/* /dashboard/account styles */
+
+.page {
+  padding: 8px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: "Zen Kaku Gothic New", "Noto Sans JP", system-ui, sans-serif;
+  color: #2a1f15;
+  font-feature-settings: "palt" 1;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0 12px;
+}
+.headIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6e4632, #4a3a28);
+  color: #f0e6d2;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
+.headTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+.headSub {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: #8a7860;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.card {
+  background: #faf5e9;
+  border: 1px solid #e4d5b8;
+  border-radius: 10px;
+  padding: 20px 22px;
+}
+.cardTitle {
+  margin: 0 0 14px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+
+/* Avatar */
+.avatarRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.avatarLarge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #6e4632;
+  color: #f0e6d2;
+  display: grid;
+  place-items: center;
+  font-family: "Shippori Mincho", serif;
+  font-size: 22px;
+}
+
+/* Fields */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a3a28;
+}
+.input {
+  padding: 9px 12px;
+  border: 1px solid #d9c8a8;
+  border-radius: 7px;
+  font-size: 13px;
+  background: #ffffff;
+  color: #2a1f15;
+  font-family: inherit;
+}
+.input:focus {
+  outline: none;
+  border-color: #5e2a2a;
+  box-shadow: 0 0 0 3px rgba(94, 42, 42, 0.1);
+}
+
+/* Buttons */
+.btnPrimary {
+  padding: 10px 22px;
+  border-radius: 7px;
+  border: 0;
+  background: #2a1f15;
+  color: #f0e6d2;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btnPrimary:hover:not(:disabled) { background: #3a2c1c; }
+.btnPrimary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btnSecondary {
+  padding: 9px 18px;
+  border-radius: 7px;
+  border: 1px solid #5e2a2a;
+  background: transparent;
+  color: #5e2a2a;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btnSecondary:hover { background: rgba(94, 42, 42, 0.06); }
+.btnGhost {
+  padding: 9px 18px;
+  border-radius: 7px;
+  border: 1px solid #d9c8a8;
+  background: transparent;
+  color: #4a3a28;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btnGhost:hover { background: rgba(217, 200, 168, 0.2); }
+.btnSmall {
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid #d9c8a8;
+  background: #ffffff;
+  color: #4a3a28;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btnSmall:hover { background: #ede2cf; }
+.btnDanger {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #c4392e;
+  background: transparent;
+  color: #c4392e;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btnDanger:hover { background: rgba(196, 57, 46, 0.06); }
+
+/* Security */
+.securityList { display: flex; flex-direction: column; gap: 6px; }
+.securityRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid #e4d5b8;
+  border-radius: 8px;
+  background: #ffffff;
+}
+.securityMain { flex: 1; }
+.securityLabel {
+  font-size: 13px;
+  color: #2a1f15;
+  margin-bottom: 2px;
+}
+.securitySub {
+  font-size: 11.5px;
+  color: #8a7860;
+}
+.statusOk {
+  background: #d8eed1;
+  color: #4a6a3a;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+/* Save bar */
+.saveBar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+/* Danger */
+.dangerCard {
+  background: #fdf5f3;
+  border-color: #e8b8b0;
+}
+.dangerTitle {
+  margin: 0 0 14px;
+  font-family: "Shippori Mincho", serif;
+  font-size: 14px;
+  color: #c4392e;
+}
+.dangerList { display: flex; flex-direction: column; gap: 8px; }
+.dangerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border-radius: 8px;
+}
+.dangerLabel {
+  font-size: 13px;
+  color: #2a1f15;
+  margin-bottom: 2px;
+}
+.dangerSub {
+  font-size: 11.5px;
+  color: #8a7860;
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}
