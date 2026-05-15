@@ -52,3 +52,4 @@ design_handoff_salonrink_lp/
 
 # Claude Code 内部ファイル
 .claude/
+app/dashboard/booking/page.tsx.bak-list-view

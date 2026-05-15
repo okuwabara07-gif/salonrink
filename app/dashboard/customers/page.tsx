@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Icon } from '@/components/srk';
+import { createClient } from '@/lib/supabase/client';
 import {
-  SAMPLE_CUSTOMERS,
   ALL_TAGS,
   STATUS_LIST,
   STATUS_PALETTE,
-  getCustomerDetail,
+  getCustomerDetail as _origGetCustomerDetail,
   fmtDate,
   fmtDateFull,
   fmtDateTime,
@@ -24,6 +24,77 @@ import {
 } from '@/lib/customers/sampleCustomers';
 
 /* ============================================================
+   DB → SampleCustomer マッパー
+   ============================================================ */
+type DbCustomerRow = {
+  id: string;
+  salon_id: string | null;
+  name: string | null;
+  kana: string | null;
+  phone: string | null;
+  stylist: string | null;
+  tags: string[] | null;
+  memo: string | null;
+  last_visit: string | null;
+  visit_count: number | null;
+  created_at: string | null;
+  is_vip: boolean | null;
+  needs_attention: boolean | null;
+  line_display_name: string | null;
+};
+
+function computeStatus(row: DbCustomerRow): CustomerStatus {
+  if (row.is_vip) return 'VIP' as CustomerStatus;
+  if (row.needs_attention) return '要注意' as CustomerStatus;
+  if (!row.last_visit && (row.visit_count ?? 0) === 0) return '新規' as CustomerStatus;
+  return '再来店' as CustomerStatus;
+}
+
+function mapDbCustomer(row: DbCustomerRow): SampleCustomer {
+  return {
+    id: row.id,
+    name: row.name || row.line_display_name || '名前未登録',
+    kana: row.kana || '',
+    phone: row.phone || '',
+    stylist: row.stylist || '—',
+    status: computeStatus(row),
+    tags: Array.isArray(row.tags) ? row.tags : [],
+    lastVisit: row.last_visit ? row.last_visit.split('T')[0] : '',
+    nextAppt: '',
+    totalVisits: row.visit_count ?? 0,
+    totalSpend: 0,
+    note: row.memo || '',
+  } as SampleCustomer;
+}
+
+/* getCustomerDetail のオーバーライド:
+   DB顧客は空データ、サンプル顧客は元のサンプル結果を返す(プログレッシブ対応) */
+function getCustomerDetail(c: SampleCustomer) {
+  // 元の sample (c01-c99) なら元データを返す、それ以外は空
+  if (c.id && /^c\d+$/.test(c.id)) {
+    try {
+      return _origGetCustomerDetail(c);
+    } catch {
+      // fallthrough
+    }
+  }
+  return {
+    visits: [] as Visit[],
+    karte: {
+      hair: { length: '—', type: '—', scalp: '—', tone: '—' },
+      lastColor: null,
+      lastPerm: null,
+      lastTreatment: null,
+      allergies: [] as string[],
+      preferences: [] as string[],
+      avoidance: [] as string[],
+      memo: c.note || '',
+    } as Karte,
+    messages: [] as ChatMessage[],
+  };
+}
+
+/* ============================================================
    /dashboard/customers — Phase 4+5 (split view)
    ============================================================
 
@@ -37,13 +108,119 @@ import {
 type TabId = 'overview' | 'history' | 'karte' | 'msg';
 
 export default function CustomersPage() {
-  const [customers, setCustomers] = useState<SampleCustomer[]>(SAMPLE_CUSTOMERS);
+  const [customers, setCustomers] = useState<SampleCustomer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [ownerName, setOwnerName] = useState<string>('スタッフ');
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<'すべて' | CustomerStatus>('すべて');
   const [tagFilter, setTagFilter] = useState<string[]>([]);
-  const [selectedId, setSelectedId] = useState('c01');
+  const [selectedId, setSelectedId] = useState<string>('');
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [tab, setTab] = useState<TabId>('overview');
+
+  // Supabase からデータ取得
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+          setLoadError('ログインが必要です');
+          setLoading(false);
+          return;
+        }
+
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('id, owner_name')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+
+        if (!salon) {
+          setLoadError('サロン情報が見つかりません');
+          setLoading(false);
+          return;
+        }
+
+        if (salon.owner_name) setOwnerName(salon.owner_name);
+
+        const { data: rows, error } = await supabase
+          .from('customers')
+          .select('*')
+          .eq('salon_id', salon.id)
+          .order('last_visit', { ascending: false, nullsFirst: false });
+
+        if (error) {
+          console.error('customers fetch:', error);
+          setLoadError(`顧客取得失敗: ${error.message}`);
+        } else if (rows) {
+          const mapped = rows.map((r) => mapDbCustomer(r as DbCustomerRow));
+
+          // 予約データを一括取得して totalSpend / nextAppt を計算
+          try {
+            const customerIds = mapped.map((c) => c.id);
+            const customerNames = mapped.map((c) => c.name).filter(Boolean);
+            const priceMap: Record<string, number> = {
+              'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
+              'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
+            };
+            const { data: allRes } = await supabase
+              .from('reservations')
+              .select('customer_id, customer_name, datetime, menu, status')
+              .eq('salon_id', salon.id);
+
+            if (allRes) {
+              const byId: Record<string, typeof allRes> = {};
+              const byName: Record<string, typeof allRes> = {};
+              for (const r of allRes) {
+                if (r.customer_id) {
+                  (byId[r.customer_id] ||= []).push(r);
+                } else if (r.customer_name) {
+                  (byName[r.customer_name] ||= []).push(r);
+                }
+              }
+              const now = new Date().toISOString();
+              for (const c of mapped) {
+                const list = [...(byId[c.id] || []), ...(byName[c.name] || [])];
+                let totalSpend = 0;
+                let nextAppt = '';
+                let nextApptTs = '';
+                for (const r of list) {
+                  const menu = r.menu || '';
+                  const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
+                  const amt = items.reduce((s: number, m: string) => s + (priceMap[m] || 5000), 0) || 5000;
+                  const dt = r.datetime || '';
+                  if (dt <= now && r.status !== 'cancelled') {
+                    totalSpend += amt;
+                  }
+                  if (dt > now && r.status !== 'cancelled' && (!nextApptTs || dt < nextApptTs)) {
+                    nextApptTs = dt;
+                    const d = new Date(dt);
+                    nextAppt = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+                  }
+                }
+                (c as SampleCustomer).totalSpend = totalSpend;
+                (c as SampleCustomer).nextAppt = nextAppt;
+              }
+            }
+          } catch (e) {
+            console.error('enrich reservations:', e);
+          }
+
+          setCustomers(mapped);
+          if (mapped.length > 0) setSelectedId(mapped[0].id);
+        }
+      } catch (e) {
+        console.error(e);
+        setLoadError('予期しないエラーが発生しました');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const filtered = useMemo(() => {
     return customers.filter((c) => {
@@ -71,8 +248,68 @@ export default function CustomersPage() {
     return m;
   }, [customers]);
 
-  function updateCustomer(id: string, patch: Partial<SampleCustomer>) {
+  async function updateCustomer(id: string, patch: Partial<SampleCustomer>) {
     setCustomers((cs) => cs.map((c) => (c.id === id ? { ...c, ...patch } : c)));
+    // Supabase に永続化(tags, memo, stylist, kana のみ)
+    try {
+      const dbPatch: Record<string, unknown> = {};
+      if (patch.tags !== undefined) dbPatch.tags = patch.tags;
+      if (patch.note !== undefined) dbPatch.memo = patch.note;
+      if (patch.stylist !== undefined) dbPatch.stylist = patch.stylist;
+      if (patch.kana !== undefined) dbPatch.kana = patch.kana;
+      if (Object.keys(dbPatch).length === 0) return;
+      const supabase = createClient();
+      await supabase.from('customers').update(dbPatch).eq('id', id);
+    } catch (e) {
+      console.error('update customer:', e);
+    }
+  }
+
+  if (loading) {
+    return (
+      <div style={{ padding: 40, color: 'var(--muted)', fontSize: 13 }}>
+        読み込み中...
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div style={{ padding: 40 }}>
+        <div style={{
+          padding: '14px 18px',
+          background: 'rgba(168,90,62,0.08)',
+          border: '1px solid rgba(168,90,62,0.30)',
+          borderRadius: 8,
+          color: '#7a3030',
+          fontSize: 13,
+        }}>
+          ⚠ {loadError}
+        </div>
+      </div>
+    );
+  }
+
+  if (customers.length === 0) {
+    return (
+      <div style={{ padding: 40 }}>
+        <div style={{
+          padding: 40,
+          textAlign: 'center',
+          background: 'var(--paper)',
+          border: '1px dashed var(--line-2)',
+          borderRadius: 12,
+        }}>
+          <div style={{ fontSize: 15, color: 'var(--ink)', marginBottom: 8, fontFamily: 'var(--serif)' }}>
+            顧客がまだ登録されていません
+          </div>
+          <div style={{ fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.7 }}>
+            予約が入ると自動的に顧客が追加されます。<br />
+            手動登録は「+ 新規予約」から、または LINE 連携経由で行えます。
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -745,15 +982,50 @@ function OverviewTab({
   const c = customer;
   const [editingTags, setEditingTags] = useState(false);
   const [tagInput, setTagInput] = useState('');
+  const [recentVisits, setRecentVisits] = useState<Array<{ d: string; svc: string; amt: number }>>([]);
 
-  const recentVisits = c.lastVisit
-    ? [
-        { d: c.lastVisit, svc: 'カット + カラー', amt: 12800 },
-        { d: '2026-03-15', svc: 'カット', amt: 5500 },
-        { d: '2026-02-08', svc: 'カラー + トリートメント', amt: 11000 },
-        { d: '2026-01-12', svc: 'カット + パーマ', amt: 13800 },
-      ]
-    : [];
+  // Supabase から最近の来店履歴を取得(reservations から)
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const nowIso = new Date().toISOString();
+        // customer_id で取得 → 失敗時は customer_name fallback
+        let { data } = await supabase
+          .from('reservations')
+          .select('datetime, menu')
+          .eq('customer_id', c.id)
+          .lte('datetime', nowIso)
+          .order('datetime', { ascending: false })
+          .limit(4);
+        if (!data || data.length === 0) {
+          const { data: byName } = await supabase
+            .from('reservations')
+            .select('datetime, menu')
+            .eq('customer_name', c.name)
+            .lte('datetime', nowIso)
+            .order('datetime', { ascending: false })
+            .limit(4);
+          data = byName || [];
+        }
+        if (data) {
+          const priceMap: Record<string, number> = {
+            'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
+            'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
+          };
+          const parsed = data.map((r) => {
+            const menu = r.menu || '';
+            const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
+            const amt = items.reduce((s: number, m: string) => s + (priceMap[m] || 5000), 0) || 5000;
+            return { d: (r.datetime || '').split('T')[0], svc: menu || '—', amt };
+          });
+          setRecentVisits(parsed);
+        }
+      } catch (e) {
+        console.error('recent visits:', e);
+      }
+    })();
+  }, [c.id, c.name]);
 
   return (
     <div
@@ -826,12 +1098,12 @@ function OverviewTab({
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
         <SectionCard title="連絡先">
-          <ContactRow icon="msg" label="LINE" value="連携中 · 既読率 94%" />
-          <ContactRow icon="msg" label="電話" value={c.phone} mono />
+          <ContactRow icon="msg" label="LINE" value={c.tags?.includes('LINE') ? '連携中' : '未連携'} />
+          <ContactRow icon="msg" label="電話" value={c.phone || '—'} mono />
           <ContactRow
             icon="users"
-            label="登録"
-            value={fmtDateFull('2024-08-15')}
+            label="累計"
+            value={`${c.totalVisits} 回来店`}
           />
         </SectionCard>
 
@@ -938,10 +1210,64 @@ function OverviewTab({
 /* ─── History Tab ──────────────────────────────────────── */
 
 function HistoryTab({ customer }: { customer: SampleCustomer }) {
-  const d = getCustomerDetail(customer);
-  const visits = d.visits;
+  const [visits, setVisits] = useState<Visit[]>([]);
   const [filter, setFilter] = useState<'all' | 'cut' | 'color' | 'perm' | 'treat'>('all');
   const [openIdx, setOpenIdx] = useState(0);
+
+  // Supabase から来店履歴を取得
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const priceMap: Record<string, number> = {
+          'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
+          'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
+        };
+        const durationMap: Record<string, number> = {
+          'カット': 60, 'カラー': 90, '白髪染め': 90, 'パーマ': 120,
+          'トリートメント': 30, 'ヘッドスパ': 30, 'ハイライト': 120,
+        };
+        // customer_id で検索 → 失敗時は customer_name fallback
+        let { data } = await supabase
+          .from('reservations')
+          .select('*')
+          .eq('customer_id', customer.id)
+          .lte('datetime', new Date().toISOString())
+          .order('datetime', { ascending: false });
+        if (!data || data.length === 0) {
+          const { data: byName } = await supabase
+            .from('reservations')
+            .select('*')
+            .eq('customer_name', customer.name)
+            .lte('datetime', new Date().toISOString())
+            .order('datetime', { ascending: false });
+          data = byName || [];
+        }
+        const mapped: Visit[] = (data || []).map((r) => {
+          const menu = r.menu || '';
+          const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
+          const services = items.length > 0
+            ? items.map((name: string) => ({ name, amt: priceMap[name] || 5000 }))
+            : [{ name: menu || '—', amt: 5000 }];
+          const amt = services.reduce((s: number, sv: { amt: number }) => s + sv.amt, 0);
+          const duration = items.reduce((s: number, n: string) => s + (durationMap[n] || 60), 0) || 60;
+          return {
+            date: (r.datetime || '').split('T')[0],
+            services,
+            products: [],
+            photoNote: '—',
+            note: '',
+            duration,
+            stylist: customer.stylist || '—',
+            amt,
+          } as Visit;
+        });
+        setVisits(mapped);
+      } catch (e) {
+        console.error('history fetch:', e);
+      }
+    })();
+  }, [customer.id, customer.name, customer.stylist]);
 
   const filtered = visits.filter((v) => {
     if (filter === 'all') return true;
@@ -1245,15 +1571,101 @@ function VisitRow({
 /* ─── Karte Tab ────────────────────────────────────────── */
 
 function KarteTab({ customer }: { customer: SampleCustomer }) {
-  const d = getCustomerDetail(customer);
-  const k = d.karte;
-  const [memo, setMemo] = useState(k.memo || '');
+  const [k, setK] = useState<Karte>({
+    hair: { length: '—', type: '—', scalp: '—', tone: '—' },
+    lastColor: null,
+    lastPerm: null,
+    lastTreatment: null,
+    allergies: [],
+    preferences: [],
+    avoidance: [],
+    memo: '',
+  } as Karte);
+  const [memo, setMemo] = useState('');
   const [editingMemo, setEditingMemo] = useState(false);
+  const [karteId, setKarteId] = useState<string | null>(null);
+  const [salonId, setSalonId] = useState<string | null>(null);
 
+  // Supabase からカルテ取得
   useEffect(() => {
-    setMemo(k.memo || '');
-    setEditingMemo(false);
-  }, [customer.id, k.memo]);
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('id')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+        if (!salon) return;
+        setSalonId(salon.id);
+
+        const { data: row } = await supabase
+          .from('kartes')
+          .select('*')
+          .eq('customer_id', customer.id)
+          .maybeSingle();
+        if (row) {
+          setKarteId(row.id);
+          const newK: Karte = {
+            hair: {
+              length: row.hair_length || '—',
+              type: row.hair_type || '—',
+              scalp: row.hair_scalp || '—',
+              tone: row.hair_tone || '—',
+            },
+            lastColor: row.last_color || null,
+            lastPerm: row.last_perm || null,
+            lastTreatment: row.last_treatment || null,
+            allergies: Array.isArray(row.allergies) ? row.allergies : [],
+            preferences: Array.isArray(row.preferences) ? row.preferences : [],
+            avoidance: Array.isArray(row.avoidance) ? row.avoidance : [],
+            memo: row.memo || '',
+          } as Karte;
+          setK(newK);
+          setMemo(newK.memo || '');
+        } else {
+          setKarteId(null);
+          setK({
+            hair: { length: '—', type: '—', scalp: '—', tone: '—' },
+            lastColor: null,
+            lastPerm: null,
+            lastTreatment: null,
+            allergies: [],
+            preferences: [],
+            avoidance: [],
+            memo: '',
+          } as Karte);
+          setMemo('');
+        }
+      } catch (e) {
+        console.error('karte fetch:', e);
+      }
+      setEditingMemo(false);
+    })();
+  }, [customer.id]);
+
+  // メモ保存(編集完了時)
+  async function saveMemo() {
+    if (!salonId) return;
+    try {
+      const supabase = createClient();
+      if (karteId) {
+        await supabase.from('kartes').update({ memo, updated_at: new Date().toISOString() }).eq('id', karteId);
+      } else {
+        const { data: created } = await supabase
+          .from('kartes')
+          .insert({ customer_id: customer.id, salon_id: salonId, memo })
+          .select('id')
+          .single();
+        if (created) setKarteId(created.id);
+      }
+      setK((prev) => ({ ...prev, memo } as Karte));
+    } catch (e) {
+      console.error('save memo:', e);
+    }
+  }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
@@ -1502,7 +1914,12 @@ function KarteTab({ customer }: { customer: SampleCustomer }) {
           action={
             <button
               type="button"
-              onClick={() => setEditingMemo((v) => !v)}
+              onClick={async () => {
+                if (editingMemo) {
+                  await saveMemo();
+                }
+                setEditingMemo((v) => !v);
+              }}
               style={{
                 all: 'unset',
                 cursor: 'pointer',
@@ -1558,9 +1975,9 @@ function KarteTab({ customer }: { customer: SampleCustomer }) {
               lineHeight: 1.7,
             }}
           >
-            <KvRow label="指名" value={customer.stylist} />
-            <KvRow label="登録日" value="2024/08/15" mono />
-            <KvRow label="紹介元" value="Instagram" />
+            <KvRow label="指名" value={customer.stylist || '—'} />
+            <KvRow label="累計" value={`${customer.totalVisits} 回`} mono />
+            <KvRow label="ステータス" value={customer.status} />
           </div>
         </SectionCard>
       </div>
@@ -1681,36 +2098,92 @@ function FormulaCard({
 /* ─── Messages Tab ─────────────────────────────────────── */
 
 function MessagesTab({ customer }: { customer: SampleCustomer }) {
-  const d = getCustomerDetail(customer);
-  const [messages, setMessages] = useState<ChatMessage[]>(d.messages);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState('');
+  const [salonId, setSalonId] = useState<string | null>(null);
+  const [ownerName, setOwnerName] = useState<string>('スタッフ');
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Supabase からメッセージ取得
   useEffect(() => {
-    setMessages(d.messages);
-  }, [customer.id, d.messages]);
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('id, owner_name')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+        if (!salon) return;
+        setSalonId(salon.id);
+        if (salon.owner_name) setOwnerName(salon.owner_name);
+
+        const { data: rows } = await supabase
+          .from('line_messages')
+          .select('*')
+          .eq('customer_id', customer.id)
+          .order('ts', { ascending: true });
+        if (rows) {
+          const mapped: ChatMessage[] = rows.map((r) => {
+            const d = new Date(r.ts);
+            const ts = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+            return {
+              id: r.id,
+              ts,
+              from: r.from_type,
+              text: r.text,
+              staffName: r.staff_name || undefined,
+            } as ChatMessage;
+          });
+          setMessages(mapped);
+        }
+      } catch (e) {
+        console.error('messages fetch:', e);
+      }
+    })();
+  }, [customer.id]);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages.length]);
 
-  function send() {
-    if (!draft.trim()) return;
+  async function send() {
+    if (!draft.trim() || !salonId) return;
+    const text = draft.trim();
     const now = new Date();
     const ts =
       `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` +
       ` ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    // 楽観更新
+    const tempId = 'new-' + Date.now();
     setMessages((ms) => [
       ...ms,
-      {
-        id: 'new-' + Date.now(),
-        ts,
-        from: 'staff',
-        text: draft.trim(),
-        staffName: 'テスト太郎',
-      },
+      { id: tempId, ts, from: 'staff', text, staffName: ownerName } as ChatMessage,
     ]);
     setDraft('');
+    // DB に永続化
+    try {
+      const supabase = createClient();
+      const { data: inserted } = await supabase
+        .from('line_messages')
+        .insert({
+          customer_id: customer.id,
+          salon_id: salonId,
+          ts: now.toISOString(),
+          from_type: 'staff',
+          text,
+          staff_name: ownerName,
+        })
+        .select('id')
+        .single();
+      if (inserted) {
+        setMessages((ms) => ms.map((m) => (m.id === tempId ? { ...m, id: inserted.id } : m)));
+      }
+    } catch (e) {
+      console.error('message send:', e);
+    }
   }
 
   const templates = [
