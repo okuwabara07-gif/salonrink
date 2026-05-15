@@ -395,7 +395,17 @@ export default function DashboardHomePage() {
                       className="srk-reach-actions"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <button className="srk-btn primary" type="button">
+                      <button
+                        className="srk-btn primary"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (confirm(`${r.name}様にLINEで来店促進メッセージを送信しますか?`)) {
+                            // TODO: Phase 4 で /api/messages/send にPOST
+                            alert(`✅ ${r.name}様 にメッセージを送信しました(モック)`);
+                          }
+                        }}
+                      >
                         <Icon name="plus" size={10} /> 招待
                       </button>
                     </div>
