@@ -77,8 +77,53 @@ export default function ConsPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  // AI 経営分析
+  interface AiSuggestion {
+    title: string;
+    body: string;
+    category: string;
+  }
+  const [aiNarrative, setAiNarrative] = useState<string | null>(null);
+  const [aiSuggestions, setAiSuggestions] = useState<AiSuggestion[]>([]);
+  const [aiCached, setAiCached] = useState(false);
+  const [aiGeneratedAt, setAiGeneratedAt] = useState<string | null>(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const today = new Date();
   const dateStr = `${today.getFullYear()}年 ${today.getMonth() + 1}月 ${today.getDate()}日(${'日月火水木金土'[today.getDay()]})`;
+
+  const generateAi = useCallback(async (force: boolean) => {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch('/api/cons/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ force }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (res.status === 429) {
+          setAiError(
+            `今月のAI利用上限に達しました(${data.used}/${data.limit}回・${data.plan}プラン)。プランのアップグレードで上限が増えます。`
+          );
+        } else {
+          setAiError(data.error || 'AI分析の生成に失敗しました');
+        }
+        return;
+      }
+      setAiNarrative(data.narrative ?? '');
+      setAiSuggestions(Array.isArray(data.suggestions) ? data.suggestions : []);
+      setAiCached(data.cached === true);
+      setAiGeneratedAt(data.generated_at ?? null);
+    } catch (e) {
+      console.error('AI分析エラー:', e);
+      setAiError('AI分析の生成中にエラーが発生しました');
+    } finally {
+      setAiLoading(false);
+    }
+  }, []);
 
   const loadKpis = useCallback(async () => {
     setLoading(true);
@@ -347,77 +392,195 @@ export default function ConsPage() {
             </div>
           </section>
 
-          {/* AI経営アドバイス(Step2 予定の明示) */}
-          <section
-            className={styles.card}
-            style={{ textAlign: 'center', padding: '36px 24px' }}
-          >
-            <p
-              style={{
-                margin: 0,
-                fontFamily: 'var(--serif)',
-                fontSize: 17,
-                fontWeight: 500,
-                color: 'var(--ink)',
-              }}
-            >
-              AI経営アドバイスを準備中です
-            </p>
-            <p
-              style={{
-                margin: '12px auto 0',
-                maxWidth: 480,
-                fontSize: 12.5,
-                lineHeight: 1.7,
-                color: 'var(--muted)',
-              }}
-            >
-              上記の実データをもとに、AI
-              が空き枠対策・客単価向上・リピート改善などの具体的な打ち手を提案する機能を開発中です。
-              公開まではKPIと着眼点をご活用ください。
-            </p>
-            <div
-              style={{
-                display: 'inline-flex',
-                gap: 10,
-                marginTop: 22,
-                flexWrap: 'wrap',
-                justifyContent: 'center',
-              }}
-            >
-              <a
-                href="/dashboard/messages"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '9px 16px',
-                  borderRadius: 8,
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  background: 'var(--ink)',
-                  color: '#f0e6d2',
-                }}
-              >
-                DM配信で来店促進 →
-              </a>
-              <a
-                href="/dashboard/customers"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  padding: '9px 16px',
-                  borderRadius: 8,
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  textDecoration: 'none',
-                  border: '1px solid var(--line-2)',
-                  color: 'var(--ink-2)',
-                }}
-              >
-                顧客一覧へ →
-              </a>
+          {/* AI経営アドバイス(Claude Haiku 生成・日次キャッシュ) */}
+          <section className={styles.card}>
+            <div className={styles.cardHead}>
+              <h2 className={styles.cardTitle}>AI経営アドバイス</h2>
+              <span className={styles.cardSub}>
+                上記KPIをもとに具体的な打ち手を提案(1日1回まで・自動キャッシュ)
+              </span>
             </div>
+
+            {/* 未生成 & 非ローディング: 生成ボタン */}
+            {!aiNarrative && !aiLoading && !aiError && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '28px 16px 8px',
+                }}
+              >
+                <p
+                  style={{
+                    margin: '0 auto 18px',
+                    maxWidth: 460,
+                    fontSize: 12.5,
+                    lineHeight: 1.7,
+                    color: 'var(--muted)',
+                  }}
+                >
+                  当月の実データをAIが分析し、空き枠対策・客単価向上・リピート改善などの打ち手を提案します。
+                </p>
+                <button
+                  type="button"
+                  onClick={() => generateAi(false)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '11px 22px',
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: 'var(--ink)',
+                    color: '#f0e6d2',
+                  }}
+                >
+                  ✦ AI分析を生成する
+                </button>
+              </div>
+            )}
+
+            {/* ローディング */}
+            {aiLoading && (
+              <div
+                style={{
+                  textAlign: 'center',
+                  padding: '40px 16px',
+                  color: 'var(--muted)',
+                  fontSize: 13,
+                }}
+              >
+                AIが当月の経営データを分析中です…(最大20秒程度)
+              </div>
+            )}
+
+            {/* エラー */}
+            {aiError && !aiLoading && (
+              <div
+                style={{
+                  padding: '20px 16px',
+                  textAlign: 'center',
+                }}
+              >
+                <p
+                  style={{
+                    margin: '0 0 16px',
+                    fontSize: 13,
+                    lineHeight: 1.7,
+                    color: 'var(--ink-2)',
+                  }}
+                >
+                  {aiError}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => generateAi(false)}
+                  style={{
+                    padding: '9px 18px',
+                    borderRadius: 8,
+                    fontSize: 12.5,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: '1px solid var(--line-2)',
+                    background: 'transparent',
+                    color: 'var(--ink-2)',
+                  }}
+                >
+                  再試行
+                </button>
+              </div>
+            )}
+
+            {/* 結果表示 */}
+            {aiNarrative && !aiLoading && (
+              <div style={{ padding: '4px 2px' }}>
+                <p
+                  style={{
+                    margin: '0 0 20px',
+                    fontSize: 13.5,
+                    lineHeight: 1.8,
+                    color: 'var(--ink-2)',
+                  }}
+                >
+                  {aiNarrative}
+                </p>
+
+                <div style={{ display: 'grid', gap: 12 }}>
+                  {aiSuggestions.map((s, i) => (
+                    <div
+                      key={i}
+                      className={`${styles.rec} ${
+                        i > 0 ? styles.recBorder : ''
+                      }`}
+                      style={{ display: 'block', padding: '14px 2px' }}
+                    >
+                      <div
+                        className={styles.recTitleRow}
+                        style={{ marginBottom: 6 }}
+                      >
+                        <span className={styles.tag}>{s.category}</span>
+                        <h3
+                          className={styles.recTitle}
+                          style={{ display: 'inline' }}
+                        >
+                          {s.title}
+                        </h3>
+                      </div>
+                      <p
+                        className={styles.recBody}
+                        style={{ margin: 0, lineHeight: 1.75 }}
+                      >
+                        {s.body}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: 10,
+                    marginTop: 20,
+                    paddingTop: 14,
+                    borderTop: '1px solid var(--line-2)',
+                  }}
+                >
+                  <span style={{ fontSize: 11, color: 'var(--muted)' }}>
+                    {aiCached
+                      ? '本日生成済みのキャッシュを表示しています'
+                      : 'AIが新規生成しました'}
+                    {aiGeneratedAt &&
+                      ` · ${new Date(aiGeneratedAt).toLocaleString('ja-JP', {
+                        month: 'numeric',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}`}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => generateAi(true)}
+                    style={{
+                      padding: '7px 14px',
+                      borderRadius: 7,
+                      fontSize: 11.5,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      border: '1px solid var(--line-2)',
+                      background: 'transparent',
+                      color: 'var(--ink-2)',
+                    }}
+                  >
+                    再生成(本日の利用回数を消費)
+                  </button>
+                </div>
+              </div>
+            )}
           </section>
         </>
       )}
