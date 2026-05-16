@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 
 /* ============================================================
    /dashboard/more — Phase 8: その他ページ完全リニューアル
@@ -32,6 +33,36 @@ export default function MorePage() {
     dm: false,
     dark: false,
   });
+  const [salonInfo, setSalonInfo] = useState<{ name: string; owner: string; email: string }>({
+    name: '—', owner: '—', email: '—',
+  });
+
+  // サロン情報取得
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('name, owner_name, email')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+        if (salon) {
+          setSalonInfo({
+            name: salon.name || '—',
+            owner: salon.owner_name || '—',
+            email: salon.email || user.email || '—',
+          });
+        } else if (user.email) {
+          setSalonInfo((s) => ({ ...s, email: user.email as string }));
+        }
+      } catch (e) {
+        console.error('salon info:', e);
+      }
+    })();
+  }, []);
 
   // Auto-dismiss toast
   useEffect(() => {
@@ -49,6 +80,17 @@ export default function MorePage() {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
+  async function handleLogout() {
+    try {
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      window.location.href = '/login';
+    } catch (e) {
+      console.error('logout:', e);
+      setToast('ログアウトに失敗しました');
+    }
+  }
+
   return (
     <div
       style={{
@@ -65,8 +107,9 @@ export default function MorePage() {
 
       {/* Feature cards */}
       <FeatureCards
+        salonInfo={salonInfo}
         onOpenSettings={() => setDrawer('settings')}
-        onLogout={() => setToast('ログアウトしました')}
+        onLogout={handleLogout}
       />
 
       {/* Support footer */}
@@ -403,12 +446,17 @@ function StatusItem({
 /* ─── Feature Cards (設定 / アカウント / ログアウト) ─── */
 
 function FeatureCards({
+  salonInfo,
   onOpenSettings,
   onLogout,
 }: {
+  salonInfo: { name: string; owner: string; email: string };
   onOpenSettings: () => void;
   onLogout: () => void;
 }) {
+  const maskedEmail = salonInfo.email !== '—'
+    ? salonInfo.email.replace(/^(.{1,3}).*(@.*)$/, '$1…$2')
+    : '—';
   return (
     <div
       style={{
@@ -428,10 +476,10 @@ function FeatureCards({
         icon={<CogIcon />}
         desc="営業時間・スタッフ・通知設定など"
         rows={[
-          { k: '営業時間', v: '10:00 - 20:00', mono: true },
+          { k: '営業時間', v: '設定画面で確認', mono: false },
           { k: '通知設定', v: 'ON', color: '#5b8c5a' },
-          { k: 'スタッフ', v: '4 名' },
-          { k: '定休日', v: '水曜日', muted: true },
+          { k: 'スタッフ', v: '設定画面で管理' },
+          { k: '定休日', v: '設定画面で確認', muted: true },
         ]}
         cta="設定を開く →"
         ctaBg="rgba(184,149,100,0.18)"
@@ -445,10 +493,9 @@ function FeatureCards({
         icon={<UsersIcon />}
         desc="プロフィール・パスワード・店舗情報"
         rows={[
-          { k: '店舗', v: 'キレイ 鶴見店' },
-          { k: 'オーナー', v: 'テスト太郎' },
-          { k: 'メール', v: 'test@…' },
-          { k: '最終ログイン', v: '今日 09:21', mono: true },
+          { k: '店舗', v: salonInfo.name },
+          { k: 'オーナー', v: salonInfo.owner },
+          { k: 'メール', v: maskedEmail },
         ]}
         cta="編集する →"
         ctaBg="rgba(184,149,100,0.18)"
@@ -462,7 +509,6 @@ function FeatureCards({
         icon={<LogoutIcon />}
         desc="アカウントからサインアウト"
         rows={[
-          { k: '現在のセッション', v: '今日 09:21〜', mono: true },
           { k: 'セキュリティ', v: '保護有効', color: '#5b8c5a' },
         ]}
         cta="ログアウトする →"
@@ -909,9 +955,9 @@ function SettingsPanel({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
       <DrawerSection title="営業情報">
-        <DrawerRow label="営業時間" value="10:00 - 20:00" />
-        <DrawerRow label="定休日" value="水曜日" />
-        <DrawerRow label="スタッフ数" value="4 名" />
+        <DrawerRow label="営業時間" value="設定画面で管理" />
+        <DrawerRow label="定休日" value="設定画面で管理" />
+        <DrawerRow label="スタッフ" value="設定画面で管理" />
       </DrawerSection>
 
       <DrawerSection title="通知">

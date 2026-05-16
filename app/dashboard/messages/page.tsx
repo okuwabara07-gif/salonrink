@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 /* ============================================================
@@ -51,13 +52,13 @@ const TEMPLATES: Record<TemplateKey, { name: string; tag: string; body: string }
 
 type Filter = 'all' | 'dormant_90' | 'dormant_60' | 'recent_30' | 'birthday_month' | 'new_customers';
 
-const FILTERS: { key: Filter; label: string; count: number }[] = [
-  { key: 'all', label: '全顧客', count: 247 },
-  { key: 'recent_30', label: '直近30日来店', count: 56 },
-  { key: 'dormant_60', label: '60日休眠', count: 32 },
-  { key: 'dormant_90', label: '90日以上休眠', count: 18 },
-  { key: 'birthday_month', label: '今月誕生月', count: 7 },
-  { key: 'new_customers', label: '新規顧客(3ヶ月)', count: 28 },
+const FILTER_DEFS: { key: Filter; label: string }[] = [
+  { key: 'all', label: '全顧客' },
+  { key: 'recent_30', label: '直近30日来店' },
+  { key: 'dormant_60', label: '60日休眠' },
+  { key: 'dormant_90', label: '90日以上休眠' },
+  { key: 'birthday_month', label: '今月誕生月' },
+  { key: 'new_customers', label: '新規顧客(3ヶ月)' },
 ];
 
 export default function MessagesPage() {
@@ -65,13 +66,77 @@ export default function MessagesPage() {
   const [filter, setFilter] = useState<Filter>('dormant_60');
   const [messageBody, setMessageBody] = useState(TEMPLATES.visit_reminder.body);
   const [sending, setSending] = useState(false);
-  const [history] = useState([
-    { date: '2026/05/10', template: '来店リマインド', target: '60日休眠 (28名)', status: '配信済' },
-    { date: '2026/05/03', template: 'キャンペーン告知', target: '全顧客 (247名)', status: '配信済' },
-    { date: '2026/04/28', template: 'お誕生月特典', target: '4月誕生月 (12名)', status: '配信済' },
-  ]);
 
-  const targetCount = useMemo(() => FILTERS.find(f => f.key === filter)?.count || 0, [filter]);
+  const [salonId, setSalonId] = useState<string | null>(null);
+  const [salonName, setSalonName] = useState('サロン');
+  const [counts, setCounts] = useState<Record<Filter, number>>({
+    all: 0, recent_30: 0, dormant_60: 0, dormant_90: 0, birthday_month: 0, new_customers: 0,
+  });
+  const [history, setHistory] = useState<{ date: string; template: string; target: string; status: string }[]>([]);
+  const [previewName, setPreviewName] = useState('お客様');
+
+  // ─── Supabase からデータ取得 ──────────────────
+  useEffect(() => {
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: salon } = await supabase
+          .from('salons').select('id, name').eq('owner_user_id', user.id).maybeSingle();
+        if (!salon) return;
+        setSalonId(salon.id);
+        if (salon.name) setSalonName(salon.name);
+
+        // 顧客データを取得してフィルタ別カウント
+        const { data: custs } = await supabase
+          .from('customers').select('name, last_visit, visit_count, created_at').eq('salon_id', salon.id);
+        if (custs) {
+          const now = Date.now();
+          const day = 86400000;
+          let recent30 = 0, dormant60 = 0, dormant90 = 0, newC = 0;
+          for (const c of custs) {
+            const lv = c.last_visit ? new Date(c.last_visit).getTime() : 0;
+            const cr = c.created_at ? new Date(c.created_at).getTime() : 0;
+            const daysSinceVisit = lv ? (now - lv) / day : Infinity;
+            if (daysSinceVisit <= 30) recent30++;
+            if (daysSinceVisit >= 60) dormant60++;
+            if (daysSinceVisit >= 90) dormant90++;
+            if (cr && (now - cr) / day <= 90) newC++;
+          }
+          setCounts({
+            all: custs.length,
+            recent_30: recent30,
+            dormant_60: dormant60,
+            dormant_90: dormant90,
+            birthday_month: 0, // 誕生日カラム未実装のため0
+            new_customers: newC,
+          });
+          if (custs.length > 0 && custs[0].name) setPreviewName(custs[0].name);
+        }
+
+        // 配信履歴
+        const { data: camps } = await supabase
+          .from('dm_campaigns').select('*').eq('salon_id', salon.id)
+          .order('sent_at', { ascending: false }).limit(10);
+        if (camps) {
+          setHistory(camps.map((c) => {
+            const d = new Date(c.sent_at);
+            return {
+              date: `${d.getFullYear()}/${String(d.getMonth() + 1).padStart(2, '0')}/${String(d.getDate()).padStart(2, '0')}`,
+              template: c.template_name,
+              target: `${c.target_label} (${c.target_count}名)`,
+              status: c.status,
+            };
+          }));
+        }
+      } catch (e) {
+        console.error('messages fetch:', e);
+      }
+    })();
+  }, []);
+
+  const targetCount = useMemo(() => counts[filter] || 0, [counts, filter]);
 
   const switchTemplate = (k: TemplateKey) => {
     setTemplateKey(k);
@@ -80,21 +145,40 @@ export default function MessagesPage() {
 
   const previewBody = useMemo(() => {
     return messageBody
-      .replace(/\{\{customerName\}\}/g, '山田 花子')
+      .replace(/\{\{customerName\}\}/g, previewName)
       .replace(/\{\{daysSinceVisit\}\}/g, '63');
-  }, [messageBody]);
+  }, [messageBody, previewName]);
 
   const handleSend = async () => {
     if (!messageBody.trim()) {
       alert('配信内容を入力してください');
       return;
     }
-    if (!confirm(`${FILTERS.find(f => f.key === filter)?.label}(${targetCount}名)に配信します。よろしいですか?`)) {
+    const label = FILTER_DEFS.find(f => f.key === filter)?.label || '';
+    if (!confirm(`${label}(${targetCount}名)に配信します。よろしいですか?`)) {
       return;
     }
     setSending(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // 配信履歴を記録(実際の LINE 配信処理は別途バックエンドで実装)
+      if (salonId) {
+        const supabase = createClient();
+        await supabase.from('dm_campaigns').insert({
+          salon_id: salonId,
+          template_name: TEMPLATES[templateKey].name,
+          target_label: label,
+          target_count: targetCount,
+          status: '配信予約',
+          sent_at: new Date().toISOString(),
+        });
+        const now = new Date();
+        setHistory((h) => [{
+          date: `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')}`,
+          template: TEMPLATES[templateKey].name,
+          target: `${label} (${targetCount}名)`,
+          status: '配信予約',
+        }, ...h]);
+      }
       alert(`✅ ${targetCount}名への配信を予約しました(5分以内に順次配信されます)`);
     } catch (err) {
       console.error(err);
@@ -145,7 +229,7 @@ export default function MessagesPage() {
           <section className={styles.card}>
             <h2 className={styles.cardTitle}>2. 配信対象を絞り込み</h2>
             <div className={styles.filterGrid}>
-              {FILTERS.map(f => (
+              {FILTER_DEFS.map(f => (
                 <button
                   key={f.key}
                   type="button"
@@ -153,7 +237,7 @@ export default function MessagesPage() {
                   className={`${styles.filterChip} ${filter === f.key ? styles.filterChipActive : ''}`}
                 >
                   <span className={styles.filterLabel}>{f.label}</span>
-                  <span className={styles.filterCount}>{f.count}名</span>
+                  <span className={styles.filterCount}>{counts[f.key]}名</span>
                 </button>
               ))}
             </div>
@@ -195,7 +279,7 @@ export default function MessagesPage() {
                   </React.Fragment>
                 ))}
               </div>
-              <div className={styles.lineSender}>キレイ 鶴見店</div>
+              <div className={styles.lineSender}>{salonName}</div>
             </div>
           </section>
 
@@ -205,7 +289,7 @@ export default function MessagesPage() {
             <div className={styles.sendInfo}>
               <div className={styles.sendInfoRow}>
                 <span>配信対象</span>
-                <strong>{FILTERS.find(f => f.key === filter)?.label}</strong>
+                <strong>{FILTER_DEFS.find(f => f.key === filter)?.label}</strong>
               </div>
               <div className={styles.sendInfoRow}>
                 <span>対象人数</span>

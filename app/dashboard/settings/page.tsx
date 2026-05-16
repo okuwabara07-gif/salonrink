@@ -1,29 +1,238 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { createClient } from '@/lib/supabase/client';
 import styles from './page.module.css';
 
 /* ============================================================
-   /dashboard/settings — サロン設定ページ
+   /dashboard/settings — サロン設定ページ(完全動的化)
    ============================================================ */
 
 type Tab = 'business' | 'staff' | 'menu' | 'notifications' | 'holidays';
 
+type StaffRow = { id: string; name: string; role: string; status: string };
+type MenuRow = { id: string; name: string; price: number; duration: number };
+type SettingsRow = {
+  open_time: string;
+  close_time: string;
+  last_order_time: string;
+  slot_minutes: number;
+  closed_weekdays: number[];
+  close_on_holidays: boolean;
+  notif_new_reservation: boolean;
+  notif_cancel: boolean;
+  notif_reminder: boolean;
+  notif_dormant: boolean;
+  notif_inventory: boolean;
+};
+
+const DEFAULT_SETTINGS: SettingsRow = {
+  open_time: '10:00',
+  close_time: '20:00',
+  last_order_time: '19:00',
+  slot_minutes: 30,
+  closed_weekdays: [],
+  close_on_holidays: false,
+  notif_new_reservation: true,
+  notif_cancel: true,
+  notif_reminder: true,
+  notif_dormant: true,
+  notif_inventory: false,
+};
+
+const WEEKDAYS = ['月', '火', '水', '木', '金', '土', '日'];
+
 export default function SettingsPage() {
   const [tab, setTab] = useState<Tab>('business');
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [salonId, setSalonId] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [savedMsg, setSavedMsg] = useState('');
+
+  const [settings, setSettings] = useState<SettingsRow>(DEFAULT_SETTINGS);
+  const [staff, setStaff] = useState<StaffRow[]>([]);
+  const [menus, setMenus] = useState<MenuRow[]>([]);
+
+  // ─── データ取得 ───────────────────────────────
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      setLoadError(null);
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { setLoadError('ログインが必要です'); setLoading(false); return; }
+
+        const { data: salon } = await supabase
+          .from('salons').select('id').eq('owner_user_id', user.id).maybeSingle();
+        if (!salon) { setLoadError('サロン情報が見つかりません'); setLoading(false); return; }
+        setSalonId(salon.id);
+
+        const { data: st } = await supabase
+          .from('salon_settings').select('*').eq('salon_id', salon.id).maybeSingle();
+        if (st) {
+          setSettings({
+            open_time: st.open_time ?? DEFAULT_SETTINGS.open_time,
+            close_time: st.close_time ?? DEFAULT_SETTINGS.close_time,
+            last_order_time: st.last_order_time ?? DEFAULT_SETTINGS.last_order_time,
+            slot_minutes: st.slot_minutes ?? DEFAULT_SETTINGS.slot_minutes,
+            closed_weekdays: Array.isArray(st.closed_weekdays) ? st.closed_weekdays : [],
+            close_on_holidays: !!st.close_on_holidays,
+            notif_new_reservation: st.notif_new_reservation ?? true,
+            notif_cancel: st.notif_cancel ?? true,
+            notif_reminder: st.notif_reminder ?? true,
+            notif_dormant: st.notif_dormant ?? true,
+            notif_inventory: st.notif_inventory ?? false,
+          });
+        }
+
+        const { data: stf } = await supabase
+          .from('staff').select('*').eq('salon_id', salon.id).order('sort_order');
+        setStaff((stf || []).map((s) => ({ id: s.id, name: s.name, role: s.role, status: s.status })));
+
+        const { data: mn } = await supabase
+          .from('salon_menus').select('*').eq('salon_id', salon.id).order('sort_order');
+        setMenus((mn || []).map((m) => ({ id: m.id, name: m.name, price: m.price, duration: m.duration })));
+      } catch (e) {
+        console.error(e);
+        setLoadError('予期しないエラーが発生しました');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const flashSaved = useCallback(() => {
+    setSavedMsg('保存しました ✓');
+    setTimeout(() => setSavedMsg(''), 2000);
+  }, []);
+
+  async function saveSettings() {
+    if (!salonId) return;
+    setSaving(true);
+    try {
+      const supabase = createClient();
+      await supabase.from('salon_settings').upsert({
+        salon_id: salonId,
+        ...settings,
+        updated_at: new Date().toISOString(),
+      });
+      flashSaved();
+    } catch (e) {
+      console.error('save settings:', e);
+      alert('保存に失敗しました');
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function addStaff() {
+    if (!salonId) return;
+    const name = prompt('スタッフ名を入力');
+    if (!name?.trim()) return;
+    const role = prompt('役割(例: スタイリスト)', 'スタイリスト') || 'スタイリスト';
+    try {
+      const supabase = createClient();
+      const { data } = await supabase.from('staff')
+        .insert({ salon_id: salonId, name: name.trim(), role, sort_order: staff.length })
+        .select('*').single();
+      if (data) setStaff((s) => [...s, { id: data.id, name: data.name, role: data.role, status: data.status }]);
+    } catch (e) { console.error(e); alert('追加に失敗しました'); }
+  }
+
+  async function editStaff(row: StaffRow) {
+    const name = prompt('スタッフ名', row.name);
+    if (name === null) return;
+    const role = prompt('役割', row.role);
+    if (role === null) return;
+    try {
+      const supabase = createClient();
+      await supabase.from('staff').update({ name: name.trim(), role: role.trim(), updated_at: new Date().toISOString() }).eq('id', row.id);
+      setStaff((s) => s.map((x) => x.id === row.id ? { ...x, name: name.trim(), role: role.trim() } : x));
+    } catch (e) { console.error(e); }
+  }
+
+  async function deleteStaff(id: string) {
+    if (!confirm('このスタッフを削除しますか?')) return;
+    try {
+      const supabase = createClient();
+      await supabase.from('staff').delete().eq('id', id);
+      setStaff((s) => s.filter((x) => x.id !== id));
+    } catch (e) { console.error(e); }
+  }
+
+  async function addMenu() {
+    if (!salonId) return;
+    const name = prompt('メニュー名');
+    if (!name?.trim()) return;
+    const price = parseInt(prompt('料金(円)', '5000') || '0', 10);
+    const duration = parseInt(prompt('所要時間(分)', '60') || '60', 10);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase.from('salon_menus')
+        .insert({ salon_id: salonId, name: name.trim(), price, duration, sort_order: menus.length })
+        .select('*').single();
+      if (data) setMenus((m) => [...m, { id: data.id, name: data.name, price: data.price, duration: data.duration }]);
+    } catch (e) { console.error(e); alert('追加に失敗しました'); }
+  }
+
+  async function editMenu(row: MenuRow) {
+    const name = prompt('メニュー名', row.name);
+    if (name === null) return;
+    const price = parseInt(prompt('料金(円)', String(row.price)) || String(row.price), 10);
+    const duration = parseInt(prompt('所要時間(分)', String(row.duration)) || String(row.duration), 10);
+    try {
+      const supabase = createClient();
+      await supabase.from('salon_menus').update({ name: name.trim(), price, duration }).eq('id', row.id);
+      setMenus((m) => m.map((x) => x.id === row.id ? { ...x, name: name.trim(), price, duration } : x));
+    } catch (e) { console.error(e); }
+  }
+
+  async function deleteMenu(id: string) {
+    if (!confirm('このメニューを削除しますか?')) return;
+    try {
+      const supabase = createClient();
+      await supabase.from('salon_menus').delete().eq('id', id);
+      setMenus((m) => m.filter((x) => x.id !== id));
+    } catch (e) { console.error(e); }
+  }
+
+  function toggleWeekday(i: number) {
+    setSettings((s) => ({
+      ...s,
+      closed_weekdays: s.closed_weekdays.includes(i)
+        ? s.closed_weekdays.filter((x) => x !== i)
+        : [...s.closed_weekdays, i],
+    }));
+  }
+
+  if (loading) {
+    return <div style={{ padding: 40, color: 'var(--muted)', fontSize: 13 }}>読み込み中...</div>;
+  }
+  if (loadError) {
+    return (
+      <div style={{ padding: 40 }}>
+        <div style={{ padding: '14px 18px', background: 'rgba(168,90,62,0.08)', border: '1px solid rgba(168,90,62,0.30)', borderRadius: 8, color: '#7a3030', fontSize: 13 }}>
+          ⚠ {loadError}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
-      {/* Header */}
       <div className={styles.head}>
         <div className={styles.headIcon}>⚙️</div>
         <div>
           <h1 className={styles.headTitle}>設定</h1>
           <p className={styles.headSub}>サロン運営の各種設定</p>
         </div>
+        {savedMsg && (
+          <span style={{ marginLeft: 'auto', fontSize: 12.5, color: '#5b8c5a', fontWeight: 600 }}>{savedMsg}</span>
+        )}
       </div>
 
-      {/* Tabs */}
       <div className={styles.tabs}>
         {[
           { k: 'business' as Tab, label: '営業時間' },
@@ -32,96 +241,100 @@ export default function SettingsPage() {
           { k: 'notifications' as Tab, label: '通知' },
           { k: 'holidays' as Tab, label: '定休日' },
         ].map(t => (
-          <button
-            key={t.k}
-            type="button"
-            onClick={() => setTab(t.k)}
-            className={`${styles.tab} ${tab === t.k ? styles.tabActive : ''}`}
-          >
+          <button key={t.k} type="button" onClick={() => setTab(t.k)}
+            className={`${styles.tab} ${tab === t.k ? styles.tabActive : ''}`}>
             {t.label}
           </button>
         ))}
       </div>
 
-      {/* Content */}
       {tab === 'business' && (
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>営業時間</h2>
           <div className={styles.fieldGrid}>
             <div className={styles.field}>
               <label className={styles.label}>開店時間</label>
-              <input type="time" defaultValue="10:00" className={styles.input} />
+              <input type="time" value={settings.open_time}
+                onChange={(e) => setSettings((s) => ({ ...s, open_time: e.target.value }))}
+                className={styles.input} />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>閉店時間</label>
-              <input type="time" defaultValue="20:00" className={styles.input} />
+              <input type="time" value={settings.close_time}
+                onChange={(e) => setSettings((s) => ({ ...s, close_time: e.target.value }))}
+                className={styles.input} />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>最終受付</label>
-              <input type="time" defaultValue="19:00" className={styles.input} />
+              <input type="time" value={settings.last_order_time}
+                onChange={(e) => setSettings((s) => ({ ...s, last_order_time: e.target.value }))}
+                className={styles.input} />
             </div>
             <div className={styles.field}>
               <label className={styles.label}>予約間隔</label>
-              <select defaultValue="30" className={styles.input}>
+              <select value={String(settings.slot_minutes)}
+                onChange={(e) => setSettings((s) => ({ ...s, slot_minutes: parseInt(e.target.value, 10) }))}
+                className={styles.input}>
                 <option value="15">15分刻み</option>
                 <option value="30">30分刻み</option>
                 <option value="60">60分刻み</option>
               </select>
             </div>
           </div>
-          <button type="button" className={styles.saveBtn}>保存する</button>
+          <button type="button" className={styles.saveBtn} onClick={saveSettings} disabled={saving}>
+            {saving ? '保存中...' : '保存する'}
+          </button>
         </section>
       )}
 
       {tab === 'staff' && (
         <section className={styles.card}>
-          <h2 className={styles.cardTitle}>スタッフ管理 (4名)</h2>
+          <h2 className={styles.cardTitle}>スタッフ管理 ({staff.length}名)</h2>
           <div className={styles.staffList}>
-            {[
-              { name: 'テスト太郎', role: 'オーナー', status: 'アクティブ' },
-              { name: 'さつき', role: 'スタイリスト', status: 'アクティブ' },
-              { name: 'みなみ', role: 'スタイリスト', status: 'アクティブ' },
-              { name: 'ゆう', role: 'アシスタント', status: 'アクティブ' },
-            ].map((s, i) => (
-              <div key={i} className={styles.staffRow}>
+            {staff.length === 0 && (
+              <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+                スタッフが登録されていません。「+ スタッフを追加」から登録してください。
+              </div>
+            )}
+            {staff.map((s) => (
+              <div key={s.id} className={styles.staffRow}>
                 <div className={styles.staffAvatar}>{s.name[0]}</div>
                 <div className={styles.staffMain}>
                   <div className={styles.staffName}>{s.name}</div>
                   <div className={styles.staffRole}>{s.role}</div>
                 </div>
                 <span className={styles.statusBadge}>{s.status}</span>
-                <button type="button" className={styles.editBtn}>編集</button>
+                <button type="button" className={styles.editBtn} onClick={() => editStaff(s)}>編集</button>
+                <button type="button" className={styles.editBtn} onClick={() => deleteStaff(s.id)}>削除</button>
               </div>
             ))}
           </div>
-          <button type="button" className={styles.addBtn}>+ スタッフを追加</button>
+          <button type="button" className={styles.addBtn} onClick={addStaff}>+ スタッフを追加</button>
         </section>
       )}
 
       {tab === 'menu' && (
         <section className={styles.card}>
-          <h2 className={styles.cardTitle}>施術メニュー</h2>
+          <h2 className={styles.cardTitle}>施術メニュー ({menus.length}件)</h2>
           <div className={styles.menuList}>
-            {[
-              { name: 'カット', price: 4800, duration: 60 },
-              { name: 'カラー', price: 6800, duration: 90 },
-              { name: '白髪染め', price: 7200, duration: 90 },
-              { name: 'パーマ', price: 8800, duration: 120 },
-              { name: 'トリートメント', price: 2800, duration: 30 },
-              { name: 'ヘッドスパ', price: 3500, duration: 30 },
-              { name: 'ハイライト', price: 9800, duration: 120 },
-            ].map((m, i) => (
-              <div key={i} className={styles.menuRow}>
+            {menus.length === 0 && (
+              <div style={{ padding: 24, textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+                メニューが登録されていません。「+ メニューを追加」から登録してください。
+              </div>
+            )}
+            {menus.map((m) => (
+              <div key={m.id} className={styles.menuRow}>
                 <div className={styles.menuName}>{m.name}</div>
                 <div className={styles.menuMeta}>
                   <span>¥{m.price.toLocaleString()}</span>
                   <span>{m.duration}分</span>
                 </div>
-                <button type="button" className={styles.editBtn}>編集</button>
+                <button type="button" className={styles.editBtn} onClick={() => editMenu(m)}>編集</button>
+                <button type="button" className={styles.editBtn} onClick={() => deleteMenu(m.id)}>削除</button>
               </div>
             ))}
           </div>
-          <button type="button" className={styles.addBtn}>+ メニューを追加</button>
+          <button type="button" className={styles.addBtn} onClick={addMenu}>+ メニューを追加</button>
         </section>
       )}
 
@@ -129,27 +342,28 @@ export default function SettingsPage() {
         <section className={styles.card}>
           <h2 className={styles.cardTitle}>通知設定</h2>
           <div className={styles.toggleList}>
-            {[
-              { label: '新規予約があったとき', sub: 'LINE通知 + メール', enabled: true },
-              { label: '予約キャンセル時', sub: 'LINE通知', enabled: true },
-              { label: '24時間以内の予約リマインド', sub: 'プッシュ通知', enabled: true },
-              { label: '休眠顧客の検知(60日以上)', sub: '週次まとめメール', enabled: true },
-              { label: '在庫アラート', sub: 'ダッシュボード通知のみ', enabled: false },
-            ].map((n, i) => (
-              <label key={i} className={styles.toggleRow}>
+            {([
+              { key: 'notif_new_reservation', label: '新規予約があったとき', sub: 'LINE通知 + メール' },
+              { key: 'notif_cancel', label: '予約キャンセル時', sub: 'LINE通知' },
+              { key: 'notif_reminder', label: '24時間以内の予約リマインド', sub: 'プッシュ通知' },
+              { key: 'notif_dormant', label: '休眠顧客の検知(60日以上)', sub: '週次まとめメール' },
+              { key: 'notif_inventory', label: '在庫アラート', sub: 'ダッシュボード通知のみ' },
+            ] as const).map((n) => (
+              <label key={n.key} className={styles.toggleRow}>
                 <div className={styles.toggleMain}>
                   <div className={styles.toggleLabel}>{n.label}</div>
                   <div className={styles.toggleSub}>{n.sub}</div>
                 </div>
-                <input
-                  type="checkbox"
-                  defaultChecked={n.enabled}
-                  className={styles.toggle}
-                />
+                <input type="checkbox"
+                  checked={settings[n.key] as boolean}
+                  onChange={(e) => setSettings((s) => ({ ...s, [n.key]: e.target.checked }))}
+                  className={styles.toggle} />
               </label>
             ))}
           </div>
-          <button type="button" className={styles.saveBtn}>保存する</button>
+          <button type="button" className={styles.saveBtn} onClick={saveSettings} disabled={saving}>
+            {saving ? '保存中...' : '保存する'}
+          </button>
         </section>
       )}
 
@@ -159,9 +373,10 @@ export default function SettingsPage() {
           <div className={styles.field}>
             <label className={styles.label}>毎週の定休日</label>
             <div className={styles.weekdayChips}>
-              {['月', '火', '水', '木', '金', '土', '日'].map((d, i) => (
-                <label key={d} className={`${styles.weekdayChip} ${i === 2 ? styles.weekdayChipActive : ''}`}>
-                  <input type="checkbox" defaultChecked={i === 2} hidden />
+              {WEEKDAYS.map((d, i) => (
+                <label key={d}
+                  className={`${styles.weekdayChip} ${settings.closed_weekdays.includes(i) ? styles.weekdayChipActive : ''}`}
+                  onClick={(e) => { e.preventDefault(); toggleWeekday(i); }}>
                   {d}
                 </label>
               ))}
@@ -173,10 +388,15 @@ export default function SettingsPage() {
               <div className={styles.toggleMain}>
                 <div className={styles.toggleSub}>日本の祝日に合わせて自動的に休業日として設定</div>
               </div>
-              <input type="checkbox" className={styles.toggle} />
+              <input type="checkbox"
+                checked={settings.close_on_holidays}
+                onChange={(e) => setSettings((s) => ({ ...s, close_on_holidays: e.target.checked }))}
+                className={styles.toggle} />
             </label>
           </div>
-          <button type="button" className={styles.saveBtn}>保存する</button>
+          <button type="button" className={styles.saveBtn} onClick={saveSettings} disabled={saving}>
+            {saving ? '保存中...' : '保存する'}
+          </button>
         </section>
       )}
     </div>
