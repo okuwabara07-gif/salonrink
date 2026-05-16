@@ -4,6 +4,11 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Icon } from '@/components/srk';
 import { createClient } from '@/lib/supabase/client';
 import {
+  resolveMenuPrice,
+  toMenuMaster,
+  type MenuMaster,
+} from '@/lib/menuPricing';
+import {
   ALL_TAGS,
   STATUS_LIST,
   STATUS_PALETTE,
@@ -163,10 +168,19 @@ export default function CustomersPage() {
           try {
             const customerIds = mapped.map((c) => c.id);
             const customerNames = mapped.map((c) => c.name).filter(Boolean);
-            const priceMap: Record<string, number> = {
-              'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
-              'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
-            };
+            // 価格は salon_menus マスタから解決(固定表廃止)。未解決は 0 扱い。
+            const { data: menuRows } = await supabase
+              .from('salon_menus')
+              .select('name, price, duration')
+              .eq('salon_id', salon.id)
+              .order('sort_order', { ascending: true });
+            const menus: MenuMaster[] = (
+              (menuRows as Array<{
+                name: string;
+                price: number;
+                duration: number | null;
+              }>) ?? []
+            ).map(toMenuMaster);
             const { data: allRes } = await supabase
               .from('reservations')
               .select('customer_id, customer_name, datetime, menu, status')
@@ -189,9 +203,7 @@ export default function CustomersPage() {
                 let nextAppt = '';
                 let nextApptTs = '';
                 for (const r of list) {
-                  const menu = r.menu || '';
-                  const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
-                  const amt = items.reduce((s: number, m: string) => s + (priceMap[m] || 5000), 0) || 5000;
+                  const amt = resolveMenuPrice(r.menu, menus) ?? 0;
                   const dt = r.datetime || '';
                   if (dt <= now && r.status !== 'cancelled') {
                     totalSpend += amt;
@@ -1009,14 +1021,21 @@ function OverviewTab({
           data = byName || [];
         }
         if (data) {
-          const priceMap: Record<string, number> = {
-            'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
-            'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
-          };
+          // 価格は salon_menus マスタから解決(RLS で当該サロンに限定)。未解決は 0。
+          const { data: menuRows } = await supabase
+            .from('salon_menus')
+            .select('name, price, duration')
+            .order('sort_order', { ascending: true });
+          const menus: MenuMaster[] = (
+            (menuRows as Array<{
+              name: string;
+              price: number;
+              duration: number | null;
+            }>) ?? []
+          ).map(toMenuMaster);
           const parsed = data.map((r) => {
             const menu = r.menu || '';
-            const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
-            const amt = items.reduce((s: number, m: string) => s + (priceMap[m] || 5000), 0) || 5000;
+            const amt = resolveMenuPrice(menu, menus) ?? 0;
             return { d: (r.datetime || '').split('T')[0], svc: menu || '—', amt };
           });
           setRecentVisits(parsed);
@@ -1219,10 +1238,18 @@ function HistoryTab({ customer }: { customer: SampleCustomer }) {
     (async () => {
       try {
         const supabase = createClient();
-        const priceMap: Record<string, number> = {
-          'カット': 4800, 'カラー': 6800, '白髪染め': 7200, 'パーマ': 8800,
-          'トリートメント': 2800, 'ヘッドスパ': 3500, 'ハイライト': 9800,
-        };
+        // 価格は salon_menus マスタから解決(RLS で当該サロンに限定)。未解決は 0。
+        const { data: menuRows } = await supabase
+          .from('salon_menus')
+          .select('name, price, duration')
+          .order('sort_order', { ascending: true });
+        const menus: MenuMaster[] = (
+          (menuRows as Array<{
+            name: string;
+            price: number;
+            duration: number | null;
+          }>) ?? []
+        ).map(toMenuMaster);
         const durationMap: Record<string, number> = {
           'カット': 60, 'カラー': 90, '白髪染め': 90, 'パーマ': 120,
           'トリートメント': 30, 'ヘッドスパ': 30, 'ハイライト': 120,
@@ -1247,8 +1274,11 @@ function HistoryTab({ customer }: { customer: SampleCustomer }) {
           const menu = r.menu || '';
           const items = menu.split(/[,、+＋\s]/).map((s: string) => s.trim()).filter(Boolean);
           const services = items.length > 0
-            ? items.map((name: string) => ({ name, amt: priceMap[name] || 5000 }))
-            : [{ name: menu || '—', amt: 5000 }];
+            ? items.map((name: string) => ({
+                name,
+                amt: resolveMenuPrice(name, menus) ?? 0,
+              }))
+            : [{ name: menu || '—', amt: resolveMenuPrice(menu, menus) ?? 0 }];
           const amt = services.reduce((s: number, sv: { amt: number }) => s + sv.amt, 0);
           const duration = items.reduce((s: number, n: string) => s + (durationMap[n] || 60), 0) || 60;
           return {
