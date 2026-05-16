@@ -3,6 +3,12 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
+import {
+  resolveMenuPrice,
+  resolveMenuDuration,
+  toMenuMaster,
+  type MenuMaster,
+} from '@/lib/menuPricing';
 import styles from './page.module.css';
 
 /* ============================================================
@@ -10,19 +16,9 @@ import styles from './page.module.css';
    挨拶 / KPI 4枚 / タイムライン / 本日予約 / 来店促進 / タスク / メッセージ
    ============================================================ */
 
-// メニュー名 → duration/price の lookup
-const MENU_LOOKUP: Record<string, { duration: number; price: number }> = {
-  'カット': { duration: 60, price: 4800 },
-  'カラー': { duration: 90, price: 6800 },
-  '白髪染め': { duration: 90, price: 7200 },
-  'パーマ': { duration: 120, price: 8800 },
-  'トリートメント': { duration: 30, price: 2800 },
-  'ヘッドスパ': { duration: 30, price: 3500 },
-  'ハイライト': { duration: 120, price: 9800 },
-};
-
+// 価格/所要時間は salon_menus マスタから解決(固定表は廃止)。
+// マスタ未登録メニューは price=null(UI で - 表示・売上見込から除外)。
 const DEFAULT_DURATION = 60;
-const DEFAULT_PRICE = 5000;
 
 interface Salon {
   id: string;
@@ -73,33 +69,18 @@ interface Task {
   created_at: string;
 }
 
-// メニューを分解して duration/price を集計
-function parseMenuInfo(menu: string | null): { items: string[]; duration: number; price: number } {
-  if (!menu) return { items: [], duration: DEFAULT_DURATION, price: DEFAULT_PRICE };
-  const items = menu.split(/[,、+＋\s]/).map(s => s.trim()).filter(Boolean);
-  let duration = 0;
-  let price = 0;
-  for (const item of items) {
-    const lookup = MENU_LOOKUP[item];
-    if (lookup) {
-      duration += lookup.duration;
-      price += lookup.price;
-    } else {
-      // Partial match
-      const matched = Object.keys(MENU_LOOKUP).find(k => item.includes(k));
-      if (matched) {
-        duration += MENU_LOOKUP[matched].duration;
-        price += MENU_LOOKUP[matched].price;
-      } else {
-        duration += DEFAULT_DURATION;
-        price += DEFAULT_PRICE;
-      }
-    }
-  }
-  if (items.length === 0) {
-    duration = DEFAULT_DURATION;
-    price = DEFAULT_PRICE;
-  }
+// メニュー名 -> 表示用トークン(items)+ マスタ解決の duration/price。
+// items はチップ表示用の分解のみ(価格には不使用)。
+// price は salon_menus マスタで確定できない場合 null(UI で - 表示)。
+function parseMenuInfo(
+  menu: string | null,
+  masters: MenuMaster[]
+): { items: string[]; duration: number; price: number | null } {
+  const items = menu
+    ? menu.split(/[,、+＋\s]/).map((s) => s.trim()).filter(Boolean)
+    : [];
+  const duration = resolveMenuDuration(menu, masters, DEFAULT_DURATION);
+  const price = resolveMenuPrice(menu, masters);
   return { items, duration, price };
 }
 
@@ -132,6 +113,7 @@ export default function DashboardHomePage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [preCounselings, setPreCounselings] = useState<PreCounseling[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [menus, setMenus] = useState<MenuMaster[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -182,7 +164,7 @@ export default function DashboardHomePage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, preRes, taskRes, hpbRes] = await Promise.all([
+      const [resRes, custRes, preRes, taskRes, hpbRes, menuRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -212,6 +194,11 @@ export default function DashboardHomePage() {
           .gte('start_time', startDate.toISOString())
           .lte('start_time', endDate.toISOString())
           .order('start_time', { ascending: true }),
+        supabase
+          .from('salon_menus')
+          .select('name, price, duration')
+          .eq('salon_id', salonRow.id)
+          .order('sort_order', { ascending: true }),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
@@ -219,6 +206,7 @@ export default function DashboardHomePage() {
       if (preRes.error) console.error('pre_counselings:', preRes.error);
       if (taskRes.error) console.error('tasks:', taskRes.error);
       if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error);
+      if (menuRes.error) console.error('salon_menus:', menuRes.error);
 
       // HPB予約を home の Reservation 形に正規化してマージ
       const manualResv = (resRes.data as Reservation[]) ?? [];
@@ -242,6 +230,8 @@ export default function DashboardHomePage() {
       setCustomers((custRes.data as Customer[]) ?? []);
       setPreCounselings((preRes.data as PreCounseling[]) ?? []);
       setTasks((taskRes.data as Task[]) ?? []);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setMenus(((menuRes.data as any[]) ?? []).map(toMenuMaster));
     } catch (e) {
       console.error(e);
       setLoadError('予期しないエラー');
@@ -326,8 +316,17 @@ export default function DashboardHomePage() {
   }, [customers, now]);
 
   const todayRevenue = useMemo(() => {
-    return todayReservations.reduce((sum, r) => sum + parseMenuInfo(r.menu).price, 0);
-  }, [todayReservations]);
+    return todayReservations.reduce((sum, r) => {
+      const p = resolveMenuPrice(r.menu, menus);
+      return sum + (p ?? 0);
+    }, 0);
+  }, [todayReservations, menus]);
+
+  // 1 件でもマスタ解決できた予約があるか(無ければ売上見込は - 表示)
+  const hasResolvablePrice = useMemo(
+    () => todayReservations.some((r) => resolveMenuPrice(r.menu, menus) != null),
+    [todayReservations, menus],
+  );
 
   const REVENUE_TARGET = 80000;
 
@@ -512,14 +511,26 @@ export default function DashboardHomePage() {
         <div className={styles.kpiCard}>
           <p className={styles.kpiLabel}>本日の売上見込み</p>
           <div className={styles.kpiValueRow}>
-            <span className={styles.kpiIcon}>¥</span>
-            <span className={styles.kpiValue}>
-              {(todayRevenue / 1000).toFixed(1)}<span className={styles.kpiUnit}>k</span>
-            </span>
+            {hasResolvablePrice ? (
+              <>
+                <span className={styles.kpiIcon}>¥</span>
+                <span className={styles.kpiValue}>
+                  {(todayRevenue / 1000).toFixed(1)}<span className={styles.kpiUnit}>k</span>
+                </span>
+              </>
+            ) : (
+              <span className={styles.kpiValue}>—</span>
+            )}
           </div>
-          <p className={styles.kpiDelta} style={{ color: todayRevenue >= REVENUE_TARGET ? '#7a8a5c' : '#c4392e' }}>
-            目標 ¥{(REVENUE_TARGET / 1000).toFixed(0)}k に対して {Math.round((todayRevenue / REVENUE_TARGET) * 100)}%
-          </p>
+          {hasResolvablePrice ? (
+            <p className={styles.kpiDelta} style={{ color: todayRevenue >= REVENUE_TARGET ? '#7a8a5c' : '#c4392e' }}>
+              目標 ¥{(REVENUE_TARGET / 1000).toFixed(0)}k に対して {Math.round((todayRevenue / REVENUE_TARGET) * 100)}%
+            </p>
+          ) : (
+            <p className={styles.kpiDelta} style={{ color: 'var(--muted)' }}>
+              メニュー単価未登録のため算出不可
+            </p>
+          )}
         </div>
       </section>
 
@@ -540,7 +551,7 @@ export default function DashboardHomePage() {
             {todayReservations.map(r => {
               const dt = new Date(r.datetime);
               const startMin = dt.getHours() * 60 + dt.getMinutes() - TIMELINE_START_HOUR * 60;
-              const info = parseMenuInfo(r.menu);
+              const info = parseMenuInfo(r.menu, menus);
               const widthMin = info.duration;
               const left = (startMin / (TIMELINE_HOURS * 60)) * 100;
               const width = (widthMin / (TIMELINE_HOURS * 60)) * 100;
@@ -591,7 +602,7 @@ export default function DashboardHomePage() {
                 c.line_user_id && r.line_user_id && c.line_user_id === r.line_user_id
                 || c.name === r.customer_name
               );
-              const info = parseMenuInfo(r.menu);
+              const info = parseMenuInfo(r.menu, menus);
               const preCounseling = preCounselings.find(pc => pc.reservation_id === r.id);
               return (
                 <div key={r.id} className={styles.reservationRow}>
@@ -645,7 +656,7 @@ export default function DashboardHomePage() {
                     )}
                   </div>
                   <div className={styles.resRight}>
-                    <div className={styles.resPrice}>¥{info.price.toLocaleString()}</div>
+                    <div className={styles.resPrice}>{info.price == null ? '—' : `¥${info.price.toLocaleString()}`}</div>
                     <button type="button" className={styles.resCta}>受付開始</button>
                   </div>
                 </div>
