@@ -167,7 +167,7 @@ export default function DashboardHomePage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, preRes, taskRes, hpbRes, menuRes, catalogRes] = await Promise.all([
+      const [resRes, custRes, preRes, taskRes, hpbRes, menuRes, catalogRes, aliasRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -206,6 +206,10 @@ export default function DashboardHomePage() {
           .from('hpb_menu_prices')
           .select('hpb_menu_name, price_incl_tax')
           .eq('salon_id', salonRow.id),
+        supabase
+          .from('hpb_menu_alias')
+          .select('hpb_raw_name, status, salon_menus!salon_menu_id(price, duration)')
+          .eq('salon_id', salonRow.id),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
@@ -238,15 +242,26 @@ export default function DashboardHomePage() {
       setCustomers((custRes.data as Customer[]) ?? []);
       setPreCounselings((preRes.data as PreCounseling[]) ?? []);
       setTasks((taskRes.data as Task[]) ?? []);
+      // alias(hpb_menu_alias ⋈ salon_menus)由来の確定エントリ。name=HPB生メニュー名。
+      // 最長一致により完全一致で必ず優先。alias 空/失敗時は [] = 従来挙動(後方互換)。
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setMenus(((menuRes.data as any[]) ?? []).map(toMenuMaster));
+      const aliasEntries: MenuMaster[] = (((aliasRes.data as any[]) ?? [])
+        .filter((r) => r.status === 'mapped' && r.salon_menus && typeof r.salon_menus.price === 'number')
+        .map((r) => ({
+          name: r.hpb_raw_name,
+          price: r.salon_menus.price,
+          duration: r.salon_menus.duration ?? null,
+        })));
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setMenus([...aliasEntries, ...(((menuRes.data as any[]) ?? []).map(toMenuMaster))]);
       // HPB掲載価格カタログ(price_incl_tax が数値の行のみ採用)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setCatalog(
-        ((catalogRes.data as any[]) ?? [])
+      setCatalog([
+        ...aliasEntries,
+        ...(((catalogRes.data as any[]) ?? [])
           .filter((r) => typeof r.price_incl_tax === 'number')
-          .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax })),
-      );
+          .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax }))),
+      ]);
     } catch (e) {
       console.error(e);
       setLoadError('予期しないエラー');

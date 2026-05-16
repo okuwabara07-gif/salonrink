@@ -12,6 +12,7 @@ type Tab = 'business' | 'staff' | 'menu' | 'notifications' | 'holidays';
 
 type StaffRow = { id: string; name: string; role: string; status: string };
 type MenuRow = { id: string; name: string; price: number; duration: number };
+type AliasCandidate = { hpb_raw_name: string; occ: number };
 type SettingsRow = {
   open_time: string;
   close_time: string;
@@ -53,6 +54,9 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState<SettingsRow>(DEFAULT_SETTINGS);
   const [staff, setStaff] = useState<StaffRow[]>([]);
   const [menus, setMenus] = useState<MenuRow[]>([]);
+  const [unmapped, setUnmapped] = useState<AliasCandidate[]>([]);
+  const [aliasPick, setAliasPick] = useState<Record<string, string>>({});
+  const [aliasBusy, setAliasBusy] = useState<string | null>(null);
 
   // ─── データ取得 ───────────────────────────────
   useEffect(() => {
@@ -102,6 +106,36 @@ export default function SettingsPage() {
       }
     })();
   }, []);
+
+  // ② HPB予約メニューの未マッピング一覧（追加のみ・既存不変）
+  useEffect(() => {
+    if (!salonId) return;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const [aliasRes, resvRes] = await Promise.all([
+          supabase.from('hpb_menu_alias').select('hpb_raw_name').eq('salon_id', salonId),
+          supabase.from('hpb_reservations').select('menu_name').eq('salon_id', salonId),
+        ]);
+        const handled = new Set(
+          ((aliasRes.data ?? []) as { hpb_raw_name: string | null }[])
+            .map((r) => (r.hpb_raw_name || '').trim()),
+        );
+        const tally = new Map<string, number>();
+        for (const r of ((resvRes.data ?? []) as { menu_name: string | null }[])) {
+          const n = (r.menu_name || '').trim();
+          if (!n || handled.has(n)) continue;
+          tally.set(n, (tally.get(n) ?? 0) + 1);
+        }
+        const list: AliasCandidate[] = Array.from(tally.entries())
+          .map(([hpb_raw_name, occ]) => ({ hpb_raw_name, occ }))
+          .sort((a, b) => b.occ - a.occ);
+        setUnmapped(list);
+      } catch (e) {
+        console.error('unmapped load:', e);
+      }
+    })();
+  }, [salonId]);
 
   const flashSaved = useCallback(() => {
     setSavedMsg('保存しました ✓');
@@ -196,6 +230,53 @@ export default function SettingsPage() {
       await supabase.from('salon_menus').delete().eq('id', id);
       setMenus((m) => m.filter((x) => x.id !== id));
     } catch (e) { console.error(e); }
+  }
+
+  async function mapAlias(hpbRawName: string) {
+    if (!salonId) return;
+    const salonMenuId = aliasPick[hpbRawName];
+    if (!salonMenuId) { alert('紐付けるメニューを選択してください'); return; }
+    setAliasBusy(hpbRawName);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from('hpb_menu_alias').insert({
+        salon_id: salonId,
+        hpb_raw_name: hpbRawName,
+        salon_menu_id: salonMenuId,
+        status: 'mapped',
+        match_source: 'manual',
+      });
+      if (error) throw error;
+      setUnmapped((u) => u.filter((x) => x.hpb_raw_name !== hpbRawName));
+    } catch (e) {
+      console.error('map alias:', e);
+      alert('紐付けに失敗しました');
+    } finally {
+      setAliasBusy(null);
+    }
+  }
+
+  async function ignoreAlias(hpbRawName: string) {
+    if (!salonId) return;
+    if (!confirm('この予約メニューを「価格対象外」にします？')) return;
+    setAliasBusy(hpbRawName);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.from('hpb_menu_alias').insert({
+        salon_id: salonId,
+        hpb_raw_name: hpbRawName,
+        salon_menu_id: null,
+        status: 'ignored',
+        match_source: 'manual',
+      });
+      if (error) throw error;
+      setUnmapped((u) => u.filter((x) => x.hpb_raw_name !== hpbRawName));
+    } catch (e) {
+      console.error('ignore alias:', e);
+      alert('操作に失敗しました');
+    } finally {
+      setAliasBusy(null);
+    }
   }
 
   function toggleWeekday(i: number) {
@@ -335,6 +416,60 @@ export default function SettingsPage() {
             ))}
           </div>
           <button type="button" className={styles.addBtn} onClick={addMenu}>+ メニューを追加</button>
+
+          <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+            <h2 className={styles.cardTitle}>HPB予約メニューの紐付け ({unmapped.length}件 未割当)</h2>
+            <p style={{ fontSize: 12, color: 'var(--muted)', margin: '4px 0 14px' }}>
+              HPB予約のメニュー名を上の施術メニューに紐付けると正しい価格・時間で表示されます。対象外は「無視」。
+            </p>
+            {unmapped.length === 0 ? (
+              <div style={{ padding: 20, textAlign: 'center', color: 'var(--muted)', fontSize: 13 }}>
+                未割当のHPB予約メニューはありません。
+              </div>
+            ) : (
+              <div className={styles.menuList}>
+                {unmapped.map((u) => (
+                  <div key={u.hpb_raw_name} className={styles.menuRow}>
+                    <div className={styles.menuName} title={u.hpb_raw_name}>
+                      {u.hpb_raw_name}
+                      <span style={{ marginLeft: 8, fontSize: 11, color: 'var(--muted)' }}>×{u.occ}</span>
+                    </div>
+                    <select
+                      className={styles.input}
+                      style={{ maxWidth: 220 }}
+                      value={aliasPick[u.hpb_raw_name] ?? ''}
+                      onChange={(e) =>
+                        setAliasPick((p) => ({ ...p, [u.hpb_raw_name]: e.target.value }))
+                      }
+                    >
+                      <option value="">メニューを選択…</option>
+                      {menus.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {m.name}（¥{m.price.toLocaleString()}）
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className={styles.editBtn}
+                      disabled={aliasBusy === u.hpb_raw_name}
+                      onClick={() => mapAlias(u.hpb_raw_name)}
+                    >
+                      {aliasBusy === u.hpb_raw_name ? '...' : '紐付け'}
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.editBtn}
+                      disabled={aliasBusy === u.hpb_raw_name}
+                      onClick={() => ignoreAlias(u.hpb_raw_name)}
+                    >
+                      無視
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </section>
       )}
 
