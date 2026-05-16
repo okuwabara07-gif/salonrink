@@ -26,7 +26,7 @@ export interface NavTab {
 
 export const tabs: NavTab[] = [
   { id: 'home',      icon: 'home',     label: 'ホーム',   path: '/dashboard' },
-  { id: 'schedule',  icon: 'calendar', label: '予約',     path: '/dashboard/booking' },
+  { id: 'schedule',  icon: 'calendar', label: 'HPB予約',  path: '/dashboard/booking' },
   { id: 'customers', icon: 'users',    label: '顧客',     path: '/dashboard/customers' },
   { id: 'messages',  icon: 'msg',      label: 'DM配信',   path: '/dashboard/messages' },
   { id: 'link',      icon: 'link',     label: '連携',     path: '/dashboard/integrations' },
