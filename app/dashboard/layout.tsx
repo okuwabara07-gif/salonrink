@@ -42,7 +42,7 @@ function resolveTitle(pathname: string): TitleEntry {
    NEXT_PUBLIC_SALONRINK_DEMO=0 を環境変数に入れる。 */
 function useSamplePhotoSeed() {
   useEffect(() => {
-    if (process.env.NEXT_PUBLIC_SALONRINK_DEMO === '0') return;
+    if (process.env.NEXT_PUBLIC_SALONRINK_DEMO !== '1') return; // 本番無効化: 明示的に '1' の時のみシード
     if (typeof window === 'undefined') return;
     if (localStorage.getItem('srk-photos-seeded') === '1') return;
 

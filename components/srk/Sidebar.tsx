@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, type IconName } from './Icon';
 import { tabs, type NavTab } from '@/components/tabs';
+import { createClient } from '@/lib/supabase/client';
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -14,10 +15,42 @@ interface SidebarProps {
 
 export function Sidebar({
   collapsed = false,
-  shopName = 'キレイ 鶴見店',
-  userName = 'テスト太郎 さん',
+  shopName: shopNameProp,
+  userName: userNameProp,
 }: SidebarProps) {
   const pathname = usePathname();
+
+  // props で明示指定があればそれを優先、無ければ Supabase から取得
+  const [shopName, setShopName] = useState(shopNameProp || 'サロン');
+  const [userName, setUserName] = useState(userNameProp || '');
+
+  useEffect(() => {
+    if (shopNameProp && userNameProp) return; // 明示指定済みなら取得しない
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user || cancelled) return;
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('name, owner_name')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+        if (cancelled) return;
+        if (salon?.name) setShopName(salon.name);
+        if (salon?.owner_name) setUserName(`${salon.owner_name} さん`);
+        else if (user.email) setUserName(user.email);
+      } catch (e) {
+        console.error('sidebar salon fetch:', e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [shopNameProp, userNameProp]);
 
   // Match active tab: exact /dashboard for home, then prefix-match for sub-routes
   const isActive = (path: string) => {
