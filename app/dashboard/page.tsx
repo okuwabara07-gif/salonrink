@@ -182,7 +182,7 @@ export default function DashboardHomePage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, preRes, taskRes] = await Promise.all([
+      const [resRes, custRes, preRes, taskRes, hpbRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -205,14 +205,40 @@ export default function DashboardHomePage() {
           .select('id, salon_id, title, completed, is_urgent, due_at, created_at')
           .eq('salon_id', salonRow.id)
           .order('created_at', { ascending: false }),
+        supabase
+          .from('hpb_reservations')
+          .select('id, salon_id, customer_name, start_time, menu_name, status')
+          .eq('salon_id', salonRow.id)
+          .gte('start_time', startDate.toISOString())
+          .lte('start_time', endDate.toISOString())
+          .order('start_time', { ascending: true }),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
       if (custRes.error) console.error('customers:', custRes.error);
       if (preRes.error) console.error('pre_counselings:', preRes.error);
       if (taskRes.error) console.error('tasks:', taskRes.error);
+      if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error);
 
-      setReservations((resRes.data as Reservation[]) ?? []);
+      // HPB予約を home の Reservation 形に正規化してマージ
+      const manualResv = (resRes.data as Reservation[]) ?? [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hpbResv: Reservation[] = ((hpbRes.data as any[]) ?? [])
+        .filter((r) => r.start_time)
+        .map((r) => ({
+          id: 'hpb_' + r.id,
+          salon_id: r.salon_id ?? null,
+          customer_name: r.customer_name ?? null,
+          customer_line_id: null,
+          datetime: r.start_time,
+          menu: r.menu_name ?? null,
+          status: r.status ?? null,
+          line_user_id: null,
+        }));
+      const mergedResv = [...manualResv, ...hpbResv].sort(
+        (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+      );
+      setReservations(mergedResv);
       setCustomers((custRes.data as Customer[]) ?? []);
       setPreCounselings((preRes.data as PreCounseling[]) ?? []);
       setTasks((taskRes.data as Task[]) ?? []);
