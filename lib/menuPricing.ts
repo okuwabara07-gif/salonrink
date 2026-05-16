@@ -104,3 +104,28 @@ export function toMenuMaster(row: {
     duration: row.duration ?? null,
   };
 }
+
+/**
+ * 2 段解決(Step 3-0c):
+ *   ① catalog(hpb_menu_prices 由来。HPB掲載ページから自動取得した実価格)
+ *   ② masters(salon_menus 由来。手動登録)
+ *   ③ どちらも不一致 -> null(UI は - 表示・売上見込から除外)
+ *
+ * catalog を最優先。catalog にマッチしたが price が数値でない(bot が
+ * 価格をパースできなかった)場合は ② にフォールスルー。
+ * catalog 空(C1 未稼働)なら実質 resolveMenuPrice と同一挙動 = 後方互換。
+ *
+ * catalog 要素も MenuMaster 形({ name: hpb_menu_name, price: price_incl_tax })。
+ * 既存 resolveMenuPrice / resolveMenuDuration / toMenuMaster は不変。
+ */
+export function resolveMenuPriceLayered(
+  menuName: string | null | undefined,
+  catalog: MenuMaster[] | null | undefined,
+  masters: MenuMaster[] | null | undefined
+): number | null {
+  if (menuName && catalog && catalog.length > 0) {
+    const c = bestMasterFor(menuName, catalog);
+    if (c && typeof c.price === 'number') return c.price;
+  }
+  return resolveMenuPrice(menuName, masters);
+}
