@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/srk';
+import { createClient } from '@/lib/supabase/client';
 
 /* ============================================================
    /dashboard/link — Phase 7: 連携 (Integrations)
@@ -186,23 +187,61 @@ export default function LinkPage() {
   const [filter, setFilter] = useState<'all' | ServiceStatus>('all');
   const [query, setQuery] = useState('');
   const [openService, setOpenService] = useState<Service | null>(null);
+  const [hpbConnected, setHpbConnected] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: salonRows } = await supabase
+          .from('salons')
+          .select('id')
+          .eq('owner_user_id', user.id)
+          .limit(1);
+        const salonId = salonRows?.[0]?.id;
+        if (!salonId) return;
+        const { data: hpbRows } = await supabase
+          .from('hpb_reservations')
+          .select('id')
+          .eq('salon_id', salonId)
+          .limit(1);
+        if (!cancelled) setHpbConnected((hpbRows?.length ?? 0) > 0);
+      } catch {
+        /* 連携ステータス取得失敗時は未接続表示を維持（既存挙動） */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const services = useMemo<Service[]>(
+    () =>
+      SERVICES.map((s) =>
+        s.k === 'hp'
+          ? { ...s, status: (hpbConnected ? 'connected' : 'disconnected') as ServiceStatus }
+          : s
+      ),
+    [hpbConnected]
+  );
 
   const filtered = useMemo(() => {
-    return SERVICES.filter((s) => {
+    return services.filter((s) => {
       if (filter !== 'all' && s.status !== filter) return false;
       if (query && !s.name.includes(query) && !s.desc.includes(query))
         return false;
       return true;
     });
-  }, [filter, query]);
+  }, [services, filter, query]);
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { all: SERVICES.length };
+    const c: Record<string, number> = { all: services.length };
     for (const f of FILTERS.slice(1)) {
-      c[f.id] = SERVICES.filter((s) => s.status === f.id).length;
+      c[f.id] = services.filter((s) => s.status === f.id).length;
     }
     return c;
-  }, []);
+  }, [services]);
 
   return (
     <div className="srk-page" style={{ paddingBottom: 32 }}>
