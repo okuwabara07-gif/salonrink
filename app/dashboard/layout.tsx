@@ -84,6 +84,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [resModalOpen, setResModalOpen] = useState(false);
+  const [plan, setPlan] = useState('FREE');
   const { title, sub } = resolveTitle(pathname);
 
   // 他ページの「+ 新規予約」ボタンからの起動イベント受信
@@ -91,6 +92,32 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const handler = () => setResModalOpen(true);
     window.addEventListener('srk:open-new-reservation', handler as EventListener);
     return () => window.removeEventListener('srk:open-new-reservation', handler as EventListener);
+  }, []);
+
+  // サロンのプラン名を取得して TopHeader に表示
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const supabase = createClient();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user || cancelled) return;
+        const { data: salon } = await supabase
+          .from('salons')
+          .select('plan')
+          .eq('owner_user_id', user.id)
+          .maybeSingle();
+        if (cancelled) return;
+        if (salon?.plan) setPlan(String(salon.plan).toUpperCase());
+      } catch (e) {
+        console.error('layout plan fetch:', e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useSamplePhotoSeed();
@@ -108,6 +135,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <TopHeader
           title={title}
           subtitle={sub}
+          plan={plan}
+          unread={0}
           onToggleSide={() => setCollapsed((c) => !c)}
           onNewBooking={() => setResModalOpen(true)}
         />
