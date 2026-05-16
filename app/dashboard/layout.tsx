@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { Sidebar, TopHeader } from '@/components/srk';
 import NewReservationModal from '@/components/dashboard/NewReservationModal';
+import { createClient } from '@/lib/supabase/client';
 
 /**
  * /dashboard 配下の全画面に共通のクロム(サイドバー + トップヘッダー)。
@@ -19,7 +20,7 @@ interface TitleEntry {
 
 const TITLE_MAP: Record<string, TitleEntry> = {
   '/dashboard':                 { title: 'ホーム', sub: '本日のサロン状況' },
-  '/dashboard/booking':         { title: '予約スケジュール',                     sub: 'タイムテーブル / 予約管理' },
+  '/dashboard/booking':         { title: 'HPB予約',                              sub: 'タイムテーブル / 予約管理' },
   '/dashboard/customers':       { title: '顧客一覧',                             sub: '顧客データベース' },
   '/dashboard/messages':        { title: 'DM配信',                                sub: '自動リマインダー · 来店促進' },
   '/dashboard/integrations':    { title: '連携サービス',                         sub: '外部システムとの連携' },
@@ -116,8 +117,78 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         open={resModalOpen}
         onClose={() => setResModalOpen(false)}
         onSubmit={async (draft) => {
-          console.log('新規予約:', draft);
-          alert('予約を作成しました(モックです。Supabase 接続は後日)');
+          try {
+            const supabase = createClient();
+            const {
+              data: { user },
+            } = await supabase.auth.getUser();
+            if (!user) {
+              alert('ログインが必要です');
+              return;
+            }
+
+            const { data: salon } = await supabase
+              .from('salons')
+              .select('id')
+              .eq('owner_user_id', user.id)
+              .maybeSingle();
+            if (!salon) {
+              alert('サロン情報が見つかりません');
+              return;
+            }
+
+            // 日時を組み立て(date: YYYY-MM-DD, startTime: HH:MM)
+            if (!draft.date || !draft.startTime) {
+              alert('日付と開始時間を選択してください');
+              return;
+            }
+            const datetimeIso = new Date(
+              `${draft.date}T${draft.startTime}:00`
+            ).toISOString();
+
+            // メニュー名を結合
+            const menuStr = (draft.menus || []).map((m) => m.name).join(' + ');
+
+            // 新規顧客なら customers に作成して customer_id を取得
+            let customerId: string | null = draft.customerId || null;
+            if (!customerId && draft.isNewCustomer && draft.customerName) {
+              const { data: newCust } = await supabase
+                .from('customers')
+                .insert({
+                  salon_id: salon.id,
+                  name: draft.customerName,
+                  phone: draft.customerPhone || null,
+                  visit_count: 0,
+                })
+                .select('id')
+                .single();
+              if (newCust) customerId = newCust.id;
+            }
+
+            // 予約を保存
+            const { error: resErr } = await supabase.from('reservations').insert({
+              salon_id: salon.id,
+              customer_id: customerId,
+              customer_name: draft.customerName || '名前未登録',
+              datetime: datetimeIso,
+              menu: menuStr || 'メニュー未設定',
+              status: 'confirmed',
+              source: 'manual',
+            });
+
+            if (resErr) {
+              console.error('予約保存エラー:', resErr);
+              alert(`予約の保存に失敗しました: ${resErr.message}`);
+              return;
+            }
+
+            alert('予約を作成しました');
+            // 各ページの一覧に反映するためリロード
+            window.location.reload();
+          } catch (e) {
+            console.error('予約作成エラー:', e);
+            alert('予約の作成中にエラーが発生しました');
+          }
         }}
       />
     </div>
