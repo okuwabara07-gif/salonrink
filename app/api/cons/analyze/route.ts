@@ -32,7 +32,7 @@ import {
   type ApiType,
 } from '@/lib/ai/usage-tracker'
 import {
-  resolveMenuPrice,
+  resolveMenuPriceLayered,
   toMenuMaster,
   type MenuMaster,
 } from '@/lib/menuPricing'
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1)
 
-    const [resRes, hpbRes, custRes, menuRes] = await Promise.all([
+    const [resRes, hpbRes, custRes, menuRes, catalogRes] = await Promise.all([
       admin
         .from('reservations')
         .select('datetime, menu, status')
@@ -153,12 +153,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .select('name, price, duration')
         .eq('salon_id', salon_id)
         .order('sort_order', { ascending: true }),
+      admin
+        .from('hpb_menu_prices')
+        .select('hpb_menu_name, price_incl_tax')
+        .eq('salon_id', salon_id),
     ])
 
     if (resRes.error) console.error('reservations:', resRes.error)
     if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error)
     if (custRes.error) console.error('customers:', custRes.error)
     if (menuRes.error) console.error('salon_menus:', menuRes.error)
+    if (catalogRes.error) console.error('hpb_menu_prices:', catalogRes.error)
 
     const menus: MenuMaster[] = (
       (menuRes.data as Array<{
@@ -167,6 +172,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         duration: number | null
       }>) ?? []
     ).map(toMenuMaster)
+    // HPB掲載価格カタログ(price_incl_tax が数値の行のみ採用)
+    const catalog: MenuMaster[] = (
+      (catalogRes.data as Array<{
+        hpb_menu_name: string
+        price_incl_tax: number | null
+      }>) ?? []
+    )
+      .filter((r) => typeof r.price_incl_tax === 'number')
+      .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax as number }))
 
     type ResvRow = { datetime: string; menu: string | null; status: string | null }
     const manual: ResvRow[] = ((resRes.data as ResvRow[]) ?? []).filter(
@@ -191,7 +205,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // マスタ解決できた予約のみ売上見込に加算(未解決は除外=推定額を出さない)
     let resolvedCount = 0
     const monthRevenue = allResv.reduce((acc, r) => {
-      const p = resolveMenuPrice(r.menu, menus)
+      const p = resolveMenuPriceLayered(r.menu, catalog, menus)
       if (p == null) return acc
       resolvedCount += 1
       return acc + p

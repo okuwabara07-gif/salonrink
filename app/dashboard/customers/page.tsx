@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Icon } from '@/components/srk';
 import { createClient } from '@/lib/supabase/client';
 import {
-  resolveMenuPrice,
+  resolveMenuPriceLayered,
   toMenuMaster,
   type MenuMaster,
 } from '@/lib/menuPricing';
@@ -181,6 +181,18 @@ export default function CustomersPage() {
                 duration: number | null;
               }>) ?? []
             ).map(toMenuMaster);
+            const { data: catalogRows } = await supabase
+              .from('hpb_menu_prices')
+              .select('hpb_menu_name, price_incl_tax')
+              .eq('salon_id', salon.id);
+            const catalog: MenuMaster[] = (
+              (catalogRows as Array<{
+                hpb_menu_name: string;
+                price_incl_tax: number | null;
+              }>) ?? []
+            )
+              .filter((r) => typeof r.price_incl_tax === 'number')
+              .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax as number }));
             const { data: allRes } = await supabase
               .from('reservations')
               .select('customer_id, customer_name, datetime, menu, status')
@@ -203,7 +215,7 @@ export default function CustomersPage() {
                 let nextAppt = '';
                 let nextApptTs = '';
                 for (const r of list) {
-                  const amt = resolveMenuPrice(r.menu, menus) ?? 0;
+                  const amt = resolveMenuPriceLayered(r.menu, catalog, menus) ?? 0;
                   const dt = r.datetime || '';
                   if (dt <= now && r.status !== 'cancelled') {
                     totalSpend += amt;
@@ -1033,9 +1045,20 @@ function OverviewTab({
               duration: number | null;
             }>) ?? []
           ).map(toMenuMaster);
+          const { data: catalogRows } = await supabase
+            .from('hpb_menu_prices')
+            .select('hpb_menu_name, price_incl_tax');
+          const catalog: MenuMaster[] = (
+            (catalogRows as Array<{
+              hpb_menu_name: string;
+              price_incl_tax: number | null;
+            }>) ?? []
+          )
+            .filter((r) => typeof r.price_incl_tax === 'number')
+            .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax as number }));
           const parsed = data.map((r) => {
             const menu = r.menu || '';
-            const amt = resolveMenuPrice(menu, menus) ?? 0;
+            const amt = resolveMenuPriceLayered(menu, catalog, menus) ?? 0;
             return { d: (r.datetime || '').split('T')[0], svc: menu || '—', amt };
           });
           setRecentVisits(parsed);
@@ -1250,6 +1273,17 @@ function HistoryTab({ customer }: { customer: SampleCustomer }) {
             duration: number | null;
           }>) ?? []
         ).map(toMenuMaster);
+        const { data: catalogRows } = await supabase
+          .from('hpb_menu_prices')
+          .select('hpb_menu_name, price_incl_tax');
+        const catalog: MenuMaster[] = (
+          (catalogRows as Array<{
+            hpb_menu_name: string;
+            price_incl_tax: number | null;
+          }>) ?? []
+        )
+          .filter((r) => typeof r.price_incl_tax === 'number')
+          .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax as number }));
         const durationMap: Record<string, number> = {
           'カット': 60, 'カラー': 90, '白髪染め': 90, 'パーマ': 120,
           'トリートメント': 30, 'ヘッドスパ': 30, 'ハイライト': 120,
@@ -1276,9 +1310,9 @@ function HistoryTab({ customer }: { customer: SampleCustomer }) {
           const services = items.length > 0
             ? items.map((name: string) => ({
                 name,
-                amt: resolveMenuPrice(name, menus) ?? 0,
+                amt: resolveMenuPriceLayered(name, catalog, menus) ?? 0,
               }))
-            : [{ name: menu || '—', amt: resolveMenuPrice(menu, menus) ?? 0 }];
+            : [{ name: menu || '—', amt: resolveMenuPriceLayered(menu, catalog, menus) ?? 0 }];
           const amt = services.reduce((s: number, sv: { amt: number }) => s + sv.amt, 0);
           const duration = items.reduce((s: number, n: string) => s + (durationMap[n] || 60), 0) || 60;
           return {

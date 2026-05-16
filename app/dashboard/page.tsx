@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import {
   resolveMenuPrice,
+  resolveMenuPriceLayered,
   resolveMenuDuration,
   toMenuMaster,
   type MenuMaster,
@@ -74,13 +75,14 @@ interface Task {
 // price は salon_menus マスタで確定できない場合 null(UI で - 表示)。
 function parseMenuInfo(
   menu: string | null,
+  catalog: MenuMaster[],
   masters: MenuMaster[]
 ): { items: string[]; duration: number; price: number | null } {
   const items = menu
     ? menu.split(/[,、+＋\s]/).map((s) => s.trim()).filter(Boolean)
     : [];
   const duration = resolveMenuDuration(menu, masters, DEFAULT_DURATION);
-  const price = resolveMenuPrice(menu, masters);
+  const price = resolveMenuPriceLayered(menu, catalog, masters);
   return { items, duration, price };
 }
 
@@ -114,6 +116,7 @@ export default function DashboardHomePage() {
   const [preCounselings, setPreCounselings] = useState<PreCounseling[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [menus, setMenus] = useState<MenuMaster[]>([]);
+  const [catalog, setCatalog] = useState<MenuMaster[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -164,7 +167,7 @@ export default function DashboardHomePage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, preRes, taskRes, hpbRes, menuRes] = await Promise.all([
+      const [resRes, custRes, preRes, taskRes, hpbRes, menuRes, catalogRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -199,6 +202,10 @@ export default function DashboardHomePage() {
           .select('name, price, duration')
           .eq('salon_id', salonRow.id)
           .order('sort_order', { ascending: true }),
+        supabase
+          .from('hpb_menu_prices')
+          .select('hpb_menu_name, price_incl_tax')
+          .eq('salon_id', salonRow.id),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
@@ -207,6 +214,7 @@ export default function DashboardHomePage() {
       if (taskRes.error) console.error('tasks:', taskRes.error);
       if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error);
       if (menuRes.error) console.error('salon_menus:', menuRes.error);
+      if (catalogRes.error) console.error('hpb_menu_prices:', catalogRes.error);
 
       // HPB予約を home の Reservation 形に正規化してマージ
       const manualResv = (resRes.data as Reservation[]) ?? [];
@@ -232,6 +240,13 @@ export default function DashboardHomePage() {
       setTasks((taskRes.data as Task[]) ?? []);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setMenus(((menuRes.data as any[]) ?? []).map(toMenuMaster));
+      // HPB掲載価格カタログ(price_incl_tax が数値の行のみ採用)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      setCatalog(
+        ((catalogRes.data as any[]) ?? [])
+          .filter((r) => typeof r.price_incl_tax === 'number')
+          .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax })),
+      );
     } catch (e) {
       console.error(e);
       setLoadError('予期しないエラー');
@@ -317,15 +332,15 @@ export default function DashboardHomePage() {
 
   const todayRevenue = useMemo(() => {
     return todayReservations.reduce((sum, r) => {
-      const p = resolveMenuPrice(r.menu, menus);
+      const p = resolveMenuPriceLayered(r.menu, catalog, menus);
       return sum + (p ?? 0);
     }, 0);
-  }, [todayReservations, menus]);
+  }, [todayReservations, catalog, menus]);
 
   // 1 件でもマスタ解決できた予約があるか(無ければ売上見込は - 表示)
   const hasResolvablePrice = useMemo(
-    () => todayReservations.some((r) => resolveMenuPrice(r.menu, menus) != null),
-    [todayReservations, menus],
+    () => todayReservations.some((r) => resolveMenuPriceLayered(r.menu, catalog, menus) != null),
+    [todayReservations, catalog, menus],
   );
 
   const REVENUE_TARGET = 80000;
@@ -551,7 +566,7 @@ export default function DashboardHomePage() {
             {todayReservations.map(r => {
               const dt = new Date(r.datetime);
               const startMin = dt.getHours() * 60 + dt.getMinutes() - TIMELINE_START_HOUR * 60;
-              const info = parseMenuInfo(r.menu, menus);
+              const info = parseMenuInfo(r.menu, catalog, menus);
               const widthMin = info.duration;
               const left = (startMin / (TIMELINE_HOURS * 60)) * 100;
               const width = (widthMin / (TIMELINE_HOURS * 60)) * 100;
@@ -602,7 +617,7 @@ export default function DashboardHomePage() {
                 c.line_user_id && r.line_user_id && c.line_user_id === r.line_user_id
                 || c.name === r.customer_name
               );
-              const info = parseMenuInfo(r.menu, menus);
+              const info = parseMenuInfo(r.menu, catalog, menus);
               const preCounseling = preCounselings.find(pc => pc.reservation_id === r.id);
               return (
                 <div key={r.id} className={styles.reservationRow}>

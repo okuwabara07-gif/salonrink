@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import {
-  resolveMenuPrice,
+  resolveMenuPriceLayered,
   toMenuMaster,
   type MenuMaster,
 } from '@/lib/menuPricing';
@@ -137,7 +137,7 @@ export default function ConsPage() {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-      const [resRes, hpbRes, custRes, menuRes] = await Promise.all([
+      const [resRes, hpbRes, custRes, menuRes, catalogRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('datetime, menu, status')
@@ -159,12 +159,17 @@ export default function ConsPage() {
           .select('name, price, duration')
           .eq('salon_id', salon.id)
           .order('sort_order', { ascending: true }),
+        supabase
+          .from('hpb_menu_prices')
+          .select('hpb_menu_name, price_incl_tax')
+          .eq('salon_id', salon.id),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
       if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error);
       if (custRes.error) console.error('customers:', custRes.error);
       if (menuRes.error) console.error('salon_menus:', menuRes.error);
+      if (catalogRes.error) console.error('hpb_menu_prices:', catalogRes.error);
 
       const menus: MenuMaster[] = (
         (menuRes.data as Array<{
@@ -173,6 +178,15 @@ export default function ConsPage() {
           duration: number | null;
         }>) ?? []
       ).map(toMenuMaster);
+      // HPB掲載価格カタログ(price_incl_tax が数値の行のみ採用)
+      const catalog: MenuMaster[] = (
+        (catalogRes.data as Array<{
+          hpb_menu_name: string;
+          price_incl_tax: number | null;
+        }>) ?? []
+      )
+        .filter((r) => typeof r.price_incl_tax === 'number')
+        .map((r) => ({ name: r.hpb_menu_name, price: r.price_incl_tax as number }));
 
       // 予約を統合(キャンセル除外)
       const manual: ResvRow[] = ((resRes.data as ResvRow[]) ?? []).filter(
@@ -192,7 +206,7 @@ export default function ConsPage() {
       // マスタ解決できた予約のみ売上見込に加算(未解決は除外)
       let resolvedCount = 0;
       const monthRevenue = allResv.reduce((acc, r) => {
-        const p = resolveMenuPrice(r.menu, menus);
+        const p = resolveMenuPriceLayered(r.menu, catalog, menus);
         if (p == null) return acc;
         resolvedCount += 1;
         return acc + p;
