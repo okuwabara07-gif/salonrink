@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import {
+  resolveMenuPrice,
+  toMenuMaster,
+  type MenuMaster,
+} from '@/lib/menuPricing';
 import styles from './page.module.css';
 
 /* ============================================================
@@ -14,32 +19,8 @@ import styles from './page.module.css';
    - AI経営アドバイス(Haiku 生成)は Step2 で追加予定
    ============================================================ */
 
-// メニュー名 → price の lookup(home/booking と統一)
-const MENU_PRICE: Record<string, number> = {
-  'カット': 4800,
-  'カラー': 6800,
-  '白髪染め': 7200,
-  'パーマ': 8800,
-  'トリートメント': 2800,
-  'ヘッドスパ': 3500,
-  'ハイライト': 9800,
-};
-const DEFAULT_PRICE = 5000;
-
-function menuToPrice(menu: string | null | undefined): number {
-  if (!menu) return DEFAULT_PRICE;
-  const items = menu.split(/[,、+＋\s/]/).map((s) => s.trim()).filter(Boolean);
-  let total = 0;
-  for (const item of items) {
-    if (MENU_PRICE[item] != null) {
-      total += MENU_PRICE[item];
-    } else {
-      const matched = Object.keys(MENU_PRICE).find((k) => item.includes(k));
-      total += matched ? MENU_PRICE[matched] : DEFAULT_PRICE;
-    }
-  }
-  return items.length === 0 ? DEFAULT_PRICE : total;
-}
+// 価格は salon_menus マスタから解決(固定表は廃止)。
+// マスタ未解決の予約は売上見込に加算しない(誤った推定額を出さない)。
 
 interface ResvRow {
   datetime: string;
@@ -61,6 +42,7 @@ interface Kpis {
   repeatRate: number; // 0-100
   avgSpend: number;
   totalCustomers: number;
+  revenueKnown: boolean; // マスタ解決できた予約が1件以上あるか
 }
 
 function yen(n: number): string {
@@ -155,7 +137,7 @@ export default function ConsPage() {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-      const [resRes, hpbRes, custRes] = await Promise.all([
+      const [resRes, hpbRes, custRes, menuRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('datetime, menu, status')
@@ -172,11 +154,25 @@ export default function ConsPage() {
           .from('customers')
           .select('last_visit, visit_count, created_at')
           .eq('salon_id', salon.id),
+        supabase
+          .from('salon_menus')
+          .select('name, price, duration')
+          .eq('salon_id', salon.id)
+          .order('sort_order', { ascending: true }),
       ]);
 
       if (resRes.error) console.error('reservations:', resRes.error);
       if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error);
       if (custRes.error) console.error('customers:', custRes.error);
+      if (menuRes.error) console.error('salon_menus:', menuRes.error);
+
+      const menus: MenuMaster[] = (
+        (menuRes.data as Array<{
+          name: string;
+          price: number;
+          duration: number | null;
+        }>) ?? []
+      ).map(toMenuMaster);
 
       // 予約を統合(キャンセル除外)
       const manual: ResvRow[] = ((resRes.data as ResvRow[]) ?? []).filter(
@@ -193,8 +189,16 @@ export default function ConsPage() {
       const allResv = [...manual, ...hpb];
 
       const monthCount = allResv.length;
-      const monthRevenue = allResv.reduce((s, r) => s + menuToPrice(r.menu), 0);
-      const avgSpend = monthCount > 0 ? monthRevenue / monthCount : 0;
+      // マスタ解決できた予約のみ売上見込に加算(未解決は除外)
+      let resolvedCount = 0;
+      const monthRevenue = allResv.reduce((acc, r) => {
+        const p = resolveMenuPrice(r.menu, menus);
+        if (p == null) return acc;
+        resolvedCount += 1;
+        return acc + p;
+      }, 0);
+      const avgSpend = resolvedCount > 0 ? monthRevenue / resolvedCount : 0;
+      const revenueKnown = resolvedCount > 0;
 
       // 顧客集計
       const customers = (custRes.data as CustRow[]) ?? [];
@@ -230,6 +234,7 @@ export default function ConsPage() {
         repeatRate,
         avgSpend,
         totalCustomers,
+        revenueKnown,
       });
     } catch (e) {
       console.error(e);
@@ -295,16 +300,28 @@ export default function ConsPage() {
             <div className={styles.kpiCard}>
               <div className={styles.kpiLeft}>
                 <p className={styles.kpiLabel}>今月の売上見込</p>
-                <p className={styles.kpiVal}>{yenK(kpis.monthRevenue)}</p>
-                <p className={styles.kpiDelta}>メニュー単価から算出</p>
+                <p className={styles.kpiVal}>
+                  {kpis.revenueKnown ? yenK(kpis.monthRevenue) : '—'}
+                </p>
+                <p className={styles.kpiDelta}>
+                  {kpis.revenueKnown
+                    ? 'メニュー単価から算出'
+                    : 'メニュー単価未登録のため算出不可'}
+                </p>
               </div>
             </div>
 
             <div className={styles.kpiCard}>
               <div className={styles.kpiLeft}>
                 <p className={styles.kpiLabel}>平均客単価</p>
-                <p className={styles.kpiVal}>{yen(kpis.avgSpend)}</p>
-                <p className={styles.kpiDelta}>当月予約ベース</p>
+                <p className={styles.kpiVal}>
+                  {kpis.revenueKnown ? yen(kpis.avgSpend) : '—'}
+                </p>
+                <p className={styles.kpiDelta}>
+                  {kpis.revenueKnown
+                    ? '当月予約ベース'
+                    : 'メニュー単価未登録のため算出不可'}
+                </p>
               </div>
             </div>
 

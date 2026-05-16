@@ -31,38 +31,16 @@ import {
   recordAIUsage,
   type ApiType,
 } from '@/lib/ai/usage-tracker'
+import {
+  resolveMenuPrice,
+  toMenuMaster,
+  type MenuMaster,
+} from '@/lib/menuPricing'
 
 const MODEL_NAME = 'claude-haiku-4-5-20251001'
 
-// メニュー名 → 単価(home/booking/cons UI と統一)
-const MENU_PRICE: Record<string, number> = {
-  'カット': 4800,
-  'カラー': 6800,
-  '白髪染め': 7200,
-  'パーマ': 8800,
-  'トリートメント': 2800,
-  'ヘッドスパ': 3500,
-  'ハイライト': 9800,
-}
-const DEFAULT_PRICE = 5000
-
-function menuToPrice(menu: string | null | undefined): number {
-  if (!menu) return DEFAULT_PRICE
-  const items = menu
-    .split(/[,、+＋\s/]/)
-    .map((s) => s.trim())
-    .filter(Boolean)
-  let total = 0
-  for (const item of items) {
-    if (MENU_PRICE[item] != null) {
-      total += MENU_PRICE[item]
-    } else {
-      const matched = Object.keys(MENU_PRICE).find((k) => item.includes(k))
-      total += matched ? MENU_PRICE[matched] : DEFAULT_PRICE
-    }
-  }
-  return items.length === 0 ? DEFAULT_PRICE : total
-}
+// 価格は salon_menus マスタから解決(固定表は廃止)。
+// マスタ未解決の予約は売上見込に加算しない(誤った推定額を出さない)。
 
 function errorResponse(error: string, statusCode: number): NextResponse {
   return NextResponse.json({ error }, { status: statusCode })
@@ -152,7 +130,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 1)
 
-    const [resRes, hpbRes, custRes] = await Promise.all([
+    const [resRes, hpbRes, custRes, menuRes] = await Promise.all([
       admin
         .from('reservations')
         .select('datetime, menu, status')
@@ -169,11 +147,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .from('customers')
         .select('last_visit, visit_count, created_at')
         .eq('salon_id', salon_id),
+      // admin は RLS バイパスのため salon_id 明示絞り必須
+      admin
+        .from('salon_menus')
+        .select('name, price, duration')
+        .eq('salon_id', salon_id)
+        .order('sort_order', { ascending: true }),
     ])
 
     if (resRes.error) console.error('reservations:', resRes.error)
     if (hpbRes.error) console.error('hpb_reservations:', hpbRes.error)
     if (custRes.error) console.error('customers:', custRes.error)
+    if (menuRes.error) console.error('salon_menus:', menuRes.error)
+
+    const menus: MenuMaster[] = (
+      (menuRes.data as Array<{
+        name: string
+        price: number
+        duration: number | null
+      }>) ?? []
+    ).map(toMenuMaster)
 
     type ResvRow = { datetime: string; menu: string | null; status: string | null }
     const manual: ResvRow[] = ((resRes.data as ResvRow[]) ?? []).filter(
@@ -195,11 +188,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const allResv = [...manual, ...hpb]
 
     const monthCount = allResv.length
-    const monthRevenue = allResv.reduce(
-      (s, r) => s + menuToPrice(r.menu),
-      0
-    )
-    const avgSpend = monthCount > 0 ? monthRevenue / monthCount : 0
+    // マスタ解決できた予約のみ売上見込に加算(未解決は除外=推定額を出さない)
+    let resolvedCount = 0
+    const monthRevenue = allResv.reduce((acc, r) => {
+      const p = resolveMenuPrice(r.menu, menus)
+      if (p == null) return acc
+      resolvedCount += 1
+      return acc + p
+    }, 0)
+    const avgSpend = resolvedCount > 0 ? monthRevenue / resolvedCount : 0
 
     type CustRow = {
       last_visit: string | null
