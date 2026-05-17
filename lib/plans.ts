@@ -1,53 +1,62 @@
 /**
- * SalonRink プラン定義・マッピング
+ * SalonRink プラン定義・マッピング(単一の真実のソース / Phase2 canonical)
  *
- * プラン名は複数の表記で管理される:
- * - LP表記: フリーランス / スタンダード / プロ （顧客向けUI）
- * - Stripe内部名: basic / small / medium / free （決済API）
- * - DB値: freelance / standard / pro / free （salons.plan, subscriptions.plan）
+ * 識別子は Stripeスラッグ basic/small/medium/free に統一。
+ * - displayName  : 顧客UI/LP表記 = Light / Standard / Premium
+ * - stripeId     : Stripe内部名(price ID 環境変数キー) basic/small/medium/free
+ * - dbValue      : salons.plan / subscriptions.plan ( = stripeId に統一 )
+ * - price        : 月額(税込) LP整合 1980 / 2980 / 4580
+ * - aiQuota      : 月次AI生成上限(全api_type合計のハードキャップ)
  *
- * このファイルは3つの表記を統一管理するための真実のソース。
+ * 旧DB値(freelance/standard/pro)は getPlanByDbValue でレガシー解決のみ対応。
  */
 
 export const PLANS = {
   FREELANCE: {
-    // LP表記
-    displayName: 'フリーランス',
-    // Stripe内部名（price ID 環境変数のキー）
+    displayName: 'Light',
     stripeId: 'basic',
-    // DB保存値
-    dbValue: 'freelance',
-    // 価格
-    price: 980,
+    dbValue: 'basic',
+    price: 1980,
     currency: '¥',
     description: 'ソロオーナー向け',
+    aiQuota: 200,
   },
   STANDARD: {
-    displayName: 'スタンダード',
+    displayName: 'Standard',
     stripeId: 'small',
-    dbValue: 'standard',
-    price: 2480,
+    dbValue: 'small',
+    price: 2980,
     currency: '¥',
     description: '小規模店舗向け',
     popular: true,
+    aiQuota: 600,
   },
   PRO: {
-    displayName: 'プロ',
+    displayName: 'Premium',
     stripeId: 'medium',
-    dbValue: 'pro',
-    price: 3980,
+    dbValue: 'medium',
+    price: 4580,
     currency: '¥',
     description: 'HPB同期・中〜大規模向け',
+    aiQuota: 2000,
   },
   FREE: {
-    displayName: '永久無料プラン',
+    displayName: 'トライアル / 招待',
     stripeId: 'free',
     dbValue: 'free',
     price: 0,
     currency: '¥',
-    description: '招待コード利用時',
+    description: '14日間トライアル・招待コード利用時',
+    aiQuota: 50,
   },
 } as const
+
+const LEGACY_DB_VALUE_ALIAS: Record<string, string> = {
+  freelance: 'basic',
+  standard: 'small',
+  pro: 'medium',
+  free: 'free',
+}
 
 /**
  * Stripe内部名（basic/small/medium/free）から
@@ -58,11 +67,21 @@ export function getPlanByStripeId(stripeId: string) {
 }
 
 /**
- * DB値（freelance/standard/pro/free）から
- * プラン定義オブジェクトを取得
+ * DB値から プラン定義オブジェクトを取得
+ * 新DB値(basic/small/medium/free)を解決。旧値(freelance/standard/pro)もレガシー対応。
  */
 export function getPlanByDbValue(dbValue: string) {
-  return Object.values(PLANS).find((p) => p.dbValue === dbValue)
+  const resolved = LEGACY_DB_VALUE_ALIAS[dbValue] ?? dbValue
+  return Object.values(PLANS).find((p) => p.dbValue === resolved)
+}
+
+/**
+ * AI月次枠を取得（DB値ベース。未知/未設定/null は FREE 相当=50）
+ */
+export function getAIQuotaByDbValue(dbValue: string | null | undefined): number {
+  if (!dbValue) return PLANS.FREE.aiQuota
+  const plan = getPlanByDbValue(dbValue)
+  return plan?.aiQuota ?? PLANS.FREE.aiQuota
 }
 
 /**
