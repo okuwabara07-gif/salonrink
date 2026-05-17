@@ -41,6 +41,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Phase2 (決定B): 接客スクリプト(Advanced AI)は Premium(medium) 限定。
+    // AI無制限アドオン保有者は上位機能として許可。
+    if (usageStatus.plan !== 'medium' && !usageStatus.unlimited) {
+      return NextResponse.json(
+        {
+          error: 'plan_restricted',
+          feature: 'communication_script',
+          required_plan: 'medium',
+          plan: usageStatus.plan,
+        },
+        { status: 200 }
+      );
+    }
+
     // kartes テーブルから顧客カルテを取得
     const { data: karte, error: karteError } = await supabase
       .from('kartes')
