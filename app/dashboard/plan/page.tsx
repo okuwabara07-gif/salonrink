@@ -119,7 +119,7 @@ export default function PlanPage() {
             { k: 'スタッフ数', v: '1名まで' },
             { k: '予約管理', v: '✓' },
             { k: 'HPB同期', v: '✓' },
-            { k: 'AIカルテ', v: '— (Core以上)' },
+            { k: 'AIカルテ', v: '— (Standard以上)' },
           ].map((r) => (
             <div key={r.k}>
               <div
@@ -171,7 +171,7 @@ export default function PlanPage() {
             letterSpacing: '0.02em',
           }}
         >
-          Core プラン — AIカルテ標準装備
+          Standard プラン — AIカルテ標準装備
         </div>
         <div
           style={{
