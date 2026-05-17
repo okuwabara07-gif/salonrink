@@ -446,13 +446,12 @@ export default function PlanPage() {
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 14, fontWeight: 500, color: '#1A1018', margin: '0 0 4px 0' }}>
                   {plan.name}
-                  {plan.id === 'large' && <span style={{ fontSize: 11, color: '#888', marginLeft: 8 }}>（要相談）</span>}
                 </p>
                 <p style={{ fontSize: 12, color: '#888', margin: '0 0 8px 0' }}>
                   {plan.description}
                 </p>
                 <p style={{ fontSize: 18, fontWeight: 500, color: '#1A1018', margin: 0 }}>
-                  {plan.id === 'large' ? '要相談' : (plan.price === 0 ? '無料' : `¥${plan.price.toLocaleString()}/月`)}
+                  {`¥${plan.price.toLocaleString()}/月`}
                 </p>
               </div>
               {plan.id === currentPlan && (
