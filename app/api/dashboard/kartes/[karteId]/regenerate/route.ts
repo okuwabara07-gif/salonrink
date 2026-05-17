@@ -91,6 +91,20 @@ export async function POST(
 
     const internalData = await internalResponse.json()
 
+    // Phase2: AI枠超過時は internal が quota_exceeded を返す。そのまま UI へ透過
+    if (internalData?.status === 'quota_exceeded') {
+      return NextResponse.json(
+        {
+          status: 'quota_exceeded',
+          karte_id: karteId,
+          plan: internalData.plan,
+          used: internalData.used,
+          limit: internalData.limit,
+        },
+        { status: 200 }
+      )
+    }
+
     // Step 6: レスポンス返却
     return NextResponse.json(
       {
