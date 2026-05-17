@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { callClaude } from '@/lib/ai/claude-client'
 import { generateWarningsPrompt, validateWarningsResponse, type Warning } from '@/lib/ai/warnings-prompt'
+import { checkAIUsageLimit, recordAIUsage } from '@/lib/ai/usage-tracker'
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -53,6 +54,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
+    // Phase2: AI枠チェック (超過時は生成しない)
+    const usageStatus = await checkAIUsageLimit(salon_id)
+    if (!usageStatus.allowed) {
+      return NextResponse.json(
+        {
+          error: 'quota_exceeded',
+          plan: usageStatus.plan,
+          used: usageStatus.used,
+          limit: usageStatus.limit,
+        },
+        { status: 200 }
+      )
+    }
+
     // Step 4: admin クライアント初期化
     const admin = createAdminClient()
 
@@ -90,6 +105,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } else {
         console.warn('Warnings API: validation failed:', validation.error, 'raw:', validation.raw)
         warnings = []
+      }
+      if (claudeResponse?.usage) {
+        await recordAIUsage(
+          salon_id,
+          'allergy_warning',
+          claudeResponse.usage.input_tokens,
+          claudeResponse.usage.output_tokens
+        ).catch((e) => {
+          console.error('Warnings API: usage recording failed:', e)
+        })
       }
     } catch (err) {
       console.error('Warnings API: Claude call failed:', err)
