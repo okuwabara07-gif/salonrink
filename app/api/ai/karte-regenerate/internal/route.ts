@@ -16,7 +16,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { callClaude } from '@/lib/ai/claude-client'
-import { recordAIUsage } from '@/lib/ai/usage-tracker'
+import { recordAIUsage, checkAIUsageLimitAdmin } from '@/lib/ai/usage-tracker'
 
 const MODEL_NAME = 'claude-haiku-4-5-20251001'
 
@@ -102,6 +102,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       pastKarteSummaries,
       preCounselingAnswers: preCounseling?.answers,
     })
+
+    // Phase2: AI枠チェック (内部=admin文脈でRLSバイパス)。超過なら生成/上書き/記録を全てスキップ
+    const usageStatus = await checkAIUsageLimitAdmin(salonId)
+    if (!usageStatus.allowed) {
+      console.warn('karte-regenerate: AI quota exceeded', {
+        salonId,
+        used: usageStatus.used,
+        limit: usageStatus.limit,
+        plan: usageStatus.plan,
+      })
+      return NextResponse.json(
+        {
+          status: 'quota_exceeded',
+          plan: usageStatus.plan,
+          used: usageStatus.used,
+          limit: usageStatus.limit,
+        },
+        { status: 200 }
+      )
+    }
 
     // Step 8: Claude Haiku 呼び出し
     let analysisResult

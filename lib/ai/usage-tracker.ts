@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getAIQuotaByDbValue } from '@/lib/plans'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 // Phase2: 月次AI枠は lib/plans.ts (canonical) を単一ソースとして参照
 // 旧 PLAN_LIMITS/DEFAULT_LIMIT は廃止 (getAIQuotaByDbValue に統合)
@@ -42,6 +43,57 @@ export async function checkAIUsageLimit(salonId: string): Promise<{
   const unlimited = !!unlimitedAddon
 
   // 当月使用量(全 api_type 合計)
+  const yearMonth = new Date().toISOString().slice(0, 7)
+
+  const { data: usage } = await supabase
+    .from('ai_usage')
+    .select('call_count')
+    .eq('salon_id', salonId)
+    .eq('year_month', yearMonth)
+
+  const used = usage?.reduce(
+    (sum, row) => sum + (row.call_count || 0),
+    0
+  ) || 0
+
+  return {
+    allowed: unlimited || used < limit,
+    used,
+    limit,
+    plan,
+    unlimited,
+  }
+}
+
+// Phase2: 内部/サーバ間呼び出し用 (ユーザセッション無し)。
+// admin(service role) クライアントで RLS をバイパスし枠を正しく判定する。
+export async function checkAIUsageLimitAdmin(salonId: string): Promise<{
+  allowed: boolean
+  used: number
+  limit: number
+  plan: string
+  unlimited: boolean
+}> {
+  const supabase = createAdminClient()
+
+  const { data: salon } = await supabase
+    .from('salons')
+    .select('plan')
+    .eq('id', salonId)
+    .maybeSingle()
+
+  const plan = salon?.plan || 'free'
+  const limit = getAIQuotaByDbValue(plan)
+
+  const { data: unlimitedAddon } = await supabase
+    .from('salon_addons')
+    .select('enabled')
+    .eq('salon_id', salonId)
+    .eq('addon_key', 'ai_unlimited')
+    .eq('enabled', true)
+    .maybeSingle()
+  const unlimited = !!unlimitedAddon
+
   const yearMonth = new Date().toISOString().slice(0, 7)
 
   const { data: usage } = await supabase
