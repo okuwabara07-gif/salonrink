@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { PLANS as CANON } from '@/lib/plans'
 
 interface Addon {
   id: string
@@ -29,14 +30,14 @@ const ADDONS_CONFIG: Addon[] = [
   { id: '9', addon_key: 'beauty_column', enabled: false, price: 300, label: '美容コラム配信', description: '美容トレンド・施術コラム自動配信' },
 ]
 
+// Phase2 canonical: lib/plans.ts を単一ソースに参照。large は廃止 (LP3プラン)。
 const PLANS = [
-  { id: 'basic', name: 'フリーランス', price: 980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || '', description: 'フリーランス向け' },
-  { id: 'small', name: 'スタンダード', price: 2480, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || '', description: '小規模店舗向け' },
-  { id: 'medium', name: 'プロ', price: 3980, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || '', description: 'HPB同期込み・中〜大規模向け' },
-  { id: 'large', name: 'カスタム', price: 0, priceId: '', description: '大規模向け' },
+  { id: CANON.FREELANCE.stripeId, name: CANON.FREELANCE.displayName, price: CANON.FREELANCE.price, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_BASIC || '', description: CANON.FREELANCE.description },
+  { id: CANON.STANDARD.stripeId, name: CANON.STANDARD.displayName, price: CANON.STANDARD.price, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_SMALL || '', description: CANON.STANDARD.description },
+  { id: CANON.PRO.stripeId, name: CANON.PRO.displayName, price: CANON.PRO.price, priceId: process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_MEDIUM || '', description: CANON.PRO.description },
 ]
 
-const FREE_PLAN = { id: 'free', name: 'フリープラン', price: 0, priceId: '', description: '無料トライアル' }
+const FREE_PLAN = { id: CANON.FREE.stripeId, name: CANON.FREE.displayName, price: CANON.FREE.price, priceId: '', description: CANON.FREE.description }
 
 export default function PlanPage() {
   const router = useRouter()
