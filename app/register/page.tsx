@@ -148,9 +148,9 @@ function RegisterFormContent() {
   // - name: ユーザー向けUI表記 ※LP表記とは異なる
   // - LP表記は components/lp/PricingSection.tsx で管理
   const plans = [
-    { id: 'basic', name: 'ベーシック', price: '¥980', desc: '予約同期・リマインド自動送信' },
-    { id: 'small', name: 'スモール', price: '¥2,480', desc: '＋顧客カルテ・失客アラート' },
-    { id: 'medium', name: 'ミディアム', price: '¥3,980', desc: '＋売上レポート・スタッフ管理' },
+    { id: 'basic', name: 'Light', price: '¥1,980', desc: 'ソロオーナー向け・AIカルテ/LINE連携' },
+    { id: 'small', name: 'Standard', price: '¥2,980', desc: '小規模店舗向け・AIカルテ自動生成（おすすめ）' },
+    { id: 'medium', name: 'Premium', price: '¥4,580', desc: 'HPB同期・中〜大規模向け・スタッフ管理' },
   ]
 
   if (registered) {
