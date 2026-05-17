@@ -69,6 +69,16 @@ export async function POST(req: Request) {
           ).toISOString(),
           plan,
         })
+
+        // Phase2: salons.plan を canonical スラッグで同期
+        // (枠判定 lib/ai/usage-tracker は salons.plan を参照するため必須)
+        const { error: salonPlanError } = await supabase
+          .from('salons')
+          .update({ plan })
+          .eq('owner_user_id', userId)
+        if (salonPlanError) {
+          console.error('salons.plan sync failed (checkout.completed):', salonPlanError, { userId, plan })
+        }
         break
       }
 
@@ -107,6 +117,22 @@ export async function POST(req: Request) {
           .from('subscriptions')
           .update({ status: 'canceled' })
           .eq('stripe_customer_id', customerId)
+
+        // Phase2: 解約時は salons.plan を free に戻す (customer -> user_id -> salon)
+        const { data: canceledSub } = await supabase
+          .from('subscriptions')
+          .select('user_id')
+          .eq('stripe_customer_id', customerId)
+          .maybeSingle()
+        if (canceledSub?.user_id) {
+          const { error: salonResetError } = await supabase
+            .from('salons')
+            .update({ plan: 'free' })
+            .eq('owner_user_id', canceledSub.user_id)
+          if (salonResetError) {
+            console.error('salons.plan reset failed (subscription.deleted):', salonResetError, { customerId })
+          }
+        }
         break
       }
 
