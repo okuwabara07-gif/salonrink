@@ -46,9 +46,9 @@ export default function DashboardClient({
 
   const planPrice = {
     free: '¥0/月',
-    basic: '¥2,980/月',
-    small: '¥4,980/月',
-    medium: '¥7,980/月',
+    basic: '¥1,980/月',
+    small: '¥2,980/月',
+    medium: '¥4,580/月',
   }[salon.plan || 'free'] || '変更中'
 
   // 契約日と有効期限計算
