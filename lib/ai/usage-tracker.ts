@@ -1,12 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAIQuotaByDbValue } from '@/lib/plans'
 
-const PLAN_LIMITS: Record<string, number> = {
-  free: 10,
-  core: 50,
-  pro_with_ai: 150,
-}
-
-const DEFAULT_LIMIT = 10
+// Phase2: 月次AI枠は lib/plans.ts (canonical) を単一ソースとして参照
+// 旧 PLAN_LIMITS/DEFAULT_LIMIT は廃止 (getAIQuotaByDbValue に統合)
 
 export type ApiType =
   | 'customer_summary'
@@ -21,6 +17,7 @@ export async function checkAIUsageLimit(salonId: string): Promise<{
   used: number
   limit: number
   plan: string
+  unlimited: boolean
 }> {
   const supabase = await createClient()
 
@@ -32,7 +29,17 @@ export async function checkAIUsageLimit(salonId: string): Promise<{
     .maybeSingle()
 
   const plan = salon?.plan || 'free'
-  const limit = PLAN_LIMITS[plan] ?? DEFAULT_LIMIT
+  const limit = getAIQuotaByDbValue(plan)
+
+  // Phase2: AI無制限アドオン (salon_addons.addon_key='ai_unlimited', enabled) は枠バイパス
+  const { data: unlimitedAddon } = await supabase
+    .from('salon_addons')
+    .select('enabled')
+    .eq('salon_id', salonId)
+    .eq('addon_key', 'ai_unlimited')
+    .eq('enabled', true)
+    .maybeSingle()
+  const unlimited = !!unlimitedAddon
 
   // 当月使用量(全 api_type 合計)
   const yearMonth = new Date().toISOString().slice(0, 7)
@@ -49,10 +56,11 @@ export async function checkAIUsageLimit(salonId: string): Promise<{
   ) || 0
 
   return {
-    allowed: used < limit,
+    allowed: unlimited || used < limit,
     used,
     limit,
     plan,
+    unlimited,
   }
 }
 
