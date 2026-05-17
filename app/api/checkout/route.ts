@@ -13,9 +13,9 @@ export async function POST(req: NextRequest) {
 
     // plan は Stripe内部名 (basic/small/medium/free) で受け取る
     // ※ LP表記 との対応:
-    //   basic → フリーランス (¥980)
-    //   small → スタンダード (¥2,480) [人気]
-    //   medium → プロ (¥3,980)
+    //   basic → Light (¥1,980)
+    //   small → Standard (¥2,980) [おすすめ]
+    //   medium → Premium (¥4,580)
     //   free → 永久無料プラン (招待コード利用時)
     let plan: string
     try {
