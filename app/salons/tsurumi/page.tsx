@@ -358,8 +358,8 @@ export default function KireiturumiPage() {
         <div style={styles.pricingContainer}>
           {/* Basic */}
           <div style={styles.pricingCard(false)}>
-            <div style={styles.planName}>Basic</div>
-            <div style={styles.planPrice}>¥980/月</div>
+            <div style={styles.planName}>Light</div>
+            <div style={styles.planPrice}>¥1,980/月</div>
             <div style={styles.featureList}>
               ✅ LINE予約<br />
               ✅ 重複ブロック<br />
@@ -374,8 +374,8 @@ export default function KireiturumiPage() {
 
           {/* Small - Recommended */}
           <div style={styles.pricingCard(true)}>
-            <div style={styles.planName}>⭐ Small</div>
-            <div style={styles.planPrice}>¥2,480/月</div>
+            <div style={styles.planName}>⭐ Standard</div>
+            <div style={styles.planPrice}>¥2,980/月</div>
             <div style={styles.planBadge}>推奨プラン</div>
             <div style={styles.featureList}>
               ✅ LINE予約<br />
@@ -391,8 +391,8 @@ export default function KireiturumiPage() {
 
           {/* Medium */}
           <div style={styles.pricingCard(false)}>
-            <div style={styles.planName}>Medium</div>
-            <div style={styles.planPrice}>¥3,980/月</div>
+            <div style={styles.planName}>Premium</div>
+            <div style={styles.planPrice}>¥4,580/月</div>
             <div style={styles.featureList}>
               ✅ LINE予約<br />
               ✅ 重複ブロック<br />
