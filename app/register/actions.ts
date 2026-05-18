@@ -118,6 +118,82 @@ export async function registerSalon(input: RegisterInput): Promise<RegisterResul
   return { ok: true, salonId, freePlanActivated: isFreeplan }
 }
 
+export async function trackLeadConversion(
+  admin: ReturnType<typeof createAdminClient>,
+  email: string,
+  ownerName: string,
+  salonName: string,
+  salonId: string,
+  utmParams: {
+    utm_source?: string
+    utm_medium?: string
+    utm_campaign?: string
+    referrer?: string
+  }
+): Promise<boolean> {
+  try {
+    // Step1: lp_leads を email で照合
+    const { data: existingLead } = await admin
+      .from('lp_leads')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle()
+
+    let leadId: string
+
+    if (existingLead?.id) {
+      leadId = existingLead.id
+    } else {
+      // Step2b: lp_leads に新規作成（contact_name は ownerName を使用）
+      const source = utmParams.utm_source || utmParams.referrer || 'register_direct'
+      const { data: newLead, error: insertError } = await admin
+        .from('lp_leads')
+        .insert({
+          contact_name: ownerName,
+          email,
+          salon_name: salonName,
+          cta_type: 'free_trial',
+          source,
+          status: 'new',
+          created_at: new Date().toISOString(),
+        })
+        .select('id')
+        .single()
+
+      if (insertError || !newLead?.id) {
+        throw new Error(`Failed to create lead: ${insertError?.message}`)
+      }
+      leadId = newLead.id
+    }
+
+    // Step3: lead_events に記録
+    const { error: eventError } = await admin
+      .from('lead_events')
+      .insert({
+        lead_id: leadId,
+        event_type: 'register_completed',
+        event_data: {
+          utm_source: utmParams.utm_source || null,
+          utm_medium: utmParams.utm_medium || null,
+          utm_campaign: utmParams.utm_campaign || null,
+          referrer: utmParams.referrer || null,
+          salon_id: salonId,
+        },
+      })
+
+    if (eventError) {
+      throw new Error(`Failed to record event: ${eventError.message}`)
+    }
+
+    console.log(`[registerSalon] Lead tracking complete: ${leadId}`)
+    return true
+  } catch (error) {
+    const errMsg = error instanceof Error ? error.message : 'Unknown error'
+    console.warn(`[registerSalon] Lead tracking failed (non-blocking): ${errMsg}`)
+    return false
+  }
+}
+
 export async function sendRegistrationOtp(email: string): Promise<{ ok: boolean; message?: string }> {
   const trimmedEmail = email.trim().toLowerCase()
   if (!trimmedEmail) {
