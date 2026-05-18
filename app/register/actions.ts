@@ -115,6 +115,14 @@ export async function registerSalon(input: RegisterInput): Promise<RegisterResul
     }
   }
 
+  // Lead tracking（失敗しても登録は成功のまま。本流を妨げない）
+  await trackLeadConversion(admin, email, input.ownerName, input.salonName, salonId, {
+    utm_source: input.utm_source,
+    utm_medium: input.utm_medium,
+    utm_campaign: input.utm_campaign,
+    referrer: input.referrer,
+  })
+
   return { ok: true, salonId, freePlanActivated: isFreeplan }
 }
 
