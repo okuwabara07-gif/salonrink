@@ -157,7 +157,8 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       • 14日間無料お試し<br>
       • 解約はいつでも</p>
 
-      <p><a href="https://salonrink.com/signup" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p>ご質問やご不明な点がございましたら、本メールにご返信ください。</p>
     </div>
@@ -218,7 +219,8 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <p><strong>【月額¥1,980(税込¥2,178〜)で実現】</strong><br>
       年間で計算すると、削減時間の時給以上の投資対効果が出ます。</p>
 
-      <p><a href="https://salonrink.com/signup" class="cta">14日間無料で試してみる</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">14日間無料で試してみる</a></p>
+      <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p>質問や詳細なお見積りご希望の場合は、本メールへのご返信をお願いします。</p>
     </div>
@@ -279,7 +281,8 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <br>
       こうしたご質問も、無料期間中にサポートチームがサポートいたします。</p>
 
-      <p><a href="https://salonrink.com/signup" class="cta">今すぐ始める</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">今すぐ始める</a></p>
+      <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p>何かご質問があれば、本メールへのご返信でお気軽にお問い合わせください。</p>
     </div>
@@ -326,7 +329,8 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <p>本当にお客様を<strong>「覚えてくれるサロン」</strong>にしたいなら、<br>
       今が行動する時です。</p>
 
-      <p><a href="https://salonrink.com/signup" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p><strong>ご不明な点や導入のご相談</strong>がございましたら、<br>
       本メールへのご返信いただければ、<br>
