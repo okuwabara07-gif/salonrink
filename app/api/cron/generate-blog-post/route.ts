@@ -125,7 +125,14 @@ async function generateArticle(title: string, slug: string, cluster: string): Pr
 - ❌ 「月25時間削減できた」(根拠不明)
 - ❌ 「業界では〇〇億円規模」(未確認)
 
-- 記事末尾に CTA: 「無料で AI カルテを試す」
+- 記事末尾に必ず次のCTAブロックをそのまま挿入（リンクは改変しない）:
+
+## サロンの予約・顧客管理を仕組み化しませんか
+
+予約管理やカルテ管理に毎日時間を取られていませんか。AOKAE合同会社が運営するサービスなら、現場で実際に回っている予約・顧客管理の仕組みを、初期費用0円・14日間無料でお試しいただけます。
+
+- 無料で試す: https://salonrink.com/register
+- LINEで相談する: https://lin.ee/UDNlEOAA
 - マークダウン形式で出力(Frontmatter なし、本文のみ)`
 
   const userPrompt = `以下のタイトルで記事を執筆してください。
