@@ -130,6 +130,10 @@ function RegisterFormContent() {
       plan: inviteCodeValidated ? 'free' : form.plan,
       ownerUserId: authUser.id,
       inviteCodeUsed: inviteCodeValidated,
+      utm_source: searchParams.get('utm_source') || undefined,
+      utm_medium: searchParams.get('utm_medium') || undefined,
+      utm_campaign: searchParams.get('utm_campaign') || undefined,
+      referrer: typeof document !== 'undefined' ? (document.referrer || undefined) : undefined,
     })
 
     if (!result.ok) {
