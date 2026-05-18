@@ -36,7 +36,7 @@ export default function LineContact() {
           QRコードを読み込んでLINE公式アカウントを友だち追加
         </p>
         <a
-          href="https://line.me/R/ti/p/%40salonrink"
+          href="https://lin.ee/UDNlEOAA"
           style={{
             display: 'inline-block',
             background: '#00B900',

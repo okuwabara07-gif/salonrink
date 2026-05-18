@@ -599,7 +599,7 @@ export default function LpPage() {
           <p className={styles.finalCtaSub}>14日間の無料トライアル。最短5分で開始・最短契約期間なし。</p>
           <div className={styles.finalCtaButtons}>
             <a href="/register" className={styles.finalCtaPrimary}>14日間無料で試す<span className={styles.heroArrow} aria-hidden>→</span></a>
-            <a href="https://line.me/R/ti/p/@088vddij" target="_blank" rel="noopener noreferrer" className={styles.finalCtaSecondary}>
+            <a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" className={styles.finalCtaSecondary}>
               <span className={styles.lineIcon} aria-hidden>L</span>LINEで相談する
             </a>
           </div>

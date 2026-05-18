@@ -78,7 +78,7 @@ export default function Footer() {
 
             {/* LINE */}
             <a
-              href="https://lin.ee/salonrink"
+              href="https://lin.ee/UDNlEOAA"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LINE"
