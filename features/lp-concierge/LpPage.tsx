@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './LpPage.module.css';
+import StickyCTA from './StickyCTA';
 
 /* ============================================================
    SalonRink Concierge — Launch LP v3 (with imagery)
@@ -629,6 +630,8 @@ export default function LpPage() {
           </div>
         </div>
       </footer>
+
+      <StickyCTA />
     </main>
   );
 }
