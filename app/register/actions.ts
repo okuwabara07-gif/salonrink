@@ -14,6 +14,10 @@ export type RegisterInput = {
   plan: string
   ownerUserId?: string
   inviteCodeUsed?: boolean
+  utm_source?: string
+  utm_medium?: string
+  utm_campaign?: string
+  referrer?: string
 }
 
 export type RegisterResult =
