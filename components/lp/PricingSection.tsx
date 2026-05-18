@@ -315,7 +315,7 @@ export default function PricingSection() {
             margin: 0,
           }}
         >
-          ※ 価格は税抜表示です。全プランで 14日間無料体験できます。
+          ※ 価格は税込表示です。初期費用0円・全プランで14日間無料体験できます。
         </p>
       </div>
     </section>
