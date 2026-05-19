@@ -19,6 +19,10 @@
     {
       "path": "/api/cron/generate-blog-post",
       "schedule": "0 21 * * 1,3,5"
+    },
+    {
+      "path": "/api/cron/refresh-ig-token",
+      "schedule": "0 3 1 * *"
     }
   ]
 }

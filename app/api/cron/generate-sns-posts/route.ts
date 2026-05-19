@@ -147,6 +147,130 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
   return generatedPosts
 }
 
+// ───── Helper: IGトークンをSupabaseから取得 ─────
+
+interface IgTokenRow {
+  access_token: string
+  ig_business_id: string
+}
+
+async function getIgToken(): Promise<IgTokenRow> {
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!supaUrl || !supaKey) {
+    throw new Error('Supabase env not configured (NEXT_PUBLIC_SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY)')
+  }
+  const res = await fetch(
+    `${supaUrl}/rest/v1/ig_tokens?id=eq.salonrink&select=access_token,ig_business_id`,
+    { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } }
+  )
+  if (!res.ok) {
+    throw new Error(`getIgToken: supabase fetch failed ${res.status}`)
+  }
+  const rows = (await res.json()) as IgTokenRow[]
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error('getIgToken: ig_tokens row not found')
+  }
+  return rows[0]
+}
+
+// ───── Helper: public/ig/ から日付ベースで連続3枚を選択 ─────
+
+function pickCarouselImageUrls(count: number = 3): string[] {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const igDir = path.join(process.cwd(), 'public', 'ig')
+  let files: string[] = []
+  try {
+    files = fs
+      .readdirSync(igDir)
+      .filter((f: string) => /\.(png|jpe?g)$/i.test(f))
+      .sort()
+  } catch {
+    return []
+  }
+  if (files.length === 0) return []
+
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = now.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const base = (dayOfYear * count) % files.length
+
+  const baseUrl = 'https://salonrink.com/ig/'
+  const picks: string[] = []
+  for (let i = 0; i < count; i++) {
+    picks.push(baseUrl + files[(base + i) % files.length])
+  }
+  return picks
+}
+
+// ───── Helper: IGカルーセル投稿(3段階) ─────
+
+interface IgPostResult {
+  success: boolean
+  postId?: string
+  imageUrls: string[]
+  error?: string
+}
+
+async function postCarouselToInstagram(caption: string, imageUrls: string[]): Promise<IgPostResult> {
+  if (imageUrls.length === 0) {
+    return { success: false, imageUrls, error: 'no images available in public/ig/' }
+  }
+  let token: IgTokenRow
+  try {
+    token = await getIgToken()
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'unknown'
+    return { success: false, imageUrls, error: `token fetch failed: ${msg}` }
+  }
+  const { access_token: accessToken, ig_business_id: igId } = token
+  const api = `https://graph.facebook.com/v21.0/${igId}`
+
+  try {
+    const childIds: string[] = []
+    for (const url of imageUrls) {
+      const form = new URLSearchParams()
+      form.set('image_url', url)
+      form.set('is_carousel_item', 'true')
+      form.set('access_token', accessToken)
+      const r = await fetch(`${api}/media`, { method: 'POST', body: form })
+      const j = await r.json()
+      if (!j.id) {
+        throw new Error(`child container failed for ${url}: ${JSON.stringify(j).slice(0, 200)}`)
+      }
+      childIds.push(j.id as string)
+    }
+
+    const parentForm = new URLSearchParams()
+    parentForm.set('media_type', 'CAROUSEL')
+    parentForm.set('children', childIds.join(','))
+    parentForm.set('caption', caption)
+    parentForm.set('access_token', accessToken)
+    const pr = await fetch(`${api}/media`, { method: 'POST', body: parentForm })
+    const pj = await pr.json()
+    if (!pj.id) {
+      throw new Error(`parent container failed: ${JSON.stringify(pj).slice(0, 200)}`)
+    }
+    const parentId = pj.id as string
+
+    await new Promise((res) => setTimeout(res, 5000))
+    const pubForm = new URLSearchParams()
+    pubForm.set('creation_id', parentId)
+    pubForm.set('access_token', accessToken)
+    const ur = await fetch(`${api}/media_publish`, { method: 'POST', body: pubForm })
+    const uj = await ur.json()
+    if (!uj.id) {
+      throw new Error(`publish failed: ${JSON.stringify(uj).slice(0, 200)}`)
+    }
+    return { success: true, postId: uj.id as string, imageUrls }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'unknown'
+    return { success: false, imageUrls, error: msg }
+  }
+}
+
 // ───── Helper: Slack に投稿案を送信 ─────
 
 async function sendToSlack(theme: string, posts: GeneratedPosts): Promise<boolean> {
@@ -286,6 +410,31 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
     result.generated.x = generatedPosts.x.length
     result.generated.threads = generatedPosts.threads.length
     result.generated.instagram = 1
+    // ─── IG実投稿 ─── (patch)
+    let igPostStatus = '未実行'
+    try {
+      const imageUrls = pickCarouselImageUrls(3)
+      if (imageUrls.length === 0) {
+        igPostStatus = 'スキップ(public/ig/に画像なし)'
+        console.warn('[generate-sns-posts] IG投稿スキップ: 画像が無い')
+      } else {
+        console.log(`[generate-sns-posts] IGカルーセル投稿開始 (${imageUrls.length}枚)`)
+        const igResult = await postCarouselToInstagram(generatedPosts.instagram.caption, imageUrls)
+        if (igResult.success) {
+          igPostStatus = `成功(post_id=${igResult.postId})`
+          console.log(`[generate-sns-posts] IG投稿成功: ${igResult.postId}`)
+        } else {
+          igPostStatus = `失敗(${igResult.error})`
+          console.error(`[generate-sns-posts] IG投稿失敗: ${igResult.error}`)
+        }
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'unknown'
+      igPostStatus = `エラー(${msg})`
+      console.error(`[generate-sns-posts] IG投稿例外: ${msg}`)
+    }
+    // ─── IG実投稿 ここまで ───
+
 
     console.log(
       `[generate-sns-posts] Generated: X=${result.generated.x}, Threads=${result.generated.threads}, Instagram=1`
