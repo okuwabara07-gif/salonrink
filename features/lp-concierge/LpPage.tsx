@@ -620,6 +620,7 @@ export default function LpPage() {
             <a href="/privacy">プライバシー</a>
             <a href="/terms">利用規約</a>
             <a href="mailto:support@salonrink.com">お問い合わせ</a>
+            <a href="https://www.instagram.com/salonrink_concierge/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">Instagram</a>
           </nav>
           <div className={styles.footerLegal}>
             <p>運営: AOKAE合同会社</p>
