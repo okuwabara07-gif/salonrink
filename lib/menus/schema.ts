@@ -12,7 +12,7 @@ export const MenuRow = z.object({
   duration: z.number().int(),
   category: z.string().nullable(),
   sort_order: z.number().int(),
-  created_at: z.string().datetime(),
+  created_at: z.string(),
 })
 
 export type MenuRow = z.infer<typeof MenuRow>

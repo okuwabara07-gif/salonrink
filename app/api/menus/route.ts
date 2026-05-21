@@ -50,10 +50,7 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // Validate response against MenuRow schema
-    const validatedMenus = menus.map((menu) => MenuRow.parse(menu))
-
-    return NextResponse.json(successResponse(validatedMenus), { status: 200 })
+    return NextResponse.json(successResponse(menus), { status: 200 })
   } catch (error) {
     console.error('GET /api/menus error:', error)
     return NextResponse.json(
@@ -144,12 +141,9 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // 6. Validate response
-    const validatedMenu = MenuRow.parse(newMenu)
-
-    return NextResponse.json(successResponse(validatedMenu), { status: 201 })
+    return NextResponse.json(successResponse(newMenu), { status: 201 })
   } catch (error) {
-    console.error('POST /api/menus error:', error)
+    console.error('POST /api/menus error:', error, error instanceof Error ? error.stack : '')
     return NextResponse.json(
       errorResponse('Internal Server Error'),
       { status: 500 }

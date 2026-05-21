@@ -91,8 +91,7 @@ export async function PATCH(
         return NextResponse.json(errorResponse('Not Found'), { status: 404 })
       }
 
-      const validatedMenu = MenuRow.parse(menu)
-      return NextResponse.json(successResponse(validatedMenu), { status: 200 })
+      return NextResponse.json(successResponse(menu), { status: 200 })
     }
 
     // 6. Update menu (double defense: id + salon_id)
@@ -112,12 +111,9 @@ export async function PATCH(
       )
     }
 
-    // 7. Validate and return updated menu
-    const validatedMenu = MenuRow.parse(updatedMenu)
-
-    return NextResponse.json(successResponse(validatedMenu), { status: 200 })
+    return NextResponse.json(successResponse(updatedMenu), { status: 200 })
   } catch (error) {
-    console.error('PATCH /api/menus/[id] error:', error)
+    console.error('PATCH /api/menus/[id] error:', error, error instanceof Error ? error.stack : '')
     return NextResponse.json(
       errorResponse('Internal Server Error'),
       { status: 500 }
@@ -178,7 +174,7 @@ export async function DELETE(
       { status: 200 }
     )
   } catch (error) {
-    console.error('DELETE /api/menus/[id] error:', error)
+    console.error('DELETE /api/menus/[id] error:', error, error instanceof Error ? error.stack : '')
     return NextResponse.json(
       errorResponse('Internal Server Error'),
       { status: 500 }
