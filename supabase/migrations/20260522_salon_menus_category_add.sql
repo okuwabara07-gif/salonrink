@@ -33,6 +33,8 @@ UPDATE public.salon_menus
 SET category =
   CASE
     WHEN name ILIKE '%カラー%' THEN 'カラー'
+    WHEN name ILIKE '%リタッチ%' THEN 'カラー'
+    WHEN name ILIKE '%全体%' THEN 'カラー'
     WHEN name ILIKE '%パーマ%' THEN 'パーマ'
     WHEN name ILIKE '%トリートメント%' THEN 'トリートメント'
     WHEN name ILIKE '%ストレート%' THEN 'ストレート'
