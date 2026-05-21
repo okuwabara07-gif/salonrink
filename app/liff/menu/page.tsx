@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import liff from '@line/liff'
 import { createBrowserClient } from '@supabase/ssr'
 import type { User } from '@supabase/supabase-js'
+import { MenuClient } from './_components/MenuClient'
 
 // ========================================
 // Type definitions
@@ -207,30 +208,8 @@ export default function MenuPage() {
 
       {/* Content */}
       <main className="px-lg py-md">
-        {/* Placeholder for MenuClient component */}
         <MenuClient user={authContext.user!} />
       </main>
-    </div>
-  )
-}
-
-// ========================================
-// MenuClient Component (placeholder)
-// ========================================
-
-interface MenuClientProps {
-  user: User
-}
-
-function MenuClient({ user }: MenuClientProps) {
-  return (
-    <div className="text-center py-xl">
-      <p className="text-body-sm text-ink-3 mb-md">
-        ログイン成功: {user.email}
-      </p>
-      <p className="text-caption-sm text-ink-4">
-        メニュー一覧はここに表示されます
-      </p>
     </div>
   )
 }
