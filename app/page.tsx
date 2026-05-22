@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import LpPage from '@/features/lp-concierge/LpPage';
 
 export const metadata: Metadata = {
-  title: 'SalonRink Concierge — サロンに、専属コンシェルジュを。',
+  title: 'SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。',
   description:
-    'お客様一人ひとりの好み・履歴・前回の悩みまで覚えている、AIコンシェルジュ。LINE完結のサロン管理SaaS。月¥1,980から、14日間無料。本日発売開始。',
+    'いまのLINE公式アカウントに、AIカルテと顧客記憶を追加するだけ。新しいアプリ不要、最短5分で開始。月¥1,980から、14日間無料。',
   keywords: [
     'サロンコンシェルジュ',
     'SalonRink Concierge',
@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'AOKAE合同会社' }],
   openGraph: {
-    title: 'SalonRink Concierge — サロンに、専属コンシェルジュを。',
+    title: 'SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。',
     description:
-      'あなたの好み、前回の悩み、お気に入りの担当さん。覚えていてくれる、その嬉しさを。LINE完結のサロン管理SaaS、月¥1,980から。',
+      'いまのLINE公式アカウントに、AIカルテと顧客記憶を追加。新アプリ不要、最短5分で開始。月¥1,980から、14日間無料。',
     url: 'https://salonrink.com',
     siteName: 'SalonRink Concierge',
     locale: 'ja_JP',
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SalonRink Concierge | サロンに、専属コンシェルジュを。',
+    title: 'SalonRink Concierge | 再来店率と業務時間を、LINEひとつで変える。',
     description:
-      'お客様一人ひとりの「いつも」を記憶する、AIコンシェルジュ。月¥1,980から、14日間無料。',
+      'LINE公式アカウントに追加するだけで、AIカルテと顧客記憶が動作。新アプリ不要、5分で開始。月¥1,980から。',
     creator: '@salonrink_jp',
   },
 };

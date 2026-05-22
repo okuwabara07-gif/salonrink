@@ -145,12 +145,12 @@ export default function LpPage() {
               <span className={styles.heroKickerText}>S A L O N R I N K · C O N C I E R G E</span>
             </div>
             <h1 className={styles.heroTitle}>
-              サロンに、<br/>
-              <span className={styles.heroTitleAccent}>専属コンシェルジュを。</span>
+              再来店率と業務時間を、<br/>
+              <span className={styles.heroTitleAccent}>LINEひとつで変える。</span>
             </h1>
             <p className={styles.heroSub}>
-              あなたの好み、前回の悩み、お気に入りの担当さん。<br/>
-              覚えていてくれる、その嬉しさを。
+              いまのLINE公式アカウントに、AIカルテと顧客記憶を追加するだけ。<br/>
+              新しいアプリは要らない。最短5分で開始。
             </p>
             <ul className={styles.heroBullets}>
               <li><span className={styles.heroBulletMark} aria-hidden>✓</span>お客様一人ひとりの「いつも」を記憶</li>
@@ -170,7 +170,7 @@ export default function LpPage() {
           <div className={styles.heroVisual}>
             <Image
               src="/logo/salonrink-concierge-oval.png"
-              alt="SalonRink Concierge — サロンに、専属コンシェルジュを。"
+              alt="SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。"
               width={560} height={720} priority
               sizes="(max-width: 980px) 70vw, 500px"
               className={styles.heroLogo}
