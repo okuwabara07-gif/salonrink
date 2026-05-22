@@ -23,6 +23,14 @@ interface KpiData {
     current: number
     unit: string
   }
+  salon: {
+    name: string
+    branch: string | null
+  }
+  user: {
+    name: string
+    initial: string
+  }
 }
 
 interface BookingToday {
@@ -91,19 +99,48 @@ export function DashboardClient({ user }: DashboardClientProps) {
     fetchData()
   }, [user.id])
 
+  // ヘッダー用データを生成
+  const salonName = kpi?.salon.name || 'サロン'
+  const branch = kpi?.salon.branch || '中目黒店'
+  const userName = kpi?.user.name || 'オーナー'
+  const userInitial = kpi?.user.initial || '℃'
+
+  // 日付フォーマット: YYYY.MM.DD · 曜日
+  const now = new Date()
+  const jstDate = now.toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
+  const dayOfWeek = now.toLocaleDateString('ja-JP', {
+    weekday: 'long',
+    timeZone: 'Asia/Tokyo'
+  })
+  const dateLabel = `${jstDate} · ${dayOfWeek}`
+
   return (
-    <div className="space-y-6 px-4 py-6">
+    <div className="space-y-6">
       {/* ヘッダー */}
-      <div>
-        <h1 className="text-2xl font-serif font-medium text-ink">ダッシュボード</h1>
-        <p className="text-sm text-ink-3 mt-1">
-          {new Date().toLocaleDateString('ja-JP', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-          })}
-        </p>
-      </div>
+      <header className="bg-cream px-4 pt-4 pb-3 border-b border-border-soft">
+        {/* 上段: サロン名 + アバター */}
+        <div className="flex items-center justify-between mb-1">
+          <div>
+            <h1 className="font-serif text-[19px] font-medium text-ink" style={{ letterSpacing: '0.4px' }}>
+              {salonName}
+            </h1>
+            <p className="text-[11px] text-muted mt-px">
+              {branch} · ようこそ、{userName}さん
+            </p>
+          </div>
+          <div className="w-[38px] h-[38px] rounded-full bg-bg-alt border border-border-primary flex items-center justify-center font-serif text-[14px] text-ink">
+            {userInitial}
+          </div>
+        </div>
+
+        {/* 下段: 日付バッジ */}
+        <div className="mt-1.5 text-[10.5px] text-faint font-mono uppercase" style={{ letterSpacing: '0.4px' }}>
+          {dateLabel}
+        </div>
+      </header>
+
+      {/* コンテンツエリア */}
+      <div className="space-y-6 px-4 py-6">
 
       {/* エラー表示 */}
       {error && (
@@ -217,6 +254,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
 
       {/* ボトムナビ */}
       <BottomNav />
+      </div>
     </div>
   )
 }

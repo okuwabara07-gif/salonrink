@@ -23,6 +23,14 @@ interface KpiResponseData {
     current: number
     unit: string
   }
+  salon: {
+    name: string
+    branch: string | null
+  }
+  user: {
+    name: string
+    initial: string
+  }
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -53,10 +61,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Unauthorized', 401)
     }
 
-    // Step 3: salon 特定 + 所有権確認
+    // Step 3: salon 特定 + 所有権確認 + 詳細情報取得
     const { data: salon, error: salonError } = await supabase
       .from('salons')
-      .select('id')
+      .select('id, name, branch')
       .eq('owner_user_id', user.id)
       .maybeSingle()
 
@@ -78,13 +86,25 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       getRepeatRate(salonId),
     ])
 
-    // Step 5: レスポンス構築
+    // Step 5: ユーザー情報を取得
+    const userName = user.user_metadata?.name || 'オーナー'
+    const userInitial = userName.charAt(0) || '℃'
+
+    // Step 6: レスポンス構築
     const responseData: KpiResponseData = {
       revenue,
       newBookings,
       repeatRate: {
         current: repeatRate,
         unit: '%',
+      },
+      salon: {
+        name: (salon.name as string) || 'サロン',
+        branch: (salon.branch as string | null) || null,
+      },
+      user: {
+        name: userName,
+        initial: userInitial,
       },
     }
 
