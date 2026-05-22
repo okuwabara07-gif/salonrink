@@ -53,7 +53,7 @@ export async function createOwnerRichMenu(
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify(menuConfig)
     const options = {
-      hostname: 'api.line.biz',
+      hostname: 'api.line.me',
       path: '/v2/bot/richmenu',
       method: 'POST',
       headers: {
@@ -97,7 +97,7 @@ export async function uploadOwnerRichMenuImage(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'api.line.biz',
+      hostname: 'api-data.line.me',
       path: `/v2/bot/richmenu/${richMenuId}/content`,
       method: 'POST',
       headers: {
@@ -135,7 +135,7 @@ export async function setDefaultOwnerRichMenu(
 ): Promise<void> {
   return new Promise((resolve, reject) => {
     const options = {
-      hostname: 'api.line.biz',
+      hostname: 'api.line.me',
       path: `/v2/bot/user/all/richmenu/${richMenuId}`,
       method: 'POST',
       headers: {
