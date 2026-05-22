@@ -7,107 +7,83 @@ export function generateOwnerRichMenuSvg(): string {
   const height = 1686
   const cols = 3
   const rows = 2
-  const squareWidth = width / cols // 833px each
-  const squareHeight = height / rows // 843px each
-  const gridColor = '#E8E8E8'
-  const bgColor = '#FFFBF7' // cream background
+  const squareWidth = width / cols // 833.33px
+  const squareHeight = height / rows // 843px
+  const gridColor = '#E5E5E5'
+  const bgColor = '#FFFBF7' // cream
   const accentGreen = '#06C755'
   const darkText = '#2C2C2C'
 
   const items = [
     {
-      label: '今日の予約',
       emoji: '📅',
-      description: 'Booking Summary',
-      color: '#3366FF', // token blue
+      label: '今日の予約',
+      desc: 'Booking',
+      accentColor: '#3366FF',
       col: 0,
       row: 0,
     },
     {
-      label: 'カルテ',
       emoji: '📋',
-      description: 'Client Cards',
-      color: '#FF6B6B', // token red
+      label: 'カルテ',
+      desc: 'Records',
+      accentColor: '#FF6B6B',
       col: 1,
       row: 0,
     },
     {
-      label: '顧客',
       emoji: '👥',
-      description: 'Customers',
-      color: '#9933FF', // token purple
+      label: '顧客',
+      desc: 'Customers',
+      accentColor: '#9933FF',
       col: 2,
       row: 0,
     },
     {
-      label: 'メニュー',
       emoji: '✂️',
-      description: 'Menu',
-      color: '#FF9933', // token orange
+      label: 'メニュー',
+      desc: 'Menu',
+      accentColor: '#FF9933',
       col: 0,
       row: 1,
     },
     {
-      label: '設定',
       emoji: '⚙️',
-      description: 'Settings',
-      color: '#00B8A9', // token teal
+      label: '設定',
+      desc: 'Settings',
+      accentColor: '#00B8A9',
       col: 1,
       row: 1,
     },
     {
-      label: 'サポート',
       emoji: '💬',
-      description: 'Support',
-      color: accentGreen,
+      label: 'サポート',
+      desc: 'Support',
+      accentColor: accentGreen,
       col: 2,
       row: 1,
       isSupport: true,
     },
   ]
 
-  // Embed fonts as data URIs (fallback: system fonts)
-  const fontFaces = `
-    <defs>
-      <style>
-        @font-face {
-          font-family: 'Noto Serif JP';
-          font-weight: 700;
-          src: local('Noto Serif JP Bold'), local('NotoSerifJP-Bold');
-        }
-        @font-face {
-          font-family: 'Noto Sans JP';
-          font-weight: 400;
-          src: local('Noto Sans JP'), local('NotoSansJP-Regular');
-        }
-        @font-face {
-          font-family: 'Noto Sans JP';
-          font-weight: 500;
-          src: local('Noto Sans JP Medium'), local('NotoSansJP-Medium');
-        }
-      </style>
-    </defs>
-  `
-
+  // Grid lines (vertical + horizontal)
   const gridLines = items
-    .map(
-      (item) => `
-    <!-- Grid lines for square (${item.col}, ${item.row}) -->
-    <line x1="${item.col * squareWidth}" y1="${item.row * squareHeight}"
-          x2="${(item.col + 1) * squareWidth}" y2="${item.row * squareHeight}"
-          stroke="${gridColor}" stroke-width="2"/>
-    <line x1="${item.col * squareWidth}" y1="${(item.row + 1) * squareHeight}"
-          x2="${(item.col + 1) * squareWidth}" y2="${(item.row + 1) * squareHeight}"
-          stroke="${gridColor}" stroke-width="2"/>
-    <line x1="${item.col * squareWidth}" y1="${item.row * squareHeight}"
-          x2="${item.col * squareWidth}" y2="${(item.row + 1) * squareHeight}"
-          stroke="${gridColor}" stroke-width="2"/>
-    <line x1="${(item.col + 1) * squareWidth}" y1="${item.row * squareHeight}"
-          x2="${(item.col + 1) * squareWidth}" y2="${(item.row + 1) * squareHeight}"
-          stroke="${gridColor}" stroke-width="2"/>
-    `
-    )
-    .join('')
+    .map((item) => {
+      const x = item.col * squareWidth
+      const y = item.row * squareHeight
+      return `<line x1="${x}" y1="${item.row * squareHeight}" x2="${x}" y2="${(item.row + 1) * squareHeight}" stroke="${gridColor}" stroke-width="3"/>`
+    })
+    .concat([
+      // Top and bottom horizontal lines
+      `<line x1="0" y1="0" x2="${width}" y2="0" stroke="${gridColor}" stroke-width="3"/>`,
+      `<line x1="0" y1="${squareHeight}" x2="${width}" y2="${squareHeight}" stroke="${gridColor}" stroke-width="3"/>`,
+      `<line x1="0" y1="${height}" x2="${width}" y2="${height}" stroke="${gridColor}" stroke-width="3"/>`,
+      // Vertical lines
+      `<line x1="${squareWidth}" y1="0" x2="${squareWidth}" y2="${height}" stroke="${gridColor}" stroke-width="3"/>`,
+      `<line x1="${squareWidth * 2}" y1="0" x2="${squareWidth * 2}" y2="${height}" stroke="${gridColor}" stroke-width="3"/>`,
+      `<line x1="${width}" y1="0" x2="${width}" y2="${height}" stroke="${gridColor}" stroke-width="3"/>`,
+    ])
+    .join('\n')
 
   const squareContents = items
     .map((item) => {
@@ -115,41 +91,37 @@ export function generateOwnerRichMenuSvg(): string {
       const y = item.row * squareHeight
       const cx = x + squareWidth / 2
       const cy = y + squareHeight / 2
-      const emojiSize = 360
-      const labelSize = 100
-      const descSize = 60
+
+      const emojiSize = 380
+      const labelFontSize = 110
+      const descFontSize = 70
 
       return `
     <!-- Square (${item.col}, ${item.row}): ${item.label} -->
     <g>
       <!-- Color accent bar (top) -->
-      <rect x="${x}" y="${y}" width="${squareWidth}" height="60" fill="${item.color}" opacity="0.15"/>
+      <rect x="${x}" y="${y}" width="${squareWidth}" height="80" fill="${item.accentColor}" opacity="${item.isSupport ? 0.25 : 0.12}"/>
 
       <!-- Emoji -->
-      <text x="${cx}" y="${cy - 180}"
-            font-size="${emojiSize}" text-anchor="middle" dominant-baseline="middle">${item.emoji}</text>
+      <text x="${cx}" y="${cy - 150}" font-size="${emojiSize}" text-anchor="middle" dominant-baseline="middle">${item.emoji}</text>
 
-      <!-- Label -->
-      <text x="${cx}" y="${cy + 120}"
-            font-family="Noto Serif JP" font-size="${labelSize}" font-weight="700"
-            text-anchor="middle" dominant-baseline="middle" fill="${darkText}">
-        ${item.label}
-      </text>
+      <!-- Label (Japanese) -->
+      <text x="${cx}" y="${cy + 140}" font-family="'Noto Serif JP'" font-size="${labelFontSize}" font-weight="700" text-anchor="middle" dominant-baseline="middle" fill="${darkText}">${item.label}</text>
 
       <!-- Description (English) -->
-      <text x="${cx}" y="${cy + 220}"
-            font-family="Noto Sans JP" font-size="${descSize}" font-weight="400"
-            text-anchor="middle" dominant-baseline="middle" fill="${item.color}">
-        ${item.description}
-      </text>
+      <text x="${cx}" y="${cy + 250}" font-family="'Noto Sans JP'" font-size="${descFontSize}" font-weight="400" text-anchor="middle" dominant-baseline="middle" fill="${item.accentColor}">${item.desc}</text>
     </g>
     `
     })
-    .join('')
+    .join('\n')
 
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}">
-  ${fontFaces}
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap');
+    </style>
+  </defs>
 
   <!-- Background -->
   <rect width="${width}" height="${height}" fill="${bgColor}"/>
@@ -157,17 +129,14 @@ export function generateOwnerRichMenuSvg(): string {
   <!-- Grid lines -->
   ${gridLines}
 
-  <!-- Squares content -->
+  <!-- Squares -->
   ${squareContents}
-
-  <!-- Outer border -->
-  <rect x="0" y="0" width="${width}" height="${height}" fill="none" stroke="${gridColor}" stroke-width="2"/>
 </svg>`
 
   return svg
 }
 
-// Type for rich menu configuration
+// Generate click areas for rich menu
 export type RichMenuArea = {
   bounds: {
     x: number
@@ -183,41 +152,21 @@ export type RichMenuArea = {
   }
 }
 
-// Generate rich menu areas (click zones)
 export function generateRichMenuAreas(): RichMenuArea[] {
-  const cols = 3
-  const rows = 2
   const width = 2500
   const height = 1686
+  const cols = 3
+  const rows = 2
   const squareWidth = width / cols
   const squareHeight = height / rows
 
   const actions = [
-    {
-      label: 'today-booking',
-      uri: 'https://salonrink.com/dashboard/bookings',
-    },
-    {
-      label: 'karte',
-      uri: 'https://salonrink.com/dashboard/karte',
-    },
-    {
-      label: 'customers',
-      uri: 'https://salonrink.com/dashboard/customers',
-    },
-    {
-      label: 'menu',
-      uri: 'https://salonrink.com/dashboard/menu',
-    },
-    {
-      label: 'settings',
-      uri: 'https://salonrink.com/dashboard/settings',
-    },
-    {
-      label: 'support',
-      data: 'action=help',
-      postback: true,
-    },
+    { label: 'booking', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/bookings' },
+    { label: 'records', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/karte' },
+    { label: 'customers', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/customers' },
+    { label: 'menu', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/menu' },
+    { label: 'settings', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/settings' },
+    { label: 'support', type: 'postback' as const, data: 'action=help' },
   ]
 
   return actions.map((action, idx) => {
@@ -231,7 +180,7 @@ export function generateRichMenuAreas(): RichMenuArea[] {
         height: squareHeight,
       },
       action: {
-        type: action.postback ? 'postback' : 'uri',
+        type: action.type,
         label: action.label,
         uri: action.uri,
         data: action.data,

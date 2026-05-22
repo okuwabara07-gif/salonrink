@@ -1,14 +1,37 @@
 import https from 'https'
 import { generateRichMenuAreas } from '@/lib/line-messages/owner-richmenu-svg'
 
-// Create rich menu and return menu ID
+type RichMenuConfig = {
+  size: {
+    width: number
+    height: number
+  }
+  selected: boolean
+  name: string
+  chat_bar_text: string
+  areas: Array<{
+    bounds: {
+      x: number
+      y: number
+      width: number
+      height: number
+    }
+    action: {
+      type: 'uri' | 'postback'
+      label: string
+      uri?: string
+      data?: string
+    }
+  }>
+}
+
 export async function createOwnerRichMenu(
   channelToken: string,
   richMenuName: string = 'owner-dashboard-v1'
 ): Promise<string> {
   const areas = generateRichMenuAreas()
 
-  const menuPayload = {
+  const menuConfig: RichMenuConfig = {
     size: {
       width: 2500,
       height: 1686,
@@ -28,7 +51,7 @@ export async function createOwnerRichMenu(
   }
 
   return new Promise((resolve, reject) => {
-    const payload = JSON.stringify(menuPayload)
+    const payload = JSON.stringify(menuConfig)
     const options = {
       hostname: 'api.line.biz',
       path: '/v2/bot/richmenu',
@@ -48,16 +71,14 @@ export async function createOwnerRichMenu(
       res.on('end', () => {
         if (res.statusCode !== 200) {
           reject(
-            new Error(
-              `Failed to create rich menu: ${res.statusCode} ${data}`
-            )
+            new Error(`createRichMenu failed: ${res.statusCode} ${data}`)
           )
         } else {
           try {
             const parsed = JSON.parse(data)
             resolve(parsed.richMenuId)
           } catch (err) {
-            reject(new Error(`Failed to parse rich menu ID from response: ${data}`))
+            reject(new Error(`Failed to parse richMenuId: ${data}`))
           }
         }
       })
@@ -69,7 +90,6 @@ export async function createOwnerRichMenu(
   })
 }
 
-// Upload image to rich menu
 export async function uploadOwnerRichMenuImage(
   richMenuId: string,
   imageBuffer: Buffer,
@@ -95,9 +115,7 @@ export async function uploadOwnerRichMenuImage(
       res.on('end', () => {
         if (res.statusCode !== 200) {
           reject(
-            new Error(
-              `Failed to upload rich menu image: ${res.statusCode} ${data}`
-            )
+            new Error(`uploadImage failed: ${res.statusCode} ${data}`)
           )
         } else {
           resolve()
@@ -111,13 +129,11 @@ export async function uploadOwnerRichMenuImage(
   })
 }
 
-// Set default rich menu for all users
 export async function setDefaultOwnerRichMenu(
   richMenuId: string,
   channelToken: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const payload = ''
     const options = {
       hostname: 'api.line.biz',
       path: `/v2/bot/user/all/richmenu/${richMenuId}`,
@@ -137,9 +153,7 @@ export async function setDefaultOwnerRichMenu(
       res.on('end', () => {
         if (res.statusCode !== 200) {
           reject(
-            new Error(
-              `Failed to set default rich menu: ${res.statusCode} ${data}`
-            )
+            new Error(`setDefaultRichMenu failed: ${res.statusCode} ${data}`)
           )
         } else {
           resolve()
