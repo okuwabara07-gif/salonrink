@@ -8,7 +8,7 @@ type RichMenuConfig = {
   }
   selected: boolean
   name: string
-  chat_bar_text: string
+  chatBarText: string
   areas: Array<{
     bounds: {
       x: number
@@ -38,7 +38,7 @@ export async function createOwnerRichMenu(
     },
     selected: true,
     name: richMenuName,
-    chat_bar_text: 'メニューを見る',
+    chatBarText: 'メニュー',
     areas: areas.map((area) => ({
       bounds: area.bounds,
       action: {
