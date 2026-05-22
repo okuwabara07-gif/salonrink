@@ -211,17 +211,17 @@
 
 /* COMPARE TABLE */
 .compare { background: #f5f0e6; }
-.compareTableWrap { max-width: 900px; margin: 0 auto; overflow-x: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 4px 16px rgba(26, 20, 16, 0.05); }
-.compareTable { width: 100%; border-collapse: collapse; min-width: 600px; }
+.compareTableWrap { max-width: 1000px; margin: 0 auto; overflow-x: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 4px 16px rgba(26, 20, 16, 0.05); }
+.compareTable { width: 100%; border-collapse: collapse; min-width: 720px; }
 .compareTable thead th { padding: 22px 16px; background: #fbf7ef; border-bottom: 1px solid rgba(184, 149, 100, 0.2); font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 14px; font-weight: 500; color: #4a3d31; text-align: center; }
-.compareThSrk { background: linear-gradient(135deg, #2a2018, #1a1410) !important; color: #f0e6d2 !important; }
-.compareSrkLabel { display: inline-block; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; line-height: 1.3; }
+.compareThSrk { background: linear-gradient(135deg, #06C755, #039d3d) !important; color: #ffffff !important; font-weight: 600; box-shadow: inset 0 0 12px rgba(6, 199, 85, 0.15); }
+.compareSrkLabel { display: inline-block; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; line-height: 1.3; letter-spacing: 0.02em; }
 .compareTable tbody tr { border-bottom: 1px solid rgba(184, 149, 100, 0.1); }
 .compareTable tbody tr:last-child { border-bottom: 0; }
 .compareTable td { padding: 18px 16px; font-size: 13.5px; text-align: center; color: #2a2018; }
 .compareFeatureCell { text-align: left !important; font-weight: 500; color: #1f1813 !important; }
-.compareSrkCell { background: rgba(184, 149, 100, 0.04); }
-.compareYes { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: linear-gradient(135deg, #d4ad6e, #b89564); color: #1a1410; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.compareSrkCell { background: rgba(6, 199, 85, 0.06); border-left: 3px solid #06C755; }
+.compareYes { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: linear-gradient(135deg, #06C755, #039d3d); color: #ffffff; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .compareNo { color: #b89c84; font-size: 12.5px; }
 .compareValue { color: #2a2018; font-weight: 500; }
 

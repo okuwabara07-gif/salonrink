@@ -49,13 +49,15 @@ const STEPS = [
 ];
 
 const COMPARE_ROWS = [
-  { feature: 'AIカルテ自動生成', srk: '対応', a: '未対応', b: '未対応' },
-  { feature: 'LINEカウンセリング', srk: '対応', a: '未対応', b: '対応' },
-  { feature: '敏感肌情報の整理', srk: '対応', a: '未対応', b: '未対応' },
-  { feature: '予約・売上の一元管理', srk: '対応', a: '対応', b: '未対応' },
-  { feature: '初期費用', srk: '0円', a: '30,000円〜', b: '0円' },
-  { feature: '最短契約期間', srk: 'なし', a: '12ヶ月', b: 'なし' },
-  { feature: '月額(標準プラン)', srk: '¥1,980〜', a: '¥9,800', b: '¥4,500' },
+  { feature: 'ポジショニング', srk: 'LINEアドオン型', a: '従来型予約システム', b: '予約系SaaS', c: 'カルテ専業' },
+  { feature: '月額料金', srk: '¥1,980〜', a: '¥9,800', b: '¥4,500', c: '¥3,300' },
+  { feature: '初期費用', srk: '0円', a: '30,000円〜', b: '0円', c: '10,000円〜' },
+  { feature: '導入時間', srk: '5分', a: '2週間', b: '1週間', c: '3日' },
+  { feature: 'スタッフ学習コスト', srk: '無し', a: '高い', b: '中程度', c: '低い' },
+  { feature: 'お客様への影響', srk: '無し(LINEのまま)', a: '中程度(新ログイン)', b: '低い(既存連携)', c: '中程度(アプリDL)' },
+  { feature: '顧客記憶カルテ', srk: '対応', a: '未対応', b: '基本機能', c: '対応' },
+  { feature: 'AIカルテ自動生成', srk: '対応', a: '未対応', b: '未対応', c: '対応(基本)' },
+  { feature: 'LINE完結性', srk: '100%完結', a: '連携なし', b: '一部連携', c: '連携なし' },
 ];
 
 const INTEGRATIONS = [
@@ -592,8 +594,9 @@ export default function LpPage() {
                   <th className={styles.compareThSrk}>
                     <span className={styles.compareSrkLabel}>SalonRink<br/>Concierge</span>
                   </th>
-                  <th>従来型A社</th>
-                  <th>予約系B社</th>
+                  <th>A社</th>
+                  <th>B社</th>
+                  <th>C社</th>
                 </tr>
               </thead>
               <tbody>
@@ -608,6 +611,9 @@ export default function LpPage() {
                     </td>
                     <td>
                       <span className={row.b === '未対応' ? styles.compareNo : styles.compareValue}>{row.b}</span>
+                    </td>
+                    <td>
+                      <span className={row.c === '未対応' ? styles.compareNo : styles.compareValue}>{row.c}</span>
                     </td>
                   </tr>
                 ))}
