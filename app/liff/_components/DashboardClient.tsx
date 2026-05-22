@@ -12,7 +12,9 @@
 import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { BottomNav } from './BottomNav'
-import { KpiCard } from './KpiCard'
+import { KpiCardV2 } from './KpiCardV2'
+import { UnmatchedCard } from './UnmatchedCard'
+import { SectionLabel } from './SectionLabel'
 import type { ApiResponse } from '@/lib/menus/schema'
 import type { KpiTrend } from '@/lib/kpi'
 
@@ -52,6 +54,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
   const [bookings, setBookings] = useState<BookingToday[]>([])
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsError, setBookingsError] = useState<string | null>(null)
+  const [unmatchedCount, setUnmatchedCount] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +88,14 @@ export function DashboardClient({ user }: DashboardClientProps) {
           setBookingsError(bookingsJson.error || '予約データの取得に失敗しました')
         } else if (bookingsJson.data) {
           setBookings(bookingsJson.data)
+        }
+
+        // Fetch unmatched count
+        const unmatchedResponse = await fetch('/api/menus/unmatched-count')
+        const unmatchedJson: ApiResponse<{ count: number }> = await unmatchedResponse.json()
+
+        if (unmatchedResponse.ok && unmatchedJson.data) {
+          setUnmatchedCount(unmatchedJson.data.count)
         }
       } catch (err) {
         console.error('[DashboardClient] fetch error:', err)
@@ -147,7 +158,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
         </div>
       )}
 
-      {/* KPI カード */}
+      {/* KPI セクション */}
       {loading ? (
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
@@ -158,27 +169,37 @@ export function DashboardClient({ user }: DashboardClientProps) {
           </div>
         </div>
       ) : kpi ? (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <KpiCard
-            label="月間売上"
-            value={`¥${kpi.revenue.current.toLocaleString()}`}
-            previous={kpi.revenue.previousMonth}
-            trend={kpi.revenue.trend}
-            unit="¥"
-          />
-          <KpiCard
-            label="新規予約"
-            value={`${kpi.newBookings.current}`}
-            previous={kpi.newBookings.previousMonth}
-            trend={kpi.newBookings.trend}
-            unit="件"
-          />
-          <KpiCard
-            label="リピート率"
-            value={`${kpi.repeatRate.current.toFixed(1)}%`}
-            trend="flat"
-            unit="%"
-          />
+        <div className="px-3 pb-4">
+          <SectionLabel trailing="過去 7日">今月のサマリー</SectionLabel>
+
+          <div className="grid grid-cols-2 gap-2">
+            <KpiCardV2
+              label="売上"
+              value={formatRevenue(kpi.revenue.current)}
+              series={kpi.revenue.series || []}
+              trend={formatTrend(kpi.revenue.current, kpi.revenue.previousMonth)}
+              trendUp={kpi.revenue.trend === 'up'}
+              sub={`前月 ${formatRevenue(kpi.revenue.previousMonth)}`}
+              primary
+            />
+            <KpiCardV2
+              label="新規"
+              value={`${kpi.newBookings.current}件`}
+              series={kpi.newBookings.series || []}
+              trend={formatTrendNumber(kpi.newBookings.current, kpi.newBookings.previousMonth)}
+              trendUp={kpi.newBookings.trend === 'up'}
+              sub={`前月 ${kpi.newBookings.previousMonth}件`}
+            />
+            <KpiCardV2
+              label="リピート率"
+              value={`${kpi.repeatRate.current}${kpi.repeatRate.unit}`}
+              series={[]}
+              trend="—"
+              trendUp={false}
+              sub="90日平均"
+            />
+            <UnmatchedCard count={unmatchedCount} />
+          </div>
         </div>
       ) : null}
 
@@ -255,4 +276,27 @@ export function DashboardClient({ user }: DashboardClientProps) {
       </div>
     </div>
   )
+}
+
+function formatRevenue(amount: number): string {
+  if (amount >= 1000000) {
+    return `¥${(amount / 1000000).toFixed(2)}M`
+  }
+  if (amount >= 10000) {
+    return `¥${(amount / 10000).toFixed(1)}万`
+  }
+  return `¥${amount.toLocaleString()}`
+}
+
+function formatTrend(current: number, previous: number): string {
+  if (previous === 0) return '—'
+  const pct = ((current - previous) / previous) * 100
+  const arrow = pct >= 0 ? '↑' : '↓'
+  return `${arrow} ${Math.abs(pct).toFixed(1)}%`
+}
+
+function formatTrendNumber(current: number, previous: number): string {
+  const diff = current - previous
+  const arrow = diff >= 0 ? '↑' : '↓'
+  return `${arrow} ${Math.abs(diff)}`
 }
