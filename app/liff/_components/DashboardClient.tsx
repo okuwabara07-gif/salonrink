@@ -16,6 +16,7 @@ import { KpiCardV2 } from './KpiCardV2'
 import { UnmatchedCard } from './UnmatchedCard'
 import { SectionLabel } from './SectionLabel'
 import { Timeline } from './Timeline'
+import { BookingRow } from './BookingRow'
 import type { ApiResponse } from '@/lib/menus/schema'
 import type { KpiTrend } from '@/lib/kpi'
 
@@ -225,52 +226,13 @@ export function DashboardClient({ user }: DashboardClientProps) {
         ) : bookings.length === 0 ? (
           <p className="text-sm text-ink-3 text-center py-8">本日の予約はありません</p>
         ) : (
-          <div className="space-y-3">
+          <div>
             <Timeline bookings={bookings} />
-            {bookings.map((booking) => {
-              const sourceStyles = {
-                hpb: 'bg-blue-100 text-blue-800',
-                line: 'bg-green-100 text-green-800',
-                manual: 'bg-gray-100 text-gray-800',
-              }
-              const sourceLabel = {
-                hpb: 'HPB',
-                line: 'LINE',
-                manual: '手動',
-              }
-              const sourceStyle = sourceStyles[booking.source as keyof typeof sourceStyles] || 'bg-gray-100 text-gray-800'
-              const label = sourceLabel[booking.source as keyof typeof sourceLabel] || booking.source
-
-              return (
-                <div
-                  key={booking.id}
-                  className="bg-card border border-line rounded-lg p-4 flex items-start gap-4"
-                >
-                  <div className="flex-1">
-                    <div className="text-lg font-mono font-semibold text-ink mb-1">
-                      {booking.time}
-                    </div>
-                    <div className="text-sm text-ink mb-1">
-                      {booking.customer_name}
-                    </div>
-                    <div className="text-sm text-ink-3 mb-2">
-                      {booking.menu_name || 'メニュー未確定'}
-                    </div>
-                    {booking.price !== null && (
-                      <div className="text-sm font-mono text-ink-2">
-                        ¥{booking.price.toLocaleString()}
-                      </div>
-                    )}
-                    {booking.price === null && booking.menu_name && (
-                      <div className="text-sm text-ink-3">---</div>
-                    )}
-                  </div>
-                  <div className={`px-2 py-1 rounded text-xs font-500 whitespace-nowrap ${sourceStyle}`}>
-                    {label}
-                  </div>
-                </div>
-              )
-            })}
+            <div className="bg-surface border border-border-primary rounded-xl overflow-hidden">
+              {bookings.map((booking, i) => (
+                <BookingRow key={booking.id} booking={booking} isLast={i === bookings.length - 1} />
+              ))}
+            </div>
           </div>
         )}
       </div>
