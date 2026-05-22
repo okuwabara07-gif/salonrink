@@ -40,22 +40,27 @@ export function MenuClient({ user }: MenuClientProps) {
         setLoading(true)
         setError(null)
 
-        // メニュー一覧取得
+        // メニュー取得は必須
         const menuRes = await fetch('/api/menus')
-        if (!menuRes.ok) {
-          throw new Error('Failed to fetch menus')
-        }
+        if (!menuRes.ok) throw new Error('メニューの取得に失敗しました')
         const menuJson = await menuRes.json()
         setMenus(menuJson.data || [])
 
-        // サロン情報取得(KPI API から salon.name)
-        const now = new Date()
-        const year = now.getFullYear()
-        const month = now.getMonth() + 1
-        const kpiRes = await fetch(`/api/kpi?year=${year}&month=${month}`)
-        const kpiJson = await kpiRes.json()
-        if (kpiJson.data?.salon?.name) {
-          setSalonName(kpiJson.data.salon.name)
+        // サロン情報は任意(失敗してもメニュー画面は表示)
+        try {
+          const now = new Date()
+          const year = now.getFullYear()
+          const month = now.getMonth() + 1
+          const kpiRes = await fetch(`/api/kpi?year=${year}&month=${month}`)
+          if (kpiRes.ok) {
+            const kpiJson = await kpiRes.json()
+            if (kpiJson.data?.salon?.name) {
+              setSalonName(kpiJson.data.salon.name)
+            }
+          }
+        } catch (kpiErr) {
+          console.warn('[MenuClient] salon name fetch failed (non-critical):', kpiErr)
+          // エラーにしない、salonName は 'サロン' のまま
         }
       } catch (err) {
         console.error('[MenuClient] init error:', err)
