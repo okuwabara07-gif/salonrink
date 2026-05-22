@@ -26,7 +26,7 @@ export default function LiffDashboardPage() {
     const initAuth = async () => {
       try {
         // Step 1: LIFF 初期化
-        const liffId = process.env.NEXT_PUBLIC_LIFF_ID
+        const liffId = process.env.NEXT_PUBLIC_LIFF_ID_MENU
 
         if (!liffId) {
           throw new Error('LIFF ID が設定されていません')
