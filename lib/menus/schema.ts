@@ -56,12 +56,5 @@ export type ApiResponse<T> = {
   error: string | null
 }
 
-// Success response helper
-export function successResponse<T>(data: T): ApiResponse<T> {
-  return { data, error: null }
-}
-
-// Error response helper
-export function errorResponse<T>(error: string): ApiResponse<T> {
-  return { data: null, error }
-}
+// Re-export from lib/api/response.ts for backward compatibility
+export { successResponse, errorResponse } from '@/lib/api/response'
