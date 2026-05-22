@@ -1,10 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Sidebar, TopHeader } from '@/components/srk';
 import NewReservationModal from '@/components/dashboard/NewReservationModal';
 import { createClient } from '@/lib/supabase/client';
+
+const LiffAutoLogin = dynamic(() => import('./_components/LiffAutoLogin').then(m => ({ default: m.LiffAutoLogin })), {
+  ssr: false,
+});
 
 /**
  * /dashboard 配下の全画面に共通のクロム(サイドバー + トップヘッダー)。
@@ -140,6 +145,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           onToggleSide={() => setCollapsed((c) => !c)}
           onNewBooking={() => setResModalOpen(true)}
         />
+        <Suspense fallback={null}>
+          <LiffAutoLogin />
+        </Suspense>
         {children}
       </main>
       <NewReservationModal

@@ -266,6 +266,10 @@ export function buildOwnerEveningFlex(
   })
 
   // Footer
+  const dashboardUri = process.env.NEXT_PUBLIC_OWNER_LIFF_ID
+    ? `https://liff.line.me/${process.env.NEXT_PUBLIC_OWNER_LIFF_ID}`
+    : 'https://salonrink.com/dashboard'
+
   const footer = {
     type: 'box',
     layout: 'vertical',
@@ -281,7 +285,7 @@ export function buildOwnerEveningFlex(
         action: {
           type: 'uri',
           label: 'ダッシュボードを開く',
-          uri: 'https://salonrink.com/dashboard',
+          uri: dashboardUri,
         },
         color: accentColor,
       },
