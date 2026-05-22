@@ -10,15 +10,31 @@ const config: Config = {
     extend: {
       colors: {
         // ========================================
-        // Text colors
+        // Design Token T (Sprint 2 Dashboard)
         // ========================================
-        ink: '#1a1814',      // main text, dark background
-        'ink-2': '#3d3833',  // body text
-        'ink-3': '#6f6a62',  // supplementary text, labels
-        'ink-4': '#9c968c',  // weak text, captions
+        cream: '#faf8f3',         // page background (T.bg)
+        'bg-alt': '#f3efe5',      // statistical chips, subsections (T.bgAlt)
+        surface: '#ffffff',       // cards, modals (T.surface)
+        'border-primary': '#e6e1d6',  // standard border (T.border)
+        'border-soft': '#efeae0',     // row separators (T.borderSoft)
+
+        ink: '#1a1814',           // body, headings (T.ink)
+        muted: '#6f6a62',         // secondary text (T.muted)
+        faint: '#9c968c',         // captions (T.faint)
+        hairline: '#d9d3c6',      // very light (T.hairline)
+
+        green: '#06C755',         // LINE green, CTA, active (T.green)
+        'green-ink': '#04863a',   // green-based dark text (T.greenInk)
+        'green-soft': '#e6f7ec',  // green light fill (T.greenSoft)
+
+        alert: '#D85A30',         // warning, "approval pending" (T.alert)
+        'alert-soft': '#fbeae0',  // warning fill (T.alertSoft)
+
+        amber: '#C7902B',         // HPB badge, unmatched warning (T.amber)
+        'amber-soft': '#f6ecd3',  // HPB fill (T.amberSoft)
 
         // ========================================
-        // Background colors
+        // Legacy colors (keep for backward compatibility)
         // ========================================
         'bg-warm': '#faf8f3',    // page base (warm cream)
         'bg-warm-2': '#f2eee4',  // even sections, emphasized bg
@@ -34,7 +50,6 @@ const config: Config = {
         // ========================================
         // Accent colors (LINE Green — beauty professional)
         // ========================================
-        accent: '#06C755',       // LINE green primary
         'accent-hover': '#05a648',
         'accent-soft': '#e6f7ec',
         'accent-ink': '#054d22',
@@ -63,12 +78,12 @@ const config: Config = {
       },
 
       fontFamily: {
-        // Serif: headings, formal elements
-        serif: ['"Noto Serif JP"', '"Yu Mincho"', 'serif'],
+        // Serif: headings, formal elements (T.serif)
+        serif: ['var(--font-serif)', '"Noto Serif JP"', '"Yu Mincho"', 'serif'],
         // Sans: body, UI elements
         sans: ['"Noto Sans JP"', '"Hiragino Sans"', 'sans-serif'],
-        // Mono: numbers, labels, codes
-        mono: ['"JetBrains Mono"', '"SF Mono"', 'monospace'],
+        // Mono: numbers, labels, codes (T.mono)
+        mono: ['var(--font-mono)', '"JetBrains Mono"', '"SF Mono"', 'monospace'],
       },
 
       fontSize: {

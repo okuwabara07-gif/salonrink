@@ -55,8 +55,9 @@
 *{ box-sizing: border-box; }
 html, body {
   margin: 0; padding: 0;
-  background: var(--bg); color: var(--ink);
-  font-family: var(--sans);
+  background: #faf8f3; /* cream (T.bg) */
+  color: var(--ink);
+  font-family: system-ui, -apple-system, sans-serif;
   font-feature-settings: "palt";
 }
 body {
