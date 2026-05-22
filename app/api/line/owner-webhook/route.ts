@@ -51,6 +51,13 @@ export async function POST(request: Request) {
     const signature = request.headers.get('x-line-signature') || ''
     const body = await request.text()
 
+    // LINE Console の検証ボタンクリック時は body が空だが、署名は送られる
+    // body が空の場合は検証リクエストとして 200 を返す
+    if (body === '') {
+      console.log('[Owner OA] Validation request received (empty body)')
+      return new Response(JSON.stringify({ status: 'ok' }), { status: 200 })
+    }
+
     if (!verifyOwnerLineSignature(body, signature, channelSecret)) {
       console.error('Invalid LINE owner signature')
       return new Response('Invalid signature', { status: 403 })
