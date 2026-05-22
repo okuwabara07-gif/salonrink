@@ -135,7 +135,6 @@ export function buildOwnerMorningFlex(
                 weight: 'bold',
                 color: '#2C2C2C',
                 flex: 0,
-                minWidth: '45px',
               },
               {
                 type: 'text',
