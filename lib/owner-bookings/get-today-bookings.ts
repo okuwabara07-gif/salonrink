@@ -43,7 +43,10 @@ export async function getTodayBookings(salonId: string): Promise<TodayBookingsRe
     if (!hpbErr && hpbData) {
       for (const r of hpbData) {
         const dt = new Date(r.start_time)
-        const time = `${dt.getHours()}:${String(dt.getMinutes()).padStart(2, '0')}`
+        // HACK 2026/05/22: HPB scraper writes JST hours with off-by-12 bug. Adjust here.
+        // TODO: Fix scraper on VPS (/root/salonrink-sync-bot) and revert this hack.
+        const _adj = new Date(dt.getTime() + 12 * 60 * 60 * 1000)
+        const time = `${String(_adj.getUTCHours()).padStart(2, '0')}:${String(_adj.getUTCMinutes()).padStart(2, '0')}`
         const price = Number(r.price) || 0
         bookings.push({
           time,
