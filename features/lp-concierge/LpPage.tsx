@@ -99,6 +99,37 @@ const IN_ACTION_SCENES = [
   },
 ];
 
+const CASE_STUDY = {
+  salon: {
+    name: 'キレイ鶴見店',
+    region: '神奈川県横浜市鶴見区',
+    specialty: '白髪ケア・大人女性向け',
+    feature: '予約制完全プライベートサロン',
+    links: [
+      { label: 'ホットペッパーBeauty', url: 'https://beauty.hotpepper.jp/H000501100/', icon: 'HPB' },
+      { label: 'Instagram', url: 'https://www.instagram.com/kirei.tsurumi/', icon: 'IG' },
+      { label: 'X', url: 'https://twitter.com/kirei_tsurumi', icon: 'X' },
+    ],
+  },
+  effects: [
+    {
+      title: '当日朝の予約把握、3分で完了',
+      before: 'HotPepper Beauty 管理画面で1件ずつ確認',
+      after: 'LINE で当日サマリが朝7時に届く',
+    },
+    {
+      title: 'カルテ整理時間、ほぼゼロに',
+      before: '営業後に紙カルテ手書き、20-30分/日',
+      after: 'LINE にメモを送るだけで AI が整理',
+    },
+    {
+      title: 'リピート率、再来店率に注力できる',
+      before: '事務作業に追われて顧客分析が後回し',
+      after: '業務時間が浮いて、顧客への提案が増えた',
+    },
+  ],
+};
+
 const FAQ_ITEMS = [
   { q: 'Lightプラン¥1,980で何ができますか?', a: 'AIカルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とAIカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
   { q: '途中で解約できますか?', a: 'いつでも解約可能です。最低契約期間はなく、解約手数料もかかりません。' },
@@ -449,6 +480,66 @@ export default function LpPage() {
             >
               お使いのブラウザは動画再生に対応していません。
             </video>
+          </div>
+        </div>
+      </section>
+
+      {/* FIRST CASE - キレイ鶴見店事例 */}
+      <section id="cases" className={styles.cases}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>FIRST CASE</p>
+            <h2 className={styles.sectionTitle}>導入第一号、キレイ鶴見店。</h2>
+            <p className={styles.sectionSub}>東京・神奈川エリアで白髪ケアに特化した小規模サロンが、SalonRink Concierge を実運用しています。</p>
+          </div>
+
+          <div className={styles.caseGrid}>
+            {/* 左側: 店舗情報 */}
+            <div className={styles.caseInfoCard}>
+              <div className={styles.caseInfoBody}>
+                <h3 className={styles.caseInfoTitle}>{CASE_STUDY.salon.name}</h3>
+                <div className={styles.caseInfoMeta}>
+                  <p className={styles.caseInfoRegion}>📍 {CASE_STUDY.salon.region}</p>
+                  <p className={styles.caseInfoSpec}>{CASE_STUDY.salon.specialty}</p>
+                  <p className={styles.caseInfoFeature}>{CASE_STUDY.salon.feature}</p>
+                </div>
+                <div className={styles.caseInfoLinks}>
+                  {CASE_STUDY.salon.links.map((link, i) => (
+                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.caseInfoLink}>
+                      {link.label} →
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 右側: 導入効果 */}
+            <div className={styles.caseEffectsCard}>
+              <div className={styles.caseEffectsTag}>導入から1ヶ月 × 予約管理 LINE 完結 × カルテ自動化</div>
+              <div className={styles.caseEffectsList}>
+                {CASE_STUDY.effects.map((effect, i) => (
+                  <div key={i} className={styles.caseEffect}>
+                    <h4 className={styles.caseEffectTitle}>{effect.title}</h4>
+                    <div className={styles.caseEffectComparison}>
+                      <div className={styles.caseEffectBefore}>
+                        <div className={styles.caseEffectLabel}>旧</div>
+                        <p>{effect.before}</p>
+                      </div>
+                      <div className={styles.caseEffectArrow}>→</div>
+                      <div className={styles.caseEffectAfter}>
+                        <div className={styles.caseEffectLabel}>新</div>
+                        <p>{effect.after}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.caseFootnote}>
+            <p>※ 実運用中のサロンの声を、随時更新していきます。</p>
+            <p className={styles.caseCta}>事例にご協力いただけるサロン様、<a href="mailto:support@salonrink.com">お問い合わせください</a></p>
           </div>
         </div>
       </section>

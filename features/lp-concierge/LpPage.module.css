@@ -176,6 +176,39 @@
 .stepDesc { margin: 8px 0 22px; padding: 0 22px; font-size: 12.5px; line-height: 1.75; color: #4a3d31; }
 .stepArrow { display: flex; align-items: center; justify-content: center; color: #b89564; font-size: 24px; padding: 0 4px; flex-shrink: 0; }
 
+/* FIRST CASE */
+.cases { background: #f5f0e6; }
+.caseGrid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 32px; margin-top: 48px; }
+.caseInfoCard { background: #ffffff; border: 1px solid rgba(184, 149, 100, 0.15); border-radius: 14px; padding: 36px 32px; display: flex; flex-direction: column; gap: 24px; }
+.caseInfoBody { display: flex; flex-direction: column; gap: 20px; }
+.caseInfoTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 26px; font-weight: 500; color: #1f1813; }
+.caseInfoMeta { display: flex; flex-direction: column; gap: 8px; }
+.caseInfoRegion { margin: 0; font-size: 14px; color: #2a2018; font-weight: 500; }
+.caseInfoSpec { margin: 0; font-size: 13px; color: #4a3d31; }
+.caseInfoFeature { margin: 0; font-size: 13px; color: #7a5e3a; font-weight: 500; }
+.caseInfoLinks { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.caseInfoLink { display: inline-flex; align-items: center; font-size: 13px; color: #06c755; text-decoration: none; font-weight: 600; letter-spacing: 0.02em; transition: color 0.15s; }
+.caseInfoLink:hover { color: #009640; }
+
+.caseEffectsCard { background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.15); border-radius: 14px; padding: 36px 32px; display: flex; flex-direction: column; gap: 24px; }
+.caseEffectsTag { font-size: 11px; font-weight: 600; color: #7a5e3a; letter-spacing: 0.06em; padding: 8px 12px; background: rgba(184, 149, 100, 0.1); border-radius: 6px; width: fit-content; }
+.caseEffectsList { display: flex; flex-direction: column; gap: 20px; }
+.caseEffect { display: flex; flex-direction: column; gap: 12px; }
+.caseEffectTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 16px; font-weight: 500; color: #1f1813; }
+.caseEffectComparison { display: grid; grid-template-columns: 1fr auto 1fr; gap: 12px; align-items: center; }
+.caseEffectBefore { background: rgba(107, 45, 58, 0.04); border: 1px solid rgba(107, 45, 58, 0.1); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.caseEffectAfter { background: rgba(6, 199, 85, 0.05); border: 1px solid rgba(6, 199, 85, 0.15); border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.caseEffectLabel { font-size: 10px; font-weight: 700; color: #7a5e3a; letter-spacing: 0.1em; text-transform: uppercase; }
+.caseEffectBefore p { margin: 0; font-size: 12.5px; line-height: 1.6; color: #4a3d31; }
+.caseEffectAfter p { margin: 0; font-size: 12.5px; line-height: 1.6; color: #054d22; font-weight: 500; }
+.caseEffectArrow { display: flex; align-items: center; justify-content: center; color: #b89564; font-size: 20px; }
+
+.caseFootnote { margin-top: 32px; text-align: center; padding-top: 24px; border-top: 1px solid rgba(184, 149, 100, 0.1); }
+.caseFootnote p { margin: 8px 0; font-size: 12px; color: #8a7c6b; }
+.caseCta { font-size: 13px !important; color: #4a3d31 !important; }
+.caseCta a { color: #06c755; text-decoration: none; font-weight: 600; transition: color 0.15s; }
+.caseCta a:hover { color: #009640; }
+
 /* COMPARE TABLE */
 .compare { background: #f5f0e6; }
 .compareTableWrap { max-width: 900px; margin: 0 auto; overflow-x: auto; background: #ffffff; border-radius: 14px; box-shadow: 0 4px 16px rgba(26, 20, 16, 0.05); }
@@ -284,6 +317,7 @@
   .securityGrid { grid-template-columns: repeat(2, 1fr); }
   .ownerGrid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .inActionGrid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .caseGrid { grid-template-columns: 1fr; gap: 24px; }
   .problemGrid { grid-template-columns: 1fr; max-width: 600px; margin-left: auto; margin-right: auto; }
   .stepsRow { flex-direction: column; }
   .stepArrow { transform: rotate(90deg); padding: 4px 0; }
@@ -301,6 +335,9 @@
   .conceptLogo { margin: 0 auto; max-width: 220px; }
   .ownerGrid { grid-template-columns: 1fr; gap: 16px; }
   .inActionGrid { grid-template-columns: 1fr; gap: 16px; }
+  .caseGrid { grid-template-columns: 1fr; gap: 16px; }
+  .caseEffectComparison { grid-template-columns: 1fr; gap: 8px; }
+  .caseEffectArrow { display: none; }
   .baGrid { grid-template-columns: 1fr; }
   .baStats { grid-template-columns: 1fr; gap: 16px; }
   .planGrid { grid-template-columns: 1fr; max-width: 460px; gap: 20px; }
