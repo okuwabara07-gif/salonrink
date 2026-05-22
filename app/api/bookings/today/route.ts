@@ -19,6 +19,19 @@ interface BookingToday {
   source: string
 }
 
+type SalonMenuRow = {
+  name: string
+  price: number
+}
+
+type HpbReservationRow = {
+  id: string
+  start_time: string | null
+  customer_name: string | null
+  menu_name: string | null
+  source: string | null
+}
+
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     // Step 1: 認証確認
@@ -49,7 +62,20 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const salonId = salon.id as string
 
-    // Step 3: 今日の予約を取得
+    // Step 3: メニュー価格マップ作成
+    const { data: menus, error: menuError } = await supabase
+      .from('salon_menus')
+      .select('name, price')
+      .eq('salon_id', salonId)
+
+    if (menuError) {
+      console.error('[GET /api/bookings/today] Menu lookup error:', menuError.message)
+      return errorResponse('Menu lookup failed', 500)
+    }
+
+    const priceMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.price]))
+
+    // Step 4: 今日の予約を取得
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const tomorrow = new Date(today)
@@ -57,7 +83,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const { data: bookings, error: bookingsError } = await supabase
       .from('hpb_reservations')
-      .select('id, start_time, customer_name, menu_name, price, source')
+      .select('id, start_time, customer_name, menu_name, source')
       .eq('salon_id', salonId)
       .eq('status', 'confirmed')
       .gte('start_time', today.toISOString())
@@ -69,17 +95,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Failed to fetch bookings', 500)
     }
 
-    // Step 4: レスポンス整形
-    type BookingRow = {
-      id: string
-      start_time: string | null
-      customer_name: string | null
-      menu_name: string | null
-      price: number | null
-      source: string | null
-    }
-
-    const result: BookingToday[] = (bookings || []).map((b: BookingRow) => {
+    // Step 5: レスポンス整形
+    const result: BookingToday[] = (bookings || []).map((b: HpbReservationRow) => {
       const startTime = b.start_time ? new Date(b.start_time) : new Date()
       const timeStr = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`
 
@@ -88,7 +105,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         time: timeStr,
         customer_name: b.customer_name || 'ゲスト',
         menu_name: b.menu_name || null,
-        price: b.price,
+        price: priceMap.get(b.menu_name ?? '') ?? null,
         source: b.source || 'unknown',
       }
     })

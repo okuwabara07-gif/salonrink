@@ -18,21 +18,21 @@ export interface KpiTrend {
   trend: 'up' | 'down' | 'flat'
 }
 
-type HpbReservationRow = {
+type HpbMenuRow = {
   menu_name: string | null
 }
 
-type SalonMenuRow = {
-  name: string
-  price: number
+type HpbCustomerNameRow = {
+  customer_name: string | null
 }
 
 type HpbCountRow = {
   id: string
 }
 
-type HpbCustomerRow = {
-  customer_id: string | null
+type SalonMenuRow = {
+  name: string
+  price: number
 }
 
 /**
@@ -80,7 +80,7 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] currentMonth error:', currentError)
   }
 
-  const currentRevenue = (currentData || []).reduce((sum: number, r: HpbReservationRow) => {
+  const currentRevenue = (currentData || []).reduce((sum: number, r: HpbMenuRow) => {
     return sum + (priceMap.get(r.menu_name ?? '') ?? 0)
   }, 0)
 
@@ -97,7 +97,7 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] prevMonth error:', prevError)
   }
 
-  const prevRevenue = (prevData || []).reduce((sum: number, r: HpbReservationRow) => {
+  const prevRevenue = (prevData || []).reduce((sum: number, r: HpbMenuRow) => {
     return sum + (priceMap.get(r.menu_name ?? '') ?? 0)
   }, 0)
 
@@ -191,11 +191,11 @@ export async function getRepeatRate(salonId: string): Promise<number> {
   // Step 1: 過去90日の訪問ユニーク顧客
   const { data: visitors90d, error: err1 } = await supabase
     .from('hpb_reservations')
-    .select('customer_id')
+    .select('customer_name')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .gte('start_time', ninetyDaysAgo.toISOString())
-    .order('customer_id')
+    .order('customer_name')
 
   if (err1) {
     console.error('[getRepeatRate] visitors_90d error:', err1)
@@ -203,9 +203,9 @@ export async function getRepeatRate(salonId: string): Promise<number> {
   }
 
   const visitors90dSet = new Set<string>()
-  ;(visitors90d || []).forEach((r: HpbCustomerRow) => {
-    if (r.customer_id) {
-      visitors90dSet.add(r.customer_id)
+  ;(visitors90d || []).forEach((r: HpbCustomerNameRow) => {
+    if (r.customer_name) {
+      visitors90dSet.add(r.customer_name)
     }
   })
 
@@ -216,11 +216,11 @@ export async function getRepeatRate(salonId: string): Promise<number> {
   // Step 2: 過去90日より前に来店した顧客
   const { data: beforeVisitors, error: err2 } = await supabase
     .from('hpb_reservations')
-    .select('customer_id')
+    .select('customer_name')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .lt('start_time', ninetyDaysAgo.toISOString())
-    .order('customer_id')
+    .order('customer_name')
 
   if (err2) {
     console.error('[getRepeatRate] beforeVisitors error:', err2)
@@ -228,17 +228,17 @@ export async function getRepeatRate(salonId: string): Promise<number> {
   }
 
   const beforeVisitorsSet = new Set<string>()
-  ;(beforeVisitors || []).forEach((r: HpbCustomerRow) => {
-    if (r.customer_id) {
-      beforeVisitorsSet.add(r.customer_id)
+  ;(beforeVisitors || []).forEach((r: HpbCustomerNameRow) => {
+    if (r.customer_name) {
+      beforeVisitorsSet.add(r.customer_name)
     }
   })
 
   // Step 3: リピーター = 過去90日に来店した顧客のうち、90日より前にも来店した顧客
   const repeaters = new Set<string>()
-  visitors90dSet.forEach((customerId) => {
-    if (beforeVisitorsSet.has(customerId)) {
-      repeaters.add(customerId)
+  visitors90dSet.forEach((customerName) => {
+    if (beforeVisitorsSet.has(customerName)) {
+      repeaters.add(customerName)
     }
   })
 
