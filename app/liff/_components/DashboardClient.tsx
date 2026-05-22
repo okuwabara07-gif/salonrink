@@ -25,7 +25,6 @@ interface KpiData {
   }
   salon: {
     name: string
-    branch: string | null
   }
   user: {
     name: string
@@ -101,9 +100,8 @@ export function DashboardClient({ user }: DashboardClientProps) {
 
   // ヘッダー用データを生成
   const salonName = kpi?.salon.name || 'サロン'
-  const branch = kpi?.salon.branch || '中目黒店'
   const userName = kpi?.user.name || 'オーナー'
-  const userInitial = kpi?.user.initial || '℃'
+  const userInitial = kpi?.user.initial || '?'
 
   // 日付フォーマット: YYYY.MM.DD · 曜日
   const now = new Date()
@@ -125,7 +123,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
               {salonName}
             </h1>
             <p className="text-[11px] text-muted mt-px">
-              {branch} · ようこそ、{userName}さん
+              ようこそ、{userName}さん
             </p>
           </div>
           <div className="w-[38px] h-[38px] rounded-full bg-bg-alt border border-border-primary flex items-center justify-center font-serif text-[14px] text-ink">

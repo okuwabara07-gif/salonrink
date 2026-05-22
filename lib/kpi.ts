@@ -16,6 +16,13 @@ export interface KpiTrend {
   current: number
   previousMonth: number
   trend: 'up' | 'down' | 'flat'
+  series?: number[]
+}
+
+export interface DailySeries {
+  revenue: number[]
+  newBookings: number[]
+  repeatRate: number[]
 }
 
 type HpbMenuRow = {
@@ -252,4 +259,84 @@ export async function getRepeatRate(salonId: string): Promise<number> {
 
   const repeatRate = (repeaters.size * 100.0) / visitors90dSet.size
   return Math.round(repeatRate * 10) / 10
+}
+
+/**
+ * 過去7日間の日次集計（本日含む）
+ * - revenue: 日次売上額の配列
+ * - newBookings: 日次予約数の配列
+ * - repeatRate: 簡略版（固定値または日ごと計算）
+ */
+export async function getDailySeries7Days(salonId: string): Promise<DailySeries> {
+  const supabase = await createClient()
+
+  // メニュー価格マップ作成
+  const { data: menus, error: menuError } = await supabase
+    .from('salon_menus')
+    .select('name, price')
+    .eq('salon_id', salonId)
+
+  if (menuError) {
+    console.error('[getDailySeries7Days] menu lookup error:', menuError)
+  }
+
+  const priceMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.price]))
+
+  // 本日の JST 日付を計算
+  const now = new Date()
+  const jstDateStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' })
+  const todayJstStart = new Date(`${jstDateStr}T00:00:00+09:00`)
+
+  const revenue: number[] = []
+  const newBookings: number[] = []
+
+  for (let i = 6; i >= 0; i--) {
+    const dayStart = new Date(todayJstStart.getTime() - i * 24 * 60 * 60 * 1000)
+    const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000)
+
+    // 日次売上
+    const { data: revenueData, error: revenueError } = await supabase
+      .from('hpb_reservations')
+      .select('menu_name')
+      .eq('salon_id', salonId)
+      .eq('status', 'confirmed')
+      .gte('start_time', dayStart.toISOString())
+      .lt('start_time', dayEnd.toISOString())
+
+    if (revenueError) {
+      console.error(`[getDailySeries7Days] revenue error for day ${i}:`, revenueError)
+    }
+
+    const dayRevenue = (revenueData || []).reduce((sum: number, r: HpbMenuRow) => {
+      return sum + (priceMap.get(r.menu_name ?? '') ?? 0)
+    }, 0)
+
+    // 日次予約数
+    const { data: bookingsData, error: bookingsError } = await supabase
+      .from('hpb_reservations')
+      .select('id')
+      .eq('salon_id', salonId)
+      .eq('status', 'confirmed')
+      .gte('start_time', dayStart.toISOString())
+      .lt('start_time', dayEnd.toISOString())
+
+    if (bookingsError) {
+      console.error(`[getDailySeries7Days] bookings error for day ${i}:`, bookingsError)
+    }
+
+    const dayBookings = (bookingsData || []).length
+
+    revenue.push(dayRevenue)
+    newBookings.push(dayBookings)
+  }
+
+  // repeatRate: 簡略版（現在の90日リピート率を固定）
+  const currentRepeatRate = await getRepeatRate(salonId)
+  const repeatRate = Array(7).fill(currentRepeatRate)
+
+  return {
+    revenue,
+    newBookings,
+    repeatRate,
+  }
 }

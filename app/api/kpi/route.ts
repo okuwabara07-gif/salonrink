@@ -12,6 +12,7 @@ import {
   getMonthlyRevenue,
   getNewBookingsCount,
   getRepeatRate,
+  getDailySeries7Days,
   type KpiTrend,
 } from '@/lib/kpi'
 import { successResponse, errorResponse } from '@/lib/api/response'
@@ -25,7 +26,6 @@ interface KpiResponseData {
   }
   salon: {
     name: string
-    branch: string | null
   }
   user: {
     name: string
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Step 3: salon 特定 + 所有権確認 + 詳細情報取得
     const { data: salon, error: salonError } = await supabase
       .from('salons')
-      .select('id, name, branch')
+      .select('id, name, owner_name')
       .eq('owner_user_id', user.id)
       .maybeSingle()
 
@@ -80,27 +80,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const salonId = salon.id as string
 
     // Step 4: KPI 集計（並列実行）
-    const [revenue, newBookings, repeatRate] = await Promise.all([
+    const [revenue, newBookings, repeatRate, dailySeries] = await Promise.all([
       getMonthlyRevenue(salonId, year, month),
       getNewBookingsCount(salonId, year, month),
       getRepeatRate(salonId),
+      getDailySeries7Days(salonId),
     ])
 
     // Step 5: ユーザー情報を取得
-    const userName = user.user_metadata?.name || 'オーナー'
-    const userInitial = userName.charAt(0) || '℃'
+    const userName = (salon.owner_name as string) || user.user_metadata?.name || 'オーナー'
+    const userInitial = userName.charAt(0) || '?'
 
     // Step 6: レスポンス構築
     const responseData: KpiResponseData = {
-      revenue,
-      newBookings,
+      revenue: {
+        ...revenue,
+        series: dailySeries.revenue,
+      },
+      newBookings: {
+        ...newBookings,
+        series: dailySeries.newBookings,
+      },
       repeatRate: {
         current: repeatRate,
         unit: '%',
       },
       salon: {
         name: (salon.name as string) || 'サロン',
-        branch: (salon.branch as string | null) || null,
       },
       user: {
         name: userName,
