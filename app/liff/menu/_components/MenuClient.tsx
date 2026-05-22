@@ -20,6 +20,7 @@ import {
   deleteMenu,
   MenuListResponse,
 } from '@/lib/menus/client'
+import { BottomNav } from '../../_components/BottomNav'
 
 // ========================================
 // Type definitions
@@ -270,9 +271,6 @@ export function MenuClient({ user }: MenuClientProps) {
         <IconPlus size={22} stroke={2} />
       </button>
 
-      {/* Bottom Nav Spacer */}
-      <div className="h-20" />
-
       {/* Modal: Create/Edit Menu */}
       {modalMode && (
         <MenuEditorModal
@@ -283,6 +281,9 @@ export function MenuClient({ user }: MenuClientProps) {
           onClose={handleCloseModal}
         />
       )}
+
+      {/* Bottom Nav */}
+      <BottomNav />
     </div>
   )
 }
