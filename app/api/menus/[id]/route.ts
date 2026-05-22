@@ -77,6 +77,9 @@ export async function PATCH(
     if (validatedRequest.data.category !== undefined) {
       updatePayload.category = validatedRequest.data.category
     }
+    if (validatedRequest.data.sort_order !== undefined) {
+      updatePayload.sort_order = validatedRequest.data.sort_order
+    }
 
     // If no fields provided, return current menu without updating
     if (Object.keys(updatePayload).length === 0) {

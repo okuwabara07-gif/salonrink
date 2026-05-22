@@ -37,6 +37,7 @@ export const UpdateMenuRequest = z.object({
   price: z.number().int().min(0).optional(),
   duration: z.number().int().min(15).optional(),
   category: z.string().max(50).optional(),
+  sort_order: z.number().int().optional(),
 })
 
 export type UpdateMenuRequest = z.infer<typeof UpdateMenuRequest>

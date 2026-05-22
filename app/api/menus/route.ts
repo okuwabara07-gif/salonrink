@@ -35,12 +35,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(errorResponse('Forbidden'), { status: 403 })
     }
 
-    // 3. Fetch menus for the salon
-    const { data: menus, error: menuError } = await supabase
+    // 3. Get optional category filter
+    const url = new URL(req.url)
+    const category = url.searchParams.get('category')
+
+    // 4. Fetch menus for the salon with optional category filter
+    let query = supabase
       .from('salon_menus')
       .select('id, salon_id, name, price, duration, category, sort_order, created_at')
       .eq('salon_id', salon.id)
-      .order('sort_order', { ascending: true })
+
+    if (category) {
+      query = query.eq('category', category)
+    }
+
+    const { data: menus, error: menuError } = await query.order('sort_order', { ascending: true })
 
     if (menuError) {
       console.error('salon_menus query error:', menuError)
@@ -127,7 +136,7 @@ export async function POST(req: NextRequest) {
         name: validatedRequest.data.name,
         price: validatedRequest.data.price,
         duration: validatedRequest.data.duration,
-        category: validatedRequest.data.category || null,
+        category: validatedRequest.data.category || '未分類',
         sort_order: nextSortOrder,
       })
       .select()
