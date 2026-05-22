@@ -2,7 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { getTodayBookings } from '@/lib/owner-bookings/get-today-bookings'
 import { getTomorrowBookings } from '@/lib/owner-bookings/get-tomorrow-bookings'
 import { detectChurnRisk, type ChurnRiskCustomer } from '@/lib/owner-analytics/detect-churn-risk'
-import { detectReviewCandidates } from '@/lib/owner-analytics/detect-review-candidates'
+import { detectReviewCandidates, type ReviewCandidate } from '@/lib/owner-analytics/detect-review-candidates'
 import { buildOwnerEveningFlex } from '@/lib/line-messages/owner-evening-flex'
 import { pushFlexToOwner } from '@/lib/line/owner-push'
 
@@ -160,7 +160,7 @@ export async function GET(request: Request) {
         }
 
         // 2g: Detect review candidates (graceful degradation)
-        let reviewCandidates = []
+        let reviewCandidates: ReviewCandidate[] = []
         try {
           reviewCandidates = await detectReviewCandidates(salonId)
         } catch (err) {
