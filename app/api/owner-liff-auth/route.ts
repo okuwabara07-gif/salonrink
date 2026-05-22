@@ -3,10 +3,39 @@ import { createAdminClient } from '@/lib/supabase/admin'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { lineUserId } = body
+    const { idToken } = body
+
+    if (!idToken || typeof idToken !== 'string') {
+      return new Response(JSON.stringify({ error: 'Invalid request' }), { status: 400 })
+    }
+
+    const channelId = process.env.OWNER_LIFF_CHANNEL_ID
+    if (!channelId) {
+      console.error('[owner-liff-auth] OWNER_LIFF_CHANNEL_ID not configured')
+      return new Response(JSON.stringify({ error: 'Server configuration error' }), { status: 500 })
+    }
+
+    // Verify ID token with LINE
+    const verifyRes = await fetch('https://api.line.me/oauth2/v2.1/verify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams({
+        id_token: idToken,
+        client_id: channelId,
+      }).toString(),
+    })
+
+    if (!verifyRes.ok) {
+      console.warn('[owner-liff-auth] LINE verification failed:', verifyRes.status)
+      return new Response(JSON.stringify({ error: 'Token verification failed' }), { status: 401 })
+    }
+
+    const verified = await verifyRes.json()
+    const lineUserId = verified.sub
 
     if (!lineUserId || typeof lineUserId !== 'string') {
-      return new Response(JSON.stringify({ error: 'Invalid request' }), { status: 400 })
+      console.error('[owner-liff-auth] Invalid verified token:', verified)
+      return new Response(JSON.stringify({ error: 'Invalid token' }), { status: 401 })
     }
 
     const adminClient = createAdminClient()

@@ -23,13 +23,16 @@ export function LiffAutoLogin() {
           return
         }
 
-        const profile = await liff.getProfile()
-        const lineUserId = profile.userId
+        const idToken = liff.getIDToken()
+        if (!idToken) {
+          console.warn('[LiffAutoLogin] Failed to get ID token')
+          return
+        }
 
         const res = await fetch('/api/owner-liff-auth', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ lineUserId }),
+          body: JSON.stringify({ idToken }),
         })
 
         if (!res.ok) {
