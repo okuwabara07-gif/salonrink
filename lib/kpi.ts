@@ -18,10 +18,13 @@ export interface KpiTrend {
   trend: 'up' | 'down' | 'flat'
 }
 
-type HpbRevenueRow = {
-  raw_data?: {
-    price?: number
-  } | null
+type HpbReservationRow = {
+  menu_name: string | null
+}
+
+type SalonMenuRow = {
+  name: string
+  price: number
 }
 
 type HpbCountRow = {
@@ -34,7 +37,7 @@ type HpbCustomerRow = {
 
 /**
  * 月間売上を計算
- * hpb_reservations.price を SUM
+ * hpb_reservations.menu_name → salon_menus.price でLOOKUP
  * 前月との比較も返す
  */
 export async function getMonthlyRevenue(
@@ -52,10 +55,22 @@ export async function getMonthlyRevenue(
   const prevMonthStart = new Date(year, month - 2, 1)
   const prevMonthEnd = new Date(year, month - 1, 1)
 
+  // メニュー価格マップ作成
+  const { data: menus, error: menuError } = await supabase
+    .from('salon_menus')
+    .select('name, price')
+    .eq('salon_id', salonId)
+
+  if (menuError) {
+    console.error('[getMonthlyRevenue] menu lookup error:', menuError)
+  }
+
+  const priceMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.price]))
+
   // 当月売上
   const { data: currentData, error: currentError } = await supabase
     .from('hpb_reservations')
-    .select('raw_data')
+    .select('menu_name')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .gte('start_time', monthStart.toISOString())
@@ -65,14 +80,14 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] currentMonth error:', currentError)
   }
 
-  const currentRevenue = (currentData || []).reduce((sum: number, r: any) => {
-    return sum + (r.raw_data?.price ?? 0)
+  const currentRevenue = (currentData || []).reduce((sum: number, r: HpbReservationRow) => {
+    return sum + (priceMap.get(r.menu_name ?? '') ?? 0)
   }, 0)
 
   // 前月売上
   const { data: prevData, error: prevError } = await supabase
     .from('hpb_reservations')
-    .select('raw_data')
+    .select('menu_name')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .gte('start_time', prevMonthStart.toISOString())
@@ -82,8 +97,8 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] prevMonth error:', prevError)
   }
 
-  const prevRevenue = (prevData || []).reduce((sum: number, r: any) => {
-    return sum + (r.raw_data?.price ?? 0)
+  const prevRevenue = (prevData || []).reduce((sum: number, r: HpbReservationRow) => {
+    return sum + (priceMap.get(r.menu_name ?? '') ?? 0)
   }, 0)
 
   const trend: 'up' | 'down' | 'flat' =
