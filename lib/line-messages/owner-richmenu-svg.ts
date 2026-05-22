@@ -101,8 +101,8 @@ export function generateOwnerRichMenuSvg(): string {
       const cx = x + squareWidth / 2
       const cy = y + squareHeight / 2
 
-      const emojiSize = 380
-      const labelFontSize = 110
+      const emojiSize = 280
+      const labelFontSize = 150
       const descFontSize = 70
 
       return `
@@ -112,13 +112,13 @@ export function generateOwnerRichMenuSvg(): string {
       <rect x="${x}" y="${y}" width="${squareWidth}" height="80" fill="${item.accentColor}" opacity="${item.isSupport ? 0.25 : 0.12}"/>
 
       <!-- Emoji -->
-      <text x="${cx}" y="${cy - 150}" font-size="${emojiSize}" text-anchor="middle" dominant-baseline="middle">${item.emoji}</text>
+      <text x="${cx}" y="${cy - 120}" font-size="${emojiSize}" text-anchor="middle" dominant-baseline="middle">${item.emoji}</text>
 
       <!-- Label (Japanese) -->
-      <text x="${cx}" y="${cy + 140}" font-family="sans-serif" font-size="${labelFontSize}" font-weight="700" text-anchor="middle" dominant-baseline="middle" fill="${darkText}">${escapeXml(item.label)}</text>
+      <text x="${cx}" y="${cy + 100}" font-family="sans-serif" font-size="${labelFontSize}" font-weight="900" text-anchor="middle" dominant-baseline="middle" fill="${darkText}">${escapeXml(item.label)}</text>
 
       <!-- Description (English) -->
-      <text x="${cx}" y="${cy + 250}" font-family="sans-serif" font-size="${descFontSize}" font-weight="400" text-anchor="middle" dominant-baseline="middle" fill="${item.accentColor}">${escapeXml(item.desc)}</text>
+      <text x="${cx}" y="${cy + 240}" font-family="sans-serif" font-size="${descFontSize}" font-weight="400" text-anchor="middle" dominant-baseline="middle" fill="${item.accentColor}" opacity="0.7">${escapeXml(item.desc)}</text>
     </g>
     `
     })
