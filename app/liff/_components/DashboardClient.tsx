@@ -17,6 +17,8 @@ import { UnmatchedCard } from './UnmatchedCard'
 import { SectionLabel } from './SectionLabel'
 import { Timeline } from './Timeline'
 import { BookingRow } from './BookingRow'
+import { PendingKarteSection } from './PendingKarteSection'
+import type { KarteListItem } from './PendingKarteSection'
 import type { ApiResponse } from '@/lib/menus/schema'
 import type { KpiTrend } from '@/lib/kpi'
 
@@ -59,6 +61,12 @@ export function DashboardClient({ user }: DashboardClientProps) {
   const [bookingsLoading, setBookingsLoading] = useState(false)
   const [bookingsError, setBookingsError] = useState<string | null>(null)
   const [unmatchedCount, setUnmatchedCount] = useState(0)
+  const [pendingKartes, setPendingKartes] = useState<KarteListItem[]>([])
+  const [approvedCount, setApprovedCount] = useState(0)
+  const [approvingId, setApprovingId] = useState<string | null>(null)
+  const [approvingAll, setApprovingAll] = useState(false)
+  const [kartesLoading, setKartesLoading] = useState(false)
+  const [kartesError, setKartesError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,6 +109,24 @@ export function DashboardClient({ user }: DashboardClientProps) {
         if (unmatchedResponse.ok && unmatchedJson.data) {
           setUnmatchedCount(unmatchedJson.data.count)
         }
+
+        // Fetch pending kartes
+        setKartesLoading(true)
+        try {
+          const kartesResponse = await fetch('/api/dashboard/kartes/pending')
+          const kartesJson: ApiResponse<KarteListItem[]> = await kartesResponse.json()
+
+          if (!kartesResponse.ok) {
+            setKartesError(kartesJson.error || 'カルテデータの取得に失敗しました')
+          } else if (kartesJson.data) {
+            setPendingKartes(kartesJson.data)
+          }
+        } catch (err) {
+          console.error('[DashboardClient] kartes fetch error:', err)
+          setKartesError(err instanceof Error ? err.message : 'Unknown error')
+        } finally {
+          setKartesLoading(false)
+        }
       } catch (err) {
         console.error('[DashboardClient] fetch error:', err)
         setError(err instanceof Error ? err.message : 'Unknown error')
@@ -112,6 +138,54 @@ export function DashboardClient({ user }: DashboardClientProps) {
 
     fetchData()
   }, [user.id])
+
+  const handleApprove = async (id: string) => {
+    setApprovingId(id)
+    try {
+      const response = await fetch(`/api/dashboard/kartes/${id}/approve`, {
+        method: 'PATCH',
+      })
+      const json = await response.json()
+      if (!response.ok) {
+        throw new Error(json.error || 'Failed to approve')
+      }
+      setPendingKartes((prev) => prev.filter((k) => k.id !== id))
+      setApprovedCount((prev) => prev + 1)
+    } catch (err) {
+      console.error('[DashboardClient] approve error:', err)
+      alert(err instanceof Error ? err.message : '承認に失敗しました')
+    } finally {
+      setApprovingId(null)
+    }
+  }
+
+  const handleApproveAll = async () => {
+    if (pendingKartes.length === 0) return
+    if (!confirm(`${pendingKartes.length}件のカルテをすべて承認しますか?`)) return
+
+    setApprovingAll(true)
+    try {
+      const response = await fetch('/api/dashboard/kartes/approve-all', {
+        method: 'POST',
+      })
+      const json = await response.json()
+      if (!response.ok) {
+        throw new Error(json.error || 'Failed to approve all')
+      }
+      const count = json.data?.approved_count ?? pendingKartes.length
+      setApprovedCount((prev) => prev + count)
+      setPendingKartes([])
+    } catch (err) {
+      console.error('[DashboardClient] approve-all error:', err)
+      alert(err instanceof Error ? err.message : '一括承認に失敗しました')
+    } finally {
+      setApprovingAll(false)
+    }
+  }
+
+  const handleEdit = (id: string) => {
+    alert('カルテ編集機能は今後実装予定です(カルテ ID: ' + id + ')')
+  }
 
   // ヘッダー用データを生成
   const salonName = kpi?.salon.name || 'サロン'
@@ -236,6 +310,26 @@ export function DashboardClient({ user }: DashboardClientProps) {
           </div>
         )}
       </div>
+
+      {/* 承認待ちカルテセクション */}
+      {kartesError && (
+        <div className="px-3">
+          <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg text-danger text-sm">
+            {kartesError}
+          </div>
+        </div>
+      )}
+      {!kartesError && (
+        <PendingKarteSection
+          kartes={pendingKartes}
+          approvedCount={approvedCount}
+          onApprove={handleApprove}
+          onApproveAll={handleApproveAll}
+          onEdit={handleEdit}
+          approvingId={approvingId}
+          approvingAll={approvingAll}
+        />
+      )}
 
       {/* ボトムナビ */}
       <BottomNav />
