@@ -10,7 +10,8 @@
  */
 
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import liff from '@line/liff'
+import { createBrowserClient } from '@supabase/ssr'
 import type { User } from '@supabase/supabase-js'
 import { DashboardClient } from './_components/DashboardClient'
 
@@ -24,16 +25,21 @@ export default function LiffDashboardPage() {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        // LIFF 初期化（環境に応じて遅延ロード）
-        if (typeof window !== 'undefined' && 'liff' in window) {
-          const liff = (window as any).liff
-          if (!liff.isLoggedIn()) {
-            setState('unauthed')
-            return
-          }
+        // Step 1: LIFF 初期化
+        const liffId = process.env.NEXT_PUBLIC_LIFF_ID
+
+        if (!liffId) {
+          throw new Error('LIFF ID が設定されていません')
         }
 
-        const supabase = await createClient()
+        await liff.init({ liffId })
+
+        // Step 2: Supabase セッション確認
+        const supabase = createBrowserClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+
         const {
           data: { user: authUser },
           error: authError,
