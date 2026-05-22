@@ -71,12 +71,16 @@ export async function GET(request: Request) {
     const supabase = createAdminClient()
     const today = new Date()
 
-    // Step 1: Fetch active owners with morning_enabled = true
+    // Calculate current JST hour
+    const jstHour = (new Date().getUTCHours() + 9) % 24
+
+    // Step 1: Fetch active owners with morning_enabled = true and matching send hour
     const { data: owners, error: ownersErr } = await supabase
       .from('owner_line_links')
-      .select('id, line_user_id, salon_id, last_morning_sent_at')
+      .select('id, line_user_id, salon_id, last_morning_sent_at, morning_send_hour_jst')
       .eq('status', 'active')
       .eq('morning_enabled', true)
+      .eq('morning_send_hour_jst', jstHour)
 
     if (ownersErr || !owners) {
       console.error('[Owner Morning Cron] Failed to fetch owners:', ownersErr)
