@@ -78,6 +78,27 @@ const PLANS = [
   { name: 'Premium', for: '本格的に運用したいサロン向け', price: '4,580', features: ['Standardの全機能', 'マルチ店舗管理対応', 'スタッフ無制限', '優先サポート'], featured: false },
 ];
 
+const IN_ACTION_SCENES = [
+  {
+    time: 'AM 07:00',
+    title: '朝、その日の予約が届く',
+    desc: 'LINE公式アカウントから、当日の予約一覧が自動で届きます。お客様の前回のメニュー、特記事項、要望もまとめて確認。営業前の3分で全予約把握。',
+    tags: ['自動配信', '予約サマリ'],
+  },
+  {
+    time: 'PM 21:00',
+    title: '夜、本日の振り返り',
+    desc: '営業終了後、AIが本日のカルテを自動生成。「次回はこの提案が良いかも」「保湿ケアを推奨」などのスタッフ向けメモも添えて。明日の準備が、5分で完了。',
+    tags: ['AI カルテ自動生成', '次回提案'],
+  },
+  {
+    time: 'ANY TIME',
+    title: 'お客様からの予約、いつでも',
+    desc: 'お客様は、いつものLINEで自然に予約。「前回と同じで」も「今日は新しく」も、AIが履歴から適切に提案。お客様の体験は何も変わりません。',
+    tags: ['LINE 予約', '履歴活用'],
+  },
+];
+
 const FAQ_ITEMS = [
   { q: 'Lightプラン¥1,980で何ができますか?', a: 'AIカルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とAIカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
   { q: '途中で解約できますか?', a: 'いつでも解約可能です。最低契約期間はなく、解約手数料もかかりません。' },
@@ -272,6 +293,31 @@ export default function LpPage() {
                 <div className={styles.ownerIcon} aria-hidden>{b.icon}</div>
                 <h3 className={styles.ownerTitle}>{b.title}</h3>
                 <p className={styles.ownerDesc}>{b.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* IN ACTION - 3 SCENES */}
+      <section id="in-action" className={styles.inAction}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>IN ACTION</p>
+            <h2 className={styles.sectionTitle}>1日3シーンで、こう変わる。</h2>
+            <p className={styles.sectionSub}>朝の準備、夜の振り返り、お客様とのやり取り。LINEひとつに集約。</p>
+          </div>
+          <div className={styles.inActionGrid}>
+            {IN_ACTION_SCENES.map((scene, i) => (
+              <div key={i} className={styles.inActionCard}>
+                <div className={styles.inActionTime}>{scene.time}</div>
+                <h3 className={styles.inActionTitle}>{scene.title}</h3>
+                <p className={styles.inActionBody}>{scene.desc}</p>
+                <div className={styles.inActionTags}>
+                  {scene.tags.map((tag, ti) => (
+                    <span key={ti} className={styles.inActionTag}>{tag}</span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
