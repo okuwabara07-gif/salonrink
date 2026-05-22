@@ -13,6 +13,8 @@ import { successResponse, errorResponse } from '@/lib/api/response'
 interface BookingToday {
   id: string
   time: string
+  start_time: string
+  end_time: string
   customer_name: string
   menu_name: string | null
   price: number | null
@@ -22,6 +24,7 @@ interface BookingToday {
 type SalonMenuRow = {
   name: string
   price: number
+  duration: number | null
 }
 
 type HpbReservationRow = {
@@ -62,10 +65,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const salonId = salon.id as string
 
-    // Step 3: メニュー価格マップ作成
+    // Step 3: メニュー価格・期間マップ作成
     const { data: menus, error: menuError } = await supabase
       .from('salon_menus')
-      .select('name, price')
+      .select('name, price, duration')
       .eq('salon_id', salonId)
 
     if (menuError) {
@@ -74,6 +77,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const priceMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.price]))
+    const durationMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.duration || 60]))
 
     // Step 4: 今日の予約を取得（JST 基準）
     const now = new Date()
@@ -105,9 +109,14 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         hour12: false,
       })
 
+      const duration = durationMap.get(b.menu_name ?? '') ?? 60
+      const endTime = new Date(startTime.getTime() + duration * 60 * 1000)
+
       return {
         id: b.id,
         time: timeStr,
+        start_time: startTime.toISOString(),
+        end_time: endTime.toISOString(),
         customer_name: b.customer_name || 'ゲスト',
         menu_name: b.menu_name || null,
         price: priceMap.get(b.menu_name ?? '') ?? null,

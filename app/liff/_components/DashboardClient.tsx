@@ -15,6 +15,7 @@ import { BottomNav } from './BottomNav'
 import { KpiCardV2 } from './KpiCardV2'
 import { UnmatchedCard } from './UnmatchedCard'
 import { SectionLabel } from './SectionLabel'
+import { Timeline } from './Timeline'
 import type { ApiResponse } from '@/lib/menus/schema'
 import type { KpiTrend } from '@/lib/kpi'
 
@@ -34,9 +35,11 @@ interface KpiData {
   }
 }
 
-interface BookingToday {
+export interface BookingToday {
   id: string
   time: string
+  start_time: string
+  end_time: string
   customer_name: string
   menu_name: string | null
   price: number | null
@@ -205,7 +208,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
 
       {/* 今日の予約セクション */}
       <div>
-        <h2 className="text-lg font-serif font-medium text-ink mb-4">今日の予約</h2>
+        <SectionLabel trailing={`${bookings.length}件`}>今日の予約</SectionLabel>
         {bookingsLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
@@ -223,6 +226,7 @@ export function DashboardClient({ user }: DashboardClientProps) {
           <p className="text-sm text-ink-3 text-center py-8">本日の予約はありません</p>
         ) : (
           <div className="space-y-3">
+            <Timeline bookings={bookings} />
             {bookings.map((booking) => {
               const sourceStyles = {
                 hpb: 'bg-blue-100 text-blue-800',
