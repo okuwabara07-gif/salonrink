@@ -19,7 +19,9 @@ export interface KpiTrend {
 }
 
 type HpbRevenueRow = {
-  price: number | null
+  raw_data?: {
+    price?: number
+  } | null
 }
 
 type HpbCountRow = {
@@ -53,7 +55,7 @@ export async function getMonthlyRevenue(
   // 当月売上
   const { data: currentData, error: currentError } = await supabase
     .from('hpb_reservations')
-    .select('price')
+    .select('raw_data')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .gte('start_time', monthStart.toISOString())
@@ -63,14 +65,14 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] currentMonth error:', currentError)
   }
 
-  const currentRevenue = (currentData || []).reduce((sum: number, r: HpbRevenueRow) => {
-    return sum + (r.price ?? 0)
+  const currentRevenue = (currentData || []).reduce((sum: number, r: any) => {
+    return sum + (r.raw_data?.price ?? 0)
   }, 0)
 
   // 前月売上
   const { data: prevData, error: prevError } = await supabase
     .from('hpb_reservations')
-    .select('price')
+    .select('raw_data')
     .eq('salon_id', salonId)
     .eq('status', 'confirmed')
     .gte('start_time', prevMonthStart.toISOString())
@@ -80,8 +82,8 @@ export async function getMonthlyRevenue(
     console.error('[getMonthlyRevenue] prevMonth error:', prevError)
   }
 
-  const prevRevenue = (prevData || []).reduce((sum: number, r: HpbRevenueRow) => {
-    return sum + (r.price ?? 0)
+  const prevRevenue = (prevData || []).reduce((sum: number, r: any) => {
+    return sum + (r.raw_data?.price ?? 0)
   }, 0)
 
   const trend: 'up' | 'down' | 'flat' =
