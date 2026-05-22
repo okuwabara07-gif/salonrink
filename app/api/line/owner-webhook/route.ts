@@ -44,26 +44,32 @@ export async function POST(request: Request) {
 
     if (!channelSecret || !channelToken) {
       console.error('LINE owner credentials not configured')
-      return new Response('LINE owner not configured', { status: 404 })
+      return new Response(JSON.stringify({ error: 'LINE owner credentials missing' }), { status: 404 })
     }
 
     // Signature verification
     const signature = request.headers.get('x-line-signature') || ''
     const body = await request.text()
 
-    // LINE Console の検証ボタンクリック時は body が空だが、署名は送られる
-    // body が空の場合は検証リクエストとして 200 を返す
-    if (body === '') {
-      console.log('[Owner OA] Validation request received (empty body)')
-      return new Response(JSON.stringify({ status: 'ok' }), { status: 200 })
-    }
+    console.log('[Owner OA] Webhook received', {
+      signature: signature ? 'present' : 'missing',
+      bodyLength: body.length,
+      bodyPreview: body.substring(0, 100),
+    })
 
     if (!verifyOwnerLineSignature(body, signature, channelSecret)) {
-      console.error('Invalid LINE owner signature')
-      return new Response('Invalid signature', { status: 403 })
+      console.error('[Owner OA] Signature verification failed', {
+        signature,
+        bodyLength: body.length,
+        channelSecretLength: channelSecret.length,
+      })
+      return new Response(JSON.stringify({ error: 'Invalid signature' }), { status: 403 })
     }
 
-    const events = JSON.parse(body).events || []
+    // Signature verification passed - process events even if empty
+    const events = body ? (JSON.parse(body).events || []) : []
+
+    console.log('[Owner OA] Events received:', events.length)
 
     for (const event of events) {
       await handleOwnerEvent(event, channelToken)
