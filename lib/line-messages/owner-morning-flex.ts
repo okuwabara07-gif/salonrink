@@ -236,7 +236,7 @@ export function buildOwnerMorningFlex(
         action: {
           type: 'uri',
           label: 'ダッシュボードを開く',
-          uri: 'https://salonrink.com/liff/dashboard',
+          uri: 'https://salonrink.com/dashboard',
         },
         color: accentColor,
       },
