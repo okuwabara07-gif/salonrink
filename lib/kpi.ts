@@ -47,13 +47,17 @@ export async function getMonthlyRevenue(
 ): Promise<KpiTrend> {
   const supabase = await createClient()
 
-  // 当月: 1日 00:00:00 〜 月末 23:59:59
-  const monthStart = new Date(year, month - 1, 1)
-  const monthEnd = new Date(year, month, 1)
+  // 当月: 1日 00:00:00 〜 翌月1日 00:00:00（JST 基準）
+  const monthStart = new Date(`${year}-${String(month).padStart(2, '0')}-01T00:00:00+09:00`)
+  const monthEndYear = month === 12 ? year + 1 : year
+  const monthEndMonth = month === 12 ? 1 : month + 1
+  const monthEnd = new Date(`${monthEndYear}-${String(monthEndMonth).padStart(2, '0')}-01T00:00:00+09:00`)
 
-  // 前月: 1日 00:00:00 〜 月末 23:59:59
-  const prevMonthStart = new Date(year, month - 2, 1)
-  const prevMonthEnd = new Date(year, month - 1, 1)
+  // 前月: 1日 00:00:00 〜 当月1日 00:00:00（JST 基準）
+  const prevMonthYear = month === 1 ? year - 1 : year
+  const prevMonth = month === 1 ? 12 : month - 1
+  const prevMonthStart = new Date(`${prevMonthYear}-${String(prevMonth).padStart(2, '0')}-01T00:00:00+09:00`)
+  const prevMonthEnd = monthStart
 
   // メニュー価格マップ作成
   const { data: menus, error: menuError } = await supabase
@@ -127,13 +131,17 @@ export async function getNewBookingsCount(
 ): Promise<KpiTrend> {
   const supabase = await createClient()
 
-  // 当月
-  const monthStart = new Date(year, month - 1, 1)
-  const monthEnd = new Date(year, month, 1)
+  // 当月: 1日 00:00:00 〜 翌月1日 00:00:00（JST 基準）
+  const monthStart = new Date(`${year}-${String(month).padStart(2, '0')}-01T00:00:00+09:00`)
+  const monthEndYear = month === 12 ? year + 1 : year
+  const monthEndMonth = month === 12 ? 1 : month + 1
+  const monthEnd = new Date(`${monthEndYear}-${String(monthEndMonth).padStart(2, '0')}-01T00:00:00+09:00`)
 
-  // 前月
-  const prevMonthStart = new Date(year, month - 2, 1)
-  const prevMonthEnd = new Date(year, month - 1, 1)
+  // 前月: 1日 00:00:00 〜 当月1日 00:00:00（JST 基準）
+  const prevMonthYear = month === 1 ? year - 1 : year
+  const prevMonth = month === 1 ? 12 : month - 1
+  const prevMonthStart = new Date(`${prevMonthYear}-${String(prevMonth).padStart(2, '0')}-01T00:00:00+09:00`)
+  const prevMonthEnd = monthStart
 
   // 当月件数
   const { data: currentData, error: currentError } = await supabase

@@ -75,19 +75,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const priceMap = new Map((menus || []).map((m: SalonMenuRow) => [m.name, m.price]))
 
-    // Step 4: 今日の予約を取得
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    // Step 4: 今日の予約を取得（JST 基準）
+    const now = new Date()
+    const jstDateStr = now.toLocaleDateString('en-CA', { timeZone: 'Asia/Tokyo' })
+    const todayJstStart = new Date(`${jstDateStr}T00:00:00+09:00`)
+    const tomorrowJstStart = new Date(todayJstStart.getTime() + 24 * 60 * 60 * 1000)
 
     const { data: bookings, error: bookingsError } = await supabase
       .from('hpb_reservations')
       .select('id, start_time, customer_name, menu_name, source')
       .eq('salon_id', salonId)
       .eq('status', 'confirmed')
-      .gte('start_time', today.toISOString())
-      .lt('start_time', tomorrow.toISOString())
+      .gte('start_time', todayJstStart.toISOString())
+      .lt('start_time', tomorrowJstStart.toISOString())
       .order('start_time', { ascending: true })
 
     if (bookingsError) {
@@ -98,7 +98,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Step 5: レスポンス整形
     const result: BookingToday[] = (bookings || []).map((b: HpbReservationRow) => {
       const startTime = b.start_time ? new Date(b.start_time) : new Date()
-      const timeStr = `${String(startTime.getHours()).padStart(2, '0')}:${String(startTime.getMinutes()).padStart(2, '0')}`
+      const timeStr = startTime.toLocaleTimeString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      })
 
       return {
         id: b.id,
