@@ -22,7 +22,11 @@ interface ThreadsPost {
 }
 
 interface InstagramPost {
+  pillar: string
+  hookText: string
   caption: string
+  hashtags: string[]
+  cardContents: string[]
 }
 
 interface GeneratedPosts {
@@ -43,16 +47,21 @@ interface CronResponse {
   error?: string
 }
 
-// ───── Themes by Day of Week ─────
+// ───── 5 Pillars for Instagram Rotation ─────
 
-const THEMES: Record<number, string> = {
-  0: '日: モチベーション系(美容師の仕事への思い)',
-  1: '月: 認知拡大(サービス紹介、Salon業界の課題)',
-  2: '火: 機能訴求(AI カルテで何が変わるか)',
-  3: '水: 美容師あるある(共感ネタ)',
-  4: '木: お客様目線(覚えてもらえる安心感)',
-  5: '金: 月25時間訴求(時間の価値)',
-  6: '土: 業界トレンド(美容業界の最新動向)',
+const PILLARS = [
+  '客離れの真実',
+  'AIカルテ活用',
+  'LINE配信テク',
+  '個人サロンあるある',
+  '数字で見せるビフォーアフター',
+]
+
+function getPillarByDayOfYear(date: Date): string {
+  const start = new Date(date.getFullYear(), 0, 0)
+  const diff = date.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  return PILLARS[dayOfYear % PILLARS.length]
 }
 
 // ───── Helper: 認証チェック ─────
@@ -74,18 +83,19 @@ function validateCronSecret(request: NextRequest): boolean {
 async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
   const client = new Anthropic()
 
-  const systemPrompt = `あなたは SalonRink(美容師向け AI カルテ SaaS)のSNS担当です。
-美容師さんに刺さる、自然で押し付けがましくない投稿を作ります。
+  const systemPrompt = `あなたはフリーランス美容師・個人サロン経営者向けに SalonRink Concierge を訴求する SNS 担当です。
+ターゲット: LINE 公式アカウントで顧客管理しているが「客離れ」に悩んでいる層。
 
 重要ルール:
 - 「SalonRink」のサービス名は商標問題があるので使わない
-- 「AIカルテ」「事前カウンセリング」「美容師向けSaaS」など機能名で訴求
-- 押し売り禁止、自然な「あるある」「気づき」スタイル
+- 「AIカルテ」「LINE配信」「顧客管理」「予約管理」など機能名で訴求
+- 押し売り禁止、共感型「あるある」「気づき」スタイル
+- 最後に CTA: 「→ 無料デモ salonrink.com/demo」を必ず入れる
 - 絵文字は適度に(過剰NG)
 - 月¥1,980 などの価格は出さない(認知拡大用)
 - 法令準拠(架空体験談NG、実在しない数値NG)`
 
-  const userPrompt = `今日のテーマ: ${theme}
+  const userPrompt = `今日の柱: ${theme}
 
 以下のSNS用に投稿案を考えてください。
 
@@ -99,15 +109,18 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
 - type2: 問いかけ + 解決提示
 - type3: データ訴求
 
-【Instagram】キャプション本文 + ハッシュタグ、合計2000字以内
-- 本文400字程度の美容師さんの感情に訴える物語形式
-- 本文末尾に改行2つ空けて、ハッシュタグを10〜15個生成
-- ハッシュタグは3層バランスで構成すること:
-  * 大ハッシュタグ(投稿数10万以上、4〜5個): #美容師 #美容室 #サロン #ヘアサロン #美容業界 等から選択
-  * 中ハッシュタグ(投稿数1〜10万、4〜5個): #サロン経営 #美容師の悩み #サロンオーナー #美容師求人 #サロン集客 #予約管理 等から選択
-  * 小ハッシュタグ(投稿数1万以下、3〜5個): #AIカルテ #サロンコンシェルジュ #サロンDX #美容師向けSaaS #事前カウンセリング 等から選択
-- ハッシュタグは投稿テーマと内容に関連するものを優先
-- 全て半角#で始め、スペース区切り
+【Instagram】 5枚カルーセル投稿用メタデータ
+- hookText(15-25字): 1枚目に大文字で焼き込む「掴み」テキスト(例: "3人に1人が2回目を来ない理由")
+- caption(200-300字): 感情に訴える物語形式 + 末尾に CTA「→ 無料デモ salonrink.com/demo」
+- cardContents(4本): 2-5枚目に配置するテキスト。各50-100字程度
+  * card1: 課題説明や具体例
+  * card2: 深掘り・数値
+  * card3: 解決策アイデア
+  * card4: 最終CTA「無料デモでお試しください」
+- hashtags(10本): 3層バランス
+  * 大: #美容師 #美容室 #サロン #ヘアサロン #フリーランス美容師 等から3個
+  * 中: #サロン経営 #美容師の悩み #客離れ防止 #LINE公式アカウント #予約管理 等から4個
+  * 小: #AIカルテ #サロンDX #美容師向けSaaS #顧客管理 #カウンセリング 等から3個
 
 以下のJSON形式で返してください(他の文章は含めない):
 {
@@ -122,7 +135,11 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
     { "type": "データ", "text": "投稿文" }
   ],
   "instagram": {
-    "caption": "キャプション本文"
+    "pillar": "柱名（客離れの真実 / AIカルテ活用 / LINE配信テク / 個人サロンあるある / 数字で見せるビフォーアフター）",
+    "hookText": "掴みテキスト15-25字",
+    "caption": "キャプション本文200-300字",
+    "hashtags": ["#フリーランス美容師", ...10本],
+    "cardContents": ["2枚目テキスト50-100字", "3枚目", "4枚目", "5枚目最終CTA"]
   }
 }`
 
@@ -335,11 +352,23 @@ async function sendToSlack(theme: string, posts: GeneratedPosts): Promise<boolea
       // Instagram セクション
       {
         type: 'section',
-        text: { type: 'mrkdwn', text: '*📷 Instagram キャプション*' },
+        text: { type: 'mrkdwn', text: '*📷 Instagram 5枚カルーセル*' },
       },
       {
         type: 'section',
-        text: { type: 'mrkdwn', text: `\`\`\`${posts.instagram.caption}\`\`\`` },
+        text: { type: 'mrkdwn', text: `*柱:* ${posts.instagram.pillar}\n*フック:* ${posts.instagram.hookText}` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*キャプション*\n\`\`\`${posts.instagram.caption}\`\`\`` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*カード本文*\n\`\`\`1️⃣ ${posts.instagram.cardContents[0]}\n2️⃣ ${posts.instagram.cardContents[1]}\n3️⃣ ${posts.instagram.cardContents[2]}\n4️⃣ ${posts.instagram.cardContents[3]}\`\`\`` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*ハッシュタグ*\n\`\`\`${posts.instagram.hashtags.join(' ')}\`\`\`` },
       },
 
       { type: 'divider' },
@@ -402,17 +431,16 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // テーマ選択
+    // 柱選択（5柱を日次ローテーション）
     const today = new Date()
-    const dayOfWeek = today.getDay()
-    const theme = THEMES[dayOfWeek]
+    const pillar = getPillarByDayOfYear(today)
 
-    result.theme = theme
-    console.log(`[generate-sns-posts] Starting SNS post generation for theme: ${theme}`)
+    result.theme = pillar
+    console.log(`[generate-sns-posts] Starting SNS post generation for pillar: ${pillar}`)
 
     // Claude で投稿案生成
     console.log('[generate-sns-posts] Calling Claude Haiku API...')
-    const generatedPosts = await generateSNSPosts(theme)
+    const generatedPosts = await generateSNSPosts(pillar)
 
     result.generated.x = generatedPosts.x.length
     result.generated.threads = generatedPosts.threads.length
@@ -449,7 +477,7 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
 
     // Slack に送信
     console.log('[generate-sns-posts] Sending to Slack...')
-    const slackSent = await sendToSlack(theme, generatedPosts)
+    const slackSent = await sendToSlack(pillar, generatedPosts)
     result.slackSent = slackSent
 
     result.success = true
