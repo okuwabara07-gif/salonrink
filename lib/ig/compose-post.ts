@@ -31,6 +31,20 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;')
 }
 
+function wrapText(text: string, charsPerLine: number = 22): string[] {
+  const lines: string[] = []
+  let current = ''
+  for (const char of text) {
+    current += char
+    if (current.length >= charsPerLine) {
+      lines.push(current)
+      current = ''
+    }
+  }
+  if (current) lines.push(current)
+  return lines.slice(0, 3)
+}
+
 async function resizeLogoForCard(logoPath: string): Promise<Buffer> {
   return sharp(logoPath)
     .resize(180, 273, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
@@ -75,18 +89,28 @@ async function composeCard(
       >${escapeXml(overlayContent.text)}</text>
     </svg>`
   } else {
-    // 2-5枚目: 下部に白ベール + テキスト
+    // 2-5枚目: 下部に白ベール + テキスト(複数行)
+    const lines = wrapText(overlayContent.text, 22)
+    const lineHeight = 56
+    const startY = 720 - ((lines.length - 1) * lineHeight) / 2
+    const tspanElements = lines
+      .map(
+        (line, i) =>
+          `<tspan x="540" dy="${i === 0 ? 0 : lineHeight}">${escapeXml(line)}</tspan>`
+      )
+      .join('')
+
     svgOverlay = `<svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
       <rect x="0" y="600" width="1080" height="480" fill="rgba(255,255,255,0.85)" />
       <text
         x="540"
-        y="720"
+        y="${startY}"
         text-anchor="middle"
         font-family="'Noto Serif JP', 'Noto Serif', 'Cormorant Garamond', serif"
-        font-size="42"
+        font-size="38"
         font-weight="500"
         fill="#2a1f15"
-      >${escapeXml(overlayContent.text)}</text>
+      >${tspanElements}</text>
     </svg>`
   }
 
