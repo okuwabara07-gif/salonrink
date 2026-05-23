@@ -1,17 +1,17 @@
-import sharp from 'sharp'
-import { generateOwnerRichMenuSvg } from '@/lib/line-messages/owner-richmenu-svg'
+// Static PNG approach: pre-rendered locally on Mac (Japanese fonts available)
+// Committed at public/line/owner-richmenu.png
+// Fetched at runtime via Vercel CDN to avoid librsvg font issues on serverless
 
 export async function generateOwnerRichMenuImage(): Promise<Buffer> {
-  try {
-    const svg = generateOwnerRichMenuSvg()
-    const svgBuffer = Buffer.from(svg)
+  const url = 'https://salonrink.com/line/owner-richmenu.png'
+  const response = await fetch(url, { cache: 'no-store' })
 
-    const pngBuffer = await sharp(svgBuffer).png().toBuffer()
-
-    return pngBuffer
-  } catch (error) {
+  if (!response.ok) {
     throw new Error(
-      `Failed to generate rich menu image: ${error instanceof Error ? error.message : String(error)}`
+      `Failed to fetch owner rich menu PNG: ${response.status} ${response.statusText}`
     )
   }
+
+  const arrayBuffer = await response.arrayBuffer()
+  return Buffer.from(arrayBuffer)
 }
