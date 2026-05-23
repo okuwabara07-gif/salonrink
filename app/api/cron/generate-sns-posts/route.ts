@@ -67,6 +67,13 @@ function getPillarByDayOfYear(date: Date): string {
 // ───── Helper: 認証チェック ─────
 
 function validateCronSecret(request: NextRequest): boolean {
+  // Vercel cron uses X-Vercel-Cron header for internal authentication
+  const vercelCronHeader = request.headers.get('x-vercel-cron')
+  if (vercelCronHeader) {
+    return true
+  }
+
+  // For manual testing with Bearer token
   const authHeader = request.headers.get('authorization')
   const secret = process.env.CRON_SECRET
 
@@ -421,16 +428,6 @@ async function sendToSlack(theme: string, posts: GeneratedPosts): Promise<boolea
 
 async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
   // 認証チェック
-  if (!process.env.CRON_SECRET) {
-    return NextResponse.json(
-      {
-        error: 'CRON_SECRET not configured',
-        message: 'Environment variable CRON_SECRET is required',
-      },
-      { status: 500 }
-    )
-  }
-
   if (!validateCronSecret(request)) {
     console.warn('Unauthorized cron request: generate-sns-posts')
     return NextResponse.json(

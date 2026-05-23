@@ -16,9 +16,15 @@ interface CronResponse {
 }
 
 function validateCronSecret(request: Request): boolean {
+  // Vercel cron uses X-Vercel-Cron header for internal authentication
+  const vercelCronHeader = request.headers.get('x-vercel-cron')
+  if (vercelCronHeader) {
+    return true
+  }
+
+  // For manual testing with Bearer token
   const authHeader = request.headers.get('authorization') || ''
   const secret = process.env.CRON_SECRET
-
   if (!secret) {
     return false
   }
