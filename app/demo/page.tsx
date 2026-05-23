@@ -3,6 +3,13 @@
 import Link from 'next/link';
 import styles from './page.module.css';
 
+const CARDS = [
+  { href: '/demo/booking', image: '/demo/cards/card-booking.png', alt: '予約管理' },
+  { href: '/demo/customers', image: '/demo/cards/card-customers.png', alt: '顧客一覧' },
+  { href: '/demo/cons', image: '/demo/cards/card-cons.png', alt: 'AI コンシェルジュ' },
+  { href: '/demo/settings', image: '/demo/cards/card-settings.png', alt: 'メニュー設定' },
+];
+
 export default function DemoPage() {
   return (
     <div className={styles.page}>
@@ -17,32 +24,18 @@ export default function DemoPage() {
 
       <div className={styles.content}>
         <h1 className={styles.title}>SalonRink デモへようこそ</h1>
-        <p className={styles.subtitle}>主な機能をお試しいただけます</p>
 
         <div className={styles.cardGrid}>
-          <Link href="/demo/booking" className={styles.card}>
-            <div className={styles.cardIcon}>📅</div>
-            <h2 className={styles.cardTitle}>予約管理</h2>
-            <p className={styles.cardDesc}>タイムテーブル / 予約管理</p>
-          </Link>
-
-          <Link href="/demo/customers" className={styles.card}>
-            <div className={styles.cardIcon}>👥</div>
-            <h2 className={styles.cardTitle}>顧客一覧</h2>
-            <p className={styles.cardDesc}>顧客データベース</p>
-          </Link>
-
-          <Link href="/demo/cons" className={styles.card}>
-            <div className={styles.cardIcon}>🤖</div>
-            <h2 className={styles.cardTitle}>AI コンシェルジュ</h2>
-            <p className={styles.cardDesc}>自動カウンセリング</p>
-          </Link>
-
-          <Link href="/demo/settings" className={styles.card}>
-            <div className={styles.cardIcon}>⚙️</div>
-            <h2 className={styles.cardTitle}>メニュー設定</h2>
-            <p className={styles.cardDesc}>施術メニュー管理</p>
-          </Link>
+          {CARDS.map((card) => (
+            <Link key={card.href} href={card.href} className={styles.card}>
+              <img
+                src={card.image}
+                alt={card.alt}
+                className={styles.cardImage}
+                loading="lazy"
+              />
+            </Link>
+          ))}
         </div>
       </div>
     </div>
