@@ -1,0 +1,266 @@
+/* /demo/settings page styles */
+
+.page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Demo badge */
+.demoBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #E7F3FF;
+  border: 1px solid #B3D9FF;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #0066CC;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.demoBadgeIcon {
+  font-size: 14px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.title {
+  margin: 0 0 4px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 12.5px;
+  color: #8a7860;
+}
+
+/* Add menu button */
+.addMenuBtn {
+  padding: 10px 18px;
+  border-radius: 7px;
+  border: 1px dashed #D9C8A8;
+  background: transparent;
+  color: #4a3a28;
+  font-size: 12.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.addMenuBtn:hover {
+  background: #FBF6E8;
+  border-color: #B5A684;
+}
+
+/* Menu card */
+.menuCard {
+  background: #FAFAF5;
+  border: 1px solid #E4D5B8;
+  border-radius: 10px;
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+
+/* Menu table */
+.menuTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #E4D5B8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 12px 14px;
+  background: #FAF5E9;
+  border-bottom: 1px solid #E4D5B8;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #4a3a28;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tableRow {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 16px;
+  padding: 14px;
+  border-bottom: 1px solid #E4D5B8;
+  align-items: center;
+  font-size: 13px;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.colName {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menuName {
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+
+.menuDesc {
+  font-size: 11px;
+  color: #8a7860;
+}
+
+.colMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
+  color: #2a1f15;
+  font-variant-numeric: tabular-nums;
+}
+
+.duration {
+  font-size: 11px;
+  color: #8a7860;
+}
+
+.colCategory {
+  display: flex;
+  justify-content: center;
+}
+
+.categoryBadge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #E7F3FF;
+  color: #0066CC;
+  border: 1px solid #B3D9FF;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.colActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.actionBtn {
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid #D9C8A8;
+  background: transparent;
+  color: #4a3a28;
+  font-size: 11.5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.actionBtn:hover {
+  background: #EDE2CF;
+}
+
+/* Info box */
+.infoBox {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  background: #FFF9E6;
+  border: 1px solid #FFE5A3;
+  border-radius: 8px;
+  align-items: flex-start;
+}
+
+.infoIcon {
+  font-size: 18px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.infoText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.infoTitle {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #856404;
+}
+
+.infoDesc {
+  margin: 0;
+  font-size: 12px;
+  color: #856404;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .addMenuBtn {
+    width: 100%;
+  }
+
+  .tableHeader,
+  .tableRow {
+    grid-template-columns: 1fr 0.8fr;
+    gap: 12px;
+  }
+
+  .colCategory,
+  .colActions {
+    display: none;
+  }
+
+  .colMeta {
+    grid-column: 2;
+  }
+}

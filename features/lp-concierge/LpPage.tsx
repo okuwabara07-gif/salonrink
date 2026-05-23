@@ -237,6 +237,20 @@ export default function LpPage() {
         </div>
       </section>
 
+      {/* DEMO CTA */}
+      <section className={styles.demoCta}>
+        <div className={styles.demoCtaInner}>
+          <div className={styles.demoCtaContent}>
+            <h2 className={styles.demoCtaTitle}>実際に操作してみたい方へ</h2>
+            <p className={styles.demoCtaSub}>ログイン不要の無料デモで、SalonRink の機能を今すぐ体験できます。</p>
+          </div>
+          <a href="/demo" className={styles.demoCtaButton}>
+            <span className={styles.demoCtaButtonIcon}>🎯</span>
+            無料デモを見る
+          </a>
+        </div>
+      </section>
+
       {/* EXPERIENCE */}
       <section id="experience" className={styles.experience}>
         <div className={styles.sectionInner}>
