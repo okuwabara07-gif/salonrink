@@ -31,7 +31,7 @@ function escapeXml(str: string): string {
     .replace(/'/g, '&apos;')
 }
 
-function wrapText(text: string, charsPerLine: number = 22): string[] {
+function wrapText(text: string, charsPerLine: number = 14): string[] {
   const lines: string[] = []
   let current = ''
   for (const char of text) {
@@ -42,12 +42,13 @@ function wrapText(text: string, charsPerLine: number = 22): string[] {
     }
   }
   if (current) lines.push(current)
-  return lines.slice(0, 3)
+  return lines.slice(0, 2)
 }
 
 async function resizeLogoForCard(logoPath: string): Promise<Buffer> {
   return sharp(logoPath)
-    .resize(180, 273, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .resize(100, 152, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .ensureAlpha(0.3)
     .png()
     .toBuffer()
 }
@@ -82,17 +83,17 @@ async function composeCard(
         y="620"
         text-anchor="middle"
         font-family="'Noto Serif JP', 'Noto Serif', 'Cormorant Garamond', serif"
-        font-size="64"
+        font-size="56"
         font-weight="700"
         fill="white"
         filter="url(#textShadow)"
       >${escapeXml(overlayContent.text)}</text>
     </svg>`
   } else {
-    // 2-5枚目: 下部に白ベール + テキスト(複数行)
-    const lines = wrapText(overlayContent.text, 22)
-    const lineHeight = 56
-    const startY = 720 - ((lines.length - 1) * lineHeight) / 2
+    // 2-5枚目: 中央寄り白ベール + テキスト(複数行、短文・大字)
+    const lines = wrapText(overlayContent.text, 14)
+    const lineHeight = 76
+    const startY = 540 - ((lines.length - 1) * lineHeight) / 2
     const tspanElements = lines
       .map(
         (line, i) =>
@@ -101,14 +102,14 @@ async function composeCard(
       .join('')
 
     svgOverlay = `<svg width="1080" height="1080" xmlns="http://www.w3.org/2000/svg">
-      <rect x="0" y="600" width="1080" height="480" fill="rgba(255,255,255,0.85)" />
+      <rect x="0" y="415" width="1080" height="250" fill="rgba(255,255,255,0.6)" />
       <text
         x="540"
         y="${startY}"
         text-anchor="middle"
         font-family="'Noto Serif JP', 'Noto Serif', 'Cormorant Garamond', serif"
-        font-size="38"
-        font-weight="500"
+        font-size="64"
+        font-weight="600"
         fill="#2a1f15"
       >${tspanElements}</text>
     </svg>`
