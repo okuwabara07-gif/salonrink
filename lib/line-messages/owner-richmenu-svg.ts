@@ -165,11 +165,11 @@ export function generateRichMenuAreas(): RichMenuArea[] {
   const squareHeight = height / rows
 
   const actions = [
-    { label: 'booking', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/bookings' },
-    { label: 'records', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/karte' },
-    { label: 'customers', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/customers' },
-    { label: 'menu', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/menu' },
-    { label: 'settings', type: 'uri' as const, uri: 'https://salonrink.com/dashboard/settings' },
+    { label: 'booking', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/bookings' },
+    { label: 'records', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/karte' },
+    { label: 'customers', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/customers' },
+    { label: 'menu', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/menu' },
+    { label: 'settings', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/settings' },
     { label: 'support', type: 'postback' as const, data: 'action=help' },
   ]
 
