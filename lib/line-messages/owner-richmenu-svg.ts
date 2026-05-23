@@ -102,7 +102,7 @@ export function generateOwnerRichMenuSvg(): string {
       const cy = y + squareHeight / 2
 
       const emojiSize = 280
-      const labelFontSize = 150
+      const labelFontSize = 230
       const descFontSize = 70
 
       return `
