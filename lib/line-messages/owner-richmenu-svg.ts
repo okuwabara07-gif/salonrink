@@ -165,10 +165,10 @@ export function generateRichMenuAreas(): RichMenuArea[] {
   const squareHeight = height / rows
 
   const actions = [
-    { label: 'booking', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/bookings' },
-    { label: 'records', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/karte' },
+    { label: 'booking', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/booking' },
+    { label: 'records', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/cons' },
     { label: 'customers', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/customers' },
-    { label: 'menu', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/menu' },
+    { label: 'menu', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/settings' },
     { label: 'settings', type: 'uri' as const, uri: 'https://liff.line.me/2010171194-dkeKAzwz/settings' },
     { label: 'support', type: 'postback' as const, data: 'action=help' },
   ]
