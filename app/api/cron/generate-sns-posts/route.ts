@@ -221,7 +221,88 @@ async function getIgToken(): Promise<IgTokenRow> {
   return rows[0]
 }
 
-// ───── Helper: public/ig/ から日付ベースで連続3枚を選択 ─────
+// ───── Helper: 次に投稿すべき post_NNN フォルダを選定 ─────
+
+interface PostPackage {
+  postNumber: number
+  folderName: string         // 例: "post_001"
+  folderPath: string          // 絶対パス
+  imageFilenames: string[]    // 例: ["card1.png", ..., "card5.png"]
+  imageUrls: string[]         // 例: ["https://salonrink.com/ig/posts/post_001/card1.png", ...]
+  captionPath: string | null  // caption.txt の絶対パス（存在しない場合 null）
+  captionText: string | null  // caption.txt の中身（存在しない場合 null）
+}
+
+function pickNextPostPackage(): PostPackage | null {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const baseDir = path.join(process.cwd(), 'public', 'ig', 'posts')
+
+  if (!fs.existsSync(baseDir)) {
+    console.warn('[pickNextPostPackage] baseDir not found:', baseDir)
+    return null
+  }
+
+  const entries = fs.readdirSync(baseDir, { withFileTypes: true })
+  const postFolders = entries
+    .filter((e: any) => e.isDirectory() && /^post_\d{3,}$/.test(e.name))
+    .map((e: any) => e.name)
+    .sort() // post_001, post_002, ... の順
+
+  for (const folderName of postFolders) {
+    const folderPath = path.join(baseDir, folderName)
+    const files = fs.readdirSync(folderPath)
+    const cardFiles = ['card1.png', 'card2.png', 'card3.png', 'card4.png', 'card5.png']
+    const allCardsPresent = cardFiles.every((f: string) => files.includes(f))
+
+    if (!allCardsPresent) {
+      console.warn(`[pickNextPostPackage] skip ${folderName}: cards incomplete`)
+      continue
+    }
+
+    const m = folderName.match(/^post_(\d+)$/)
+    if (!m) continue
+    const postNumber = parseInt(m[1], 10)
+
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
+    const imageUrls = cardFiles.map((f: string) => `${baseUrl}/ig/posts/${folderName}/${f}`)
+
+    const captionPath = path.join(folderPath, 'caption.txt')
+    let captionText: string | null = null
+    if (fs.existsSync(captionPath)) {
+      captionText = fs.readFileSync(captionPath, 'utf-8').trim()
+    }
+
+    return {
+      postNumber,
+      folderName,
+      folderPath,
+      imageFilenames: cardFiles,
+      imageUrls,
+      captionPath: fs.existsSync(captionPath) ? captionPath : null,
+      captionText,
+    }
+  }
+
+  console.warn('[pickNextPostPackage] no valid post folder found')
+  return null
+}
+
+// ───── Helper: 投稿成功後、フォルダを _posted/ に移動 ─────
+
+function markPostAsPosted(folderPath: string, folderName: string): void {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const postedDir = path.join(process.cwd(), 'public', 'ig', 'posts', '_posted')
+  if (!fs.existsSync(postedDir)) {
+    fs.mkdirSync(postedDir, { recursive: true })
+  }
+  const dstPath = path.join(postedDir, folderName)
+  fs.renameSync(folderPath, dstPath)
+  console.log(`[markPostAsPosted] moved ${folderName} → _posted/`)
+}
+
+// ───── DEPRECATED v1.1以降IG投稿には使われない。Slack通知やバックアップ用途のみ ─────
 
 function pickCarouselImageUrls(count: number = 3): string[] {
   const fs = require('fs') as typeof import('fs')
@@ -458,19 +539,30 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
     result.generated.x = generatedPosts.x.length
     result.generated.threads = generatedPosts.threads.length
     result.generated.instagram = 1
-    // ─── IG実投稿 ─── (patch)
+    // ─── IG実投稿 v1.1: post_NNN フォルダ + 5枚カルーセル ─── (patch)
     let igPostStatus = '未実行'
     try {
-      const imageUrls = pickCarouselImageUrls(3)
-      if (imageUrls.length === 0) {
-        igPostStatus = 'スキップ(public/ig/に画像なし)'
-        console.warn('[generate-sns-posts] IG投稿スキップ: 画像が無い')
+      const postPackage = pickNextPostPackage()
+      if (!postPackage) {
+        igPostStatus = 'スキップ(public/ig/posts/にpost_NNNなし)'
+        console.warn('[generate-sns-posts] IG投稿スキップ: 投稿可能なpost_NNNが無い')
       } else {
-        console.log(`[generate-sns-posts] IGカルーセル投稿開始 (${imageUrls.length}枚)`)
-        const igResult = await postCarouselToInstagram(generatedPosts.instagram.caption, imageUrls)
+        console.log(`[generate-sns-posts] IGカルーセル投稿開始: ${postPackage.folderName} (${postPackage.imageUrls.length}枚)`)
+
+        // caption.txt があればそれを優先、なければHaiku生成結果を使う
+        const finalCaption = postPackage.captionText ?? generatedPosts.instagram.caption
+
+        const igResult = await postCarouselToInstagram(finalCaption, postPackage.imageUrls)
         if (igResult.success) {
-          igPostStatus = `成功(post_id=${igResult.postId})`
+          igPostStatus = `成功(post_id=${igResult.postId}, folder=${postPackage.folderName})`
           console.log(`[generate-sns-posts] IG投稿成功: ${igResult.postId}`)
+          // 投稿成功 → フォルダを _posted/ に移動（次回は post_002 が拾われる）
+          try {
+            markPostAsPosted(postPackage.folderPath, postPackage.folderName)
+          } catch (e) {
+            console.error(`[generate-sns-posts] _posted/移動失敗:`, e)
+            // 移動失敗しても投稿自体は成功しているのでスローしない
+          }
         } else {
           igPostStatus = `失敗(${igResult.error})`
           console.error(`[generate-sns-posts] IG投稿失敗: ${igResult.error}`)
