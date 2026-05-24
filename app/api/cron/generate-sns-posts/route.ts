@@ -264,7 +264,7 @@ function pickNextPostPackage(): PostPackage | null {
     if (!m) continue
     const postNumber = parseInt(m[1], 10)
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
+    const baseUrl = 'https://salonrink.com'
     const imageUrls = cardFiles.map((f: string) => `${baseUrl}/ig/posts/${folderName}/${f}`)
 
     const captionPath = path.join(folderPath, 'caption.txt')
