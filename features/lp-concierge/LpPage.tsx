@@ -56,7 +56,8 @@ const COMPARE_ROWS = [
   { feature: 'スタッフ学習コスト', srk: '無し', a: '高い', b: '中程度', c: '低い' },
   { feature: 'お客様への影響', srk: '無し(LINEのまま)', a: '中程度(新ログイン)', b: '低い(既存連携)', c: '中程度(アプリDL)' },
   { feature: '顧客記憶カルテ', srk: '対応', a: '未対応', b: '基本機能', c: '対応' },
-  { feature: 'AIカルテ自動生成', srk: '対応', a: '未対応', b: '未対応', c: '対応(基本)' },
+  { feature: 'カルテ自動生成', srk: '対応', a: '未対応', b: '未対応', c: '対応(基本)' },
+  { feature: 'HPB予約取込', srk: '対応', a: '未対応', b: '未対応', c: '未対応' },
   { feature: 'LINE完結性', srk: '100%完結', a: '連携なし', b: '一部連携', c: '連携なし' },
 ];
 
@@ -758,8 +759,8 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>COMPARE</p>
-            <h2 className={styles.sectionTitle}>他社サービスとの比較</h2>
-            <p className={styles.sectionSub}>他社情報は公開情報をもとにした参考値です。</p>
+            <h2 className={styles.sectionTitle}>他サービスとの比較</h2>
+            <p className={styles.sectionSub}>1人サロンが選ぶべきは、どのタイプ?</p>
           </div>
           <div className={styles.compareTableWrap}>
             <table className={styles.compareTable}>
@@ -769,9 +770,9 @@ export default function LpPage() {
                   <th className={styles.compareThSrk}>
                     <span className={styles.compareSrkLabel}>SalonRink<br/>Concierge</span>
                   </th>
-                  <th>A社</th>
-                  <th>B社</th>
-                  <th>C社</th>
+                  <th>他サービス A<br/><span className={styles.compareThSub}>(予約管理型)</span></th>
+                  <th>他サービス B<br/><span className={styles.compareThSub}>(予約系SaaS)</span></th>
+                  <th>他サービス C<br/><span className={styles.compareThSub}>(カルテ専業型)</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -795,6 +796,10 @@ export default function LpPage() {
               </tbody>
             </table>
           </div>
+          <p className={styles.compareDisclaimer}>
+            ※ 他サービス A / B / C は、予約管理SaaS・予約系SaaS・カルテ専業SaaSの一般的な水準を参考に記載しています。
+            特定の競合サービスを指すものではありません。各サービスの料金・機能は変更される場合があります。
+          </p>
         </div>
       </section>
 

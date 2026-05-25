@@ -357,6 +357,26 @@
 .compareYes { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: linear-gradient(135deg, #06C755, #039d3d); color: #ffffff; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .compareNo { color: #b89c84; font-size: 12.5px; }
 .compareValue { color: #2a2018; font-weight: 500; }
+.compareThSub {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #888a82;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.compareDisclaimer {
+  max-width: 1000px;
+  margin: 18px auto 0;
+  padding: 14px 18px;
+  background: #fbf7ef;
+  border-left: 3px solid rgba(184, 149, 100, 0.4);
+  border-radius: 0 6px 6px 0;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #4a3d31;
+  letter-spacing: 0.02em;
+}
 
 /* INTEGRATIONS */
 .integrations { background: #ffffff; }
