@@ -917,8 +917,21 @@ section#solution .sr-container { position: relative; z-index: 1; }
   .scene__photo { display: none; }
 }
 
-/* A案: 画像内に全要素焼き込み済みのため、HTML側テキストを非表示 */
+/* A案: 画像を信じる - フルブリード化 + ナビ重複解消 */
+.hero { padding: 0 !important; min-height: 0 !important; }
 .hero__inner { display: none !important; }
+.hero img[src*="hero-final"] {
+  position: relative !important;
+  width: 100% !important;
+  height: auto !important;
+  inset: auto !important;
+  display: block;
+}
+/* hero overlay も非表示 */
+.hero > div[aria-hidden="true"] { display: none !important; }
+/* ナビ重複解消: HTMLナビを白背景で固定 */
+.nav { background: #fff !important; box-shadow: 0 1px 8px rgba(0,0,0,0.08); }
+
 .everyone .sr-section__head { display: none !important; }
 .everyone__num { display: none !important; }
 
