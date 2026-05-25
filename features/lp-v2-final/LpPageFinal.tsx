@@ -127,24 +127,51 @@ a { color: inherit; text-decoration: none; }
 ═══════════════════════════════════════════════ */
 .hero {
   position: relative;
-  padding: 64px 0;
-  background: #fff;
   overflow: hidden;
+  min-height: 720px;
+  padding: 0;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 30%,
+    rgba(255, 255, 255, 0.55) 50%,
+    rgba(255, 255, 255, 0.15) 70%,
+    transparent 100%
+  );
+  pointer-events: none;
 }
 
 .hero__inner {
+  position: relative;
+  z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 32px;
+  padding: 64px 32px 96px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
+  grid-template-columns: minmax(400px, 50%) 1fr;
   align-items: center;
+  min-height: inherit;
 }
 
-.hero__content { position: relative; z-index: 1; }
+.hero__content { position: relative; }
 
-.hero__media { position: relative; }
+.hero__media { display: none; }
 
 .hero__image {
   width: 100%;
@@ -199,7 +226,25 @@ a { color: inherit; text-decoration: none; }
 .hero__trust svg { color: var(--accent); }
 
 @media (max-width: 980px) {
-  .hero__inner { grid-template-columns: 1fr; gap: 32px; }
+  .hero {
+    min-height: auto;
+  }
+  .hero__inner {
+    grid-template-columns: 1fr;
+    padding: 32px 16px 480px 16px;
+  }
+  .hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 30%,
+      rgba(255, 255, 255, 0.3) 60%,
+      transparent 100%
+    );
+  }
+  .hero__bg {
+    object-position: center bottom;
+  }
   .hero__image { border-radius: 12px; }
   .nav__menu { display: none; }
 }
@@ -871,7 +916,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
     </nav>
     <div className="nav__cta">
       <button className="sr-btn sr-btn--primary" style={{padding: '12px 18px'}}>
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
         LINEで始める
       </button>
       <button className="sr-btn sr-btn--outline" style={{padding: '12px 18px'}}>資料をダウンロード</button>
@@ -883,6 +928,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
+  <img className="hero__bg" src="/images/hero/hero-final.png" alt="SalonRink Concierge — キレイ鶴見店の店内とLINE公式アカウントのトーク画面。お客様の予約・相談・パーソナライズ提案・業務自動化がLINEの中で完結" />
+  <div className="hero__overlay" aria-hidden="true"></div>
   <div className="hero__inner">
     <div className="hero__content">
       <div className="hero__badge">
@@ -895,7 +942,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <div className="hero__stats">
         <div className="stat">
           <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
+            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
             <span className="stat__label">顧客対応の工数</span>
           </div>
           <div className="stat__value">−30<span style={{fontSize: '18px'}}>分/日</span></div>
@@ -903,7 +950,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         </div>
         <div className="stat">
           <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
             <span className="stat__label">リピート率</span>
           </div>
           <div className="stat__value">+25<span style={{fontSize: '18px'}}>%</span></div>
@@ -911,7 +958,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         </div>
         <div className="stat">
           <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" stroke-linecap="round"/></svg>
+            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" strokeLinecap="round"/></svg>
             <span className="stat__label">客単価アップ</span>
           </div>
           <div className="stat__value">+15<span style={{fontSize: '18px'}}>%</span></div>
@@ -920,14 +967,14 @@ section#solution .sr-container { position: relative; z-index: 1; }
       </div>
 
       <ul className="hero__bullets">
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約も自動取込、ダブルブッキング防止</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約も自動取込、ダブルブッキング防止</li>
       </ul>
 
       <div className="hero__cta">
         <button className="sr-btn sr-btn--primary">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
           LINEで無料ではじめる
         </button>
         <button className="sr-btn sr-btn--outline">
@@ -937,13 +984,10 @@ section#solution .sr-container { position: relative; z-index: 1; }
       </div>
 
       <div className="hero__trust">
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.5" stroke-linecap="round"/></svg>5分で連携完了</span>
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 1l5 2v4c0 3-2.2 5.5-5 6.5C4.2 12.5 2 10 2 7V3l5-2z"/></svg>初期費用0円</span>
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2l7 5-7 5z" stroke-linejoin="round"/></svg>月¥1,980〜 / 14日間無料</span>
+        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.5" strokeLinecap="round"/></svg>5分で連携完了</span>
+        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M7 1l5 2v4c0 3-2.2 5.5-5 6.5C4.2 12.5 2 10 2 7V3l5-2z"/></svg>初期費用0円</span>
+        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M4 2l7 5-7 5z" strokeLinejoin="round"/></svg>月¥1,980〜 / 14日間無料</span>
       </div>
-    </div>
-    <div className="hero__media">
-      <img className="hero__image" src="/images/hero/hero-right.png" alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面" width={1672} height={941}/>
     </div>
   </div>
 </section>
@@ -979,7 +1023,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
           <div className="demo-flag">▸ 前回は…どんなだっけ？</div>
         </div>
         <div className="pcard__foot">
-          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"/></svg></span>
+          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"/></svg></span>
           <span className="pcard__foot-text">接客の質が<br />不安定になる</span>
         </div>
       </article>
@@ -997,7 +1041,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
           <div className="demo-flag">▸ 二重チェックで時間ロス</div>
         </div>
         <div className="pcard__foot">
-          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span>
+          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span>
           <span className="pcard__foot-text">予約管理だけで<br />1日30分以上の損失</span>
         </div>
       </article>
@@ -1014,7 +1058,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
           <div className="demo-flag">▸ 機会損失が積み重なる</div>
         </div>
         <div className="pcard__foot">
-          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" stroke-linecap="round"/></svg></span>
+          <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" strokeLinecap="round"/></svg></span>
           <span className="pcard__foot-text">リピート機会の<br />取りこぼし</span>
         </div>
       </article>
@@ -1022,19 +1066,19 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
     <div className="pband">
       <div className="pband__hd">
-        <span className="pband__hd-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="9"/><path d="M6 11l3.5 3.5L16 8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span className="pband__hd-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="9"/><path d="M6 11l3.5 3.5L16 8" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
         <span className="pband__hd-text">1人サロンに、<br />こんなお悩みはありませんか？</span>
       </div>
       <ul className="pband__items">
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>LINEの返信に時間がかかり、本来の施術に集中できない</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>リピートにつながる連絡のタイミングがつかめない</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約とLINE予約の管理で1日が終わる</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去のお客様情報を引き出せず、提案が画一的になる</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>LINEの返信に時間がかかり、本来の施術に集中できない</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>リピートにつながる連絡のタイミングがつかめない</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約とLINE予約の管理で1日が終わる</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>過去のお客様情報を引き出せず、提案が画一的になる</li>
       </ul>
     </div>
 
     <div className="problem__arrow">
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 4v22M8 18l8 10 8-10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16 4v22M8 18l8 10 8-10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
     </div>
     <div className="problem__solve">
       <span className="brand">SalonRink<span className="brand-sub">CONCIERGE</span></span> <span style={{color: 'var(--ink-3)', fontWeight: '400'}}>が、</span><b>その悩みを解決します。</b>
@@ -1062,28 +1106,28 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
         <div className="sol__feat">
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h12v6H8l-3 3V5z"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 5h12v6H8l-3 3V5z"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">UI</span><span className="feat__title">LINEトーク画面</span></div>
               <div className="feat__sub">いつものトークでそのままやりとり。</div>
             </div>
           </div>
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="12" height="11" rx="1.5"/><path d="M3 7h12M6 2v3M12 2v3"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="4" width="12" height="11" rx="1.5"/><path d="M3 7h12M6 2v3M12 2v3"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">予約</span><span className="feat__title">LINE公式の予約・配信</span></div>
               <div className="feat__sub">予約受付・キャンセル・リマインド配信もそのまま。</div>
             </div>
           </div>
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M2 15c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="7" cy="7" r="2.5"/><path d="M2 15c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">管理</span><span className="feat__title">既存の友だち一覧</span></div>
               <div className="feat__sub">既存のLINE友だちにそのまま連動。</div>
             </div>
           </div>
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 8a4 4 0 018 0v3l1 2H4l1-2V8z"/><path d="M7 15a2 2 0 004 0"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 8a4 4 0 018 0v3l1 2H4l1-2V8z"/><path d="M7 15a2 2 0 004 0"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">通知</span><span className="feat__title">LINE通知 / リッチメニュー</span></div>
               <div className="feat__sub">リッチメニューや通知もそのまま活用。</div>
@@ -1094,7 +1138,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
       <div className="sol__arrow-wrap">
         <div className="sol__arrow">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 10h10M11 5l4 5-4 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M5 10h10M11 5l4 5-4 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </div>
       </div>
 
@@ -1105,21 +1149,21 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
         <div className="sol__feat">
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15h12M5 13V8m4 5V5m4 8v-6" stroke-linecap="round"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 15h12M5 13V8m4 5V5m4 8v-6" strokeLinecap="round"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">AUTO</span><span className="feat__title">会話 → カルテ 自動構造化</span></div>
               <div className="feat__sub">会話を読み取り、カルテを自動生成。</div>
             </div>
           </div>
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="4.5"/><path d="M11.5 11.5L16 16" stroke-linecap="round"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="4.5"/><path d="M11.5 11.5L16 16" strokeLinecap="round"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">検索</span><span className="feat__title">LINEで「@田中様」と打つだけ</span></div>
               <div className="feat__sub">過去の会話・施術履歴・好みを瞬時に呼び出し。</div>
             </div>
           </div>
           <div className="feat" style={{background: 'var(--accent-soft)', borderRadius: '10px', padding: '12px', margin: '-2px'}}>
-            <div className="feat__icon" style={{background: 'var(--accent)', color: '#fff'}}><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="14" height="12" rx="1.5"/><circle cx="6" cy="7" r="1.5"/><path d="M2 12l4-4 4 4 3-3 3 3"/></svg></div>
+            <div className="feat__icon" style={{background: 'var(--accent)', color: '#fff'}}><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.6"><rect x="2" y="3" width="14" height="12" rx="1.5"/><circle cx="6" cy="7" r="1.5"/><path d="M2 12l4-4 4 4 3-3 3 3"/></svg></div>
             <div className="feat__body">
               <div className="feat__row">
                 <span className="feat__tag" style={{background: 'var(--accent)', color: '#fff'}}>NEW</span>
@@ -1129,7 +1173,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
             </div>
           </div>
           <div className="feat">
-            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h8l3 3v11H4V2z"/><path d="M12 2v3h3M6 8h6M6 11h6M6 14h4"/></svg></div>
+            <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 2h8l3 3v11H4V2z"/><path d="M12 2v3h3M6 8h6M6 11h6M6 14h4"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">提案</span><span className="feat__title">リピート提案を自動下書き</span></div>
               <div className="feat__sub">「そろそろの時期」のお客様リスト + 配信文の下書きを自動生成。</div>
@@ -1150,19 +1194,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
 ═══════════════════════════════════════════════════════ */}
 <section className="everyone sr-section" id="everyone">
   <div className="sr-container">
-    <div className="sr-section__head">
-      <img className="everyone__deco everyone__deco--l" src="/images/for-everyone/header-left-customer.png" alt="" aria-hidden="true"/>
-      <img className="everyone__deco everyone__deco--r" src="/images/for-everyone/header-right-staff.png" alt="" aria-hidden="true"/>
-      <div className="sr-eyebrow">FOR EVERYONE</div>
-      <h2 className="sr-h2">お客様も、これから雇うスタッフも、<br />そして<span className="accent">あなた自身</span>も。</h2>
-      <p className="sr-lead">1人サロンのあなたが軸。<br />でも、お客様とこれから雇うスタッフ、それぞれの視点で考えました。</p>
-    </div>
-
     <div className="everyone__visual" style={{position: 'relative', width: '100%', maxWidth: '1240px', margin: '0 auto'}}>
       <img src="/images/for-everyone/for-everyone-full.png" alt="FOR EVERYONE — お客様も、これから雇うスタッフも、そしてあなた自身も。3つの視点から見たSalonRinkの価値（FOR CUSTOMERS / FOR STAFF / FOR YOU）" style={{width: '100%', height: 'auto', display: 'block'}}/>
-      <span className="everyone__num everyone__num--customers" style={{position: 'absolute', top: '41%', left: '6%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+25%</span>
-      <span className="everyone__num everyone__num--staff" style={{position: 'absolute', top: '41%', left: '38%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>−30分/日</span>
-      <span className="everyone__num everyone__num--you" style={{position: 'absolute', top: '41%', left: '72%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+15%</span>
     </div>
   </div>
 </section>
@@ -1248,7 +1281,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
               <div className="scene__phone-body">
                 <div className="suggest">
                   <div className="suggest__head">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h8M4 7V3m4 4V5"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M2 9h8M4 7V3m4 4V5"/></svg>
                     Concierge 提案 — 配信文案
                   </div>
                   <div className="suggest__body">
@@ -1259,7 +1292,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
                 </div>
                 <div className="suggest" style={{background: 'var(--coral-soft)', borderColor: 'var(--coral)'}}>
                   <div className="suggest__head" style={{color: '#7a2912'}}>
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 4v2.5l1.5 1"/></svg>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 4v2.5l1.5 1"/></svg>
                     おすすめタイミング
                   </div>
                   <div className="suggest__body">
@@ -1304,7 +1337,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
     <div className="karte__main">
       <div className="karte__left">
         <div className="karte__head-row">
-          <span className="karte__head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 4h12v6H6l-4 3V4z"/></svg></span>
+          <span className="karte__head-icon"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M2 4h12v6H6l-4 3V4z"/></svg></span>
           <span className="karte__head-title">LINE トーク履歴</span>
           <span className="karte__head-sub">過去5回分</span>
         </div>
@@ -1344,7 +1377,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
       <div className="karte__arrow">
         <div className="karte__arrow-pill">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 5l4 5-4 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 10h10M11 5l4 5-4 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
           <span>AUTO</span>
         </div>
       </div>
@@ -1385,7 +1418,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
         <div className="kr__section" style={{borderTop: '1px dashed var(--accent)'}}>
           <div className="kr__note">
-            <span className="kr__note-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4v3M5 4v3M8 4v3M2 7h6"/></svg></span>
+            <span className="kr__note-icon"><svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M2 4v3M5 4v3M8 4v3M2 7h6"/></svg></span>
             <span><b>次回提案：</b>同系統 × 0.5トーンダウン。低刺激タイプ継続を推奨。</span>
           </div>
         </div>
@@ -1394,17 +1427,17 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
     <div className="karte__feats">
       <div className="karte__feat">
-        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M13 13l5 5" stroke-linecap="round"/></svg></div>
+        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="9" r="6"/><path d="M13 13l5 5" strokeLinecap="round"/></svg></div>
         <div className="karte__feat-title">名前1つで全部わかる</div>
         <div className="karte__feat-sub">LINEで「@◯◯様」と打つだけ。過去の会話・施術・写真を瞬時に呼び出し。</div>
       </div>
       <div className="karte__feat">
-        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg></div>
+        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg></div>
         <div className="karte__feat-title">会話 → カルテ 自動化</div>
         <div className="karte__feat-sub">写真・キーワード・好みを自動抽出。手入力ゼロでカルテが育つ。</div>
       </div>
       <div className="karte__feat">
-        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3M4 4l2 2M14 14l2 2M4 16l2-2M14 6l2-2"/></svg></div>
+        <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3M4 4l2 2M14 14l2 2M4 16l2-2M14 6l2-2"/></svg></div>
         <div className="karte__feat-title">引き継ぎゼロ</div>
         <div className="karte__feat-sub">将来スタッフを雇った時も、新人スタッフでも、同じ品質で接客できる。</div>
       </div>
@@ -1434,7 +1467,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="nc__arrow-chart">
           <div className="nc__line-up">
             <svg viewBox="0 0 200 24" fill="none" preserveAspectRatio="none">
-              <path d="M0 22 Q60 22 90 14 T200 2" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M0 22 Q60 22 90 14 T200 2" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round"/>
               <circle cx="0" cy="22" r="3" fill="var(--accent)" opacity="0.4"/>
               <circle cx="200" cy="2" r="4" fill="var(--accent)"/>
             </svg>
@@ -1476,7 +1509,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         </div>
         <p className="nc__caption">カルテ検索・HPB予約取込・配信文作成のすべてを自動化。接客と提案に時間が使えます。</p>
         <div className="nc__time">
-          <span className="nc__time-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v4l3 2" stroke-linecap="round"/></svg></span>
+          <span className="nc__time-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v4l3 2" strokeLinecap="round"/></svg></span>
           <div className="nc__time-body">1日あたり <b>30分</b> の<br />業務時間を削減</div>
         </div>
       </div>
@@ -1537,7 +1570,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
               <div className="ba-text">紙のカルテと記憶頼り。「そろそろ連絡」のタイミングを逃すことが多かった。</div>
             </div>
             <div className="ba-arrow">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 5l4 5-4 5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 10h10M11 5l4 5-4 5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
             <div className="ba-col ba-col--after">
               <div className="ba-label">AFTER</div>
@@ -1629,7 +1662,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <h3 className="ostep__title">無料アカウント<br />を作成</h3>
         <p className="ostep__sub">LINE公式アカウントでログイン。<br />追加情報の入力なしで始められます。</p>
         <div className="ostep__visual">
-          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1.5C5.4 1.5 2.5 4 2.5 7c0 1.7.9 3.2 2.4 4.2L4 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S12.6 1.5 9 1.5z"/></svg></span>
+          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M9 1.5C5.4 1.5 2.5 4 2.5 7c0 1.7.9 3.2 2.4 4.2L4 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S12.6 1.5 9 1.5z"/></svg></span>
           <span className="ostep__visual-text">LINEで<b>ログイン</b><br />パスワード設定なし</span>
         </div>
       </div>
@@ -1640,11 +1673,11 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <h3 className="ostep__title">LINE公式と<br />連携</h3>
         <p className="ostep__sub">タップ1つでLINEと接続。<br />サロン情報を簡単に登録。</p>
         <div className="ostep__visual">
-          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 9c0-2 1.6-3.5 3.5-3.5S12 7 12 9M5 13l-2 2M13 5l2-2"/><circle cx="8.5" cy="9" r="1.5"/></svg></span>
+          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M5 9c0-2 1.6-3.5 3.5-3.5S12 7 12 9M5 13l-2 2M13 5l2-2"/><circle cx="8.5" cy="9" r="1.5"/></svg></span>
           <span className="ostep__visual-text">公式アカウント<br /><b>3クリック</b>で連携</span>
         </div>
         <span className="ostep__hpb-pill">
-          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg>
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg>
           HPB連携も同時に可能
         </span>
       </div>
@@ -1655,7 +1688,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <h3 className="ostep__title">過去履歴を<br />自動でカルテ化</h3>
         <p className="ostep__sub">過去のLINEトークから、お客様情報・好み・履歴を自動抽出。</p>
         <div className="ostep__visual">
-          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg></span>
+          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg></span>
           <span className="ostep__visual-text">過去 <b>6ヶ月</b>を<br />自動構造化</span>
         </div>
       </div>
@@ -1666,7 +1699,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <h3 className="ostep__title">すぐに<br />運用スタート</h3>
         <p className="ostep__sub">LINEのトーク画面から、Conciergeが動き始めます。<br />追加アプリ不要。</p>
         <div className="ostep__visual">
-          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span className="ostep__visual-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 9l4 4 8-9" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
           <span className="ostep__visual-text">本日から<br /><b>すぐ利用可能</b></span>
         </div>
       </div>
@@ -1674,7 +1707,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
     <div className="onb__cta">
       <div className="onb__cta-head">
-        <span className="onb__cta-icon"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="15" cy="15" r="11"/><path d="M10 15l3.5 3.5L20 12" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span className="onb__cta-icon"><svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="15" cy="15" r="11"/><path d="M10 15l3.5 3.5L20 12" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
         <div className="onb__cta-text">
           <h3>14日間、無料でお試しいただけます。</h3>
           <p>月¥1,980〜 / 初期費用0円 / クレジットカード登録不要 / 解約料0円 / いつでもキャンセル可</p>
@@ -1682,7 +1715,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
       </div>
       <div className="onb__cta-btns">
         <button className="sr-btn sr-btn--primary">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
           LINEで無料ではじめる
         </button>
         <button className="sr-btn sr-btn--outline">資料をダウンロード</button>
@@ -1707,7 +1740,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="cmp__cell"></div>
         <div className="cmp__cell cmp__val">
           <div className="cmp__head-cell">
-            <span className="cmp__head-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="16" height="16" rx="2"/><path d="M3 8h16M7 3v3M15 3v3"/></svg></span>
+            <span className="cmp__head-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="3" width="16" height="16" rx="2"/><path d="M3 8h16M7 3v3M15 3v3"/></svg></span>
             <span className="cmp__head-eyebrow">TYPE A</span>
             <span className="cmp__head-name">予約管理SaaS型</span>
           </div>
@@ -1722,7 +1755,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         </div>
         <div className="cmp__cell cmp__val">
           <div className="cmp__head-cell">
-            <span className="cmp__head-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="16" height="13" rx="2"/><path d="M3 9h16M7 13h2M7 16h5"/></svg></span>
+            <span className="cmp__head-mark"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="5" width="16" height="13" rx="2"/><path d="M3 9h16M7 13h2M7 16h5"/></svg></span>
             <span className="cmp__head-eyebrow">TYPE B</span>
             <span className="cmp__head-name">カルテ専業型</span>
           </div>
@@ -1784,7 +1817,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <p>クレジットカード登録不要 / 解約料0円 / いつでもキャンセル可</p>
       <div className="cmp__cta-row">
         <button className="sr-btn sr-btn--primary" style={{padding: '16px 28px', fontSize: '14px'}}>
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
           LINEで無料ではじめる
         </button>
         <button className="sr-btn sr-btn--outline" style={{padding: '16px 28px', fontSize: '14px'}}>資料をダウンロード</button>
