@@ -1022,8 +1022,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
       </div>
     </div>
 
-    <div className="phone-area">
-        <img className="hero-img" src="/images/hero/hero-salon-iphone.png" alt="サロンとLINEで連携している顧客のイメージ"/>
+    <div className="phone-area" style={{overflow: 'visible'}}>
+        <img className="hero-img" src="/images/hero/hero-salon-iphone.png" alt="サロンとLINEで連携している顧客のイメージ" style={{width: '130%', maxWidth: '720px', marginLeft: '-15%'}}/>
       </div>
   </div>
 </section>
@@ -1238,103 +1238,11 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <p className="sr-lead">1人サロンのあなたが軸。<br />でも、お客様とこれから雇うスタッフ、それぞれの視点で考えました。</p>
     </div>
 
-    <div className="everyone__grid">
-      <article className="ecard">
-        <div className="ecard__top">
-          <div className="ecard__top-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="16" cy="12" r="5"/><path d="M6 26c0-5 4-9 10-9s10 4 10 9"/></svg></div>
-          <div className="ecard__top-eyebrow">FOR CUSTOMERS</div>
-          <div className="ecard__top-stat">
-            <span className="ecard__top-num">+25</span><span className="ecard__top-unit">%</span>
-            <span className="ecard__top-pill">リピート率予想</span>
-          </div>
-          <div className="ecard__top-note">※ シミュレーション値</div>
-        </div>
-        <div className="ecard__body">
-          <h3 className="ecard__title">来店のたびに、<br /><span className="accent">「前回の続き」</span>から。</h3>
-          <p className="ecard__sub">専用アプリ不要。いつものLINEのまま、過去の好みも自然に共有されます。</p>
-          <div className="ecard__visual">
-            <img className="ecard__photo-img" src="/images/for-everyone/card1-customer.png" alt="お客様"/>
-            <ul className="ecard__checks">
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>アプリ不要、LINEで完結</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去の好みが共有済み</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>最適な来店タイミングを案内</li>
-            </ul>
-          </div>
-          <div className="ecard__quote">
-            <span className="ecard__quote-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg></span>
-            <span className="ecard__quote-text">「前回覚えてくれてた！」<br />あの安心感が、毎回続きます。</span>
-          </div>
-        </div>
-      </article>
-
-      <article className="ecard">
-        <div className="ecard__top">
-          <div className="ecard__top-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="20" r="3"/><circle cx="22" cy="20" r="3"/><path d="M10 17l8-12M22 17l-8-12"/></svg></div>
-          <div className="ecard__top-eyebrow">FOR STAFF (将来雇うスタッフへ)</div>
-          <div className="ecard__top-stat">
-            <span className="ecard__top-num">−30</span><span className="ecard__top-unit">分/日</span>
-            <span className="ecard__top-pill">確認時間</span>
-          </div>
-          <div className="ecard__top-note">※ シミュレーション値</div>
-        </div>
-        <div className="ecard__body">
-          <h3 className="ecard__title">確認の時間を、<br /><span className="accent">接客時間</span>に変える。</h3>
-          <p className="ecard__sub">スタッフを雇った時も安心。LINEで名前を検索するだけで、過去履歴・好みを瞬時に。</p>
-          <div className="ecard__visual">
-            <img className="ecard__photo-img" src="/images/for-everyone/card2-staff.png" alt="将来のスタッフ"/>
-            <ul className="ecard__checks">
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去施術を瞬時に確認</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>カルテ自動整理</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>引き継ぎ漏れ防止</li>
-            </ul>
-          </div>
-          <div className="ecard__quote">
-            <span className="ecard__quote-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg></span>
-            <span className="ecard__quote-text">「探す時間がゼロに。<br />お客様と向き合う時間が増えました」</span>
-          </div>
-        </div>
-      </article>
-
-      <article className="ecard">
-        <div className="ecard__top">
-          <div className="ecard__top-icon"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 24h24M7 20V14m6 6V8m6 12V12m6 8v-4"/><path d="M22 6l5 4-5 4"/></svg></div>
-          <div className="ecard__top-eyebrow">FOR YOU (オーナー)</div>
-          <div className="ecard__top-stat">
-            <span className="ecard__top-num">+15</span><span className="ecard__top-unit">%</span>
-            <span className="ecard__top-pill">客単価予想</span>
-          </div>
-          <div className="ecard__top-note">※ シミュレーション値</div>
-        </div>
-        <div className="ecard__body">
-          <h3 className="ecard__title">売上も顧客状態も、<br /><span className="accent">朝のLINE</span>で把握。</h3>
-          <p className="ecard__sub">管理画面を開かなくても、今日の予約・予測売上・再来候補が届きます。</p>
-          <div className="ecard__visual">
-            <div className="owner-phone">
-              <div className="owner-phone__screen">
-                <div className="owner-phone__time">7:00</div>
-                <div className="owner-phone__head">
-                  <div className="dot">C</div>
-                  <div className="ttl">Concierge</div>
-                </div>
-                <div style={{fontSize: '7.5px', color: 'var(--ink-2)', marginBottom: '4px', lineHeight: '1.4'}}>おはようございます。<br />本日のサマリー。</div>
-                <div className="owner-phone__row"><span>予約件数</span><b>5 件</b></div>
-                <div className="owner-phone__row"><span>予測売上</span><b style={{color: 'var(--accent)'}}>¥48,200</b></div>
-                <div className="owner-phone__row"><span>再来候補</span><b>3 名</b></div>
-                <div className="owner-phone__btn">詳細をみる</div>
-              </div>
-            </div>
-            <ul className="ecard__checks">
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>売上速報</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>リピート率推移</li>
-              <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約も統合表示</li>
-            </ul>
-          </div>
-          <div className="ecard__quote">
-            <span className="ecard__quote-icon"><svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg></span>
-            <span className="ecard__quote-text">「朝のLINEチェックだけで、<br />今日やるべきことが全部わかる！」</span>
-          </div>
-        </div>
-      </article>
+    <div className="everyone__visual" style={{position: 'relative', width: '100%', maxWidth: '1240px', margin: '0 auto'}}>
+      <img src="/images/for-everyone/for-everyone-full.png" alt="FOR EVERYONE — お客様も、これから雇うスタッフも、そしてあなた自身も。3つの視点から見たSalonRinkの価値（FOR CUSTOMERS / FOR STAFF / FOR YOU）" style={{width: '100%', height: 'auto', display: 'block'}}/>
+      <span className="everyone__num everyone__num--customers" style={{position: 'absolute', top: '41%', left: '6%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+25%</span>
+      <span className="everyone__num everyone__num--staff" style={{position: 'absolute', top: '41%', left: '38%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>−30分/日</span>
+      <span className="everyone__num everyone__num--you" style={{position: 'absolute', top: '41%', left: '72%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+15%</span>
     </div>
 
     <div className="eband">
@@ -1357,186 +1265,108 @@ section#solution .sr-container { position: relative; z-index: 1; }
     </div>
 
     <div className="timeline">
-      <div className="scene">
-        <img className="scene__photo scene__photo--l" src="/images/in-action/scene1-tablet-woman.png" alt="" aria-hidden="true"/>
-        <img className="scene__photo scene__photo--r" src="/images/in-action/scene1-phone-woman.png" alt="" aria-hidden="true"/>
-        <div className="scene__body scene__body--left">
-          <div className="scene__time">07:00 ／ 朝</div>
-          <h3 className="scene__title">朝のLINEに、<br /><span className="accent">今日のサマリー</span>が届く。</h3>
-          <p className="scene__desc">予約件数・予測売上・再来候補が、Conciergeから自動配信。<br />管理画面を開かなくても、状況が把握できます。</p>
-          <div className="scene__tags">
-            <span className="scene__tag">SUMMARY</span>
-            <span className="scene__tag">FORECAST</span>
-          </div>
-        </div>
-        <div className="scene__dot">01</div>
-        <div className="scene__phone">
-          <div className="scene__phone-screen">
-            <div className="scene__phone-head">
-              <span className="back">‹</span>
-              <div className="avatar" style={{background: 'var(--accent)', color: '#fff'}}>C</div>
-              <div style={{flex: '1'}}>
-                <div style={{fontSize: '11px'}}>SalonRink Concierge</div>
-                <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>サロン公式アカウント</div>
-              </div>
-            </div>
-            <div className="scene__phone-body">
-              <div className="mini-msg-row">
-                <div className="mini-msg-avatar" style={{background: 'var(--accent)'}}></div>
-                <div className="mini-msg">おはようございます。<br />本日のサマリーをお届けします。</div>
-              </div>
-              <div className="mini-msg-row">
-                <div className="mini-msg-avatar" style={{visibility: 'hidden'}}></div>
-                <div className="mini-card" style={{maxWidth: '80%'}}>
-                  <div className="mini-card__title"><span className="dot">📊</span> 本日のサマリー</div>
-                  <div className="mini-card__row"><span>予約件数</span><b>5 件</b></div>
-                  <div className="mini-card__row"><span>予測売上</span><b style={{color: 'var(--accent)'}}>¥48,200</b></div>
-                  <div className="mini-card__row"><span>再来候補</span><b>3 名</b></div>
-                  <div style={{background: 'var(--accent)', color: '#fff', textAlign: 'center', padding: '5px', borderRadius: '8px', marginTop: '8px', fontSize: '10px', fontWeight: '600'}}>詳細をみる</div>
-                </div>
-                <div className="mini-time">7:02</div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="scene-pair scene-pair--1-2">
+        <img src="/images/in-action/in-action-scene-1-2-full.png" alt="朝から夜まで、1日のサロン業務がこう流れる。Scene 01 / 07:00 朝: 朝のLINEに今日のサマリーが届く。予約件数・予測売上・再来候補がConciergeから自動配信。Scene 02 / 09:30 午前: HPB予約も一画面で確認。ホットペッパーBeautyの予約がLINE予約と同じ画面に自動で並びます。" style={{width: '100%', maxWidth: '1240px', height: 'auto', display: 'block'}}/>
       </div>
 
-      <div className="scene scene--reverse">
-        <img className="scene__photo scene__photo--l" src="/images/in-action/scene2-stylist-customer.png" alt="" aria-hidden="true"/>
-        <img className="scene__photo scene__photo--r" src="/images/in-action/scene2-stylist-man.png" alt="" aria-hidden="true"/>
-        <div className="scene__phone">
-          <div className="scene__phone-screen">
-            <div className="scene__phone-head">
-              <span className="back">‹</span>
-              <div className="avatar" style={{background: 'var(--accent-soft)', color: 'var(--accent-dk)', fontWeight: '700'}}>HPB</div>
-              <div style={{flex: '1'}}>
-                <div style={{fontSize: '11px'}}>HPB予約取込</div>
-                <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>自動連携</div>
-              </div>
+      <div className="scene-block scene-block--3-4" style={{position: 'relative', padding: '64px 0', overflow: 'hidden'}}>
+        <img src="/images/in-action/in-action-scene-3-4-bg.png" alt="" aria-hidden="true" style={{position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: '0', opacity: '0.35', pointerEvents: 'none', userSelect: 'none'}}/>
+        <div style={{position: 'absolute', inset: '0', background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0.8) 100%)', zIndex: '0', pointerEvents: 'none'}}></div>
+
+        <div className="scene" style={{position: 'relative', zIndex: '1'}}>
+          <div className="scene__body scene__body--left">
+            <div className="scene__time">13:45 ／ 来店前</div>
+            <h3 className="scene__title">名前を打つだけで、<br /><span className="accent">過去のすべてが瞬時に</span>。</h3>
+            <p className="scene__desc">LINEのトーク内で「@田中様」と打つだけ。<br />前回履歴・写真・好み・注意事項が、すぐに表示されます。</p>
+            <div className="scene__tags">
+              <span className="scene__tag">@MENTION</span>
+              <span className="scene__tag">AUTO CHART</span>
             </div>
-            <div className="scene__phone-body">
-              <div className="mini-msg-row">
-                <div className="mini-msg-avatar" style={{background: 'var(--accent)'}}></div>
-                <div className="mini-card" style={{maxWidth: '88%'}}>
-                  <div className="mini-card__title"><span className="dot">📅</span> HPB 新規予約</div>
-                  <div className="mini-card__row"><span>お客様</span><b>初回 / 山田様</b></div>
-                  <div className="mini-card__row"><span>日時</span><b>5/30 11:00</b></div>
-                  <div className="mini-card__row"><span>メニュー</span><b>白髪染め+カット</b></div>
-                  <div style={{background: 'var(--accent-soft)', color: 'var(--accent-ink)', textAlign: 'center', padding: '5px', borderRadius: '8px', marginTop: '8px', fontSize: '9.5px', fontWeight: '600'}}>✓ LINE予約と統合済み</div>
+          </div>
+          <div className="scene__dot">03</div>
+          <div className="scene__phone">
+            <div className="scene__phone-screen">
+              <div className="scene__phone-head">
+                <span className="back">‹</span>
+                <div className="avatar">田</div>
+                <div style={{flex: '1'}}>
+                  <div style={{fontSize: '11px'}}>田中 真由美 さま</div>
+                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>来店 18回目</div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="scene__dot">02</div>
-        <div className="scene__body scene__body--right">
-          <div className="scene__time">09:30 ／ 午前</div>
-          <h3 className="scene__title">HPB予約も<br /><span className="accent">一画面で確認</span>。</h3>
-          <p className="scene__desc">ホットペッパー Beauty の予約が、LINE予約と同じ画面に自動で並びます。<br />ダブルブッキングの心配なし。顧客情報も自動取込。</p>
-          <div className="scene__tags">
-            <span className="scene__tag">HPB SYNC</span>
-            <span className="scene__tag">AUTO-MATCH</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="scene">
-        <img className="scene__photo scene__photo--l" src="/images/in-action/scene3-tablet-pair.png" alt="" aria-hidden="true"/>
-        <img className="scene__photo scene__photo--r" src="/images/in-action/scene3-consult-smile.png" alt="" aria-hidden="true"/>
-        <div className="scene__body scene__body--left">
-          <div className="scene__time">13:45 ／ 来店前</div>
-          <h3 className="scene__title">名前を打つだけで、<br /><span className="accent">過去のすべてが瞬時に</span>。</h3>
-          <p className="scene__desc">LINEのトーク内で「@田中様」と打つだけ。<br />前回履歴・写真・好み・注意事項が、すぐに表示されます。</p>
-          <div className="scene__tags">
-            <span className="scene__tag">@MENTION</span>
-            <span className="scene__tag">AUTO CHART</span>
-          </div>
-        </div>
-        <div className="scene__dot">03</div>
-        <div className="scene__phone">
-          <div className="scene__phone-screen">
-            <div className="scene__phone-head">
-              <span className="back">‹</span>
-              <div className="avatar">田</div>
-              <div style={{flex: '1'}}>
-                <div style={{fontSize: '11px'}}>田中 真由美 さま</div>
-                <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>来店 18回目</div>
-              </div>
-            </div>
-            <div className="scene__phone-body">
-              <div className="mini-msg-row mini-msg-row--user">
-                <div className="mini-msg mini-msg--user">@田中様</div>
-                <div className="mini-time">13:45</div>
-              </div>
-              <div className="mini-msg-row">
-                <div className="mini-msg-avatar" style={{background: 'var(--accent)'}}></div>
-                <div className="mini-card" style={{maxWidth: '88%', padding: '12px'}}>
-                  <div className="mini-card__title"><span className="dot">C</span> Concierge カルテ</div>
-                  <div style={{display: 'flex', gap: '8px', marginBottom: '8px'}}>
-                    <div style={{width: '36px', height: '44px', background: 'linear-gradient(135deg, #d4b89c, #a08a6e)', borderRadius: '6px'}}></div>
-                    <div style={{flex: '1', fontSize: '9px'}}>
-                      <div style={{color: 'var(--ink-3)'}}>前回 3/29</div>
-                      <div style={{fontWeight: '600'}}>白髪染め × 自然ブラウン</div>
+              <div className="scene__phone-body">
+                <div className="mini-msg-row mini-msg-row--user">
+                  <div className="mini-msg mini-msg--user">@田中様</div>
+                  <div className="mini-time">13:45</div>
+                </div>
+                <div className="mini-msg-row">
+                  <div className="mini-msg-avatar" style={{background: 'var(--accent)'}}></div>
+                  <div className="mini-card" style={{maxWidth: '88%', padding: '12px'}}>
+                    <div className="mini-card__title"><span className="dot">C</span> Concierge カルテ</div>
+                    <div style={{display: 'flex', gap: '8px', marginBottom: '8px'}}>
+                      <div style={{width: '36px', height: '44px', background: 'linear-gradient(135deg, #d4b89c, #a08a6e)', borderRadius: '6px'}}></div>
+                      <div style={{flex: '1', fontSize: '9px'}}>
+                        <div style={{color: 'var(--ink-3)'}}>前回 3/29</div>
+                        <div style={{fontWeight: '600'}}>白髪染め × 自然ブラウン</div>
+                      </div>
                     </div>
+                    <div className="mini-card__row"><span>避けたい色</span><b>赤味の強い色</b></div>
+                    <div className="mini-card__row"><span>頭皮</span><b style={{color: 'var(--coral)'}}>敏感肌</b></div>
+                    <div className="mini-card__row"><span>最終 3/29</span><b>3ヶ月半 前</b></div>
                   </div>
-                  <div className="mini-card__row"><span>避けたい色</span><b>赤味の強い色</b></div>
-                  <div className="mini-card__row"><span>頭皮</span><b style={{color: 'var(--coral)'}}>敏感肌</b></div>
-                  <div className="mini-card__row"><span>最終 3/29</span><b>3ヶ月半 前</b></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div className="scene scene--reverse">
-        <img className="scene__photo scene__photo--l" src="/images/in-action/scene4-counter-consult.png" alt="" aria-hidden="true"/>
-        <img className="scene__photo scene__photo--r" src="/images/in-action/scene4-wave-goodbye.png" alt="" aria-hidden="true"/>
-        <div className="scene__phone">
-          <div className="scene__phone-screen">
-            <div className="scene__phone-head">
-              <span className="back">‹</span>
-              <div className="avatar">K</div>
-              <div style={{flex: '1'}}>
-                <div style={{fontSize: '11px'}}>キレイ鶴見店</div>
-                <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>配信予約済</div>
-              </div>
-            </div>
-            <div className="scene__phone-body">
-              <div className="suggest">
-                <div className="suggest__head">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h8M4 7V3m4 4V5"/></svg>
-                  Concierge 提案 — 配信文案
-                </div>
-                <div className="suggest__body">
-                  田中さま、こんにちは🌸<br />
-                  前回のご来店から3ヶ月半が経ちました。<br />
-                  そろそろリタッチのタイミングですね。
+        <div className="scene scene--reverse" style={{position: 'relative', zIndex: '1'}}>
+          <div className="scene__phone">
+            <div className="scene__phone-screen">
+              <div className="scene__phone-head">
+                <span className="back">‹</span>
+                <div className="avatar">K</div>
+                <div style={{flex: '1'}}>
+                  <div style={{fontSize: '11px'}}>キレイ鶴見店</div>
+                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>配信予約済</div>
                 </div>
               </div>
-              <div className="suggest" style={{background: 'var(--coral-soft)', borderColor: 'var(--coral)'}}>
-                <div className="suggest__head" style={{color: '#7a2912'}}>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 4v2.5l1.5 1"/></svg>
-                  おすすめタイミング
+              <div className="scene__phone-body">
+                <div className="suggest">
+                  <div className="suggest__head">
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h8M4 7V3m4 4V5"/></svg>
+                    Concierge 提案 — 配信文案
+                  </div>
+                  <div className="suggest__body">
+                    田中さま、こんにちは🌸<br />
+                    前回のご来店から3ヶ月半が経ちました。<br />
+                    そろそろリタッチのタイミングですね。
+                  </div>
                 </div>
-                <div className="suggest__body">
-                  来週金曜 14:00〜 がご都合よろしいかと
+                <div className="suggest" style={{background: 'var(--coral-soft)', borderColor: 'var(--coral)'}}>
+                  <div className="suggest__head" style={{color: '#7a2912'}}>
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 4v2.5l1.5 1"/></svg>
+                    おすすめタイミング
+                  </div>
+                  <div className="suggest__body">
+                    来週金曜 14:00〜 がご都合よろしいかと
+                  </div>
                 </div>
-              </div>
-              <div style={{background: 'var(--accent)', color: '#fff', textAlign: 'center', padding: '8px', borderRadius: '10px', fontSize: '10.5px', fontWeight: '600'}}>
-                確認して配信
+                <div style={{background: 'var(--accent)', color: '#fff', textAlign: 'center', padding: '8px', borderRadius: '10px', fontSize: '10.5px', fontWeight: '600'}}>
+                  確認して配信
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="scene__dot">04</div>
-        <div className="scene__body scene__body--right">
-          <div className="scene__time">18:00 ／ 営業後</div>
-          <h3 className="scene__title">「次の連絡、誰に？」を、<br /><span className="accent">自動で提案</span>。</h3>
-          <p className="scene__desc">過去の周期と履歴から、再来タイミングをConciergeが予測。<br />配信文の下書きまで自動で用意。確認して送るだけ。</p>
-          <div className="scene__tags">
-            <span className="scene__tag">AUTO SUGGEST</span>
-            <span className="scene__tag">1-TAP SEND</span>
+          <div className="scene__dot">04</div>
+          <div className="scene__body scene__body--right">
+            <div className="scene__time">18:00 ／ 営業後</div>
+            <h3 className="scene__title">「次の連絡、誰に？」を、<br /><span className="accent">自動で提案</span>。</h3>
+            <p className="scene__desc">過去の周期と履歴から、再来タイミングをConciergeが予測。<br />配信文の下書きまで自動で用意。確認して送るだけ。</p>
+            <div className="scene__tags">
+              <span className="scene__tag">AUTO SUGGEST</span>
+              <span className="scene__tag">1-TAP SEND</span>
+            </div>
           </div>
         </div>
       </div>
@@ -1547,15 +1377,15 @@ section#solution .sr-container { position: relative; z-index: 1; }
 {/* ═══════════════════════════════════════════════════════
      SECTION 06 — AI KARTE
 ═══════════════════════════════════════════════════════ */}
-<section className="karte sr-section" id="karte">
-  <div className="sr-container">
+<section className="karte sr-section" id="karte" style={{position: 'relative', overflow: 'hidden'}}>
+  <img src="/images/ai-karte/karte-bg-empty-salon.png" alt="" aria-hidden="true" style={{position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: '0', opacity: '0.45', pointerEvents: 'none', userSelect: 'none'}}/>
+  <div style={{position: 'absolute', inset: '0', background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0.85) 100%)', zIndex: '0', pointerEvents: 'none'}}></div>
+  <div className="sr-container" style={{position: 'relative', zIndex: '1'}}>
     <div className="sr-section__head">
       <div className="sr-eyebrow">CONCIERGE KARTE</div>
       <h2 className="sr-h2">流れる会話を、<br />"<span className="accent">資産</span>"に変える。</h2>
       <p className="sr-lead">LINEのトーク履歴を自動で読み取り、顧客カルテに構造化。<br />サロンの暗黙知が、検索可能なデータベースになります。</p>
     </div>
-
-    <img className="karte__hero-img" src="/images/ai-karte/karte-hero-color-palette.png" alt="サロンスタッフが顧客にカラーパレットを提案している様子"/>
 
     <div className="karte__main">
       <div className="karte__left">
@@ -1650,19 +1480,16 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
     <div className="karte__feats">
       <div className="karte__feat">
-        <img className="karte__feat-photo" src="/images/ai-karte/feat1-tablet-pair.png" alt="" aria-hidden="true"/>
         <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6"/><path d="M13 13l5 5" stroke-linecap="round"/></svg></div>
         <div className="karte__feat-title">名前1つで全部わかる</div>
         <div className="karte__feat-sub">LINEで「@◯◯様」と打つだけ。過去の会話・施術・写真を瞬時に呼び出し。</div>
       </div>
       <div className="karte__feat">
-        <img className="karte__feat-photo" src="/images/ai-karte/feat2-color-palette.png" alt="" aria-hidden="true"/>
         <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg></div>
         <div className="karte__feat-title">会話 → カルテ 自動化</div>
         <div className="karte__feat-sub">写真・キーワード・好みを自動抽出。手入力ゼロでカルテが育つ。</div>
       </div>
       <div className="karte__feat">
-        <img className="karte__feat-photo" src="/images/ai-karte/feat3-tablet-three.png" alt="" aria-hidden="true"/>
         <div className="karte__feat-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3M4 4l2 2M14 14l2 2M4 16l2-2M14 6l2-2"/></svg></div>
         <div className="karte__feat-title">引き継ぎゼロ</div>
         <div className="karte__feat-sub">将来スタッフを雇った時も、新人スタッフでも、同じ品質で接客できる。</div>
@@ -1759,12 +1586,14 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
     <article className="case__card">
       <div className="case__top">
-        <div className="case__photo">
-          <div className="case__photo-top">
+        <div className="case__photo" style={{position: 'relative', overflow: 'hidden'}}>
+          <img className="case__photo-img" src="/images/case/kirei-tsurumi-real.jpg" alt="キレイ鶴見店の店内 — ヴィンテージ調の鏡台と化粧道具が並ぶ落ち着いた1人サロン" style={{position: 'absolute', inset: '0', width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', zIndex: '0'}}/>
+          <div style={{position: 'absolute', inset: '0', background: 'linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.45) 70%, rgba(0, 0, 0, 0.65) 100%)', zIndex: '1', pointerEvents: 'none'}}></div>
+          <div className="case__photo-top" style={{position: 'relative', zIndex: '2'}}>
             <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>
             REAL PHOTO · 実店舗
           </div>
-          <div className="case__photo-bottom">
+          <div className="case__photo-bottom" style={{position: 'relative', zIndex: '2'}}>
             <div className="case__photo-name">キレイ鶴見店</div>
             <div className="case__photo-meta">WHITE HAIR COLOR SALON · 1人サロン</div>
             <div className="case__photo-meta-links">

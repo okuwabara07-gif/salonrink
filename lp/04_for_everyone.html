@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>04 FOR EVERYONE — SalonRink Concierge LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  body { background: var(--bg-tint); }
+  .everyone { padding: 96px 0 80px; }
+  .everyone__head {
+    text-align: center; margin-bottom: 56px;
+    position: relative;
+  }
+  .everyone__head .sr-eyebrow { margin-bottom: 20px; }
+  .everyone__head .deco-l, .everyone__head .deco-r {
+    position: absolute; top: 56px;
+    display: grid; grid-template-columns: repeat(3, 5px); gap: 8px;
+  }
+  .everyone__head .deco-l { left: 16%; }
+  .everyone__head .deco-r { right: 16%; }
+  .everyone__head .deco-l i, .everyone__head .deco-r i {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent); opacity: 0.4;
+  }
+
+  .everyone__grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    margin-bottom: 28px;
+  }
+  .ecard {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-xl); overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column;
+  }
+  .ecard__top {
+    background: var(--accent-soft);
+    padding: 28px 24px 24px; text-align: center;
+    border-bottom: 1px solid #cce8d6;
+  }
+  .ecard__top-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: #fff; margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent);
+    box-shadow: 0 4px 14px rgba(6,199,85,0.12);
+  }
+  .ecard__top-eyebrow {
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.2em; margin-bottom: 8px;
+  }
+  .ecard__top-stat {
+    display: inline-flex; align-items: baseline; gap: 6px;
+  }
+  .ecard__top-num {
+    font-family: var(--serif); font-weight: 700; font-size: 50px;
+    color: var(--accent); letter-spacing: -0.02em; line-height: 1;
+  }
+  .ecard__top-unit { font-size: 22px; color: var(--accent); font-weight: 600; }
+  .ecard__top-pill {
+    display: inline-block; margin-left: 8px;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    background: #fff; border-radius: 999px; padding: 3px 10px;
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+  }
+
+  .ecard__body { padding: 26px 26px 22px; flex: 1; display: flex; flex-direction: column; }
+  .ecard__title {
+    font-family: var(--serif); font-weight: 700; font-size: 22px;
+    color: var(--ink); line-height: 1.5; margin: 0 0 12px;
+  }
+  .ecard__title .accent { color: var(--accent); }
+  .ecard__sub {
+    font-size: 12.5px; line-height: 1.85; color: var(--ink-2); margin: 0 0 18px;
+  }
+  .ecard__visual {
+    display: flex; gap: 14px; margin-bottom: 18px;
+  }
+  .ecard__photo {
+    width: 110px; height: 130px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, #f5e6d3 0%, #d4b094 100%);
+    position: relative; overflow: hidden;
+  }
+  .ecard__photo--staff { background: linear-gradient(135deg, #d8e6d6, #98b694); }
+  .ecard__photo--phone { width: 110px; height: 200px; }
+  .ecard__photo::after {
+    content: attr(data-label); position: absolute; bottom: 10px; left: 10px;
+    font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.85);
+    letter-spacing: 0.18em;
+  }
+  .ecard__checks {
+    flex: 1; display: flex; flex-direction: column; gap: 10px;
+    font-size: 12px; color: var(--ink-2);
+  }
+  .ecard__checks li {
+    list-style: none; display: flex; align-items: center; gap: 8px;
+    line-height: 1.45;
+  }
+  .ecard__quote {
+    background: var(--accent-soft);
+    border-radius: 12px; padding: 14px 16px;
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-top: auto;
+  }
+  .ecard__quote-icon {
+    width: 22px; height: 22px; border-radius: 50%; background: #fff;
+    color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ecard__quote-text {
+    font-size: 12px; line-height: 1.6; color: var(--accent-ink); font-weight: 600;
+  }
+
+  /* Phone mini for owner card */
+  .owner-phone {
+    width: 130px; height: 200px; flex-shrink: 0;
+    background: #1a1a1a; border-radius: 16px; padding: 6px;
+    box-shadow: 0 4px 14px rgba(15,22,20,0.15);
+  }
+  .owner-phone__screen {
+    width: 100%; height: 100%; background: #fff; border-radius: 12px;
+    padding: 14px 10px 8px; font-size: 8.5px; color: var(--ink); position: relative;
+  }
+  .owner-phone__head {
+    display: flex; align-items: center; gap: 4px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--line-soft);
+    margin-bottom: 8px;
+  }
+  .owner-phone__head .dot { width: 12px; height: 12px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 6px; }
+  .owner-phone__head .ttl { font-size: 7.5px; color: var(--ink-2); font-weight: 600; }
+  .owner-phone__row {
+    display: flex; justify-content: space-between; padding: 4px 0;
+    font-size: 8px;
+  }
+  .owner-phone__row b { font-family: var(--serif); color: var(--ink); }
+  .owner-phone__btn {
+    background: var(--accent); color: #fff; text-align: center;
+    border-radius: 10px; padding: 5px; margin-top: 8px;
+    font-size: 8px; font-weight: 600;
+  }
+  .owner-phone__time {
+    font-family: var(--mono); font-size: 7px; color: var(--ink-3);
+    margin-bottom: 2px;
+  }
+
+  /* footer */
+  .eband {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 22px 28px; display: flex; align-items: center; gap: 28px;
+    box-shadow: var(--shadow-sm);
+  }
+  .eband__icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .eband__title {
+    font-family: var(--serif); font-weight: 700; font-size: 16px;
+    color: var(--ink); flex-shrink: 0;
+  }
+  .eband__sub {
+    font-size: 12.5px; color: var(--ink-2); line-height: 1.7; flex: 1;
+    border-left: 1px solid var(--line); padding-left: 24px;
+  }
+
+  @media (max-width: 980px) {
+    .everyone__grid { grid-template-columns: 1fr; }
+    .everyone__head .deco-l, .everyone__head .deco-r { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="everyone" id="everyone">
+  <div class="sr-container">
+    <div class="everyone__head">
+      <div class="deco-l"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="deco-r"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="sr-eyebrow">FOR EVERYONE</div>
+      <h2 class="sr-h2">お客様・スタッフ・オーナー、<br>それぞれにうれしい変化を。</h2>
+    </div>
+
+    <div class="everyone__grid">
+
+      <!-- FOR CUSTOMERS -->
+      <article class="ecard">
+        <div class="ecard__top">
+          <div class="ecard__top-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="4"/><circle cx="22" cy="9" r="3"/><path d="M3 26c0-4 3.5-7 8-7s8 3 8 7"/><path d="M28 24c0-3-2.5-5-5.5-5"/></svg>
+          </div>
+          <div class="ecard__top-eyebrow">FOR CUSTOMERS</div>
+          <div class="ecard__top-stat">
+            <span class="ecard__top-num">+28</span><span class="ecard__top-unit">%</span>
+            <span class="ecard__top-pill">再来率UP</span>
+          </div>
+        </div>
+        <div class="ecard__body">
+          <h3 class="ecard__title">来店のたびに、<br><span class="accent">「前回の続き」</span>から始まる。</h3>
+          <p class="ecard__sub">担当が変わっても、前回のカラー履歴も好みも共有済み。毎回説明する必要がありません。</p>
+          <div class="ecard__visual">
+            <div class="ecard__photo" data-label="CUSTOMER"></div>
+            <ul class="ecard__checks">
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>前回スタイル自動表示</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>苦手・注意事項を共有</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>最適な来店タイミングを案内</li>
+            </ul>
+          </div>
+          <div class="ecard__quote">
+            <span class="ecard__quote-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg>
+            </span>
+            <span class="ecard__quote-text">「前回覚えてくれてた！」<br>担当が変わっても安心できました。</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- FOR STAFF -->
+      <article class="ecard">
+        <div class="ecard__top">
+          <div class="ecard__top-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="10" cy="20" r="3"/><circle cx="22" cy="20" r="3"/><path d="M10 17l8-12M22 17l-8-12"/></svg>
+          </div>
+          <div class="ecard__top-eyebrow">FOR STAFF</div>
+          <div class="ecard__top-stat">
+            <span class="ecard__top-num">−42</span><span class="ecard__top-unit">%</span>
+            <span class="ecard__top-pill">確認作業削減</span>
+          </div>
+        </div>
+        <div class="ecard__body">
+          <h3 class="ecard__title">思い出す時間を、<br><span class="accent">接客時間</span>に変える。</h3>
+          <p class="ecard__sub">カルテ探しも引き継ぎ確認も不要。LINEで名前を検索するだけ。</p>
+          <div class="ecard__visual">
+            <div class="ecard__photo ecard__photo--staff" data-label="STAFF"></div>
+            <ul class="ecard__checks">
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去施術を瞬時に確認</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>AIがカルテ整理</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>引き継ぎ漏れ防止</li>
+            </ul>
+          </div>
+          <div class="ecard__quote">
+            <span class="ecard__quote-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg>
+            </span>
+            <span class="ecard__quote-text">「探す時間がゼロに。<br>お客様と向き合う時間が増えました」</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- FOR OWNERS -->
+      <article class="ecard">
+        <div class="ecard__top">
+          <div class="ecard__top-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 24h24M7 20V14m6 6V8m6 12V12m6 8v-4"/><path d="M22 6l5 4-5 4"/></svg>
+          </div>
+          <div class="ecard__top-eyebrow">FOR OWNERS</div>
+          <div class="ecard__top-stat">
+            <span class="ecard__top-num">+18</span><span class="ecard__top-unit">%</span>
+            <span class="ecard__top-pill">客単価UP</span>
+          </div>
+        </div>
+        <div class="ecard__body">
+          <h3 class="ecard__title">売上も顧客状態も、<br><span class="accent">朝のLINE</span>で把握。</h3>
+          <p class="ecard__sub">管理画面を開かなくても、今日の予約・予測売上・再来危険顧客が届きます。</p>
+          <div class="ecard__visual">
+            <div class="owner-phone">
+              <div class="owner-phone__screen">
+                <div class="owner-phone__time">7:00</div>
+                <div class="owner-phone__head">
+                  <div class="dot">C</div>
+                  <div class="ttl">SalonRink Concierge</div>
+                </div>
+                <div style="font-size: 7.5px; color: var(--ink-2); margin-bottom: 4px; line-height: 1.4;">おはようございます、山田様<br>本日のサマリーをお届けします.</div>
+                <div class="owner-phone__row"><span>予約件数</span><b>12 件</b></div>
+                <div class="owner-phone__row"><span>予測売上</span><b style="color: var(--accent);">¥352,400</b></div>
+                <div class="owner-phone__row"><span>再来危険顧客</span><b>8 名</b></div>
+                <div class="owner-phone__btn">詳細をみる</div>
+              </div>
+            </div>
+            <ul class="ecard__checks">
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>売上速報</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>リピート率推移</li>
+              <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>失客予兆通知</li>
+            </ul>
+          </div>
+          <div class="ecard__quote">
+            <span class="ecard__quote-icon">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h8v5H5l-3 2V3z"/></svg>
+            </span>
+            <span class="ecard__quote-text">「朝のLINEチェックだけで、<br>今日やるべきことが全部わかる！」</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="eband">
+      <span class="eband__icon">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 2v2M3.5 5l1.5 1.5M18.5 5L17 6.5M2 11h2M18 11h2M11 5a5 5 0 00-3 9v2h6v-2a5 5 0 00-3-9z"/></svg>
+      </span>
+      <span class="eband__title">すべては、サロンの成長のために。</span>
+      <span class="eband__sub">お客様満足・スタッフの働きやすさ・売上向上を、LINEの中でシンプルに実現します。</span>
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 04 / 10 · FOR EVERYONE</span>
+    <span><a href="./03_solution.html">← 03 SOLUTION</a> &nbsp;|&nbsp; <a href="./05_in_action.html">05 IN ACTION →</a></span>
+  </div>
+</div>
+
+</body>
+</html>
