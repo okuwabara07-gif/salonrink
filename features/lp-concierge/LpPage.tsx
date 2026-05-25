@@ -44,7 +44,7 @@ const FEATURES = [
 const STEPS = [
   { num: '01', img: '/v3/step-01-line-qr.webp', title: 'LINE追加', desc: 'LINEで友だち追加するだけ。QRを読み取って簡単スタート。' },
   { num: '02', img: '/v3/step-02-chat.webp', title: '質問に回答', desc: 'お客様がLINEで質問に回答。事前カウンセリングが完了。' },
-  { num: '03', img: '/v3/step-03-tablet.webp', title: 'AIがカルテ生成', desc: 'AIが回答内容をもとに自動でカルテを作成・整理。' },
+  { num: '03', img: '/v3/step-03-tablet.webp', title: '自動カルテ生成', desc: '自動で回答内容をもとにカルテを作成・整理。' },
   { num: '04', img: '/v3/step-04-staff.webp', title: '提案に活用', desc: 'カルテをもとに最適な提案。満足度UPでリピートも促進。' },
 ];
 
@@ -76,8 +76,8 @@ const SECURITY_ITEMS = [
 ];
 
 const PLANS = [
-  { name: 'Light', for: 'シンプルに始めたいサロン向け', price: '1,980', features: ['AIカルテ・LINE連携', '予約管理・顧客管理', '前日リマインド自動配信', 'メールサポート'], featured: false },
-  { name: 'Standard', for: '売上を伸ばしたいサロン向け', price: '2,980', features: ['Lightの全機能', 'AIカルテ自動生成・提案', 'ホットペッパー Beauty 連携', 'AI接客スクリプト'], featured: true },
+  { name: 'Light', for: 'シンプルに始めたいサロン向け', price: '1,980', features: ['カルテ・LINE連携', '予約管理・顧客管理', '前日リマインド自動配信', 'メールサポート'], featured: false },
+  { name: 'Standard', for: '売上を伸ばしたいサロン向け', price: '2,980', features: ['Lightの全機能', 'カルテ自動生成・提案', 'ホットペッパー Beauty 連携', '接客スクリプト提案'], featured: true },
   { name: 'Premium', for: '本格的に運用したいサロン向け', price: '4,580', features: ['Standardの全機能', 'マルチ店舗管理対応', 'スタッフ無制限', '優先サポート'], featured: false },
 ];
 
@@ -129,7 +129,7 @@ const CASE_STUDY = {
     {
       title: 'カルテ整理時間、ほぼゼロに',
       before: '営業後に紙カルテ手書き、20-30分/日',
-      after: 'LINE にメモを送るだけで AI が整理',
+      after: 'LINE にメモを送るだけで、自動で整理',
     },
     {
       title: 'リピート率、再来店率に注力できる',
@@ -140,7 +140,7 @@ const CASE_STUDY = {
 };
 
 const FAQ_ITEMS = [
-  { q: 'Lightプラン¥1,980で何ができますか?', a: 'AIカルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とAIカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
+  { q: 'Lightプラン¥1,980で何ができますか?', a: 'カルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
   { q: '途中で解約できますか?', a: 'いつでも解約可能です。最低契約期間はなく、解約手数料もかかりません。' },
   { q: '既存の予約システムから移行できますか?', a: 'CSVでのインポートに対応しています。導入セットアップは個別にサポートいたします。' },
   { q: 'セキュリティは大丈夫ですか?', a: 'AES-256による暗号化、TLS1.3通信、サロン別データ分離(RLS)、Stripe決済(PCI DSS Level 1)を採用。' },
@@ -210,7 +210,7 @@ export default function LpPage() {
               <span className={styles.heroTitleAccent}>LINEひとつで変える。</span>
             </h1>
             <p className={styles.heroSub}>
-              いまのLINE公式アカウントに、AIカルテと顧客記憶を追加するだけ。<br/>
+              いまのLINE公式アカウントに、カルテと顧客記憶を追加するだけ。<br/>
               新しいアプリは要らない。最短5分で開始。
             </p>
             <ul className={styles.heroBullets}>
@@ -642,17 +642,17 @@ export default function LpPage() {
           <div className={styles.aiKarteImageCol}>
             <Image
               src="/v3/karte-img.png"
-              alt="AIカルテ画面"
+              alt="カルテ画面"
               width={720} height={480}
               sizes="(max-width: 980px) 90vw, 600px"
               className={styles.aiKarteImage}
             />
           </div>
           <div className={styles.aiKarteTextCol}>
-            <p className={styles.aiKarteNum}>01 / AI Karte</p>
-            <h2 className={styles.aiKarteTitle}>AIがつくる、<br/>あなただけのカルテ。</h2>
+            <p className={styles.aiKarteNum}>01 / AUTO</p>
+            <h2 className={styles.aiKarteTitle}>自動でつくる、<br/>あなただけのカルテ。</h2>
             <p className={styles.aiKarteSub}>
-              事前カウンセリングからAIが自動解析。リスクの見落としを防ぎ、最適な提案で顧客満足度を高めます。
+              事前カウンセリングから自動解析。リスクの見落としを防ぎ、最適な提案で顧客満足度を高めます。
             </p>
             <ul className={styles.aiKarteBullets}>
               <li><span className={styles.aiKarteBulletMark} aria-hidden>✓</span>施術履歴・写真・好みを自動構造化</li>
@@ -668,7 +668,7 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>BEFORE / AFTER</p>
-            <h2 className={styles.sectionTitle}>紙のカルテと、AIカルテ。<br/>差は、これくらい違う。</h2>
+            <h2 className={styles.sectionTitle}>紙のカルテと、自動カルテ。<br/>差は、これくらい違う。</h2>
           </div>
           <div className={styles.baGrid}>
             <div className={styles.baCard}>
@@ -688,7 +688,7 @@ export default function LpPage() {
               <div className={styles.baImageWrap}>
                 <Image
                   src="/v3/ba-after.png"
-                  alt="AIカルテ"
+                  alt="自動カルテ"
                   width={520} height={340}
                   sizes="(max-width: 980px) 90vw, 480px"
                   className={styles.baImage}
@@ -802,7 +802,7 @@ export default function LpPage() {
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>HOW IT WORKS</p>
             <h2 className={styles.sectionTitle}>使い方はカンタン、4ステップ。</h2>
-            <p className={styles.sectionSub}>LINEでつながるだけで、AIがサロン業務をもっとスマートに。</p>
+            <p className={styles.sectionSub}>LINEでつながるだけで、自動化でサロン業務をもっとスマートに。</p>
           </div>
           <div className={styles.stepsRow}>
             {STEPS.map((s, i) => (
