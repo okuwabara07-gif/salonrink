@@ -125,7 +125,7 @@ a { color: inherit; text-decoration: none; }
 /* ═══════════════════════════════════════════════
    SECTION 01: HERO
 ═══════════════════════════════════════════════ */
-.hero { padding: 64px 0 96px; position: relative; overflow: hidden; }
+.hero { padding: 64px 0 96px; position: relative; overflow: hidden; min-height: 720px; }
 .hero::before {
   content: ""; position: absolute; top: 80px; right: 44%;
   width: 160px; height: 160px;
@@ -139,9 +139,9 @@ a { color: inherit; text-decoration: none; }
   opacity: 0.6; pointer-events: none;
 }
 .hero__inner {
-  max-width: 1400px; margin: 0 auto; padding: 0 32px;
-  display: grid; grid-template-columns: 1fr 480px; gap: 64px;
-  align-items: center; position: relative; z-index: 1;
+  max-width: 1400px; margin: 0 auto; padding: 64px 32px 96px;
+  display: grid; grid-template-columns: minmax(400px, 50%) 1fr; gap: 64px;
+  align-items: center; position: relative; z-index: 2; min-height: inherit;
 }
 .hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 .hero__badge .pill {
@@ -521,7 +521,7 @@ a { color: inherit; text-decoration: none; }
 .timeline::before {
   content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
   width: 2px; background: linear-gradient(180deg, var(--accent-soft), var(--accent), var(--accent-soft));
-  transform: translateX(-50%);
+  transform: translateX(-50%); display: none !important;
 }
 .scene { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 24px; margin-bottom: 56px; align-items: center; position: relative; }
 .scene__body { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
@@ -962,6 +962,12 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
+  <img
+    src="/images/hero/hero-final.png"
+    alt="SalonRink Concierge — キレイ鶴見店の店内とLINE公式アカウントのトーク画面。お客様の予約・相談・パーソナライズ提案・業務自動化がLINEの中で完結"
+    style={{position: 'absolute', inset: 0, zIndex: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center'}}
+  />
+  <div style={{position: 'absolute', inset: 0, zIndex: 1, background: 'linear-gradient(90deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.85) 30%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0.15) 70%, transparent 100%)', pointerEvents: 'none'}} aria-hidden="true"></div>
   <div className="hero__inner">
     <div>
       <div className="hero__badge">
@@ -1021,10 +1027,6 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2l7 5-7 5z" stroke-linejoin="round"/></svg>月¥1,980〜 / 14日間無料</span>
       </div>
     </div>
-
-    <div className="phone-area" style={{overflow: 'visible'}}>
-        <img className="hero-img" src="/images/hero/hero-salon-iphone.png" alt="サロンとLINEで連携している顧客のイメージ" style={{width: '130%', maxWidth: '720px', marginLeft: '-15%'}}/>
-      </div>
   </div>
 </section>
 
@@ -1243,12 +1245,6 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <span className="everyone__num everyone__num--customers" style={{position: 'absolute', top: '41%', left: '6%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+25%</span>
       <span className="everyone__num everyone__num--staff" style={{position: 'absolute', top: '41%', left: '38%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>−30分/日</span>
       <span className="everyone__num everyone__num--you" style={{position: 'absolute', top: '41%', left: '72%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+15%</span>
-    </div>
-
-    <div className="eband">
-      <span className="eband__icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 2v2M3.5 5l1.5 1.5M18.5 5L17 6.5M2 11h2M18 11h2M11 5a5 5 0 00-3 9v2h6v-2a5 5 0 00-3-9z"/></svg></span>
-      <span className="eband__title">すべては、1人サロンの成長のために。</span>
-      <span className="eband__sub">お客様満足・将来のスタッフの働きやすさ・売上向上を、LINEの中でシンプルに実現します。</span>
     </div>
   </div>
 </section>
