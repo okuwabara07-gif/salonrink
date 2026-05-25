@@ -696,21 +696,6 @@ export default function LpPage() {
               </div>
             </div>
           </div>
-          <div className={styles.baStats}>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>15分<span className={styles.baStatUnit}>→3分</span></span>
-              <span className={styles.baStatLabel}>カウンセリング時間</span>
-            </div>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>0<span className={styles.baStatUnit}>件</span></span>
-              <span className={styles.baStatLabel}>聞き漏れ</span>
-            </div>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>75<span className={styles.baStatUnit}>%</span></span>
-              <span className={styles.baStatLabel}>業務時間削減</span>
-            </div>
-          </div>
-          <p className={styles.baFootnote}>※ 運用実績に基づくモデル値です(参考値)</p>
         </div>
       </section>
 
