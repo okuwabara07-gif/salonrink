@@ -164,7 +164,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto;
   padding: 64px 32px 96px;
   display: grid;
-  grid-template-columns: minmax(400px, 50%) 1fr;
+  grid-template-columns: minmax(400px, 600px);
   align-items: center;
   min-height: inherit;
 }
