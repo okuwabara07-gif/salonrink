@@ -917,6 +917,10 @@ section#solution .sr-container { position: relative; z-index: 1; }
   .scene__photo { display: none; }
 }
 
+/* A案: 画像内に全要素焼き込み済みのため、HTML側テキストを非表示 */
+.hero__inner { display: none !important; }
+.everyone .sr-section__head { display: none !important; }
+.everyone__num { display: none !important; }
 
       `}</style>
 
