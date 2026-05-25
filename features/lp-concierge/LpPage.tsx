@@ -43,7 +43,7 @@ const FEATURES = [
 
 const STEPS = [
   { num: '01', img: '/v3/step-01-line-qr.webp', title: 'LINE追加', desc: 'LINEで友だち追加するだけ。QRを読み取って簡単スタート。' },
-  { num: '02', img: '/v3/step-02-chat.webp', title: '質問に回答', desc: 'お客様がLINEで質問に回答。事前カウンセリングが完了。' },
+  { num: '02', img: '/v3/step-02-chat.webp', title: '質問に回答', desc: 'お客様がLINEで質問に回答。事前カウンセリングが完了。', hpbPill: true },
   { num: '03', img: '/v3/step-03-tablet.webp', title: '自動カルテ生成', desc: '自動で回答内容をもとにカルテを作成・整理。' },
   { num: '04', img: '/v3/step-04-staff.webp', title: '提案に活用', desc: 'カルテをもとに最適な提案。満足度UPでリピートも促進。' },
 ];
@@ -973,6 +973,14 @@ export default function LpPage() {
                   <div className={styles.stepNum}>{s.num}</div>
                   <h3 className={styles.stepTitle}>{s.title}</h3>
                   <p className={styles.stepDesc}>{s.desc}</p>
+                  {s.hpbPill && (
+                    <span className={styles.stepHpbPill}>
+                      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M2 6l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      HPB連携も同時に可能
+                    </span>
+                  )}
                 </div>
                 {i < STEPS.length - 1 && <div className={styles.stepArrow} aria-hidden>→</div>}
               </React.Fragment>
