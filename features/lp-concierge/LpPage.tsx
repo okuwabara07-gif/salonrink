@@ -111,31 +111,46 @@ const IN_ACTION_SCENES = [
 const CASE_STUDY = {
   salon: {
     name: 'キレイ鶴見店',
-    region: '神奈川県横浜市鶴見区',
-    specialty: '白髪ケア・大人女性向け',
-    feature: '予約制完全プライベートサロン',
-    links: [
-      { label: 'ホットペッパーBeauty', url: 'https://beauty.hotpepper.jp/H000501100/', icon: 'HPB' },
-      { label: 'Instagram', url: 'https://www.instagram.com/kirei.tsurumi/', icon: 'IG' },
-      { label: 'X', url: 'https://twitter.com/kirei_tsurumi', icon: 'X' },
-    ],
+    nameEn: 'WHITE HAIR COLOR SALON',
+    region: '横浜・鶴見',
+    specialty: '白髪染め特化',
+    feature: '1人サロン',
+    intro: '2026年4月、SalonRink Concierge を導入。',
+    links: {
+      hpb: 'H000501100',
+      instagram: '@kirei.tsurumi',
+      instagramUrl: 'https://instagram.com/kirei.tsurumi',
+    },
+    tags: ['白髪染め特化', '1人サロン', '横浜・鶴見'],
   },
-  effects: [
-    {
-      title: '当日朝の予約把握、3分で完了',
-      before: 'HotPepper Beauty 管理画面で1件ずつ確認',
-      after: 'LINE で当日サマリが朝7時に届く',
+  ownerQuote: {
+    text: 'LINEで連絡するタイミングが分かるようになって、自然にリピートにつながる流れができてきました。',
+    by: 'キレイ鶴見店 オーナー',
+  },
+  beforeAfter: {
+    before: {
+      label: 'BEFORE',
+      text: '紙のカルテと記憶頼りで、お客様の前回情報を探すのに時間がかかっていた。リピートの案内も「そろそろかな」という勘で送るしかなく、タイミングを逃すことも多かった。',
+      image: '/images/a608_before.png',
+      imageAlt: '導入前: 紙のカルテが散乱',
     },
-    {
-      title: 'カルテ整理時間、ほぼゼロに',
-      before: '営業後に紙カルテ手書き、20-30分/日',
-      after: 'LINE にメモを送るだけで、自動で整理',
+    after: {
+      label: 'AFTER',
+      text: 'LINEで「@お客様名」と打つだけで、過去の施術・好み・敏感肌などの情報が瞬時に出る。配信文の下書きも自動で用意されるので、確認して送るだけ。',
     },
-    {
-      title: 'リピート率、再来店率に注力できる',
-      before: '事務作業に追われて顧客分析が後回し',
-      after: '業務時間が浮いて、顧客への提案が増えた',
-    },
+  },
+  metrics: [
+    { label: 'リピート率', value: '+25%', sub: 'シミュレーション' },
+    { label: '客単価', value: '+15%', sub: 'シミュレーション' },
+    { label: '業務時間', value: '−30', valueUnit: '分/日', sub: 'シミュレーション' },
+    { label: '月商変化', value: '+12%', sub: 'シミュレーション' },
+  ],
+  metricsNote: '※ 上記数値はキレイ鶴見店(2026年4月導入)の運用状況に基づく社内シミュレーション値であり、実測値ではありません。効果は店舗・業態・運用状況により異なります。',
+  timeline: [
+    { time: 'DAY 1', date: '2026/4/1', title: '5分でLINE連携', sub: 'LINE公式アカウントと連携。当日から運用開始。', done: true },
+    { time: 'WEEK 2', date: '2026/4/14', title: '過去履歴がカルテ化', sub: '過去のLINEトークから、お客様情報を自動構造化。', done: true },
+    { time: '現在', date: '2026/5/25', title: '日常運用に定着', sub: 'リピート提案・カルテ自動化が日常運用に定着。接客と提案に時間を使えるようになり、お客様一人ひとりとの関係づくりに余裕が生まれた。', done: true },
+    { time: '予定', date: '2026/6/1〜', title: 'リピート提案 本格運用', sub: '最適タイミングでの再来店案内を本格運用予定。', done: false },
   ],
 };
 
@@ -838,63 +853,99 @@ export default function LpPage() {
         </div>
       </section>
 
-      {/* FIRST CASE - キレイ鶴見店事例 */}
-      <section id="cases" className={styles.cases}>
+      {/* CASE STUDY - キレイ鶴見店 (v2 marketing-in) */}
+      <section id="case" className={styles.case}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>FIRST CASE</p>
-            <h2 className={styles.sectionTitle}>導入第一号、キレイ鶴見店。</h2>
-            <p className={styles.sectionSub}>東京・神奈川エリアで白髪ケアに特化した小規模サロンが、SalonRink Concierge を実運用しています。</p>
+            <p className={styles.sectionKicker}>CASE 01 · 導入店舗の声</p>
+            <h2 className={styles.sectionTitle}>「LINEだけで、<br/>サロン業務が<span className={styles.caseAccent}>ここまで変わる</span>」</h2>
           </div>
 
-          <div className={styles.caseGrid}>
-            {/* 左側: 店舗情報 */}
-            <div className={styles.caseInfoCard}>
-              <div className={styles.caseInfoBody}>
-                <h3 className={styles.caseInfoTitle}>{CASE_STUDY.salon.name}</h3>
-                <div className={styles.caseInfoMeta}>
-                  <p className={styles.caseInfoRegion}>📍 {CASE_STUDY.salon.region}</p>
-                  <p className={styles.caseInfoSpec}>{CASE_STUDY.salon.specialty}</p>
-                  <p className={styles.caseInfoFeature}>{CASE_STUDY.salon.feature}</p>
+          <article className={styles.caseCard}>
+            {/* TOP: メイン写真 + オーナーコメント + BEFORE/AFTER */}
+            <div className={styles.caseTop}>
+              <div className={styles.casePhoto}>
+                <div className={styles.casePhotoBadge}>
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>
+                  REAL PHOTO · 実店舗
                 </div>
-                <div className={styles.caseInfoLinks}>
-                  {CASE_STUDY.salon.links.map((link, i) => (
-                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.caseInfoLink}>
-                      {link.label} →
-                    </a>
-                  ))}
+                <div className={styles.casePhotoThumb}>
+                  <Image src="/images/a508_exterior.png" alt="外観イメージ" width={84} height={84} />
+                  <div className={styles.casePhotoThumbLabel}>外観イメージ</div>
+                </div>
+                <div className={styles.casePhotoContent}>
+                  <div className={styles.casePhotoName}>{CASE_STUDY.salon.name}</div>
+                  <div className={styles.casePhotoMeta}>{CASE_STUDY.salon.nameEn} · {CASE_STUDY.salon.feature}</div>
+                  <div className={styles.casePhotoLinks}>
+                    <span>HPB · {CASE_STUDY.salon.links.hpb}</span>
+                    <a href={CASE_STUDY.salon.links.instagramUrl} target="_blank" rel="noopener noreferrer">{CASE_STUDY.salon.links.instagram}</a>
+                  </div>
+                  <div className={styles.casePhotoTags}>
+                    {CASE_STUDY.salon.tags.map((tag, i) => (
+                      <span key={i} className={styles.casePhotoTag}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.caseTopBody}>
+                <div className={styles.caseQuoteMark}>&ldquo;</div>
+                <p className={styles.caseQuote}>{CASE_STUDY.ownerQuote.text}</p>
+                <div className={styles.caseQuoteBy}>— {CASE_STUDY.ownerQuote.by}</div>
+
+                <div className={styles.caseBeforeAfter}>
+                  <div className={`${styles.baCol} ${styles.baColWithImage}`}>
+                    <div className={styles.baImage}>
+                      <Image src={CASE_STUDY.beforeAfter.before.image} alt={CASE_STUDY.beforeAfter.before.imageAlt} width={400} height={155} />
+                    </div>
+                    <div className={styles.baLabelV2}>{CASE_STUDY.beforeAfter.before.label}</div>
+                    <div className={styles.baTextV2}>{CASE_STUDY.beforeAfter.before.text}</div>
+                  </div>
+                  <div className={styles.baArrowV2} aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 10h10M11 5l4 5-4 5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className={`${styles.baCol} ${styles.baColAfter}`}>
+                    <div className={styles.baLabelV2}>{CASE_STUDY.beforeAfter.after.label}</div>
+                    <div className={styles.baTextV2}>{CASE_STUDY.beforeAfter.after.text}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 右側: 導入効果 */}
-            <div className={styles.caseEffectsCard}>
-              <div className={styles.caseEffectsTag}>導入から1ヶ月 × 予約管理 LINE 完結 × カルテ自動化</div>
-              <div className={styles.caseEffectsList}>
-                {CASE_STUDY.effects.map((effect, i) => (
-                  <div key={i} className={styles.caseEffect}>
-                    <h4 className={styles.caseEffectTitle}>{effect.title}</h4>
-                    <div className={styles.caseEffectComparison}>
-                      <div className={styles.caseEffectBefore}>
-                        <div className={styles.caseEffectLabel}>旧</div>
-                        <p>{effect.before}</p>
-                      </div>
-                      <div className={styles.caseEffectArrow}>→</div>
-                      <div className={styles.caseEffectAfter}>
-                        <div className={styles.caseEffectLabel}>新</div>
-                        <p>{effect.after}</p>
-                      </div>
-                    </div>
+            {/* METRICS (社内シミュレーション値) */}
+            <div className={styles.caseMetrics}>
+              {CASE_STUDY.metrics.map((m, i) => (
+                <div key={i} className={styles.caseMetric}>
+                  <div className={styles.caseMetricLabel}>{m.label}</div>
+                  <div className={styles.caseMetricValue}>
+                    {m.value}{m.valueUnit && <span className={styles.caseMetricValueUnit}>{m.valueUnit}</span>}
+                  </div>
+                  <div className={styles.caseMetricSub}>{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* シミュレーション値の景表法注釈 */}
+            <div className={styles.caseMetricsNote}>
+              {CASE_STUDY.metricsNote}
+            </div>
+
+            {/* TIMELINE */}
+            <div className={styles.caseTimeline}>
+              <div className={styles.caseTimelineTitle}>導入からのタイムライン</div>
+              <div className={styles.caseTl}>
+                {CASE_STUDY.timeline.map((item, i) => (
+                  <div key={i} className={`${styles.caseTlItem} ${item.done ? styles.caseTlItemDone : ''}`}>
+                    <div className={styles.caseTlTime}>{item.time} · {item.date}</div>
+                    <div className={styles.caseTlItemTitle}>{item.title}</div>
+                    <div className={styles.caseTlItemSub}>{item.sub}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-
-          <div className={styles.caseFootnote}>
-            <p>※ 実運用中のサロンの声を、随時更新していきます。</p>
-            <p className={styles.caseCta}>事例にご協力いただけるサロン様、<a href="mailto:support@salonrink.com">お問い合わせください</a></p>
-          </div>
+          </article>
         </div>
       </section>
 

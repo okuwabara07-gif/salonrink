@@ -1052,3 +1052,395 @@
     padding-top: 0;
   }
 }
+
+/* === Phase 9: Case 01 v2 - キレイ鶴見店 === */
+.case {
+  background: #f5f0e6;
+}
+.caseAccent {
+  color: #c25a3e;
+  font-weight: 600;
+}
+.caseCard {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(107, 45, 58, 0.08);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.caseTop {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+}
+.casePhoto {
+  background-image: url('/images/kirei_real_interior.jpg');
+  background-size: cover;
+  background-position: center 40%;
+  position: relative;
+  min-height: 540px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+}
+.casePhoto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 25%, transparent 45%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+}
+.casePhotoBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  background: rgba(255,255,255,0.95);
+  color: #c25a3e;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  backdrop-filter: blur(8px);
+}
+.casePhotoThumb {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  z-index: 2;
+}
+.casePhotoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.casePhotoThumbLabel {
+  position: absolute;
+  bottom: 4px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  padding: 2px;
+  letter-spacing: 0.16em;
+}
+.casePhotoContent {
+  position: relative;
+  z-index: 1;
+}
+.casePhotoName {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.casePhotoMeta {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+.casePhotoLinks {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  opacity: 0.95;
+}
+.casePhotoLinks a {
+  color: #fff;
+  text-decoration: none;
+}
+.casePhotoLinks a:hover {
+  text-decoration: underline;
+}
+.casePhotoTags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.casePhotoTag {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.caseTopBody {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+}
+.caseQuoteMark {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 56px;
+  line-height: 1;
+  color: #c9a961;
+  margin-bottom: -8px;
+}
+.caseQuote {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.85;
+  color: #1f1813;
+  margin: 0 0 12px;
+}
+.caseQuoteBy {
+  font-size: 12px;
+  color: #888a82;
+  margin-bottom: 24px;
+}
+.caseBeforeAfter {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+.baCol {
+  background: #fbf7ef;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.baColWithImage {
+  padding: 0;
+  overflow: hidden;
+}
+.baImage {
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.baImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.baColWithImage .baLabelV2,
+.baColWithImage .baTextV2 {
+  padding: 0 16px;
+}
+.baColWithImage .baTextV2 {
+  padding-bottom: 14px;
+}
+.baLabelV2 {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #888a82;
+  margin-bottom: 6px;
+}
+.baTextV2 {
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+.baColAfter {
+  background: rgba(6, 199, 85, 0.06);
+  border: 1px solid rgba(6, 199, 85, 0.2);
+}
+.baColAfter .baLabelV2 {
+  color: #06C755;
+}
+.baColAfter .baTextV2 {
+  color: #1f1813;
+  font-weight: 500;
+}
+.baArrowV2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c25a3e;
+}
+.caseMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e8e4da;
+}
+.caseMetric {
+  padding: 24px 20px;
+  text-align: center;
+  border-right: 1px solid #e8e4da;
+}
+.caseMetric:last-child {
+  border-right: none;
+}
+.caseMetricLabel {
+  font-size: 11px;
+  color: #888a82;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.caseMetricValue {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #c25a3e;
+  line-height: 1.2;
+}
+.caseMetricValueUnit {
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+.caseMetricSub {
+  font-size: 10px;
+  color: #888a82;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+.caseMetricsNote {
+  background: #fbf7ef;
+  border-top: 1px solid #e8e4da;
+  padding: 14px 28px;
+  font-size: 10.5px;
+  color: #888a82;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+}
+.caseTimeline {
+  padding: 32px 36px;
+  border-top: 1px solid #e8e4da;
+}
+.caseTimelineTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1813;
+  margin-bottom: 20px;
+  letter-spacing: 0.06em;
+}
+.caseTl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+}
+.caseTl::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, #c25a3e 0%, #c9a961 100%);
+  opacity: 0.3;
+}
+.caseTlItem {
+  position: relative;
+  padding-top: 28px;
+}
+.caseTlItem::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fbf7ef;
+  border: 2px solid #c9a961;
+}
+.caseTlItemDone::before {
+  background: #c25a3e;
+  border-color: #c25a3e;
+}
+.caseTlTime {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c25a3e;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.caseTlItemTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.caseTlItemSub {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+
+@media (max-width: 980px) {
+  .caseTop {
+    grid-template-columns: 1fr;
+  }
+  .casePhoto {
+    min-height: 380px;
+  }
+  .caseBeforeAfter {
+    grid-template-columns: 1fr;
+  }
+  .baArrowV2 {
+    transform: rotate(90deg);
+    padding: 4px 0;
+  }
+  .caseMetrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .caseMetric:nth-child(2n) {
+    border-right: none;
+  }
+  .caseMetric:nth-child(1),
+  .caseMetric:nth-child(2) {
+    border-bottom: 1px solid #e8e4da;
+  }
+  .caseTl {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .caseTl::before {
+    display: none;
+  }
+  .caseTlItem {
+    padding-top: 0;
+    padding-left: 28px;
+  }
+  .caseTlItem::before {
+    top: 0;
+    left: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .caseTopBody {
+    padding: 24px;
+  }
+  .caseTimeline {
+    padding: 24px;
+  }
+  .caseQuote {
+    font-size: 15.5px;
+  }
+}
