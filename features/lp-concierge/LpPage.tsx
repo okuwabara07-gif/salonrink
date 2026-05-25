@@ -31,13 +31,13 @@ const OWNER_BENEFITS = [
 ];
 
 const FEATURES = [
-  { img: '/v3/feature-01-karte.webp', title: 'AIカルテ自動生成', desc: '会話から自動でカルテを整理。スタッフ全員で情報共有。' },
+  { img: '/v3/feature-01-karte.webp', title: 'カルテ自動生成', desc: '会話から自動でカルテを整理。1人サロンでも情報の取りこぼしゼロ。' },
   { img: '/v3/feature-02-line.webp', title: 'LINEカウンセリング', desc: '事前回答でカウンセリングを時短に。' },
   { img: '/v3/feature-03-allergy.webp', title: 'アレルギー情報自動表示', desc: '施術リスクを事前に確認、トラブル防止。' },
-  { img: '/v3/feature-04-booking.webp', title: '予約管理', desc: 'ダブルブッキングを防止しスムーズな予約運用。' },
+  { img: '/v3/feature-04-booking.webp', title: '予約管理(HPB予約も統合)', desc: 'HPB予約もLINE予約もダブルブッキングを防止しスムーズに運用。' },
   { img: '/v3/feature-05-customer.webp', title: '顧客履歴一元管理', desc: '写真・施術履歴・メモをすべて一元管理。' },
   { img: '/v3/feature-06-dashboard.webp', title: '売上ダッシュボード', desc: 'リアルタイムでサロンの状況を可視化。' },
-  { img: '/v3/feature-07-menu.webp', title: 'AIメニュー提案', desc: '次回施術の提案を自動でサポート。' },
+  { img: '/v3/feature-07-menu.webp', title: 'メニュー自動提案', desc: '次回施術の提案を自動でサポート。' },
   { img: '/v3/feature-08-others.webp', title: 'その他の機能', desc: '決済・リマインド・権限・口コミ・API連携など。' },
 ];
 
@@ -394,6 +394,140 @@ export default function LpPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SOLUTION - v2 marketing-in: LINE × 業務レイヤー */}
+      <section id="solution" className={styles.solution}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>SOLUTION</p>
+            <h2 className={styles.sectionTitle}>LINEを置き換えない。<br/>LINEに、&ldquo;<span className={styles.solutionAccent}>乗せる</span>&rdquo;。</h2>
+            <p className={styles.sectionSub}>お客様も、あなたも、いつもの&ldquo;LINE&rdquo;のまま。<br/>その裏側だけ、業務レイヤーを乗せる仕組みです。</p>
+          </div>
+
+          <div className={styles.solCols}>
+            {/* LEFT: いつものLINE */}
+            <div className={styles.solCol}>
+              <div className={styles.solColHead}>
+                <span className={styles.solColKicker}>FRONT</span>
+                <span className={styles.solColTitle}>いつもの、LINE</span>
+              </div>
+              <ul className={styles.solList}>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">💬</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>お客様はLINEで、いつも通り</span>
+                    </div>
+                    <div className={styles.solFeatSub}>専用アプリ不要。お客様の負担ゼロで予約と相談ができる。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📅</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>予約も会話も、ぜんぶLINE</span>
+                    </div>
+                    <div className={styles.solFeatSub}>慣れ親しんだLINE上で、予約も連絡も完結。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">🔔</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>リマインドも、いつもの形で</span>
+                    </div>
+                    <div className={styles.solFeatSub}>「来月はいかがですか?」をLINEで自然に送れる。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📝</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>カウンセリングも、LINEで完結</span>
+                    </div>
+                    <div className={styles.solFeatSub}>事前ヒアリングをLINEで。来店時間がぐっと有効に。</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* CENTER: ARROW */}
+            <div className={styles.solArrowWrap}>
+              <div className={styles.solArrow} aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 14h16M16 8l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.solArrowLabel}>裏側で<br/>自動処理</div>
+            </div>
+
+            {/* RIGHT: 業務レイヤー */}
+            <div className={`${styles.solCol} ${styles.solColBack}`}>
+              <div className={styles.solColHead}>
+                <span className={styles.solColKicker}>BACK</span>
+                <span className={styles.solColTitle}>裏側の業務レイヤー</span>
+              </div>
+              <ul className={styles.solList}>
+                <li className={`${styles.solFeat} ${styles.solFeatHighlight}`}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📌</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>HPB予約もLINE予約も、一画面で</span>
+                      <span className={styles.solFeatPillNew}>NEW</span>
+                    </div>
+                    <div className={styles.solFeatSub}>ホットペッパービューティーとLINEの予約を、自動取込して一元管理。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📂</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>会話から、自動でカルテ構造化</span>
+                    </div>
+                    <div className={styles.solFeatSub}>LINEトークから、施術履歴・好み・敏感肌情報を自動抽出。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">🔍</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>「@田中様」と打つだけで、過去履歴</span>
+                    </div>
+                    <div className={styles.solFeatSub}>LINEのトーク画面で過去施術・前回会話を瞬時に呼び出し。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">✉️</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>次回ご案内の文案を、自動下書き</span>
+                    </div>
+                    <div className={styles.solFeatSub}>最適タイミングと文案を自動で。確認して送るだけ。</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Footer band */}
+          <div className={styles.sband}>
+            <div className={styles.sbandHd}>
+              <span className={styles.sbandIcon} aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 12h16M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span className={styles.sbandTitle}>1人サロンの<br/>業務レイヤーが、整う</span>
+            </div>
+            <ul className={styles.sbandItems}>
+              <li className={styles.sbandItem}>追加アプリ不要、LINEだけで完結</li>
+              <li className={styles.sbandItem}>初期設定は5分、当日から運用開始</li>
+              <li className={`${styles.sbandItem} ${styles.sbandItemHighlight}`}>HPB予約もLINEで一元管理</li>
+              <li className={styles.sbandItem}>14日間無料、月¥1,980〜</li>
+            </ul>
           </div>
         </div>
       </section>

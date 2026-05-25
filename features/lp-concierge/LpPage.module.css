@@ -511,3 +511,256 @@
   .demoCtaInner { flex-direction: column; align-items: stretch; }
   .demoCtaButton { justify-content: center; }
 }
+
+/* === Phase 3: Solution v2 marketing-in === */
+.solution {
+  background: #fbf7ef;
+  border-top: 1px solid rgba(184, 149, 100, 0.12);
+}
+.solutionAccent {
+  color: #c25a3e;
+  font-weight: 600;
+}
+.solCols {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 40px;
+}
+.solCol {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.18);
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 16px rgba(107, 45, 58, 0.04);
+}
+.solColBack {
+  background: linear-gradient(180deg, #ffffff 0%, #fbf7ef 100%);
+  border-color: rgba(194, 90, 62, 0.22);
+}
+.solColHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed rgba(107, 45, 58, 0.15);
+}
+.solColKicker {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a5e3a;
+  letter-spacing: 0.2em;
+  background: rgba(184, 149, 100, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.solColTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f1813;
+}
+.solList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.solFeat {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.solFeatHighlight {
+  background: rgba(194, 90, 62, 0.05);
+  border-left: 3px solid #c25a3e;
+  padding: 12px 14px;
+  margin: 0 -14px;
+  border-radius: 0 8px 8px 0;
+}
+.solFeatIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.solFeatBody {
+  flex: 1;
+  min-width: 0;
+}
+.solFeatRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.solFeatTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.45;
+}
+.solFeatPillNew {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #c25a3e;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.solFeatSub {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+.solArrowWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.solArrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.25);
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.06);
+}
+.solArrowLabel {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a5e3a;
+  text-align: center;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+.sband {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.22);
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.04);
+}
+.sbandHd {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.sbandIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(184, 149, 100, 0.12);
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sbandTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f1813;
+}
+.sbandItems {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 1px dashed rgba(107, 45, 58, 0.15);
+  padding-left: 26px;
+}
+.sbandItem {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #4a3d31;
+  position: relative;
+  padding-left: 20px;
+}
+.sbandItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(184, 149, 100, 0.15);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 12 12' fill='none' stroke='%237a5e3a' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.sbandItemHighlight {
+  font-weight: 600;
+  color: #c25a3e;
+}
+.sbandItemHighlight::before {
+  background: rgba(194, 90, 62, 0.12);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 12 12' fill='none' stroke='%23c25a3e' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media (max-width: 1100px) {
+  .solCols {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .solArrowWrap {
+    flex-direction: row;
+    padding: 8px 0;
+  }
+  .solArrow {
+    transform: rotate(90deg);
+  }
+  .solArrowLabel {
+    text-align: left;
+  }
+}
+
+@media (max-width: 980px) {
+  .sband {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sbandItems {
+    grid-template-columns: 1fr 1fr;
+    border-left: none;
+    border-top: 1px dashed rgba(107, 45, 58, 0.15);
+    padding-left: 0;
+    padding-top: 18px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .sbandItems {
+    grid-template-columns: 1fr;
+  }
+}
