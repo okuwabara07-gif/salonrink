@@ -125,14 +125,32 @@ a { color: inherit; text-decoration: none; }
 /* ═══════════════════════════════════════════════
    SECTION 01: HERO
 ═══════════════════════════════════════════════ */
-.hero { padding: 64px 0 96px; position: relative; overflow: hidden; }
-.hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.25; pointer-events: none; }
-.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.85)); z-index: 0; pointer-events: none; }
+.hero {
+  position: relative;
+  padding: 64px 0;
+  background: #fff;
+  overflow: hidden;
+}
+
 .hero__inner {
-  max-width: 1400px; margin: 0 auto; padding: 0 32px;
-  display: grid; grid-template-columns: 1fr 480px; gap: 64px;
-  align-items: center; position: relative; z-index: 1;
-  min-height: 600px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.hero__content { position: relative; z-index: 1; }
+
+.hero__media { position: relative; }
+
+.hero__image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 16px;
 }
 .hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 .hero__badge .pill {
@@ -180,95 +198,9 @@ a { color: inherit; text-decoration: none; }
 .hero__trust span { display: inline-flex; align-items: center; gap: 6px; }
 .hero__trust svg { color: var(--accent); }
 
-/* Phone column */
-.phone-area { position: relative; height: 720px; display: flex; align-items: center; justify-content: center; }
-.bubble {
-  position: absolute; background: #fff;
-  border: 1px solid var(--line); border-radius: 22px;
-  padding: 14px 18px; box-shadow: var(--shadow-md);
-  display: flex; gap: 10px; align-items: center;
-  max-width: 220px; z-index: 2;
-}
-.bubble__icon {
-  width: 36px; height: 36px; border-radius: 50%;
-  background: var(--accent-soft); color: var(--accent);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.bubble__text { font-size: 12px; line-height: 1.5; color: var(--ink-2); }
-.bubble--1 { top: 70px; right: -40px; }
-.bubble--2 { top: 320px; right: -60px; }
-.bubble--3 { bottom: 70px; right: -30px; }
-.phone {
-  width: 320px; height: 660px; border-radius: 44px;
-  background: #1a1a1a;
-  box-shadow: 0 30px 60px rgba(15,22,20,0.18), 0 0 0 6px #2c2c2c;
-  padding: 14px; position: relative; z-index: 1;
-}
-.phone__screen {
-  width: 100%; height: 100%; border-radius: 32px;
-  background: #f7f7f7; overflow: hidden;
-  display: flex; flex-direction: column; position: relative;
-}
-.phone__notch {
-  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
-  width: 100px; height: 28px; background: #1a1a1a; border-radius: 18px; z-index: 5;
-}
-.phone__statusbar {
-  height: 44px; display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 28px 0; font-family: -apple-system, system-ui;
-  font-weight: 600; font-size: 14px; color: var(--ink);
-}
-.phone__statusbar .icons { display: flex; gap: 4px; }
-.phone__statusbar svg { width: 14px; height: 10px; }
-.line-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 10px 16px 12px; background: #fff;
-  border-bottom: 1px solid #eee;
-}
-.line-header .back { color: #666; font-size: 20px; line-height: 1; }
-.line-header .avatar {
-  width: 34px; height: 34px; border-radius: 50%; background: var(--bg-soft);
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--serif); font-weight: 600; color: var(--ink-2); font-size: 14px;
-}
-.line-header .name { font-weight: 600; font-size: 13px; color: var(--ink); }
-.line-header .name__sub { font-size: 9px; color: var(--ink-3); margin-top: 1px; }
-.line-header .actions { margin-left: auto; display: flex; gap: 12px; color: #666; }
-.chat-body { flex: 1; overflow: hidden; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px; background: #f7f7f7; }
-.msg-row { display: flex; gap: 6px; align-items: flex-end; }
-.msg-row--user { justify-content: flex-end; }
-.msg-avatar {
-  width: 26px; height: 26px; border-radius: 50%; background: var(--bg-soft);
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-}
-.msg-avatar svg { width: 14px; height: 14px; color: var(--ink-4); }
-.msg-bubble {
-  background: #fff; border-radius: 14px; padding: 9px 12px;
-  font-size: 11.5px; line-height: 1.55; color: var(--ink);
-  max-width: 78%; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
-}
-.msg-bubble--user { background: #B2EBC8; }
-.msg-time { font-size: 9px; color: var(--ink-3); align-self: flex-end; margin: 0 4px; }
-.msg-read { font-size: 9px; color: var(--ink-3); writing-mode: vertical-rl; align-self: flex-end; margin-right: 2px; letter-spacing: 0.1em; }
-.style-card { background: #fff; border-radius: 14px; overflow: hidden; max-width: 200px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
-.style-card__img { height: 90px; background: linear-gradient(135deg, #e3d2c0 0%, #c9a98a 100%); position: relative; }
-.style-card__img::after {
-  content: "STYLE"; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.7); letter-spacing: 0.2em;
-}
-.style-card__body { padding: 8px 10px 10px; }
-.style-card__title { font-size: 10px; font-weight: 600; color: var(--ink); }
-.style-card__sub { font-size: 9px; color: var(--ink-3); margin-top: 3px; }
-.style-card__btn { margin-top: 8px; background: var(--accent); color: #fff; text-align: center; padding: 6px; border-radius: 999px; font-size: 10px; font-weight: 600; }
-.chat-input { height: 44px; background: #fff; border-top: 1px solid #eee; display: flex; align-items: center; padding: 0 12px; gap: 8px; }
-.chat-input .plus { color: #999; font-size: 18px; }
-.chat-input .field { flex: 1; height: 26px; background: #f0f0f0; border-radius: 13px; display: flex; align-items: center; padding: 0 10px; font-size: 11px; color: var(--ink-4); }
-.chat-input .emoji { color: #999; font-size: 14px; }
-
 @media (max-width: 980px) {
   .hero__inner { grid-template-columns: 1fr; gap: 32px; }
-  .phone-area { height: 600px; }
+  .hero__image { border-radius: 12px; }
   .nav__menu { display: none; }
 }
 
@@ -953,9 +885,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
-  <img className="hero__bg" src="/images/hero/hero-final.png" alt="" aria-hidden="true"/>
   <div className="hero__inner">
-    <div>
+    <div className="hero__content">
       <div className="hero__badge">
         <span className="pill">NEW</span>
         <span className="text">LINE公式アカウント拡張ツール · 2026.05 リリース</span>
@@ -1013,10 +944,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2l7 5-7 5z" stroke-linejoin="round"/></svg>月¥1,980〜 / 14日間無料</span>
       </div>
     </div>
-
-    <div className="phone-area" style={{overflow: 'visible'}}>
-        <img className="hero-img" src="/images/hero/hero-salon-iphone.png" alt="サロンとLINEで連携している顧客のイメージ" style={{width: '130%', maxWidth: '720px', marginLeft: '-15%'}}/>
-      </div>
+    <div className="hero__media">
+      <img className="hero__image" src="/images/hero/hero-right.png" alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面" width={1672} height={941}/>
+    </div>
   </div>
 </section>
 
