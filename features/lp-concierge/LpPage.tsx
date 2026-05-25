@@ -19,9 +19,9 @@ const EXPERIENCE_STEPS = [
 ];
 
 const PROBLEMS = [
-  { img: '/v3/problem-1.png', title: '施術前の確認、本当にこれで大丈夫?', desc: '肌質や体調の情報を、毎回確認するのが不安...' },
-  { img: '/v3/problem-2.png', title: '引き継ぎが毎回バラバラ', desc: '口頭やメモだけの引き継ぎで、伝え漏れがないかいつも不安...' },
-  { img: '/v3/problem-3.png', title: 'LINE・紙・口頭で情報が散らばる', desc: 'お客様情報がバラバラで、伝えるのに時間がかかり、業務が止まる...' },
+  { img: '/v3/problem-1.png', title: '「いつもの田中さま」、前回なに話したっけ?', desc: '施術中の何気ない会話、好み、避けたい色…覚えてるつもりが、半年経つと曖昧に。お客様の「いつもの」が、思い出せない。' },
+  { img: '/v3/problem-2.png', title: '紙のカルテ、頭の中、LINE…情報が3ヶ所にバラバラ', desc: '書いたメモを探す時間。過去のやりとりを遡る時間。本来お客様に向き合うための時間が、削られていく。' },
+  { img: '/v3/problem-3.png', title: '来てくれたお客様の半分が、2回目に来ない', desc: '予約も会話もLINEに残っているのに、「いつ次の連絡をすればいい?」が分からない。タイミングを逃して、お客様を失っている。' },
 ];
 
 const OWNER_BENEFITS = [
@@ -294,10 +294,20 @@ export default function LpPage() {
       {/* PROBLEM with images */}
       <section id="problem" className={styles.problem}>
         <div className={styles.sectionInner}>
-          <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>PROBLEM</p>
-            <h2 className={styles.sectionTitle}>毎日のサロンワーク、<br/>こんな不安ありませんか?</h2>
-            <p className={styles.sectionSub}>多くの美容師さんが、日々の業務の中でこんな悩みを感じています。</p>
+          <div className={styles.problemHeadWrap}>
+            <div className={styles.problemHeadText}>
+              <p className={styles.sectionKicker}>PROBLEM</p>
+              <h2 className={styles.sectionTitle}>1人サロンだからこそ、<br/>毎日<span className={styles.problemAccent}>こんな&ldquo;もったいない&rdquo;</span>が起きていませんか?</h2>
+              <p className={styles.sectionSub}>毎日忙しく回しているのに、なぜか売上は伸び悩む。<br/>その原因は、お客様情報がきちんと&quot;資産&quot;になっていないからかもしれません。</p>
+            </div>
+            <div className={styles.problemHeadImage}>
+              <Image
+                src="/images/a802_problem.png"
+                alt="1人サロン店主の悩み"
+                width={280} height={280}
+                sizes="(max-width: 980px) 240px, 280px"
+              />
+            </div>
           </div>
           <div className={styles.problemGrid}>
             {PROBLEMS.map((p, i) => (
@@ -318,9 +328,26 @@ export default function LpPage() {
               </div>
             ))}
           </div>
+          <div className={styles.problemBand}>
+            <div className={styles.problemBandHead}>
+              <span className={styles.problemBandIcon} aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="9"/>
+                  <path d="M6 11l3.5 3.5L16 8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span className={styles.problemBandTitle}>あなたのサロンにも、<br/>こんなお悩みは?</span>
+            </div>
+            <ul className={styles.problemBandItems}>
+              <li className={styles.problemBandItem}>お客様の前回情報を毎回思い出せない</li>
+              <li className={styles.problemBandItem}>リピートのきっかけづくりが、難しい</li>
+              <li className={styles.problemBandItem}>紙のカルテ管理が、限界</li>
+              <li className={styles.problemBandItem}>LINE運用に時間がかかりすぎる</li>
+            </ul>
+          </div>
           <div className={styles.problemSolution}>
             <p className={styles.problemSolutionText}>
-              そのすべて、<strong>SalonRink Concierge</strong> が解決します。
+              <strong>SalonRink Concierge</strong> が、その&ldquo;もったいない&rdquo;を、解決します。
             </p>
           </div>
         </div>
