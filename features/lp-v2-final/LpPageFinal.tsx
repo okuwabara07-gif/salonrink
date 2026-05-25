@@ -125,7 +125,17 @@ a { color: inherit; text-decoration: none; }
 /* ═══════════════════════════════════════════════
    SECTION 01: HERO
 ═══════════════════════════════════════════════ */
-.hero { padding: 64px 0 96px; position: relative; overflow: hidden; }
+.hero {
+  padding: 64px 0 96px;
+  position: relative;
+  overflow: hidden;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)),
+    url('/images/hero/hero-final.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
 .hero::before {
   content: ""; position: absolute; top: 80px; right: 44%;
   width: 160px; height: 160px;
