@@ -105,6 +105,183 @@
 .problemSolutionText { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; line-height: 1.7; color: #2a2018; }
 .problemSolutionText strong { color: #7a5e3a; font-weight: 600; }
 
+/* === Phase 2: Problem v2 marketing-in additions === */
+.problemAccent {
+  color: #c25a3e;
+}
+.problemHeadWrap {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 48px;
+  align-items: center;
+  margin-bottom: 56px;
+}
+.problemHeadText {
+  text-align: left;
+}
+.problemHeadText .sectionTitle,
+.problemHeadText .sectionSub {
+  text-align: left;
+}
+.problemHeadImage {
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(107, 45, 58, 0.12);
+  aspect-ratio: 1 / 1;
+}
+.problemHeadImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.problemBand {
+  background: #ffffff;
+  border: 1px solid rgba(194, 90, 62, 0.25);
+  border-radius: 14px;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.04);
+  margin-bottom: 32px;
+}
+.problemBandHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.problemBandIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(194, 90, 62, 0.1);
+  color: #c25a3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.problemBandTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #1f1813;
+}
+.problemBandItems {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 1px dashed rgba(107, 45, 58, 0.15);
+  padding-left: 28px;
+}
+.problemBandItem {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #4a3d31;
+  position: relative;
+  padding-left: 22px;
+}
+.problemBandItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(194, 90, 62, 0.1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12' fill='none' stroke='%23c25a3e' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media (max-width: 980px) {
+  .problemHeadWrap {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    text-align: center;
+  }
+  .problemHeadText,
+  .problemHeadText .sectionTitle,
+  .problemHeadText .sectionSub {
+    text-align: center;
+  }
+  .problemHeadImage {
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .problemBand {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .problemBandItems {
+    grid-template-columns: 1fr 1fr;
+    border-left: none;
+    border-top: 1px dashed rgba(107, 45, 58, 0.15);
+    padding-left: 0;
+    padding-top: 18px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .problemBandItems {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* FOR EVERYONE */
+.everyone { background: #ffffff; }
+.everyoneGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.ecard { background: #fbf7ef; border: 1px solid rgba(184, 149, 100, 0.1); border-radius: 14px; display: flex; flex-direction: column; box-shadow: 0 2px 8px rgba(26, 20, 16, 0.04); transition: transform 0.2s, box-shadow 0.2s; }
+.ecard:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(26, 20, 16, 0.08); }
+.ecardImageOnly { padding: 0; overflow: hidden; }
+.ecardFullImage { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ecardTop { background: linear-gradient(135deg, rgba(194, 90, 62, 0.08), rgba(184, 149, 100, 0.06)); padding: 20px 22px; border-bottom: 1px solid rgba(184, 149, 100, 0.1); display: flex; flex-direction: column; gap: 12px; }
+.ecardTopIcon { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; background: #ffffff; border: 1.5px solid rgba(184, 149, 100, 0.2); border-radius: 12px; color: #7a5e3a; font-size: 24px; flex-shrink: 0; }
+.ecardTopEyebrow { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 10px; font-weight: 500; color: #7a5e3a; letter-spacing: 0.22em; text-transform: uppercase; }
+.ecardTopHeadline { font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 16px; font-weight: 600; color: #1f1813; line-height: 1.55; }
+.ecardBody { padding: 22px 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.ecardTitle { margin: 0; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 18px; font-weight: 600; color: #1f1813; line-height: 1.55; }
+.ecardAccent { color: #c25a3e; font-weight: 600; }
+.ecardSub { margin: 0; font-size: 12.5px; line-height: 1.85; color: #4a3d31; }
+.ecardVisual { display: flex; flex-direction: row; gap: 12px; background: #fbf7ef; border-radius: 10px; padding: 14px; }
+.ecardPhoto { width: 110px; height: 130px; border-radius: 10px; flex-shrink: 0; overflow: hidden; }
+.ecardPhoto img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+.ecardChecks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.ecardChecks li { font-size: 11.5px; line-height: 1.6; color: #4a3d31; padding-left: 18px; position: relative; }
+.ecardChecks li::before { content: '✓'; position: absolute; left: 0; color: #c25a3e; font-weight: 700; }
+.ecardChecks li b { font-weight: 600; color: #1f1813; }
+.ecardQuote { background: linear-gradient(135deg, rgba(210, 173, 110, 0.06), rgba(210, 173, 110, 0.03)); border-left: 3px solid #c9a961; padding: 12px 16px; font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif; font-size: 12.5px; font-style: italic; line-height: 1.65; color: #4a3d31; margin: 0; }
+
+@media (max-width: 1100px) {
+  .everyoneGrid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .ecardImageOnly {
+    min-height: 360px;
+  }
+}
+
+@media (max-width: 700px) {
+  .ecardVisual {
+    flex-direction: column;
+  }
+  .ecardPhoto {
+    width: 100%;
+    height: 180px;
+  }
+}
+
 /* OWNERS */
 .owners { background: #ffffff; }
 .ownerGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
@@ -224,6 +401,26 @@
 .compareYes { display: inline-flex; align-items: center; justify-content: center; padding: 4px 12px; background: linear-gradient(135deg, #06C755, #039d3d); color: #ffffff; border-radius: 999px; font-size: 12px; font-weight: 700; }
 .compareNo { color: #b89c84; font-size: 12.5px; }
 .compareValue { color: #2a2018; font-weight: 500; }
+.compareThSub {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #888a82;
+  margin-top: 3px;
+  letter-spacing: 0.02em;
+}
+.compareDisclaimer {
+  max-width: 1000px;
+  margin: 18px auto 0;
+  padding: 14px 18px;
+  background: #fbf7ef;
+  border-left: 3px solid rgba(184, 149, 100, 0.4);
+  border-radius: 0 6px 6px 0;
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #4a3d31;
+  letter-spacing: 0.02em;
+}
 
 /* INTEGRATIONS */
 .integrations { background: #ffffff; }
@@ -377,4 +574,873 @@
   .baStatNum { font-size: 32px; }
   .demoCtaInner { flex-direction: column; align-items: stretch; }
   .demoCtaButton { justify-content: center; }
+}
+
+/* === Phase 3: Solution v2 marketing-in === */
+.solution {
+  background: #fbf7ef;
+  border-top: 1px solid rgba(184, 149, 100, 0.12);
+}
+.solutionAccent {
+  color: #c25a3e;
+  font-weight: 600;
+}
+.solCols {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 40px;
+}
+.solCol {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.18);
+  border-radius: 16px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 16px rgba(107, 45, 58, 0.04);
+}
+.solColBack {
+  background: linear-gradient(180deg, #ffffff 0%, #fbf7ef 100%);
+  border-color: rgba(194, 90, 62, 0.22);
+}
+.solColHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed rgba(107, 45, 58, 0.15);
+}
+.solColKicker {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a5e3a;
+  letter-spacing: 0.2em;
+  background: rgba(184, 149, 100, 0.1);
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.solColTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f1813;
+}
+.solList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.solFeat {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.solFeatHighlight {
+  background: rgba(194, 90, 62, 0.05);
+  border-left: 3px solid #c25a3e;
+  padding: 12px 14px;
+  margin: 0 -14px;
+  border-radius: 0 8px 8px 0;
+}
+.solFeatIcon {
+  font-size: 20px;
+  flex-shrink: 0;
+  line-height: 1;
+  margin-top: 2px;
+}
+.solFeatBody {
+  flex: 1;
+  min-width: 0;
+}
+.solFeatRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.solFeatTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.45;
+}
+.solFeatPillNew {
+  font-size: 9px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #c25a3e;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+.solFeatSub {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+.solArrowWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.solArrow {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.25);
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.06);
+}
+.solArrowLabel {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a5e3a;
+  text-align: center;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+}
+.sband {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.22);
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.04);
+}
+.sbandHd {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.sbandIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(184, 149, 100, 0.12);
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sbandTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #1f1813;
+}
+.sbandItems {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  flex: 1;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 1px dashed rgba(107, 45, 58, 0.15);
+  padding-left: 26px;
+}
+.sbandItem {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #4a3d31;
+  position: relative;
+  padding-left: 20px;
+}
+.sbandItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(184, 149, 100, 0.15);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 12 12' fill='none' stroke='%237a5e3a' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.sbandItemHighlight {
+  font-weight: 600;
+  color: #c25a3e;
+}
+.sbandItemHighlight::before {
+  background: rgba(194, 90, 62, 0.12);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 12 12' fill='none' stroke='%23c25a3e' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+@media (max-width: 1100px) {
+  .solCols {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .solArrowWrap {
+    flex-direction: row;
+    padding: 8px 0;
+  }
+  .solArrow {
+    transform: rotate(90deg);
+  }
+  .solArrowLabel {
+    text-align: left;
+  }
+}
+
+@media (max-width: 980px) {
+  .sband {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .sbandItems {
+    grid-template-columns: 1fr 1fr;
+    border-left: none;
+    border-top: 1px dashed rgba(107, 45, 58, 0.15);
+    padding-left: 0;
+    padding-top: 18px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .sbandItems {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* === Phase 8: Effects v2 marketing-in === */
+.effects {
+  background: #fbf7ef;
+  background-image: radial-gradient(ellipse at top right, rgba(184, 149, 100, 0.08), transparent 60%), radial-gradient(ellipse at bottom left, rgba(194, 90, 62, 0.05), transparent 50%);
+}
+.effectsAccent {
+  color: #c25a3e;
+  font-weight: 600;
+}
+.effectsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  margin-bottom: 40px;
+}
+.effectCard {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.2);
+  border-radius: 18px;
+  padding: 36px 30px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(107, 45, 58, 0.04);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.effectCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(107, 45, 58, 0.08);
+}
+.effectCardFeatured {
+  background: linear-gradient(180deg, #ffffff 0%, rgba(184, 149, 100, 0.06) 100%);
+  border: 2px solid #c9a961;
+  box-shadow: 0 12px 32px rgba(201, 169, 97, 0.18);
+  transform: translateY(-8px);
+}
+.effectCardFeatured:hover {
+  transform: translateY(-12px);
+}
+.effectCardBadge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #c9a961, #a88a44);
+  color: #ffffff;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  box-shadow: 0 4px 12px rgba(201, 169, 97, 0.35);
+}
+.effectCardIconWrap {
+  margin-bottom: 18px;
+}
+.effectCardIcon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(184, 149, 100, 0.18), rgba(184, 149, 100, 0.06));
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(184, 149, 100, 0.25);
+}
+.effectCardNumMark {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #7a5e3a;
+  letter-spacing: 0.2em;
+  margin: 0 0 12px;
+}
+.effectCardTitle {
+  margin: 0 0 14px;
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 19px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.5;
+}
+.effectCardSub {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #4a3d31;
+}
+.effectCardBullets {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  border-top: 1px dashed rgba(184, 149, 100, 0.25);
+  padding-top: 16px;
+}
+.effectCardBullets li {
+  font-size: 12px;
+  line-height: 1.55;
+  color: #4a3d31;
+  padding-left: 20px;
+  position: relative;
+}
+.effectCardBullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(201, 169, 97, 0.15);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 12 12' fill='none' stroke='%23c9a961' stroke-width='2'%3E%3Cpath d='M2 6l3 3 5-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+.effectsTrust {
+  background: #ffffff;
+  border: 1px solid rgba(184, 149, 100, 0.22);
+  border-radius: 14px;
+  padding: 20px 28px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  box-shadow: 0 2px 8px rgba(107, 45, 58, 0.04);
+  margin-bottom: 16px;
+}
+.trustItem {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 18px;
+  border-right: 1px solid rgba(184, 149, 100, 0.15);
+}
+.trustItem:last-child {
+  border-right: none;
+}
+.trustItem:first-child {
+  padding-left: 0;
+}
+.trustItem:last-child {
+  padding-right: 0;
+}
+.trustItemIcon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(201, 169, 97, 0.12);
+  color: #7a5e3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.trustItemText {
+  flex: 1;
+  min-width: 0;
+}
+.trustItemTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+.trustItemSub {
+  font-size: 11px;
+  line-height: 1.55;
+  color: #4a3d31;
+}
+.effectsFootnote {
+  font-family: var(--font-noto-sans-jp);
+  font-size: 11px;
+  line-height: 1.7;
+  color: #888a82;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 720px;
+  padding: 12px 16px;
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 1100px) {
+  .effectsGrid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .effectCardFeatured {
+    transform: none;
+  }
+  .effectCardFeatured:hover {
+    transform: translateY(-4px);
+  }
+}
+
+@media (max-width: 980px) {
+  .effectsTrust {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 24px;
+  }
+  .trustItem {
+    border-right: none;
+    border-bottom: 1px dashed rgba(184, 149, 100, 0.15);
+    padding: 0 0 14px;
+  }
+  .trustItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .trustItem:first-child {
+    padding-top: 0;
+  }
+}
+
+/* === Phase 9: Case 01 v2 - キレイ鶴見店 === */
+.case {
+  background: #f5f0e6;
+}
+.caseAccent {
+  color: #c25a3e;
+  font-weight: 600;
+}
+.caseCard {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(107, 45, 58, 0.08);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.caseTop {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 0;
+}
+.casePhoto {
+  background-image: url('/images/kirei_real_interior.jpg');
+  background-size: cover;
+  background-position: center 40%;
+  position: relative;
+  min-height: 540px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+}
+.casePhoto::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 25%, transparent 45%, rgba(0,0,0,0.55) 80%, rgba(0,0,0,0.85) 100%);
+  pointer-events: none;
+}
+.casePhotoBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 2;
+  background: rgba(255,255,255,0.95);
+  color: #c25a3e;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  backdrop-filter: blur(8px);
+}
+.casePhotoThumb {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 84px;
+  height: 84px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  z-index: 2;
+}
+.casePhotoThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.casePhotoThumbLabel {
+  position: absolute;
+  bottom: 4px;
+  left: 0; right: 0;
+  text-align: center;
+  font-size: 8px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0,0,0,0.5);
+  padding: 2px;
+  letter-spacing: 0.16em;
+}
+.casePhotoContent {
+  position: relative;
+  z-index: 1;
+}
+.casePhotoName {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+.casePhotoMeta {
+  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+.casePhotoLinks {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  opacity: 0.95;
+}
+.casePhotoLinks a {
+  color: #fff;
+  text-decoration: none;
+}
+.casePhotoLinks a:hover {
+  text-decoration: underline;
+}
+.casePhotoTags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.casePhotoTag {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.caseTopBody {
+  padding: 32px 36px;
+  display: flex;
+  flex-direction: column;
+}
+.caseQuoteMark {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 56px;
+  line-height: 1;
+  color: #c9a961;
+  margin-bottom: -8px;
+}
+.caseQuote {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.85;
+  color: #1f1813;
+  margin: 0 0 12px;
+}
+.caseQuoteBy {
+  font-size: 12px;
+  color: #888a82;
+  margin-bottom: 24px;
+}
+.caseBeforeAfter {
+  display: grid;
+  grid-template-columns: 1fr 32px 1fr;
+  gap: 12px;
+  align-items: stretch;
+}
+.baCol {
+  background: #fbf7ef;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.baColWithImage {
+  padding: 0;
+  overflow: hidden;
+}
+.baImage {
+  width: 100%;
+  height: 110px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.baImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+.baColWithImage .baLabelV2,
+.baColWithImage .baTextV2 {
+  padding: 0 16px;
+}
+.baColWithImage .baTextV2 {
+  padding-bottom: 14px;
+}
+.baLabelV2 {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: #888a82;
+  margin-bottom: 6px;
+}
+.baTextV2 {
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+.baColAfter {
+  background: rgba(6, 199, 85, 0.06);
+  border: 1px solid rgba(6, 199, 85, 0.2);
+}
+.baColAfter .baLabelV2 {
+  color: #06C755;
+}
+.baColAfter .baTextV2 {
+  color: #1f1813;
+  font-weight: 500;
+}
+.baArrowV2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c25a3e;
+}
+.caseMetrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid #e8e4da;
+}
+.caseMetric {
+  padding: 24px 20px;
+  text-align: center;
+  border-right: 1px solid #e8e4da;
+}
+.caseMetric:last-child {
+  border-right: none;
+}
+.caseMetricLabel {
+  font-size: 11px;
+  color: #888a82;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+.caseMetricValue {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #c25a3e;
+  line-height: 1.2;
+}
+.caseMetricValueUnit {
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 2px;
+}
+.caseMetricSub {
+  font-size: 10px;
+  color: #888a82;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+.caseMetricsNote {
+  background: #fbf7ef;
+  border-top: 1px solid #e8e4da;
+  padding: 14px 28px;
+  font-size: 10.5px;
+  color: #888a82;
+  letter-spacing: 0.04em;
+  line-height: 1.7;
+}
+.caseTimeline {
+  padding: 32px 36px;
+  border-top: 1px solid #e8e4da;
+}
+.caseTimelineTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1813;
+  margin-bottom: 20px;
+  letter-spacing: 0.06em;
+}
+.caseTl {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+}
+.caseTl::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background: linear-gradient(90deg, #c25a3e 0%, #c9a961 100%);
+  opacity: 0.3;
+}
+.caseTlItem {
+  position: relative;
+  padding-top: 28px;
+}
+.caseTlItem::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fbf7ef;
+  border: 2px solid #c9a961;
+}
+.caseTlItemDone::before {
+  background: #c25a3e;
+  border-color: #c25a3e;
+}
+.caseTlTime {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c25a3e;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+.caseTlItemTitle {
+  font-family: var(--font-noto-serif-jp), "Hiragino Mincho ProN", serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1f1813;
+  line-height: 1.5;
+  margin-bottom: 4px;
+}
+.caseTlItemSub {
+  font-size: 11px;
+  line-height: 1.7;
+  color: #4a3d31;
+}
+
+@media (max-width: 980px) {
+  .caseTop {
+    grid-template-columns: 1fr;
+  }
+  .casePhoto {
+    min-height: 380px;
+  }
+  .caseBeforeAfter {
+    grid-template-columns: 1fr;
+  }
+  .baArrowV2 {
+    transform: rotate(90deg);
+    padding: 4px 0;
+  }
+  .caseMetrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .caseMetric:nth-child(2n) {
+    border-right: none;
+  }
+  .caseMetric:nth-child(1),
+  .caseMetric:nth-child(2) {
+    border-bottom: 1px solid #e8e4da;
+  }
+  .caseTl {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .caseTl::before {
+    display: none;
+  }
+  .caseTlItem {
+    padding-top: 0;
+    padding-left: 28px;
+  }
+  .caseTlItem::before {
+    top: 0;
+    left: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .caseTopBody {
+    padding: 24px;
+  }
+  .caseTimeline {
+    padding: 24px;
+  }
+  .caseQuote {
+    font-size: 15.5px;
+  }
 }

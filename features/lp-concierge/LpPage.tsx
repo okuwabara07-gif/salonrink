@@ -19,32 +19,32 @@ const EXPERIENCE_STEPS = [
 ];
 
 const PROBLEMS = [
-  { img: '/v3/problem-1.png', title: '施術前の確認、本当にこれで大丈夫?', desc: '肌質や体調の情報を、毎回確認するのが不安...' },
-  { img: '/v3/problem-2.png', title: '引き継ぎが毎回バラバラ', desc: '口頭やメモだけの引き継ぎで、伝え漏れがないかいつも不安...' },
-  { img: '/v3/problem-3.png', title: 'LINE・紙・口頭で情報が散らばる', desc: 'お客様情報がバラバラで、伝えるのに時間がかかり、業務が止まる...' },
+  { img: '/v3/problem-1.png', title: '「いつもの田中さま」、前回なに話したっけ?', desc: '施術中の何気ない会話、好み、避けたい色…覚えてるつもりが、半年経つと曖昧に。お客様の「いつもの」が、思い出せない。' },
+  { img: '/v3/problem-2.png', title: '紙のカルテ、頭の中、LINE…情報が3ヶ所にバラバラ', desc: '書いたメモを探す時間。過去のやりとりを遡る時間。本来お客様に向き合うための時間が、削られていく。' },
+  { img: '/v3/problem-3.png', title: '来てくれたお客様の半分が、2回目に来ない', desc: '予約も会話もLINEに残っているのに、「いつ次の連絡をすればいい?」が分からない。タイミングを逃して、お客様を失っている。' },
 ];
 
 const OWNER_BENEFITS = [
-  { icon: '♥', title: '顧客満足度', desc: '覚えてくれる安心感が、再来店率を高めます。1人1人に向き合う時間を、AIが守ります。' },
+  { icon: '♥', title: '顧客満足度', desc: '覚えてくれる安心感が、再来店率を高めます。1人1人に向き合う時間を、自動化が守ります。' },
   { icon: '↻', title: 'リピート率', desc: '次回のおすすめを自動でご案内。「そろそろの時期」が、お客様の心にちゃんと届きます。' },
   { icon: '⚙', title: '業務効率', desc: 'カウンセリング・カルテ作成・引き継ぎを自動化。本業の「人と向き合う時間」に集中できます。' },
 ];
 
 const FEATURES = [
-  { img: '/v3/feature-01-karte.webp', title: 'AIカルテ自動生成', desc: '会話から自動でカルテを整理。スタッフ全員で情報共有。' },
+  { img: '/v3/feature-01-karte.webp', title: 'カルテ自動生成', desc: '会話から自動でカルテを整理。1人サロンでも情報の取りこぼしゼロ。' },
   { img: '/v3/feature-02-line.webp', title: 'LINEカウンセリング', desc: '事前回答でカウンセリングを時短に。' },
   { img: '/v3/feature-03-allergy.webp', title: 'アレルギー情報自動表示', desc: '施術リスクを事前に確認、トラブル防止。' },
-  { img: '/v3/feature-04-booking.webp', title: '予約管理', desc: 'ダブルブッキングを防止しスムーズな予約運用。' },
+  { img: '/v3/feature-04-booking.webp', title: '予約管理(HPB予約も統合)', desc: 'HPB予約もLINE予約もダブルブッキングを防止しスムーズに運用。' },
   { img: '/v3/feature-05-customer.webp', title: '顧客履歴一元管理', desc: '写真・施術履歴・メモをすべて一元管理。' },
   { img: '/v3/feature-06-dashboard.webp', title: '売上ダッシュボード', desc: 'リアルタイムでサロンの状況を可視化。' },
-  { img: '/v3/feature-07-menu.webp', title: 'AIメニュー提案', desc: '次回施術の提案を自動でサポート。' },
+  { img: '/v3/feature-07-menu.webp', title: 'メニュー自動提案', desc: '次回施術の提案を自動でサポート。' },
   { img: '/v3/feature-08-others.webp', title: 'その他の機能', desc: '決済・リマインド・権限・口コミ・API連携など。' },
 ];
 
 const STEPS = [
   { num: '01', img: '/v3/step-01-line-qr.webp', title: 'LINE追加', desc: 'LINEで友だち追加するだけ。QRを読み取って簡単スタート。' },
   { num: '02', img: '/v3/step-02-chat.webp', title: '質問に回答', desc: 'お客様がLINEで質問に回答。事前カウンセリングが完了。' },
-  { num: '03', img: '/v3/step-03-tablet.webp', title: 'AIがカルテ生成', desc: 'AIが回答内容をもとに自動でカルテを作成・整理。' },
+  { num: '03', img: '/v3/step-03-tablet.webp', title: '自動カルテ生成', desc: '自動で回答内容をもとにカルテを作成・整理。' },
   { num: '04', img: '/v3/step-04-staff.webp', title: '提案に活用', desc: 'カルテをもとに最適な提案。満足度UPでリピートも促進。' },
 ];
 
@@ -56,7 +56,8 @@ const COMPARE_ROWS = [
   { feature: 'スタッフ学習コスト', srk: '無し', a: '高い', b: '中程度', c: '低い' },
   { feature: 'お客様への影響', srk: '無し(LINEのまま)', a: '中程度(新ログイン)', b: '低い(既存連携)', c: '中程度(アプリDL)' },
   { feature: '顧客記憶カルテ', srk: '対応', a: '未対応', b: '基本機能', c: '対応' },
-  { feature: 'AIカルテ自動生成', srk: '対応', a: '未対応', b: '未対応', c: '対応(基本)' },
+  { feature: 'カルテ自動生成', srk: '対応', a: '未対応', b: '未対応', c: '対応(基本)' },
+  { feature: 'HPB予約取込', srk: '対応', a: '未対応', b: '未対応', c: '未対応' },
   { feature: 'LINE完結性', srk: '100%完結', a: '連携なし', b: '一部連携', c: '連携なし' },
 ];
 
@@ -75,70 +76,118 @@ const SECURITY_ITEMS = [
 ];
 
 const PLANS = [
-  { name: 'Light', for: 'シンプルに始めたいサロン向け', price: '1,980', features: ['AIカルテ・LINE連携', '予約管理・顧客管理', '前日リマインド自動配信', 'メールサポート'], featured: false },
-  { name: 'Standard', for: '売上を伸ばしたいサロン向け', price: '2,980', features: ['Lightの全機能', 'AIカルテ自動生成・提案', 'ホットペッパー Beauty 連携', 'AI接客スクリプト'], featured: true },
+  { name: 'Light', for: 'シンプルに始めたいサロン向け', price: '1,980', features: ['カルテ・LINE連携', '予約管理・顧客管理', '前日リマインド自動配信', 'メールサポート'], featured: false },
+  { name: 'Standard', for: '売上を伸ばしたいサロン向け', price: '2,980', features: ['Lightの全機能', 'カルテ自動生成・提案', 'ホットペッパー Beauty 連携', '接客スクリプト提案'], featured: true },
   { name: 'Premium', for: '本格的に運用したいサロン向け', price: '4,580', features: ['Standardの全機能', 'マルチ店舗管理対応', 'スタッフ無制限', '優先サポート'], featured: false },
 ];
 
 const IN_ACTION_SCENES = [
   {
     time: 'AM 07:00',
-    title: '朝、その日の予約が届く',
-    desc: 'LINE公式アカウントから、当日の予約一覧が自動で届きます。お客様の前回のメニュー、特記事項、要望もまとめて確認。営業前の3分で全予約把握。',
+    title: '朝のLINEで、今日のサロンが全部見える',
+    desc: 'LINE公式アカウントから、当日の予約一覧が自動で届きます。前回のメニュー・特記事項・要望もまとめて確認。営業前の3分で、1日の段取りが整います。',
     tags: ['自動配信', '予約サマリ'],
   },
   {
-    time: 'PM 21:00',
-    title: '夜、本日の振り返り',
-    desc: '営業終了後、AIが本日のカルテを自動生成。「次回はこの提案が良いかも」「保湿ケアを推奨」などのスタッフ向けメモも添えて。明日の準備が、5分で完了。',
-    tags: ['AI カルテ自動生成', '次回提案'],
+    time: 'AM 09:30',
+    title: 'HPB予約もLINE予約も、一画面で確認',
+    desc: 'ホットペッパー Beauty からの予約が、LINEの予約と同じ画面に自動で並びます。ダブルブッキングの心配なし。顧客情報も自動で取り込み、初回対応の準備が10分で完了。',
+    tags: ['HPB自動連携', '新規顧客取込'],
   },
   {
-    time: 'ANY TIME',
-    title: 'お客様からの予約、いつでも',
-    desc: 'お客様は、いつものLINEで自然に予約。「前回と同じで」も「今日は新しく」も、AIが履歴から適切に提案。お客様の体験は何も変わりません。',
-    tags: ['LINE 予約', '履歴活用'],
+    time: 'AM 10:00',
+    title: '「@田中様」と打つだけで、過去のすべてが瞬時に',
+    desc: 'LINEのトーク画面で「@お客様名」と入力するだけ。前回の施術、好み、敏感肌などの情報が一画面で確認できます。「いつもの」をすぐに思い出せる安心感。',
+    tags: ['LINE内カルテ', '瞬時呼出'],
+  },
+  {
+    time: 'PM 18:00',
+    title: '「次の連絡、誰にする?」を、自動で提案',
+    desc: '営業終了前に、「そろそろの時期」のお客様リストが自動表示。配信文の下書きも用意されているので、確認して送るだけ。リピートのきっかけ作りが、毎日5分で完了。',
+    tags: ['自動リピート提案', '配信文下書き'],
   },
 ];
 
 const CASE_STUDY = {
   salon: {
     name: 'キレイ鶴見店',
-    region: '神奈川県横浜市鶴見区',
-    specialty: '白髪ケア・大人女性向け',
-    feature: '予約制完全プライベートサロン',
-    links: [
-      { label: 'ホットペッパーBeauty', url: 'https://beauty.hotpepper.jp/H000501100/', icon: 'HPB' },
-      { label: 'Instagram', url: 'https://www.instagram.com/kirei.tsurumi/', icon: 'IG' },
-      { label: 'X', url: 'https://twitter.com/kirei_tsurumi', icon: 'X' },
-    ],
+    nameEn: 'WHITE HAIR COLOR SALON',
+    region: '横浜・鶴見',
+    specialty: '白髪染め特化',
+    feature: '1人サロン',
+    intro: '2026年4月、SalonRink Concierge を導入。',
+    links: {
+      hpb: 'H000501100',
+      instagram: '@kirei.tsurumi',
+      instagramUrl: 'https://instagram.com/kirei.tsurumi',
+    },
+    tags: ['白髪染め特化', '1人サロン', '横浜・鶴見'],
   },
-  effects: [
-    {
-      title: '当日朝の予約把握、3分で完了',
-      before: 'HotPepper Beauty 管理画面で1件ずつ確認',
-      after: 'LINE で当日サマリが朝7時に届く',
+  ownerQuote: {
+    text: 'LINEで連絡するタイミングが分かるようになって、自然にリピートにつながる流れができてきました。',
+    by: 'キレイ鶴見店 オーナー',
+  },
+  beforeAfter: {
+    before: {
+      label: 'BEFORE',
+      text: '紙のカルテと記憶頼りで、お客様の前回情報を探すのに時間がかかっていた。リピートの案内も「そろそろかな」という勘で送るしかなく、タイミングを逃すことも多かった。',
+      image: '/images/a608_before.png',
+      imageAlt: '導入前: 紙のカルテが散乱',
     },
-    {
-      title: 'カルテ整理時間、ほぼゼロに',
-      before: '営業後に紙カルテ手書き、20-30分/日',
-      after: 'LINE にメモを送るだけで AI が整理',
+    after: {
+      label: 'AFTER',
+      text: 'LINEで「@お客様名」と打つだけで、過去の施術・好み・敏感肌などの情報が瞬時に出る。配信文の下書きも自動で用意されるので、確認して送るだけ。',
     },
-    {
-      title: 'リピート率、再来店率に注力できる',
-      before: '事務作業に追われて顧客分析が後回し',
-      after: '業務時間が浮いて、顧客への提案が増えた',
-    },
+  },
+  metrics: [
+    { label: 'リピート率', value: '+25%', sub: 'シミュレーション' },
+    { label: '客単価', value: '+15%', sub: 'シミュレーション' },
+    { label: '業務時間', value: '−30', valueUnit: '分/日', sub: 'シミュレーション' },
+    { label: '月商変化', value: '+12%', sub: 'シミュレーション' },
+  ],
+  metricsNote: '※ 上記数値はキレイ鶴見店(2026年4月導入)の運用状況に基づく社内シミュレーション値であり、実測値ではありません。効果は店舗・業態・運用状況により異なります。',
+  timeline: [
+    { time: 'DAY 1', date: '2026/4/1', title: '5分でLINE連携', sub: 'LINE公式アカウントと連携。当日から運用開始。', done: true },
+    { time: 'WEEK 2', date: '2026/4/14', title: '過去履歴がカルテ化', sub: '過去のLINEトークから、お客様情報を自動構造化。', done: true },
+    { time: '現在', date: '2026/5/25', title: '日常運用に定着', sub: 'リピート提案・カルテ自動化が日常運用に定着。接客と提案に時間を使えるようになり、お客様一人ひとりとの関係づくりに余裕が生まれた。', done: true },
+    { time: '予定', date: '2026/6/1〜', title: 'リピート提案 本格運用', sub: '最適タイミングでの再来店案内を本格運用予定。', done: false },
   ],
 };
 
 const FAQ_ITEMS = [
-  { q: 'Lightプラン¥1,980で何ができますか?', a: 'AIカルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とAIカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
+  { q: 'Lightプラン¥1,980で何ができますか?', a: 'カルテ・LINE連携・予約管理・顧客管理・前日リマインドの基本機能をご提供します。Standardではホットペッパー連携とカルテ自動生成、Premiumでは複数店舗管理が追加されます。' },
   { q: '途中で解約できますか?', a: 'いつでも解約可能です。最低契約期間はなく、解約手数料もかかりません。' },
   { q: '既存の予約システムから移行できますか?', a: 'CSVでのインポートに対応しています。導入セットアップは個別にサポートいたします。' },
   { q: 'セキュリティは大丈夫ですか?', a: 'AES-256による暗号化、TLS1.3通信、サロン別データ分離(RLS)、Stripe決済(PCI DSS Level 1)を採用。' },
   { q: 'お客様の利用環境は?', a: 'LINEのみで利用可能です。お客様にアプリのインストールは不要です。' },
   { q: 'サポートはありますか?', a: 'メールサポート(support@salonrink.com)にて承ります。導入時は個別にオンラインでセットアップをご案内します。' },
+];
+
+const EFFECTS_CARDS = [
+  {
+    num: '01',
+    id: 'RETENTION',
+    badge: null,
+    title: 'リピートが、自然に増える',
+    sub: '最適タイミングでのご案内が、お客様の心に届く。',
+    bullets: ['来店周期の自動把握', '離脱予兆を早めに検知', '配信文の自動下書き'],
+  },
+  {
+    num: '02',
+    id: 'RELATIONSHIP',
+    badge: 'CORE VALUE',
+    title: 'お客様一人ひとりに、もっと寄り添える',
+    sub: '過去履歴に基づく自然なご提案で、深い関係性を育てられる。',
+    bullets: ['過去カルテを瞬時に呼出', '好み・体質を自動記録', '細部までずれない提案'],
+  },
+  {
+    num: '03',
+    id: 'TIME',
+    badge: null,
+    title: '確認の時間を、接客の時間に変える',
+    sub: 'LINEで名前検索するだけ。事務作業の時間を、お客様との時間に。',
+    bullets: ['カルテ作成を自動化', '過去履歴を一瞬で参照', '配信文を自動で生成'],
+  },
 ];
 
 export default function LpPage() {
@@ -203,7 +252,7 @@ export default function LpPage() {
               <span className={styles.heroTitleAccent}>LINEひとつで変える。</span>
             </h1>
             <p className={styles.heroSub}>
-              いまのLINE公式アカウントに、AIカルテと顧客記憶を追加するだけ。<br/>
+              いまのLINE公式アカウントに、カルテと顧客記憶を追加するだけ。<br/>
               新しいアプリは要らない。最短5分で開始。
             </p>
             <ul className={styles.heroBullets}>
@@ -294,10 +343,20 @@ export default function LpPage() {
       {/* PROBLEM with images */}
       <section id="problem" className={styles.problem}>
         <div className={styles.sectionInner}>
-          <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>PROBLEM</p>
-            <h2 className={styles.sectionTitle}>毎日のサロンワーク、<br/>こんな不安ありませんか?</h2>
-            <p className={styles.sectionSub}>多くの美容師さんが、日々の業務の中でこんな悩みを感じています。</p>
+          <div className={styles.problemHeadWrap}>
+            <div className={styles.problemHeadText}>
+              <p className={styles.sectionKicker}>PROBLEM</p>
+              <h2 className={styles.sectionTitle}>1人サロンだからこそ、<br/>毎日<span className={styles.problemAccent}>こんな&ldquo;もったいない&rdquo;</span>が起きていませんか?</h2>
+              <p className={styles.sectionSub}>毎日忙しく回しているのに、なぜか売上は伸び悩む。<br/>その原因は、お客様情報がきちんと&quot;資産&quot;になっていないからかもしれません。</p>
+            </div>
+            <div className={styles.problemHeadImage}>
+              <Image
+                src="/images/a802_problem.png"
+                alt="1人サロン店主の悩み"
+                width={280} height={280}
+                sizes="(max-width: 980px) 240px, 280px"
+              />
+            </div>
           </div>
           <div className={styles.problemGrid}>
             {PROBLEMS.map((p, i) => (
@@ -318,30 +377,115 @@ export default function LpPage() {
               </div>
             ))}
           </div>
+          <div className={styles.problemBand}>
+            <div className={styles.problemBandHead}>
+              <span className={styles.problemBandIcon} aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="9"/>
+                  <path d="M6 11l3.5 3.5L16 8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span className={styles.problemBandTitle}>あなたのサロンにも、<br/>こんなお悩みは?</span>
+            </div>
+            <ul className={styles.problemBandItems}>
+              <li className={styles.problemBandItem}>お客様の前回情報を毎回思い出せない</li>
+              <li className={styles.problemBandItem}>リピートのきっかけづくりが、難しい</li>
+              <li className={styles.problemBandItem}>紙のカルテ管理が、限界</li>
+              <li className={styles.problemBandItem}>LINE運用に時間がかかりすぎる</li>
+            </ul>
+          </div>
           <div className={styles.problemSolution}>
             <p className={styles.problemSolutionText}>
-              そのすべて、<strong>SalonRink Concierge</strong> が解決します。
+              <strong>SalonRink Concierge</strong> が、その&ldquo;もったいない&rdquo;を、解決します。
             </p>
           </div>
         </div>
       </section>
 
-      {/* FOR OWNERS */}
-      <section id="owners" className={styles.owners}>
+      {/* FOR EVERYONE - 3視点(CUSTOMERS / STAFF / OWNERS) */}
+      <section id="everyone" className={styles.everyone}>
+        <a id="owners" aria-hidden="true"></a>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>FOR SALON OWNERS</p>
-            <h2 className={styles.sectionTitle}>サロンに、専属コンシェルジュを<br/>迎えませんか。</h2>
-            <p className={styles.sectionSub}>美容師の経験 × AI の記憶。お客様1人1人に、ちゃんと向き合う時間を。</p>
+            <p className={styles.sectionKicker}>FOR EVERYONE</p>
+            <h2 className={styles.sectionTitle}>お客様も、スタッフも、<br/>そしてあなたも。<br/>みんなが、続けたくなる仕組み。</h2>
+            <p className={styles.sectionSub}>1人サロンのあなたが軸。<br/>でも、お客様とスタッフ(これから雇う方も)、それぞれの視点で考えました。</p>
           </div>
-          <div className={styles.ownerGrid}>
-            {OWNER_BENEFITS.map((b, i) => (
-              <div key={i} className={styles.ownerCard}>
-                <div className={styles.ownerIcon} aria-hidden>{b.icon}</div>
-                <h3 className={styles.ownerTitle}>{b.title}</h3>
-                <p className={styles.ownerDesc}>{b.desc}</p>
+
+          <div className={styles.everyoneGrid}>
+            {/* FOR CUSTOMERS */}
+            <article className={styles.ecard}>
+              <div className={styles.ecardTop}>
+                <div className={styles.ecardTopIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <circle cx="16" cy="12" r="5"/>
+                    <path d="M6 26c0-5 4-9 10-9s10 4 10 9" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className={styles.ecardTopEyebrow}>FOR CUSTOMERS</div>
+                <div className={styles.ecardTopHeadline}>お客様には、<br/>いつものLINEのまま</div>
               </div>
-            ))}
+              <div className={styles.ecardBody}>
+                <h3 className={styles.ecardTitle}>専用アプリ不要。<br/><span className={styles.ecardAccent}>お客様の負担ゼロ</span>。</h3>
+                <p className={styles.ecardSub}>新しいアプリのインストールもログインも不要。お客様はいつものLINEでメッセージするだけ。</p>
+                <div className={styles.ecardVisual}>
+                  <div className={styles.ecardPhoto}>
+                    <Image
+                      src="/images/a204_customer.png"
+                      alt="LINEで気軽に予約・相談"
+                      width={220} height={260}
+                      sizes="(max-width: 700px) 130px, 110px"
+                    />
+                  </div>
+                  <ul className={styles.ecardChecks}>
+                    <li>アプリ不要、LINEで完結</li>
+                    <li>過去の好みが伝わってる安心感</li>
+                    <li>次回提案も自然に届く</li>
+                  </ul>
+                </div>
+                <div className={styles.ecardQuote}>
+                  <span className={styles.ecardQuoteText}>「いつものLINEで予約できて、<br/>覚えていてくれるのが嬉しい」</span>
+                </div>
+              </div>
+            </article>
+
+            {/* FOR STAFF - 画像1枚で全面置換 */}
+            <article className={`${styles.ecard} ${styles.ecardImageOnly}`}>
+              <Image
+                src="/images/a304_staff.png"
+                alt="FOR STAFF - スタッフが増えても、いつもの品質で"
+                width={440} height={520}
+                sizes="(max-width: 1100px) 90vw, 360px"
+                className={styles.ecardFullImage}
+              />
+            </article>
+
+            {/* FOR OWNERS */}
+            <article className={styles.ecard}>
+              <div className={styles.ecardTop}>
+                <div className={styles.ecardTopIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <path d="M4 24h24M7 20V14m6 6V8m6 12V12m6 8v-4" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className={styles.ecardTopEyebrow}>FOR OWNERS</div>
+                <div className={styles.ecardTopHeadline}>あなたには、<br/>本業に集中できる時間を</div>
+              </div>
+              <div className={styles.ecardBody}>
+                <h3 className={styles.ecardTitle}>カルテ作成・記憶・提案を<br/><span className={styles.ecardAccent}>自動化</span>。</h3>
+                <p className={styles.ecardSub}>1人で全部やる時代の終わり。お客様情報の整理は仕組みに任せて、接客と提案に集中。</p>
+                <div className={styles.ecardVisual}>
+                  <ul className={styles.ecardChecks}>
+                    {OWNER_BENEFITS.map((b, i) => (
+                      <li key={i}><b>{b.title}</b>: {b.desc.length > 28 ? b.desc.slice(0, 28) + '…' : b.desc}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className={styles.ecardQuote}>
+                  <span className={styles.ecardQuoteText}>「事務作業の時間が消えて、<br/>お客様と話す時間が増えた」</span>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
@@ -351,8 +495,8 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>IN ACTION</p>
-            <h2 className={styles.sectionTitle}>1日3シーンで、こう変わる。</h2>
-            <p className={styles.sectionSub}>朝の準備、夜の振り返り、お客様とのやり取り。LINEひとつに集約。</p>
+            <h2 className={styles.sectionTitle}>朝から夜まで、<br/>1日のサロン業務が、こう流れる。</h2>
+            <p className={styles.sectionSub}>朝のサマリー、HPB予約取込、お客様呼出、夕方のリピート提案。<br/>すべてLINEひとつに、自然に流れていきます。</p>
           </div>
           <div className={styles.inActionGrid}>
             {IN_ACTION_SCENES.map((scene, i) => (
@@ -367,6 +511,140 @@ export default function LpPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* SOLUTION - v2 marketing-in: LINE × 業務レイヤー */}
+      <section id="solution" className={styles.solution}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>SOLUTION</p>
+            <h2 className={styles.sectionTitle}>LINEを置き換えない。<br/>LINEに、&ldquo;<span className={styles.solutionAccent}>乗せる</span>&rdquo;。</h2>
+            <p className={styles.sectionSub}>お客様も、あなたも、いつもの&ldquo;LINE&rdquo;のまま。<br/>その裏側だけ、業務レイヤーを乗せる仕組みです。</p>
+          </div>
+
+          <div className={styles.solCols}>
+            {/* LEFT: いつものLINE */}
+            <div className={styles.solCol}>
+              <div className={styles.solColHead}>
+                <span className={styles.solColKicker}>FRONT</span>
+                <span className={styles.solColTitle}>いつもの、LINE</span>
+              </div>
+              <ul className={styles.solList}>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">💬</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>お客様はLINEで、いつも通り</span>
+                    </div>
+                    <div className={styles.solFeatSub}>専用アプリ不要。お客様の負担ゼロで予約と相談ができる。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📅</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>予約も会話も、ぜんぶLINE</span>
+                    </div>
+                    <div className={styles.solFeatSub}>慣れ親しんだLINE上で、予約も連絡も完結。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">🔔</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>リマインドも、いつもの形で</span>
+                    </div>
+                    <div className={styles.solFeatSub}>「来月はいかがですか?」をLINEで自然に送れる。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📝</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>カウンセリングも、LINEで完結</span>
+                    </div>
+                    <div className={styles.solFeatSub}>事前ヒアリングをLINEで。来店時間がぐっと有効に。</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* CENTER: ARROW */}
+            <div className={styles.solArrowWrap}>
+              <div className={styles.solArrow} aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 14h16M16 8l6 6-6 6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.solArrowLabel}>裏側で<br/>自動処理</div>
+            </div>
+
+            {/* RIGHT: 業務レイヤー */}
+            <div className={`${styles.solCol} ${styles.solColBack}`}>
+              <div className={styles.solColHead}>
+                <span className={styles.solColKicker}>BACK</span>
+                <span className={styles.solColTitle}>裏側の業務レイヤー</span>
+              </div>
+              <ul className={styles.solList}>
+                <li className={`${styles.solFeat} ${styles.solFeatHighlight}`}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📌</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>HPB予約もLINE予約も、一画面で</span>
+                      <span className={styles.solFeatPillNew}>NEW</span>
+                    </div>
+                    <div className={styles.solFeatSub}>ホットペッパービューティーとLINEの予約を、自動取込して一元管理。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">📂</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>会話から、自動でカルテ構造化</span>
+                    </div>
+                    <div className={styles.solFeatSub}>LINEトークから、施術履歴・好み・敏感肌情報を自動抽出。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">🔍</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>「@田中様」と打つだけで、過去履歴</span>
+                    </div>
+                    <div className={styles.solFeatSub}>LINEのトーク画面で過去施術・前回会話を瞬時に呼び出し。</div>
+                  </div>
+                </li>
+                <li className={styles.solFeat}>
+                  <span className={styles.solFeatIcon} aria-hidden="true">✉️</span>
+                  <div className={styles.solFeatBody}>
+                    <div className={styles.solFeatRow}>
+                      <span className={styles.solFeatTitle}>次回ご案内の文案を、自動下書き</span>
+                    </div>
+                    <div className={styles.solFeatSub}>最適タイミングと文案を自動で。確認して送るだけ。</div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Footer band */}
+          <div className={styles.sband}>
+            <div className={styles.sbandHd}>
+              <span className={styles.sbandIcon} aria-hidden="true">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M3 12h16M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+              <span className={styles.sbandTitle}>1人サロンの<br/>業務レイヤーが、整う</span>
+            </div>
+            <ul className={styles.sbandItems}>
+              <li className={styles.sbandItem}>追加アプリ不要、LINEだけで完結</li>
+              <li className={styles.sbandItem}>初期設定は5分、当日から運用開始</li>
+              <li className={`${styles.sbandItem} ${styles.sbandItemHighlight}`}>HPB予約もLINEで一元管理</li>
+              <li className={styles.sbandItem}>14日間無料、月¥1,980〜</li>
+            </ul>
           </div>
         </div>
       </section>
@@ -406,17 +684,17 @@ export default function LpPage() {
           <div className={styles.aiKarteImageCol}>
             <Image
               src="/v3/karte-img.png"
-              alt="AIカルテ画面"
+              alt="カルテ画面"
               width={720} height={480}
               sizes="(max-width: 980px) 90vw, 600px"
               className={styles.aiKarteImage}
             />
           </div>
           <div className={styles.aiKarteTextCol}>
-            <p className={styles.aiKarteNum}>01 / AI Karte</p>
-            <h2 className={styles.aiKarteTitle}>AIがつくる、<br/>あなただけのカルテ。</h2>
+            <p className={styles.aiKarteNum}>01 / AUTO</p>
+            <h2 className={styles.aiKarteTitle}>自動でつくる、<br/>あなただけのカルテ。</h2>
             <p className={styles.aiKarteSub}>
-              事前カウンセリングからAIが自動解析。リスクの見落としを防ぎ、最適な提案で顧客満足度を高めます。
+              事前カウンセリングから自動解析。リスクの見落としを防ぎ、最適な提案で顧客満足度を高めます。
             </p>
             <ul className={styles.aiKarteBullets}>
               <li><span className={styles.aiKarteBulletMark} aria-hidden>✓</span>施術履歴・写真・好みを自動構造化</li>
@@ -432,7 +710,7 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>BEFORE / AFTER</p>
-            <h2 className={styles.sectionTitle}>紙のカルテと、AIカルテ。<br/>差は、これくらい違う。</h2>
+            <h2 className={styles.sectionTitle}>紙のカルテと、自動カルテ。<br/>差は、これくらい違う。</h2>
           </div>
           <div className={styles.baGrid}>
             <div className={styles.baCard}>
@@ -452,7 +730,7 @@ export default function LpPage() {
               <div className={styles.baImageWrap}>
                 <Image
                   src="/v3/ba-after.png"
-                  alt="AIカルテ"
+                  alt="自動カルテ"
                   width={520} height={340}
                   sizes="(max-width: 980px) 90vw, 480px"
                   className={styles.baImage}
@@ -460,21 +738,96 @@ export default function LpPage() {
               </div>
             </div>
           </div>
-          <div className={styles.baStats}>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>15分<span className={styles.baStatUnit}>→3分</span></span>
-              <span className={styles.baStatLabel}>カウンセリング時間</span>
+        </div>
+      </section>
+
+      {/* EFFECTS - 期待できる効果(数値なし・定性表現のみ) */}
+      <section id="effects" className={styles.effects}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>EXPECTED EFFECTS</p>
+            <h2 className={styles.sectionTitle}>SalonRink Concierge で、<br/><span className={styles.effectsAccent}>期待できる効果</span>。</h2>
+            <p className={styles.sectionSub}>具体的な数値は、あなたのサロンと運用次第。<br/>でも、確かに変わる3つの本質的な価値を、お約束します。</p>
+          </div>
+
+          <div className={styles.effectsGrid}>
+            {EFFECTS_CARDS.map((card, i) => (
+              <article key={i} className={`${styles.effectCard} ${card.badge ? styles.effectCardFeatured : ''}`}>
+                {card.badge && <div className={styles.effectCardBadge}>{card.badge}</div>}
+                <div className={styles.effectCardIconWrap}>
+                  <div className={styles.effectCardIcon} aria-hidden="true">
+                    {card.id === 'RETENTION' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <path d="M16 4v8l5 3" strokeLinecap="round"/>
+                        <circle cx="16" cy="16" r="12"/>
+                      </svg>
+                    )}
+                    {card.id === 'RELATIONSHIP' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <path d="M16 27s-9-5-9-13a5 5 0 019-3 5 5 0 019 3c0 8-9 13-9 13z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                    {card.id === 'TIME' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <circle cx="16" cy="16" r="11"/>
+                        <path d="M16 9v7l4 2" strokeLinecap="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <p className={styles.effectCardNumMark}>{card.num} / {card.id}</p>
+                <h3 className={styles.effectCardTitle}>{card.title}</h3>
+                <p className={styles.effectCardSub}>{card.sub}</p>
+                <ul className={styles.effectCardBullets}>
+                  {card.bullets.map((b, bi) => (
+                    <li key={bi}>{b}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          {/* TRUST BAND */}
+          <div className={styles.effectsTrust}>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <circle cx="10" cy="10" r="8"/>
+                  <path d="M6 10l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>1人サロン特化</div>
+                <div className={styles.trustItemSub}>機能・価格・運用が、1人サロンに最適化</div>
+              </div>
             </div>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>0<span className={styles.baStatUnit}>件</span></span>
-              <span className={styles.baStatLabel}>聞き漏れ</span>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M10 2L3 5v5c0 4 3 7 7 8 4-1 7-4 7-8V5l-7-3z" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>セキュリティ重視</div>
+                <div className={styles.trustItemSub}>AES-256 暗号化、サロン別データ完全分離(RLS)</div>
+              </div>
             </div>
-            <div className={styles.baStat}>
-              <span className={styles.baStatNum}>75<span className={styles.baStatUnit}>%</span></span>
-              <span className={styles.baStatLabel}>業務時間削減</span>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M3 6l7 5 7-5M3 6v8h14V6M3 6l7-3 7 3" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>14日間無料、月¥1,980〜</div>
+                <div className={styles.trustItemSub}>始めやすく、続けやすい価格設計</div>
+              </div>
             </div>
           </div>
-          <p className={styles.baFootnote}>※ 運用実績に基づくモデル値です(参考値)</p>
+
+          <p className={styles.effectsFootnote}>
+            ※ 上記は SalonRink Concierge により期待される本質的な価値です。具体的な効果は、店舗・業態・運用状況により異なります。
+          </p>
         </div>
       </section>
 
@@ -500,63 +853,99 @@ export default function LpPage() {
         </div>
       </section>
 
-      {/* FIRST CASE - キレイ鶴見店事例 */}
-      <section id="cases" className={styles.cases}>
+      {/* CASE STUDY - キレイ鶴見店 (v2 marketing-in) */}
+      <section id="case" className={styles.case}>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>FIRST CASE</p>
-            <h2 className={styles.sectionTitle}>導入第一号、キレイ鶴見店。</h2>
-            <p className={styles.sectionSub}>東京・神奈川エリアで白髪ケアに特化した小規模サロンが、SalonRink Concierge を実運用しています。</p>
+            <p className={styles.sectionKicker}>CASE 01 · 導入店舗の声</p>
+            <h2 className={styles.sectionTitle}>「LINEだけで、<br/>サロン業務が<span className={styles.caseAccent}>ここまで変わる</span>」</h2>
           </div>
 
-          <div className={styles.caseGrid}>
-            {/* 左側: 店舗情報 */}
-            <div className={styles.caseInfoCard}>
-              <div className={styles.caseInfoBody}>
-                <h3 className={styles.caseInfoTitle}>{CASE_STUDY.salon.name}</h3>
-                <div className={styles.caseInfoMeta}>
-                  <p className={styles.caseInfoRegion}>📍 {CASE_STUDY.salon.region}</p>
-                  <p className={styles.caseInfoSpec}>{CASE_STUDY.salon.specialty}</p>
-                  <p className={styles.caseInfoFeature}>{CASE_STUDY.salon.feature}</p>
+          <article className={styles.caseCard}>
+            {/* TOP: メイン写真 + オーナーコメント + BEFORE/AFTER */}
+            <div className={styles.caseTop}>
+              <div className={styles.casePhoto}>
+                <div className={styles.casePhotoBadge}>
+                  <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><circle cx="6" cy="6" r="3"/></svg>
+                  REAL PHOTO · 実店舗
                 </div>
-                <div className={styles.caseInfoLinks}>
-                  {CASE_STUDY.salon.links.map((link, i) => (
-                    <a key={i} href={link.url} target="_blank" rel="noopener noreferrer" className={styles.caseInfoLink}>
-                      {link.label} →
-                    </a>
-                  ))}
+                <div className={styles.casePhotoThumb}>
+                  <Image src="/images/a508_exterior.png" alt="外観イメージ" width={84} height={84} />
+                  <div className={styles.casePhotoThumbLabel}>外観イメージ</div>
+                </div>
+                <div className={styles.casePhotoContent}>
+                  <div className={styles.casePhotoName}>{CASE_STUDY.salon.name}</div>
+                  <div className={styles.casePhotoMeta}>{CASE_STUDY.salon.nameEn} · {CASE_STUDY.salon.feature}</div>
+                  <div className={styles.casePhotoLinks}>
+                    <span>HPB · {CASE_STUDY.salon.links.hpb}</span>
+                    <a href={CASE_STUDY.salon.links.instagramUrl} target="_blank" rel="noopener noreferrer">{CASE_STUDY.salon.links.instagram}</a>
+                  </div>
+                  <div className={styles.casePhotoTags}>
+                    {CASE_STUDY.salon.tags.map((tag, i) => (
+                      <span key={i} className={styles.casePhotoTag}>{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.caseTopBody}>
+                <div className={styles.caseQuoteMark}>&ldquo;</div>
+                <p className={styles.caseQuote}>{CASE_STUDY.ownerQuote.text}</p>
+                <div className={styles.caseQuoteBy}>— {CASE_STUDY.ownerQuote.by}</div>
+
+                <div className={styles.caseBeforeAfter}>
+                  <div className={`${styles.baCol} ${styles.baColWithImage}`}>
+                    <div className={styles.baImage}>
+                      <Image src={CASE_STUDY.beforeAfter.before.image} alt={CASE_STUDY.beforeAfter.before.imageAlt} width={400} height={155} />
+                    </div>
+                    <div className={styles.baLabelV2}>{CASE_STUDY.beforeAfter.before.label}</div>
+                    <div className={styles.baTextV2}>{CASE_STUDY.beforeAfter.before.text}</div>
+                  </div>
+                  <div className={styles.baArrowV2} aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 10h10M11 5l4 5-4 5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className={`${styles.baCol} ${styles.baColAfter}`}>
+                    <div className={styles.baLabelV2}>{CASE_STUDY.beforeAfter.after.label}</div>
+                    <div className={styles.baTextV2}>{CASE_STUDY.beforeAfter.after.text}</div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* 右側: 導入効果 */}
-            <div className={styles.caseEffectsCard}>
-              <div className={styles.caseEffectsTag}>導入から1ヶ月 × 予約管理 LINE 完結 × カルテ自動化</div>
-              <div className={styles.caseEffectsList}>
-                {CASE_STUDY.effects.map((effect, i) => (
-                  <div key={i} className={styles.caseEffect}>
-                    <h4 className={styles.caseEffectTitle}>{effect.title}</h4>
-                    <div className={styles.caseEffectComparison}>
-                      <div className={styles.caseEffectBefore}>
-                        <div className={styles.caseEffectLabel}>旧</div>
-                        <p>{effect.before}</p>
-                      </div>
-                      <div className={styles.caseEffectArrow}>→</div>
-                      <div className={styles.caseEffectAfter}>
-                        <div className={styles.caseEffectLabel}>新</div>
-                        <p>{effect.after}</p>
-                      </div>
-                    </div>
+            {/* METRICS (社内シミュレーション値) */}
+            <div className={styles.caseMetrics}>
+              {CASE_STUDY.metrics.map((m, i) => (
+                <div key={i} className={styles.caseMetric}>
+                  <div className={styles.caseMetricLabel}>{m.label}</div>
+                  <div className={styles.caseMetricValue}>
+                    {m.value}{m.valueUnit && <span className={styles.caseMetricValueUnit}>{m.valueUnit}</span>}
+                  </div>
+                  <div className={styles.caseMetricSub}>{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* シミュレーション値の景表法注釈 */}
+            <div className={styles.caseMetricsNote}>
+              {CASE_STUDY.metricsNote}
+            </div>
+
+            {/* TIMELINE */}
+            <div className={styles.caseTimeline}>
+              <div className={styles.caseTimelineTitle}>導入からのタイムライン</div>
+              <div className={styles.caseTl}>
+                {CASE_STUDY.timeline.map((item, i) => (
+                  <div key={i} className={`${styles.caseTlItem} ${item.done ? styles.caseTlItemDone : ''}`}>
+                    <div className={styles.caseTlTime}>{item.time} · {item.date}</div>
+                    <div className={styles.caseTlItemTitle}>{item.title}</div>
+                    <div className={styles.caseTlItemSub}>{item.sub}</div>
                   </div>
                 ))}
               </div>
             </div>
-          </div>
-
-          <div className={styles.caseFootnote}>
-            <p>※ 実運用中のサロンの声を、随時更新していきます。</p>
-            <p className={styles.caseCta}>事例にご協力いただけるサロン様、<a href="mailto:support@salonrink.com">お問い合わせください</a></p>
-          </div>
+          </article>
         </div>
       </section>
 
@@ -566,7 +955,7 @@ export default function LpPage() {
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>HOW IT WORKS</p>
             <h2 className={styles.sectionTitle}>使い方はカンタン、4ステップ。</h2>
-            <p className={styles.sectionSub}>LINEでつながるだけで、AIがサロン業務をもっとスマートに。</p>
+            <p className={styles.sectionSub}>LINEでつながるだけで、自動化でサロン業務をもっとスマートに。</p>
           </div>
           <div className={styles.stepsRow}>
             {STEPS.map((s, i) => (
@@ -597,8 +986,8 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>COMPARE</p>
-            <h2 className={styles.sectionTitle}>他社サービスとの比較</h2>
-            <p className={styles.sectionSub}>他社情報は公開情報をもとにした参考値です。</p>
+            <h2 className={styles.sectionTitle}>他サービスとの比較</h2>
+            <p className={styles.sectionSub}>1人サロンが選ぶべきは、どのタイプ?</p>
           </div>
           <div className={styles.compareTableWrap}>
             <table className={styles.compareTable}>
@@ -608,9 +997,9 @@ export default function LpPage() {
                   <th className={styles.compareThSrk}>
                     <span className={styles.compareSrkLabel}>SalonRink<br/>Concierge</span>
                   </th>
-                  <th>A社</th>
-                  <th>B社</th>
-                  <th>C社</th>
+                  <th>他サービス A<br/><span className={styles.compareThSub}>(予約管理型)</span></th>
+                  <th>他サービス B<br/><span className={styles.compareThSub}>(予約系SaaS)</span></th>
+                  <th>他サービス C<br/><span className={styles.compareThSub}>(カルテ専業型)</span></th>
                 </tr>
               </thead>
               <tbody>
@@ -634,6 +1023,10 @@ export default function LpPage() {
               </tbody>
             </table>
           </div>
+          <p className={styles.compareDisclaimer}>
+            ※ 他サービス A / B / C は、予約管理SaaS・予約系SaaS・カルテ専業SaaSの一般的な水準を参考に記載しています。
+            特定の競合サービスを指すものではありません。各サービスの料金・機能は変更される場合があります。
+          </p>
         </div>
       </section>
 

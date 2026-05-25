@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalonRink Concierge LP — v1 vs v2 比較ビュー</title>
+<link rel="icon" type="image/png" href="./v2/images/a110_favicon_gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  body { background: var(--bg); }
+
+  /* Hero */
+  .top {
+    padding: 64px 0 32px;
+    background: linear-gradient(180deg, var(--brand-soft) 0%, transparent 100%);
+  }
+  .top__inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 32px;
+    text-align: center;
+  }
+  .top__brand {
+    font-family: var(--serif); font-weight: 700; font-size: 32px;
+    color: var(--ink); letter-spacing: 0.02em; margin-bottom: 6px;
+  }
+  .top__brand .mono {
+    font-family: var(--mono); font-size: 14px;
+    letter-spacing: 0.2em; color: var(--brand);
+    padding-left: 10px; border-left: 1px solid var(--line);
+    margin-left: 6px;
+  }
+  .top__sub {
+    font-size: 14px; color: var(--ink-2); margin-bottom: 24px;
+  }
+  .top__meta {
+    display: inline-flex; gap: 16px; flex-wrap: wrap;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--ink-3); letter-spacing: 0.08em;
+    padding: 8px 18px; background: #fff;
+    border-radius: 999px; border: 1px solid var(--line);
+  }
+
+  /* Tabs */
+  .tabs {
+    max-width: 1100px; margin: 24px auto 0;
+    padding: 0 32px;
+    display: flex; gap: 12px; justify-content: center;
+  }
+  .tab {
+    padding: 14px 28px;
+    background: #fff; border: 1.5px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--ink-2); letter-spacing: 0.1em;
+    cursor: pointer; transition: 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab:hover { border-color: var(--ink-2); }
+  .tab--active {
+    background: var(--ink); color: #fff;
+    border-color: var(--ink);
+  }
+  .tab__badge {
+    background: var(--bg-soft); color: var(--ink-3);
+    padding: 2px 7px; border-radius: 4px;
+    font-size: 9px; letter-spacing: 0.04em;
+  }
+  .tab--active .tab__badge {
+    background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9);
+  }
+  .tab--v2.tab--active {
+    background: var(--brand); border-color: var(--brand);
+  }
+
+  /* Group description */
+  .group-desc {
+    max-width: 1100px; margin: 32px auto 0;
+    padding: 0 32px;
+  }
+  .group-desc__card {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    display: grid; grid-template-columns: 220px 1fr; gap: 28px;
+    align-items: center;
+  }
+  .group-desc__tag {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    letter-spacing: 0.14em; padding: 6px 12px;
+    border-radius: 999px; display: inline-block;
+    margin-bottom: 8px;
+  }
+  .group-desc__tag--v1 {
+    background: var(--bg-soft); color: var(--ink-2);
+  }
+  .group-desc__tag--v2 {
+    background: var(--brand-soft); color: var(--brand);
+  }
+  .group-desc__title {
+    font-family: var(--serif); font-weight: 700; font-size: 20px;
+    color: var(--ink); margin: 0; line-height: 1.5;
+  }
+  .group-desc__points {
+    font-size: 13px; color: var(--ink-2); line-height: 1.85;
+  }
+  .group-desc__points b {
+    color: var(--ink); font-family: var(--serif);
+  }
+
+  /* List */
+  .list {
+    max-width: 1100px; margin: 24px auto 0;
+    padding: 0 32px 80px;
+  }
+  .list__grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+  }
+  .item {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius); overflow: hidden;
+    display: flex; align-items: stretch;
+    text-decoration: none; color: inherit;
+    transition: 0.15s;
+  }
+  .item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--ink-2);
+  }
+  .item__num {
+    width: 80px; flex-shrink: 0;
+    background: var(--bg-tint);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700;
+    border-right: 1px solid var(--line);
+  }
+  .item__num span:first-child {
+    font-size: 28px; color: var(--ink);
+    line-height: 1; margin-bottom: 4px;
+  }
+  .item__num span:last-child {
+    font-size: 9px; color: var(--ink-3);
+    letter-spacing: 0.18em;
+  }
+  .item--v2 .item__num {
+    background: var(--brand-soft);
+  }
+  .item--v2 .item__num span:first-child { color: var(--brand); }
+  .item__body { padding: 16px 20px; flex: 1; }
+  .item__title {
+    font-family: var(--serif); font-weight: 700; font-size: 15px;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .item__sub {
+    font-size: 12px; color: var(--ink-3); line-height: 1.55;
+  }
+  .item__change {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    background: var(--brand-soft); color: var(--brand);
+    padding: 3px 7px; border-radius: 4px;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+  }
+
+  /* Footer */
+  .foot {
+    text-align: center;
+    padding: 32px 32px 48px;
+    font-family: var(--mono); font-size: 11px;
+    color: var(--ink-3); letter-spacing: 0.06em; line-height: 1.7;
+    border-top: 1px solid var(--line);
+    max-width: 1100px; margin: 0 auto;
+  }
+  .foot a { color: var(--ink-2); }
+
+  /* Toggle script visibility */
+  .group { display: none; }
+  .group--active { display: block; }
+
+  @media (max-width: 760px) {
+    .list__grid { grid-template-columns: 1fr; }
+    .group-desc__card { grid-template-columns: 1fr; }
+    .tabs { flex-direction: column; align-items: stretch; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP -->
+<header class="top">
+  <div class="top__inner">
+    <div class="top__brand">SalonRink<span class="mono">CONCIERGE</span></div>
+    <div class="top__sub">LP モック比較ビュー — v1 (現行) vs v2 (マーケットイン改定版)</div>
+    <div class="top__meta">
+      <span>📅 2026.05.25</span>
+      <span>·</span>
+      <span>📁 lp-v2/</span>
+      <span>·</span>
+      <span>🎯 仕上がり確認用</span>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab tab--v1 tab--active" onclick="switchTab('v1')">
+    v1 · 現行モック
+    <span class="tab__badge">PRODUCT-OUT</span>
+  </button>
+  <button class="tab tab--v2" onclick="switchTab('v2')">
+    v2 · マーケットイン改定版
+    <span class="tab__badge">MARKET-IN</span>
+  </button>
+</div>
+
+<!-- V1 GROUP -->
+<div class="group group--active" id="group-v1">
+  <div class="group-desc">
+    <div class="group-desc__card">
+      <div>
+        <span class="group-desc__tag group-desc__tag--v1">GROUP A · v1</span>
+        <h3 class="group-desc__title">現行モック<br>(プロダクトアウト)</h3>
+      </div>
+      <div class="group-desc__points">
+        <b>ターゲット:</b> サロン全般 / 主訴求: 「LINEに乗せる業務レイヤー」<br>
+        <b>AIカルテ:</b> 前面 / <b>HPB:</b> 競合視 / <b>数値:</b> 32店舗 +28%等<br>
+        <b>CASE 01:</b> 架空 Atelier Lumière / <b>競合:</b> 具体名 / <b>価格:</b> ¥4,800〜<br>
+        <b>配色:</b> LINE green 一色
+      </div>
+    </div>
+  </div>
+
+  <div class="list">
+    <div class="list__grid">
+      <a class="item" href="./v1/01_hero.html"><div class="item__num"><span>01</span><span>HERO</span></div><div class="item__body"><div class="item__title">HERO</div><div class="item__sub">主訴求 · LINEに、乗せるだけ。</div></div></a>
+      <a class="item" href="./v1/02_problem.html"><div class="item__num"><span>02</span><span>PROBLEM</span></div><div class="item__body"><div class="item__title">PROBLEM</div><div class="item__sub">サロン業務のもったいない</div></div></a>
+      <a class="item" href="./v1/03_solution.html"><div class="item__num"><span>03</span><span>SOLUTION</span></div><div class="item__body"><div class="item__title">SOLUTION</div><div class="item__sub">LINEを置き換えない · 乗せる</div></div></a>
+      <a class="item" href="./v1/04_for_everyone.html"><div class="item__num"><span>04</span><span>EVERYONE</span></div><div class="item__body"><div class="item__title">FOR EVERYONE</div><div class="item__sub">顧客 / スタッフ / オーナー · 数値あり</div></div></a>
+      <a class="item" href="./v1/05_in_action.html"><div class="item__num"><span>05</span><span>ACTION</span></div><div class="item__body"><div class="item__title">IN ACTION</div><div class="item__sub">1日のサロン業務 タイムライン</div></div></a>
+      <a class="item" href="./v1/06_ai_karte.html"><div class="item__num"><span>06</span><span>KARTE</span></div><div class="item__body"><div class="item__title">AI KARTE</div><div class="item__sub">会話 → カルテ AI構造化</div></div></a>
+      <a class="item" href="./v1/07_numbers.html"><div class="item__num"><span>07</span><span>NUMBERS</span></div><div class="item__body"><div class="item__title">NUMBERS</div><div class="item__sub">32店舗実績 · +28% · +18% · −42%</div></div></a>
+      <a class="item" href="./v1/08_case.html"><div class="item__num"><span>08</span><span>CASE</span></div><div class="item__body"><div class="item__title">CASE 01</div><div class="item__sub">Atelier Lumière (架空)</div></div></a>
+      <a class="item" href="./v1/09_onboarding.html"><div class="item__num"><span>09</span><span>ONBOARDING</span></div><div class="item__body"><div class="item__title">ONBOARDING</div><div class="item__sub">4 STEP · 最短5分</div></div></a>
+      <a class="item" href="./v1/10_compare.html"><div class="item__num"><span>10</span><span>COMPARE</span></div><div class="item__body"><div class="item__title">COMPARE</div><div class="item__sub">予約SaaS / CRM SaaS 具体名で比較</div></div></a>
+    </div>
+  </div>
+</div>
+
+<!-- V2 GROUP -->
+<div class="group" id="group-v2">
+  <div class="group-desc">
+    <div class="group-desc__card">
+      <div>
+        <span class="group-desc__tag group-desc__tag--v2">GROUP B · v2</span>
+        <h3 class="group-desc__title">マーケットイン<br>改定版</h3>
+      </div>
+      <div class="group-desc__points">
+        <b>ターゲット:</b> 1人サロン店主 一点突破 / 主訴求: 「LINEで、もう一度お客様と向き合う時間を」<br>
+        <b>AIカルテ:</b> 裏方扱い ("自動""ゼロ"訴求) / <b>HPB:</b> 協調 / <b>数値:</b> 撤去 (景表法リスク回避)<br>
+        <b>CASE 01:</b> キレイ鶴見店 (実データ反映済 · シミュレーション値明記) / <b>競合:</b> 「他サービス」抽象表記 / <b>価格:</b> ¥1,980〜<br>
+        <b>配色:</b> LINE green + Gold ハイブリッド
+      </div>
+    </div>
+  </div>
+
+  <div class="list">
+    <div class="list__grid">
+      <a class="item item--v2" href="./v2/01_hero.html"><div class="item__num"><span>01</span><span>HERO</span></div><div class="item__body"><div class="item__title">HERO</div><div class="item__sub">主訴求書換 · もう一度お客様と向き合う時間</div><span class="item__change">⚡ FULL REWRITE</span></div></a>
+      <a class="item item--v2" href="./v2/02_problem.html"><div class="item__num"><span>02</span><span>PROBLEM</span></div><div class="item__body"><div class="item__title">PROBLEM</div><div class="item__sub">1人サロンの痛みに書換 · HPB攻撃ゼロ</div><span class="item__change">⚡ FULL REWRITE</span></div></a>
+      <a class="item item--v2" href="./v2/03_solution.html"><div class="item__num"><span>03</span><span>SOLUTION</span></div><div class="item__body"><div class="item__title">SOLUTION</div><div class="item__sub">HPB協調訴求を機能リスト + footer band追加</div><span class="item__change">+ HPB協調</span></div></a>
+      <a class="item item--v2" href="./v2/04_for_everyone.html"><div class="item__num"><span>04</span><span>EVERYONE</span></div><div class="item__body"><div class="item__title">FOR EVERYONE</div><div class="item__sub">数値撤去 / スタッフ将来形 / Gold基調</div><span class="item__change">⚡ FULL REWRITE</span></div></a>
+      <a class="item item--v2" href="./v2/05_in_action.html"><div class="item__num"><span>05</span><span>ACTION</span></div><div class="item__body"><div class="item__title">IN ACTION</div><div class="item__sub">SCENE 02にHPB協調シーン追加</div><span class="item__change">+ HPB追加</span></div></a>
+      <a class="item item--v2" href="./v2/06_ai_karte.html"><div class="item__num"><span>06</span><span>KARTE</span></div><div class="item__body"><div class="item__title">AI KARTE</div><div class="item__sub">"AI"単語削減 · ARROW PILL → AUTO</div><span class="item__change">- AI / + 自動</span></div></a>
+      <a class="item item--v2" href="./v2/07_numbers.html"><div class="item__num"><span>07</span><span>EFFECTS</span></div><div class="item__body"><div class="item__title">EXPECTED EFFECTS</div><div class="item__sub">完全リニューアル · 数値撤去 · Gold基調</div><span class="item__change">⚡ FULL REBUILD</span></div></a>
+      <a class="item item--v2" href="./v2/08_case.html"><div class="item__num"><span>08</span><span>CASE</span></div><div class="item__body"><div class="item__title">CASE 01</div><div class="item__sub">キレイ鶴見店 · 実店舗写真採用 · 実データ反映済</div><span class="item__change">✅ REAL PHOTO</span></div></a>
+      <a class="item item--v2" href="./v2/09_onboarding.html"><div class="item__num"><span>09</span><span>ONBOARDING</span></div><div class="item__body"><div class="item__title">ONBOARDING</div><div class="item__sub">STEP02にHPB協調pill · CTA ¥1,980〜</div><span class="item__change">+ HPB / ¥1,980</span></div></a>
+      <a class="item item--v2" href="./v2/10_compare.html"><div class="item__num"><span>10</span><span>COMPARE</span></div><div class="item__body"><div class="item__title">COMPARE</div><div class="item__sub">「他サービス」抽象表記 · ¥1,980〜</div><span class="item__change">⚡ FULL REWRITE</span></div></a>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  © 2026 AOKAE合同会社 · SalonRink Concierge LP モック比較ビュー<br>
+  <a href="./shared/tokens.css">tokens.css (v2)</a> / <a href="./shared/tokens-v1.css">tokens-v1.css</a>
+</footer>
+
+<script>
+  function switchTab(target) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('tab--active'));
+    document.querySelector('.tab--' + target).classList.add('tab--active');
+    document.querySelectorAll('.group').forEach(g => g.classList.remove('group--active'));
+    document.getElementById('group-' + target).classList.add('group--active');
+  }
+</script>
+
+</body>
+</html>
