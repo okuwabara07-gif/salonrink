@@ -693,7 +693,7 @@ a { color: inherit; text-decoration: none; }
 }
 .case__top { display: grid; grid-template-columns: 380px 1fr; gap: 0; }
 .case__photo {
-  background-image: url('kirei_real_interior.jpg');
+  background-image: url('/images/case/kirei-tsurumi-real.jpg');
   background-size: cover; background-position: center 30%;
   position: relative;
   min-height: 540px;
