@@ -1,0 +1,2594 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SalonRink Concierge リデザイン &amp; 実装 指示書 v3 — Internal Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ink: #1a1814;
+  --ink-2: #3d3833;
+  --ink-3: #6f6a62;
+  --ink-4: #9c968c;
+  --bg: #faf8f3;
+  --bg-2: #f2eee4;
+  --bg-3: #ebe6d9;
+  --card: #ffffff;
+  --line: #e6e1d6;
+  --line-2: #d4cebf;
+  --accent: #06C755;
+  --accent-2: #00b14b;
+  --accent-soft: #e6f7ec;
+  --accent-ink: #054d22;
+  --warn: #c8623a;
+  --warn-soft: #fdf0e6;
+  --warn-ink: #8a3e1c;
+  --good: #2f7d4d;
+  --font-display: "Noto Serif JP", "Hiragino Mincho ProN", serif;
+  --font-body: "Noto Sans JP", "Hiragino Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "palt";
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ============================================
+   Sidebar TOC
+============================================ */
+aside.toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 56px 32px 56px 40px;
+  border-right: 1px solid var(--line);
+  background: var(--bg);
+}
+.toc-brand {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.toc-brand-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+.toc-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-bottom: 56px;
+}
+.toc-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+.toc-list a {
+  color: var(--ink-2);
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0;
+  transition: color 0.15s ease;
+}
+.toc-list a:hover { color: var(--accent-2); }
+.toc-list .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  width: 22px;
+  flex-shrink: 0;
+}
+.toc-meta {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+  font-size: 11px;
+  color: var(--ink-4);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+.toc-meta div { margin-bottom: 4px; }
+
+/* ============================================
+   Main
+============================================ */
+main {
+  padding: 56px 64px 120px;
+  max-width: 880px;
+}
+
+/* Hero */
+.doc-hero {
+  margin-bottom: 80px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid var(--line);
+}
+.doc-hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  padding: 6px 14px 6px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--ink-2);
+  margin-bottom: 24px;
+}
+.doc-hero-tag-pill {
+  background: var(--ink);
+  color: #f7f4ec;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.doc-hero h1 {
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1.35;
+  font-weight: 600;
+  margin: 0 0 24px;
+  letter-spacing: 0.01em;
+}
+.doc-hero p {
+  font-size: 16px;
+  color: var(--ink-2);
+  line-height: 1.9;
+  margin: 0;
+  max-width: 640px;
+}
+.doc-meta-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.doc-meta-cell {
+  padding: 20px 20px 20px 0;
+  border-right: 1px solid var(--line);
+}
+.doc-meta-cell:last-child { border-right: none; padding-right: 0; }
+.doc-meta-key {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.doc-meta-val {
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.doc-meta-val .accent { color: var(--accent-2); }
+
+/* Section */
+section.doc-section {
+  margin-bottom: 96px;
+  scroll-margin-top: 32px;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--accent-2);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-num::before {
+  content: "";
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+.doc-section h2 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0 0 12px;
+  letter-spacing: 0.01em;
+}
+.section-lead {
+  font-size: 16px;
+  color: var(--ink-3);
+  line-height: 1.85;
+  margin: 0 0 40px;
+  max-width: 640px;
+}
+
+.doc-section h3 {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.55;
+  margin: 40px 0 16px;
+}
+.doc-section h4 {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 24px 0 12px;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+}
+.doc-section p {
+  margin: 0 0 16px;
+  color: var(--ink-2);
+}
+.doc-section p.muted { color: var(--ink-3); font-size: 14px; }
+.doc-section strong { color: var(--ink); font-weight: 600; }
+.doc-section em {
+  font-style: normal;
+  background: linear-gradient(180deg, transparent 65%, var(--accent-soft) 65%);
+  padding: 0 3px;
+}
+
+/* Lists */
+.doc-section ul {
+  margin: 0 0 24px;
+  padding-left: 0;
+  list-style: none;
+}
+.doc-section ul li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  color: var(--ink-2);
+}
+.doc-section ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 8px;
+  height: 1px;
+  background: var(--accent);
+}
+.doc-section ul.checklist li {
+  padding-left: 28px;
+}
+.doc-section ul.checklist li::before {
+  content: "▢";
+  background: transparent;
+  width: auto;
+  height: auto;
+  font-family: var(--font-mono);
+  top: 0;
+  color: var(--ink-4);
+  font-size: 14px;
+}
+
+/* Callout */
+.callout {
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 20px 24px;
+  border-radius: 0 12px 12px 0;
+  margin: 24px 0 32px;
+  font-size: 15px;
+  color: var(--accent-ink);
+  line-height: 1.85;
+}
+.callout-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--accent-2);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.callout.dark {
+  background: var(--ink);
+  color: #f7f4ec;
+  border-left-color: var(--accent);
+  padding: 32px 36px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  line-height: 1.65;
+  font-weight: 500;
+  border-radius: 0 16px 16px 0;
+}
+.callout.dark .callout-label { color: rgba(247,244,236,0.5); }
+
+/* Tables */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 28px;
+  font-size: 14px;
+}
+.tbl th,
+.tbl td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.7;
+}
+.tbl th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-4);
+  font-weight: 600;
+  border-bottom: 1px solid var(--line-2);
+  padding-bottom: 12px;
+}
+.tbl tbody tr:hover { background: rgba(255,255,255,0.5); }
+.tbl td .key {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-3);
+}
+.tbl .col-narrow { width: 130px; }
+.tbl .col-med { width: 200px; }
+
+/* Status badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge.bad { background: var(--warn-soft); color: var(--warn-ink); }
+.badge.good { background: var(--accent-soft); color: var(--accent-ink); }
+.badge.neutral { background: var(--bg-2); color: var(--ink-3); }
+.badge.adopted {
+  background: var(--ink);
+  color: #f7f4ec;
+}
+
+/* Compare grid (two-up) */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin: 24px 0 32px;
+}
+.compare-side {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+}
+.compare-side h4 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.compare-side.bad h4 { color: var(--warn); }
+.compare-side.good h4 { color: var(--accent-2); }
+.compare-side ul { margin: 0; }
+.compare-side ul li {
+  font-size: 13.5px;
+  margin-bottom: 8px;
+}
+.compare-side.bad ul li::before { background: var(--warn); }
+
+/* Decision matrix (3 options) */
+.decision-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 24px 0 32px;
+}
+.decision-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.decision-card.adopted {
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: #f7f4ec;
+}
+.decision-card.adopted .decision-name { color: #f7f4ec; }
+.decision-card.adopted .decision-desc { color: rgba(247,244,236,0.7); }
+.decision-card.adopted::after {
+  content: "★ 採用";
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  font-weight: 700;
+}
+.decision-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.decision-card.adopted .decision-tag { color: rgba(247,244,236,0.5); }
+.decision-name {
+  font-family: var(--font-display);
+  font-size: 17px;
+  line-height: 1.5;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--ink);
+}
+.decision-desc {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.75;
+  flex: 1;
+}
+
+/* File tree */
+.tree {
+  background: var(--ink);
+  color: #f7f4ec;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  padding: 24px 28px;
+  border-radius: 14px;
+  margin: 16px 0 28px;
+  overflow-x: auto;
+}
+.tree .dim { color: rgba(247,244,236,0.5); }
+.tree .accent { color: var(--accent); }
+.tree .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: rgba(247,244,236,0.5);
+  margin-bottom: 12px;
+  display: block;
+  text-transform: uppercase;
+}
+
+/* Tokens grid */
+.tokens-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 16px 0 28px;
+}
+.token {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+}
+.token-swatch {
+  height: 56px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 6px;
+}
+.token-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink);
+  font-weight: 600;
+}
+.token-val {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+}
+
+/* Steps */
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 16px 0 28px;
+}
+.task {
+  display: grid;
+  grid-template-columns: 90px 70px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.task:last-child { border-bottom: 1px solid var(--line); }
+.task-priority {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  align-self: center;
+  text-align: center;
+}
+.task-priority.high { background: var(--warn-soft); color: var(--warn-ink); }
+.task-priority.med { background: var(--bg-3); color: var(--ink-2); }
+.task-priority.low { background: var(--accent-soft); color: var(--accent-ink); }
+.task-check {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--ink-4);
+  padding-top: 2px;
+  text-align: center;
+}
+.task-text {
+  font-size: 14px;
+  line-height: 1.65;
+}
+.task-text strong { display: block; margin-bottom: 2px; }
+.task-text small { color: var(--ink-3); font-size: 13px; }
+
+/* Footer note */
+.doc-footer {
+  margin-top: 80px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  letter-spacing: 0.05em;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  aside.toc {
+    position: relative;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+    padding: 32px 24px;
+  }
+  main {
+    padding: 32px 24px 80px;
+  }
+  .doc-hero h1 { font-size: 32px; }
+  .doc-section h2 { font-size: 24px; }
+  .doc-meta-grid { grid-template-columns: 1fr 1fr; }
+  .compare,
+  .decision-grid,
+  .tokens-grid {
+    grid-template-columns: 1fr;
+  }
+  .task {
+    grid-template-columns: 70px 1fr;
+  }
+  .task-check { display: none; }
+}
+</style>
+<style>
+/* ============================================
+   v3 Additions — Part labels, Scene cards, Roadmap
+============================================ */
+.part-divider {
+  margin: 80px 0 56px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.part-divider::before {
+  content: "";
+  flex: 0 0 32px;
+  height: 1px;
+  background: var(--ink);
+}
+.part-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.part-divider-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  color: var(--ink);
+  text-transform: uppercase;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.part-divider-sub {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--ink-3);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* TOC part labels */
+.toc-part {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 24px 0 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.toc-part:first-of-type { margin-top: 0; }
+.toc-part-letter {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--bg);
+  text-align: center;
+  line-height: 20px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* v3 inline badge */
+.v3-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+
+/* Scene cards */
+.scene-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 24px 0 32px;
+}
+.scene-card {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.scene-card:last-child { border-bottom: 1px solid var(--line); }
+.scene-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+}
+.scene-num strong {
+  display: block;
+  font-size: 32px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-top: 4px;
+}
+.scene-body h4 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.scene-body .scene-path {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-3);
+  margin-bottom: 14px;
+  letter-spacing: 0.04em;
+}
+.scene-body .scene-desc {
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--ink-2);
+  margin: 0 0 14px;
+}
+.scene-body .scene-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.scene-meta-item {
+  background: var(--bg-2);
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--ink-3);
+}
+.scene-meta-item strong {
+  color: var(--ink);
+}
+
+/* Sprint timeline */
+.sprint-timeline {
+  margin: 24px 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.sprint-row {
+  display: grid;
+  grid-template-columns: 100px 130px 1fr;
+  gap: 20px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  align-items: start;
+}
+.sprint-row:last-child { border-bottom: 1px solid var(--line); }
+.sprint-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  font-weight: 700;
+}
+.sprint-tag small {
+  display: block;
+  font-weight: 400;
+  color: var(--ink-4);
+  margin-top: 2px;
+  font-size: 10px;
+}
+.sprint-scope {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-2);
+  letter-spacing: 0.04em;
+  align-self: center;
+}
+.sprint-deliv {
+  font-size: 13.5px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.sprint-deliv strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+/* Asset map cards */
+.asset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin: 16px 0 28px;
+}
+.asset-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+.asset-card.live {
+  border-left: 3px solid var(--accent);
+}
+.asset-card.partial {
+  border-left: 3px solid #d9a73a;
+}
+.asset-card.todo {
+  border-left: 3px solid var(--ink-4);
+  background: var(--bg-2);
+}
+.asset-status {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.asset-status.live { color: var(--accent-2); }
+.asset-status.partial { color: #a07720; }
+.asset-status.todo { color: var(--ink-3); }
+.asset-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.asset-role {
+  font-size: 13px;
+  color: var(--ink-3);
+  line-height: 1.7;
+  margin: 0 0 10px;
+}
+.asset-detail {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-4);
+  border-top: 1px solid var(--line);
+  padding-top: 8px;
+  letter-spacing: 0.02em;
+}
+
+/* Architecture diagram */
+.arch {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  margin: 16px 0 28px;
+}
+.arch-tier {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.arch-tier-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--ink-4);
+  text-transform: uppercase;
+  margin: 18px 0 10px;
+}
+.arch-tier-label:first-child { margin-top: 0; }
+.arch-box {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+.arch-box.line {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+.arch-box.core {
+  background: var(--ink);
+  color: #f7f4ec;
+  border-color: var(--ink);
+}
+.arch-box-name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+.arch-box-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-3);
+  margin-top: 4px;
+  letter-spacing: 0.04em;
+}
+.arch-box.core .arch-box-sub { color: rgba(247,244,236,0.6); }
+.arch-box.line .arch-box-sub { color: var(--accent-ink); }
+.arch-arrow {
+  text-align: center;
+  font-family: var(--font-mono);
+  color: var(--ink-4);
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+/* Do/Don't list */
+.guidance {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 16px 0 28px;
+}
+.guidance-col {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 24px 26px;
+}
+.guidance-col.do {
+  border-left: 3px solid var(--accent);
+}
+.guidance-col.dont {
+  border-left: 3px solid var(--warn);
+}
+.guidance-col h4 {
+  margin: 0 0 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.guidance-col.do h4 { color: var(--accent-2); }
+.guidance-col.dont h4 { color: var(--warn); }
+.guidance-col ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.guidance-col li {
+  padding: 6px 0 6px 22px;
+  position: relative;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.guidance-col.do li::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  color: var(--accent-2);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.guidance-col.dont li::before {
+  content: "−";
+  position: absolute;
+  left: 0;
+  color: var(--warn);
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+@media (max-width: 960px) {
+  .scene-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .sprint-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .arch-tier { grid-template-columns: 1fr; }
+  .asset-grid { grid-template-columns: 1fr; }
+  .guidance { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- ============================================
+       Sidebar TOC (v3)
+  ============================================ -->
+  <aside class="toc">
+    <div class="toc-brand">
+      <span class="toc-brand-dot"></span>
+      SalonRink Concierge
+    </div>
+    <div class="toc-sub">Internal Brief v3</div>
+
+    <div class="toc-part"><span class="toc-part-letter">★</span>v3 Changelog</div>
+    <ul class="toc-list">
+      <li><a href="#s-v3"><span class="num">★</span>v2→v3 変更点</a></li>
+    </ul>
+
+    <div class="toc-part"><span class="toc-part-letter">A</span>Why — 戦略・思想</div>
+    <ul class="toc-list">
+      <li><a href="#s01"><span class="num">01</span>Overview</a></li>
+      <li><a href="#s02"><span class="num">02</span>Market-In</a></li>
+      <li><a href="#s03"><span class="num">03</span>A-Strategy</a></li>
+      <li><a href="#s04"><span class="num">04</span>Brand</a></li>
+      <li><a href="#s05"><span class="num">05</span>Persona × Pricing</a></li>
+      <li><a href="#s06"><span class="num">06</span>Competitors</a></li>
+    </ul>
+
+    <div class="toc-part"><span class="toc-part-letter">B</span>What — 構成・仕様</div>
+    <ul class="toc-list">
+      <li><a href="#s07"><span class="num">07</span>Product Layers</a></li>
+      <li><a href="#s08"><span class="num">08</span>LP Structure</a></li>
+      <li><a href="#s09"><span class="num">09</span>Admin UI · 4 Scenes</a></li>
+      <li><a href="#s10"><span class="num">10</span>Existing Assets</a></li>
+    </ul>
+
+    <div class="toc-part"><span class="toc-part-letter">C</span>How — 実装・運用</div>
+    <ul class="toc-list">
+      <li><a href="#s11"><span class="num">11</span>Design Tokens</a></li>
+      <li><a href="#s12"><span class="num">12</span>Files &amp; Stack</a></li>
+      <li><a href="#s13"><span class="num">13</span>Roadmap · 20 Days</a></li>
+      <li><a href="#s14"><span class="num">14</span>Tweaks</a></li>
+    </ul>
+
+    <div class="toc-part"><span class="toc-part-letter">D</span>Guardrails — 制約</div>
+    <ul class="toc-list">
+      <li><a href="#s15"><span class="num">15</span>Do / Don't</a></li>
+      <li><a href="#s16"><span class="num">16</span>Constraints</a></li>
+      <li><a href="#s17"><span class="num">17</span>Next Tasks</a></li>
+    </ul>
+
+    <div class="toc-part">Appendix</div>
+    <ul class="toc-list">
+      <li><a href="#s-apx-changelog"><span class="num">A1</span>Full Changelog</a></li>
+      <li><a href="#s-apx-decisions"><span class="num">A2</span>Decisions Log</a></li>
+    </ul>
+
+    <div class="toc-meta">
+      <div>VERSION · v3.0</div>
+      <div>UPDATED · 2026.05.21</div>
+      <div>AOKAE LLC · INTERNAL</div>
+    </div>
+  </aside>
+
+  <main>
+
+    <!-- ============================================
+         Hero
+    ============================================ -->
+    <div class="doc-hero">
+      <div class="doc-hero-tag">
+        <span class="doc-hero-tag-pill">v3.0</span>
+        Internal Brief · MECE Re-organized
+      </div>
+      <h1>SalonRink Concierge<br />リデザイン &amp; 実装 指示書</h1>
+      <p>
+        マーケットイン思想で再構築するLP、LINEアドオン路線の核、LIFF管理画面4シーン、20日実装スプリントまでを一つにまとめた内部指示書。
+        v2 から MECE で再構成し、Why / What / How / Guardrails の4パートに分類。
+      </p>
+
+      <div class="doc-meta-grid">
+        <div class="doc-meta-cell">
+          <div class="doc-meta-key">Product</div>
+          <div class="doc-meta-val"><span class="accent">SalonRink</span> Concierge</div>
+        </div>
+        <div class="doc-meta-cell">
+          <div class="doc-meta-key">Operated by</div>
+          <div class="doc-meta-val">AOKAE LLC</div>
+        </div>
+        <div class="doc-meta-cell">
+          <div class="doc-meta-key">Strategy</div>
+          <div class="doc-meta-val">LINE Add-on (A方針)</div>
+        </div>
+        <div class="doc-meta-cell">
+          <div class="doc-meta-key">Pricing</div>
+          <div class="doc-meta-val">Solo ¥1,980 / Salon ¥2,980</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================
+         v2 → v3 CHANGELOG
+    ============================================ -->
+    <section class="doc-section" id="s-v3" data-screen-label="00 v3 Changelog">
+      <div class="section-num">★ V3 · CHANGELOG</div>
+      <h2>v2 から v3 への変更点</h2>
+      <p class="section-lead">
+        v2 までは LP リデザイン中心。v3 では <strong>LIFF管理画面4シーン</strong>、<strong>20日実装スプリント</strong>、<strong>Do/Don't 規律</strong> を追加し、戦略文書から実装指示書へと拡張。MECE 4パート構造で重複を解消した。
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="col-med">変更カテゴリ</th>
+            <th>v2 まで</th>
+            <th>v3</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>文書構造</strong></td><td>14セクションのフラット配列</td><td><strong>4パート(Why/What/How/Guardrails) + Appendix</strong> でMECE再分類</td></tr>
+          <tr><td><strong>LIFF管理画面</strong></td><td>言及なし</td><td><strong>4シーン(Onboarding/Daily/Dashboard/MenuEdit)を §09 に新設</strong></td></tr>
+          <tr><td><strong>プロダクト全体構成</strong></td><td>暗黙</td><td><strong>4レイヤー構造を §07 で図解</strong>(顧客LINE / オーナーLINE / LIFF / Core)</td></tr>
+          <tr><td><strong>実装ロードマップ</strong></td><td>「Next」タスクリストのみ</td><td><strong>20日スプリントを §13 に新設</strong>(5 Sprint 構成、Day別の完了基準)</td></tr>
+          <tr><td><strong>既存資産マップ</strong></td><td>テーブルのみ、説明薄い</td><td><strong>Live/Partial/Todo の3状態カードで §10 を強化</strong></td></tr>
+          <tr><td><strong>Do/Don't 規律</strong></td><td>「制約・前提」内に散在</td><td><strong>§15 として独立、デザイン規律も統合</strong></td></tr>
+          <tr><td><strong>LINEミニアプリ並行戦略</strong></td><td>Lowタスクに一行</td><td><strong>§13 で時差並行(Week 2着手)を明示</strong></td></tr>
+          <tr><td><strong>キレイ鶴見店 旗艦店設定</strong></td><td>事例言及のみ</td><td><strong>§10 で HPB ID / SNS / 実装情報を集約</strong></td></tr>
+          <tr><td><strong>重複の解消</strong></td><td>ペルソナ・競合・LINE仕様が複数箇所に散在</td><td><strong>正本セクションを定義、他はクロスリンク化</strong></td></tr>
+          <tr><td><strong>Appendix</strong></td><td>なし</td><td><strong>Full Changelog / Decisions Log を分離</strong></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-label">MIGRATION NOTE</div>
+        v2 で意思決定済みの内容（A方針採用・2プラン構成・SalonRink Concierge ブランド・3ペルソナ確定）は v3 でも維持。<strong>戦略の方向転換ではなく、実装に必要な情報の追加と整理</strong>。
+      </div>
+    </section>
+
+
+    <!-- ===========================================================
+         PART A — WHY
+    =========================================================== -->
+    <div class="part-divider">
+      <div>
+        <div class="part-divider-label">Part A</div>
+        <div class="part-divider-sub">Why — 戦略・思想</div>
+      </div>
+    </div>
+
+
+    <!-- ============================================
+         §01 PROJECT OVERVIEW
+    ============================================ -->
+    <section class="doc-section" id="s01" data-screen-label="01 Overview">
+      <div class="section-num">SECTION 01 · OVERVIEW</div>
+      <h2>プロジェクト概要</h2>
+      <p class="section-lead">
+        サロン向けLINE公式アカウント拡張ツール「SalonRink Concierge」のLP全面リデザイン、および管理画面（LIFF）の新設プロジェクト。既存サイト salonrink.com を、マーケットインの視点で再構築する。
+      </p>
+
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">プロダクト</span></td><td><strong>SalonRink Concierge</strong> — LINE公式アカウントに乗る、サロン業務AIスタッフ</td></tr>
+          <tr><td><span class="key">運営</span></td><td>AOKAE 合同会社</td></tr>
+          <tr><td><span class="key">既存サイト</span></td><td>salonrink.com</td></tr>
+          <tr><td><span class="key">v3 スコープ</span></td><td>LP全面リデザイン + LIFF管理画面4シーン新設 + 20日実装スプリント</td></tr>
+          <tr><td><span class="key">成果物</span></td><td><code>SalonRink LP v2.html</code> + <code>styles.css</code> + <code>app/liff/*</code> + 本指示書</td></tr>
+          <tr><td><span class="key">価格</span></td><td><strong>Solo ¥1,980/月</strong>（フリーランス）/ <strong>Salon ¥2,980/月</strong>（個人〜小規模）/ 追加店舗 +¥1,980/月 / 14日無料 / 初期費用0 / 解約自由</td></tr>
+          <tr><td><span class="key">旗艦店</span></td><td>キレイ鶴見店（横浜・グレイヘア専門）— 自社運営、事例第一号</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout dark">
+        <div class="callout-label">CORE THESIS</div>
+        SalonRink Concierge は「画面のないSaaS」。<br />
+        美容師は新しいツールを学ばず、いつもの LINE 公式アカウントが、勝手に賢くなる。
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §02 MARKET-IN PHILOSOPHY
+    ============================================ -->
+    <section class="doc-section" id="s02" data-screen-label="02 Market-In">
+      <div class="section-num">SECTION 02 · MARKET-IN</div>
+      <h2>マーケットインの思考フレーム</h2>
+      <p class="section-lead">
+        作り手の言いたいこと（プロダクトアウト）ではなく、買い手の経営課題から逆算して設計する。
+      </p>
+
+      <h3>なぜ既存LPが弱いか</h3>
+      <p>
+        既存サイトの最大の問題は「<strong>誰に売っているか</strong>」が揺れていること。サロンオーナーがサイトを開いた最初の10秒で「これは自分のための道具だ」と認識できていない。<strong>ヒーローのコピーが"美容室の集客広告"に読めてしまい、本当のターゲット（サロン経営者）が離脱する。</strong>
+      </p>
+
+      <h3>プロダクトアウト → マーケットイン 書き換え対応表</h3>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>プロダクトアウト的設計</th>
+            <th>マーケットイン的設計</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>ヒーローで世界観コピー＋写真</td><td>ヒーローで<strong>経営課題を1秒で名指し</strong></td></tr>
+          <tr><td>「コンシェルジュ体験」（手段）</td><td>「再来店率 / 業務時間75%削減」（成果）</td></tr>
+          <tr><td>機能8つグリッド</td><td><strong>役割別ベネフィット</strong>（オーナー / スタッフ / お客様）</td></tr>
+          <tr><td>AI技術の自慢</td><td>「メモを送るだけ、整理は不要」（体験）</td></tr>
+          <tr><td>プラン3階層</td><td><strong>2プラン</strong>で迷わせない（フリーランス枠は残す）</td></tr>
+          <tr><td>連携先一覧で網羅性訴求</td><td>"LINE公式アカウントだけあればOK"の潔さ</td></tr>
+          <tr><td>セキュリティ技術用語</td><td>"LINEと同じ仕組みで守られている"</td></tr>
+        </tbody>
+      </table>
+
+      <h3>買い手が買えない3大理由（先回り解消）</h3>
+      <ul class="checklist">
+        <li><strong>乗り換えが大変そう</strong> → 「既存のLINE公式アカウントに権限付与するだけ。未開設の方は開設からサポート」</li>
+        <li><strong>スタッフが使いこなせない</strong> → 「LINEと同じUIの専用画面ひとつで完結」</li>
+        <li><strong>お客様に違和感を与えないか</strong> → 「お客様の画面は何も変わらない」をFAQで明示</li>
+      </ul>
+    </section>
+
+
+    <!-- ============================================
+         §03 A-STRATEGY
+    ============================================ -->
+    <section class="doc-section" id="s03" data-screen-label="03 Strategy">
+      <div class="section-num">SECTION 03 · A-STRATEGY</div>
+      <h2>LINEアドオン路線（A方針）の核</h2>
+      <p class="section-lead">
+        SalonRink Concierge は「LINE公式アカウントの上に乗る、サロン特化の業務レイヤー」として再定義されている。LINEを置き換えるツールではない。
+      </p>
+
+      <h3>コンセプト1行</h3>
+      <div class="callout dark">
+        <div class="callout-label">CONCEPT</div>
+        いまの LINE公式アカウントを、サロンの業務システムに。
+      </div>
+
+      <h3>3案から A方針を採用した経緯</h3>
+      <div class="decision-grid">
+        <div class="decision-card adopted">
+          <div class="decision-tag">Option A</div>
+          <div class="decision-name">LINE アドオン路線</div>
+          <div class="decision-desc">既存LINE公式アカウントに乗っかる業務レイヤー。導入障壁が極小、LINEの安心感を借りられる。</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-tag">Option B</div>
+          <div class="decision-name">LINE 専用ブランド路線</div>
+          <div class="decision-desc">"LINE版"として別商品化、Web管理画面を完全廃止。差別化は出るが、既存ユーザーの混乱大。</div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-tag">Option C</div>
+          <div class="decision-name">ハイブリッド明確化</div>
+          <div class="decision-desc">「お客様100% LINE / スタッフは専用アプリ / オーナーはWeb」と役割明示。複雑で訴求しづらい。</div>
+        </div>
+      </div>
+
+      <h3>A方針の戦略的優位性</h3>
+      <ul>
+        <li><strong>導入障壁が極小</strong>：既存のLINE公式アカウントを使っているサロンの心理的障壁が消える</li>
+        <li><strong>"新ツール導入"ではなく"アドオン"</strong>：意思決定が軽い</li>
+        <li><strong>LINEの安心感を借りられる</strong>：セキュリティ訴求が簡潔になる</li>
+        <li><strong>競合戦略上も無理がない</strong>：LINEを置き換えに行かないため、LINE/ヤフー側との関係も良好</li>
+        <li><strong>AOKAEの立ち位置が明確</strong>：「LINEを強化する」ポジションは独自性が高い</li>
+      </ul>
+
+      <h3>LINE公式アカウントの仕様前提（重要）</h3>
+      <div class="callout">
+        <div class="callout-label">SPEC PREREQUISITES</div>
+        ・1つの LINE公式アカウントを最大 100人で運用可能<br />
+        ・権限は4種類（管理者・運用担当者・配信権限なし・分析閲覧権限なし）<br />
+        ・スタッフは <strong>LINE Official Account Manager</strong> にログインして応対（個人LINEからは直接返信不可）<br />
+        ・お客様から見ると、複数スタッフが返信しても <strong>1つのサロンアカウント</strong> として届く
+      </div>
+
+      <h3>v2/v3 で削除した誤解表現</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th>削除した表現</th><th>問題点</th><th>採用した代替</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>「いつものLINEから@お客様名と打つだけ」</td><td>個人LINEで業務できるかのような誤解</td><td>「LINEと同じUIの専用画面で、@お客様名と打つだけ」</td></tr>
+          <tr><td>「5分で完了」</td><td>LINE未開設サロンには非現実的</td><td>「お持ちなら権限付与だけ。未開設なら開設からサポート」</td></tr>
+          <tr><td>「LINE公式運用済み」暗黙前提</td><td>ターゲット縮小</td><td>「お持ちのサロンも、これからのサロンも」明示</td></tr>
+        </tbody>
+      </table>
+
+      <h3>LINE未運用サロン対応</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">状態</th><th class="col-narrow">比率(推定)</th><th>対応</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LINE公式未開設</td><td>30〜40%</td><td><strong>開設代行を月額に含む</strong>（初期費用0）</td></tr>
+          <tr><td>持っているが未活用</td><td>40〜50%</td><td>リッチメニュー設計・テンプレート提供</td></tr>
+          <tr><td>ガッツリ活用済み</td><td>10〜20%</td><td>権限付与のみで連携</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ============================================
+         §04 BRAND
+    ============================================ -->
+    <section class="doc-section" id="s04" data-screen-label="04 Brand">
+      <div class="section-num">SECTION 04 · BRAND</div>
+      <h2>ブランド体系</h2>
+      <p class="section-lead">
+        2段ブランド構造で、法人ブランドとプロダクトブランドを分離。商標未出願のため命名は柔軟に動かせる。
+      </p>
+
+      <div class="tree">
+        <span class="label">BRAND HIERARCHY</span>
+SalonRink&nbsp;&nbsp;<span class="dim">(法人 / 総称ブランド)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="accent">SalonRink&nbsp;Concierge</span>&nbsp;&nbsp;<span class="dim">(製品名)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── For&nbsp;Salon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">@salonrink-concierge-owner (美容師向け)</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── For&nbsp;Customer&nbsp;&nbsp;<span class="dim">各サロン公式LINE (顧客向け)</span>
+      </div>
+
+      <h3>表記ルール</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">初出</span></td><td><strong>SalonRink Concierge</strong>（フル表記）</td></tr>
+          <tr><td><span class="key">2回目以降</span></td><td>"Concierge" または "SalonRink"（文脈に応じて）</td></tr>
+          <tr><td><span class="key">廃止表記</span></td><td>❌「SalonRink (LINE Edition)」 / ❌「Light/Standard/Premium」(旧3プラン名)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>タグライン / スローガン</h3>
+      <ul>
+        <li><strong>メインタグライン</strong>：「あなたのファンを、つくる場所」</li>
+        <li><strong>スローガン</strong>：「いつもの、その先へ。」</li>
+        <li><strong>LP用キャッチ</strong>：「いまの LINE公式アカウントを、サロンの業務システムに。」</li>
+      </ul>
+
+      <h3>商標方針</h3>
+      <ul>
+        <li>出願済み区分: なし（2026/05 時点、リスク承知で後回し）</li>
+        <li>出願検討: 3区分（Cotobox 経由、¥160-180k 想定）</li>
+        <li>出願タイミング: <strong>PMF 確認後（営業実績 10サロン超）</strong></li>
+      </ul>
+    </section>
+
+
+    <!-- ============================================
+         §05 PERSONA × PRICING
+    ============================================ -->
+    <section class="doc-section" id="s05" data-screen-label="05 Persona × Pricing">
+      <div class="section-num">SECTION 05 · PERSONA × PRICING</div>
+      <h2>3ペルソナと、価格設計の同期</h2>
+      <p class="section-lead">
+        ペルソナと価格は1セット。プラン設計はペルソナの懐事情と必要機能から逆算する。
+      </p>
+
+      <h3>3ペルソナ（確定）</h3>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="col-narrow">ペルソナ</th>
+            <th class="col-med">属性</th>
+            <th>経営課題</th>
+            <th class="col-narrow">推奨プラン</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>ハナ</strong></td>
+            <td>28歳・フリーランス美容師（出張型含む）</td>
+            <td>顧客カルテをLINEだけで管理したい・予約手数料を削減</td>
+            <td><span class="badge good">Solo ¥1,980</span></td>
+          </tr>
+          <tr>
+            <td><strong>タカシ</strong></td>
+            <td>38歳・個人サロン経営（スタッフ1-3名）</td>
+            <td>スタッフ間のカルテ共有・HPBとLINEの二重管理</td>
+            <td><span class="badge good">Salon ¥2,980</span></td>
+          </tr>
+          <tr>
+            <td><strong>キョウコ</strong></td>
+            <td>45歳・小規模店舗経営（スタッフ4-10名）</td>
+            <td>売上分析・複数スタッフの応対・リピート率向上</td>
+            <td><span class="badge good">Salon ¥2,980 + 追加</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>価格テーブル</h3>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="col-narrow">プラン</th>
+            <th class="col-narrow">価格</th>
+            <th class="col-med">対象</th>
+            <th>含まれるもの</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Solo</strong></td>
+            <td><span style="font-family: var(--font-mono); font-weight: 600;">¥1,980/月</span></td>
+            <td>フリーランス美容師、出張型サロン</td>
+            <td>LINE OA 連携、AIカルテ、リピート提案、顧客LIFF、Stripe決済連携</td>
+          </tr>
+          <tr>
+            <td><strong>Salon</strong></td>
+            <td><span style="font-family: var(--font-mono); font-weight: 600;">¥2,980/月</span></td>
+            <td>個人〜小規模サロン（1店舗）</td>
+            <td>Solo全機能 + スタッフ複数アカウント + HPB/ミニモ同期 + Instagram自動投稿 + コンシェルジュ朝夜配信</td>
+          </tr>
+          <tr>
+            <td><strong>Salon 追加店舗</strong></td>
+            <td><span style="font-family: var(--font-mono); font-weight: 600;">+¥1,980/月</span></td>
+            <td>多店舗展開</td>
+            <td>店舗ごとの分析、横断管理</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>オプション</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th>オプション</th><th class="col-narrow">価格</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>オンボーディング代行</strong></td><td><span class="badge good">¥0</span></td><td>月額に含む。LINE OA開設・リッチメニュー・初期テンプレート</td></tr>
+          <tr><td><strong>初期データ移行</strong></td><td>¥5,000（初回のみ）</td><td>既存カルテCSV取込（セルフは¥0）</td></tr>
+          <tr><td><strong>成果連動 Plus</strong></td><td>¥100/件（任意）</td><td>LINE経由新規予約成立時、オーナー任意で有効化</td></tr>
+        </tbody>
+      </table>
+
+      <h3>意思決定の記録（価格モデル）</h3>
+      <div class="decision-grid">
+        <div class="decision-card">
+          <div class="decision-tag">案 1</div>
+          <div class="decision-name">1プラン ¥2,980 一本化</div>
+          <div class="decision-desc">フリーランス層（ハナ）を捨てる判断は早すぎる。<span class="badge bad">不採用</span></div>
+        </div>
+        <div class="decision-card">
+          <div class="decision-tag">案 2</div>
+          <div class="decision-name">完全成果報酬モデル</div>
+          <div class="decision-desc">収益予測が立ちにくい、ヘビーユーザー逆ザヤリスク。<span class="badge neutral">保留</span></div>
+        </div>
+        <div class="decision-card adopted">
+          <div class="decision-tag">案 3</div>
+          <div class="decision-name">2プラン + 成果連動 Plus</div>
+          <div class="decision-desc">フリーランス層維持・意思決定簡素化・成果連動の余地確保。</div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §06 COMPETITORS
+    ============================================ -->
+    <section class="doc-section" id="s06" data-screen-label="06 Competitors">
+      <div class="section-num">SECTION 06 · COMPETITORS</div>
+      <h2>競合認識と差別化軸</h2>
+      <p class="section-lead">
+        実競合は LINE × サロンSaaS 領域の3社。サロンボード等は競合だが「真っ向勝負しない」位置取り。
+      </p>
+
+      <h3>真の競合</h3>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th class="col-narrow">競合</th>
+            <th class="col-narrow">月額</th>
+            <th>強み</th>
+            <th>SalonRink Concierge の差別化軸</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>リピッテ</strong></td><td>¥9,800〜</td><td>LINE特化、リピート促進、知名度高</td><td>価格 1/3、AIカルテ標準、HPB自動同期</td></tr>
+          <tr><td><strong>LiME</strong></td><td>¥5,000〜</td><td>カルテ管理、シンプル</td><td>LINEアドオン設計、コンシェルジュAI配信</td></tr>
+          <tr><td><strong>サロンコネクト</strong></td><td>¥4,400〜</td><td>LINE活用、機能豊富</td><td>既存LINE活用度、月額の安さ</td></tr>
+        </tbody>
+      </table>
+
+      <h3>LP掲載用 比較表</h3>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>比較項目</th>
+            <th class="col-narrow">リピッテ</th>
+            <th class="col-narrow">LiME</th>
+            <th class="col-narrow">サロンコネクト</th>
+            <th class="col-narrow">SalonRink Concierge</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>LINE 特化度</td><td>◯</td><td>△</td><td>×</td><td><strong>★ アドオン設計</strong></td></tr>
+          <tr><td>AIカルテ自動生成</td><td>×</td><td>△</td><td>×</td><td><strong>★ 標準搭載</strong></td></tr>
+          <tr><td>既存LINE 活用</td><td>△</td><td>×</td><td>×</td><td><strong>★ そのまま使える</strong></td></tr>
+          <tr><td>HPB 自動同期</td><td>×</td><td>×</td><td>△</td><td><strong>★ 標準搭載</strong></td></tr>
+          <tr><td>月額(最小プラン)</td><td>¥9,800</td><td>¥5,000</td><td>¥4,400</td><td><strong>¥1,980</strong></td></tr>
+          <tr><td>14日無料</td><td>△</td><td>×</td><td>△</td><td><strong>★ あり</strong></td></tr>
+        </tbody>
+      </table>
+
+      <h3>戦略：「真似 + 凌駕」</h3>
+      <ul>
+        <li>各社の良いところは全部採用</li>
+        <li><strong>最安値</strong>（Solo ¥1,980 / Salon ¥2,980）</li>
+        <li><strong>LINE特化</strong>（アドオン路線）</li>
+        <li><strong>AIカルテ標準搭載</strong>（オプション扱いにせず標準）</li>
+        <li><strong>AOKAE 記事配信</strong>（haircolor-lab・aokae.net からの送客）</li>
+      </ul>
+    </section>
+
+
+    <!-- ===========================================================
+         PART B — WHAT
+    =========================================================== -->
+    <div class="part-divider">
+      <div>
+        <div class="part-divider-label">Part B</div>
+        <div class="part-divider-sub">What — 構成・仕様</div>
+      </div>
+    </div>
+
+
+    <!-- ============================================
+         §07 PRODUCT LAYERS  ★v3新規
+    ============================================ -->
+    <section class="doc-section" id="s07" data-screen-label="07 Product Layers">
+      <div class="section-num">SECTION 07 · PRODUCT LAYERS <span class="v3-badge">NEW</span></div>
+      <h2>プロダクト全体構成（4レイヤー）</h2>
+      <p class="section-lead">
+        美容師は普段通り HPB / ミニモ / Instagram を使う。その「上」と「裏」に SalonRink Concierge が動き、すべてが LINE 一本に集約される。
+      </p>
+
+      <div class="arch">
+        <div class="arch-tier-label">Layer 1 · 既存ツール（美容師は普段通り使う）</div>
+        <div class="arch-tier">
+          <div class="arch-box">
+            <p class="arch-box-name">HotPepper Beauty</p>
+            <p class="arch-box-sub">予約管理</p>
+          </div>
+          <div class="arch-box">
+            <p class="arch-box-name">ミニモ</p>
+            <p class="arch-box-sub">予約管理</p>
+          </div>
+          <div class="arch-box">
+            <p class="arch-box-name">Instagram</p>
+            <p class="arch-box-sub">SNS</p>
+          </div>
+        </div>
+
+        <div class="arch-arrow">↓</div>
+
+        <div class="arch-tier-label">Layer 2 · SalonRink Core（裏方・美容師に見えない）</div>
+        <div class="arch-tier">
+          <div class="arch-box core">
+            <p class="arch-box-name">VPS HPB Bot</p>
+            <p class="arch-box-sub">160.251.213.197</p>
+          </div>
+          <div class="arch-box core">
+            <p class="arch-box-name">Vercel + Supabase</p>
+            <p class="arch-box-sub">salonrink.com / Pro</p>
+          </div>
+          <div class="arch-box core">
+            <p class="arch-box-name">Claude AI</p>
+            <p class="arch-box-sub">Haiku · カルテ生成</p>
+          </div>
+        </div>
+
+        <div class="arch-arrow">↓</div>
+
+        <div class="arch-tier-label">Layer 3 · LINE Layer（美容師・顧客の唯一の接点）</div>
+        <div class="arch-tier">
+          <div class="arch-box line">
+            <p class="arch-box-name">@salonrink-concierge</p>
+            <p class="arch-box-sub">美容師向け OA</p>
+          </div>
+          <div class="arch-box line">
+            <p class="arch-box-name">サロン公式LINE</p>
+            <p class="arch-box-sub">顧客向け</p>
+          </div>
+          <div class="arch-box line">
+            <p class="arch-box-name">LIFF Admin</p>
+            <p class="arch-box-sub">編集 UI</p>
+          </div>
+        </div>
+
+        <div class="arch-arrow">↓</div>
+
+        <div class="arch-tier-label">Layer 4 · 接点</div>
+        <div class="arch-tier">
+          <div class="arch-box">
+            <p class="arch-box-name">サロンオーナー</p>
+            <p class="arch-box-sub">LINE 一本で完結</p>
+          </div>
+          <div class="arch-box">
+            <p class="arch-box-name">スタッフ</p>
+            <p class="arch-box-sub">LINE OA Manager</p>
+          </div>
+          <div class="arch-box">
+            <p class="arch-box-name">お客様</p>
+            <p class="arch-box-sub">サロン公式LINE</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">設計原理</div>
+        既存ツール（Layer 1）はそのまま、SalonRink Core（Layer 2）が裏で同期し、すべての接点を LINE Layer（Layer 3）に集約する。<br />
+        「画面のないSaaS」とは、Layer 2 を Layer 3 に隠す設計を指す。
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §08 LP STRUCTURE
+    ============================================ -->
+    <section class="doc-section" id="s08" data-screen-label="08 LP Structure">
+      <div class="section-num">SECTION 08 · LP STRUCTURE</div>
+      <h2>LP 構成（salonrink.com）</h2>
+      <p class="section-lead">
+        12セクション構成。3シーン In Action（朝・夜・顧客）、事例（キレイ鶴見店）、競合比較、2プラン料金を新規追加。各セクションには <code>data-screen-label</code> を付与済み。
+      </p>
+
+      <div class="tree">
+        <span class="label">LP SECTIONS · v2</span>
+00&nbsp;Nav&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">sticky header / Concierge brand / CTA</span>
+01&nbsp;Hero&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">LINE トークモック付き</span>
+02&nbsp;Problem&nbsp;&nbsp;&nbsp;<span class="dim">既存LINEだけでは足りない3つ</span>
+03&nbsp;Solution&nbsp;&nbsp;<span class="dim">LINEに乗せる構造図 + 3役割</span>
+04&nbsp;In&nbsp;Action&nbsp;<span class="accent">3シーン: 朝07:00 / 夜21:00 / 顧客</span>
+05&nbsp;AI&nbsp;Karte&nbsp;&nbsp;<span class="dim">Before / After 比較</span>
+06&nbsp;Numbers&nbsp;&nbsp;&nbsp;<span class="dim">3つの定量効果 (ダーク背景)</span>
+07&nbsp;Cases&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="accent">キレイ鶴見店 事例第一号</span>
+08&nbsp;Steps&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">導入3ステップ</span>
+09&nbsp;Pricing&nbsp;&nbsp;&nbsp;<span class="accent">2プラン Solo¥1,980 / Salon¥2,980</span>
+10&nbsp;Compare&nbsp;&nbsp;&nbsp;<span class="accent">リピッテ/LiME/サロンコネクト</span>
+11&nbsp;FAQ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">LINE特有の不安に答える8問</span>
+12&nbsp;CTA&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">LINE連携で開始</span>
+&nbsp;&nbsp;&nbsp;&nbsp;Footer
+      </div>
+
+      <h3>ヒーロー見出し 4種（Tweaksで切替）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-narrow">キー</th><th>文言</th><th class="col-narrow">特性</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>default</code></td><td>いまの<em>LINE公式アカウント</em>を、サロンの業務システムに。</td><td><span class="badge good">推奨</span></td></tr>
+          <tr><td><code>tools_die</code></td><td>管理画面、<em>もう開かなくていい</em>。</td><td><span class="badge neutral">過激</span></td></tr>
+          <tr><td><code>no_new_app</code></td><td><em>新しいアプリは、要りません</em>。</td><td><span class="badge neutral">安心系</span></td></tr>
+          <tr><td><code>addon</code></td><td>LINEを置き換えない。<em>LINEに乗せる</em>。</td><td><span class="badge neutral">直球</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ============================================
+         §09 ADMIN UI · 4 SCENES  ★v3新規
+    ============================================ -->
+    <section class="doc-section" id="s09" data-screen-label="09 Admin UI">
+      <div class="section-num">SECTION 09 · ADMIN UI · 4 SCENES <span class="v3-badge">NEW</span></div>
+      <h2>LIFF 管理画面（4 シーン構成）</h2>
+      <p class="section-lead">
+        LP「LINEで始める」CTA から始まるユーザー体験を 4 シーンに分解。実装順序は <strong>Scene 4 → 3 → 2 → 1</strong> の逆順（既存最優先タスクと完全一致するため）。
+      </p>
+
+      <div class="scene-grid">
+        <div class="scene-card">
+          <div class="scene-num">
+            <span>Scene</span>
+            <strong>01</strong>
+          </div>
+          <div class="scene-body">
+            <h4>オンボーディング Bot 会話ウィザード</h4>
+            <div class="scene-path">@salonrink-concierge ・友だち追加〜セットアップ完了</div>
+            <p class="scene-desc">
+              LP CTA → LINE OA 友だち追加 → Bot が会話形式で「サロン名」「HPB URL」「プラン選択」を聞き、Stripe Checkout（外部ブラウザ）で決済完了 → 翌朝7時から配信開始。5分で完了。
+            </p>
+            <div class="scene-meta">
+              <span class="scene-meta-item"><strong>状態</strong>: 未実装</span>
+              <span class="scene-meta-item"><strong>工数</strong>: Sprint 4 / Day 13-17</span>
+              <span class="scene-meta-item"><strong>新規要素</strong>: Bot 会話フロー, Stripe metadata 連携</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-num">
+            <span>Scene</span>
+            <strong>02</strong>
+          </div>
+          <div class="scene-body">
+            <h4>日常運用 — リッチメニュー + 朝/夜の自動配信</h4>
+            <div class="scene-path">@salonrink-concierge ・毎朝 07:00 / 毎晩 21:00 JST</div>
+            <p class="scene-desc">
+              リッチメニュー 6 マス（今日の予約 / AIカルテ / 顧客 / メニュー / レポート / 設定）。朝はサマリー（予約・カウンセリング・リピート提案）が Flex Message で届き、夜は本日の実績と「リタッチ周期のお客様 2名に送りますか?」→「送って」の 2文字返信で配信完了。
+            </p>
+            <div class="scene-meta">
+              <span class="scene-meta-item"><strong>状態</strong>: コンシェルジュ機能は本番稼働中 (cons_daily_analysis)</span>
+              <span class="scene-meta-item"><strong>工数</strong>: Sprint 3 / Day 8-12</span>
+              <span class="scene-meta-item"><strong>新規要素</strong>: 美容師向け LINE OA, Flex Message テンプレ, postback handler</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-num">
+            <span>Scene</span>
+            <strong>03</strong>
+          </div>
+          <div class="scene-body">
+            <h4>LIFF 管理画面 — ダッシュボード</h4>
+            <div class="scene-path">/liff/dashboard ・ホーム画面</div>
+            <p class="scene-desc">
+              KPI 3 枚（今月売上 / 新規予約 / リピート率）+ 今日の予約一覧（HPB / LINE / 新規タグ付き）+ 承認待ち AIカルテ（一括承認ボタン）。和モダン UI、ボトムナビ 5 タブ。3秒で今日の状態を把握できる構成。
+            </p>
+            <div class="scene-meta">
+              <span class="scene-meta-item"><strong>状態</strong>: 未実装</span>
+              <span class="scene-meta-item"><strong>工数</strong>: Sprint 2 / Day 4-7</span>
+              <span class="scene-meta-item"><strong>新規要素</strong>: KPI 集計関数, BottomNav, BookingItem コンポーネント</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="scene-card">
+          <div class="scene-num">
+            <span>Scene</span>
+            <strong>04</strong>
+          </div>
+          <div class="scene-body">
+            <h4>LIFF 管理画面 — メニュー編集 <span class="badge adopted">最優先</span></h4>
+            <div class="scene-path">/liff/menu ・salon_menus テーブル直結</div>
+            <p class="scene-desc">
+              カテゴリタブ（カット / カラー / トリートメント / セット）でフィルタ。各メニューに料金・所要時間を表示、タップで編集モーダル。右下 FAB で新規追加。<strong>menuToPrice 廃止</strong> の根本解決を兼ねる（findMenuByName でルックアップ）。
+            </p>
+            <div class="scene-meta">
+              <span class="scene-meta-item"><strong>状態</strong>: 未実装（既存最優先タスク）</span>
+              <span class="scene-meta-item"><strong>工数</strong>: Sprint 1 / Day 1-3</span>
+              <span class="scene-meta-item"><strong>新規要素</strong>: salon_menus RLS, /api/menus, MenuClient, MenuEditor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-label">UI 設計原則</div>
+        ・<strong>美容師向け = LINEグリーン</strong>（#06C755）、<strong>顧客向け = コーラル</strong>（#D85A30）でトーンを分離<br />
+        ・LIFF 画面は <strong>和モダン</strong>（warm cream + 墨 + Noto Serif JP 見出し）<br />
+        ・主要 CTA は画面下部に配置、片手操作前提、タップ領域 44pt 以上<br />
+        ・<strong>機能名ではなく結果</strong>を見せる（「AIカルテ自動生成」→「明日の準備が終わっています」）
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §10 EXISTING ASSETS MAP
+    ============================================ -->
+    <section class="doc-section" id="s10" data-screen-label="10 Existing Assets">
+      <div class="section-num">SECTION 10 · EXISTING ASSETS</div>
+      <h2>既存実装資産マップ</h2>
+      <p class="section-lead">
+        LPで訴求する体験はすべて、稼働中または実装済みの資産で裏付けられている。<strong>実装にないものを訴求しない</strong>のがルール。
+      </p>
+
+      <h3>稼働状況別の資産マップ</h3>
+      <div class="asset-grid">
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">コンシェルジュ機能</p>
+          <p class="asset-role">cons_daily_analysis テーブル。日次集計・キャッシュ。朝7時/夜21時の自動配信エンジン基盤。</p>
+          <p class="asset-detail">commit 2917e35 / Claude Haiku</p>
+        </div>
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">AIカルテ自動生成</p>
+          <p class="asset-role">チャットメモから構造化カルテ生成。Claude Haiku 経由。</p>
+          <p class="asset-detail">LP §05 Before/After で訴求</p>
+        </div>
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">HPB 同期 Bot</p>
+          <p class="asset-role">HotPepper Beauty から予約自動取得。Playwright Stealth + 30分 cron。</p>
+          <p class="asset-detail">VPS 160.251.213.197 / 21日 211件取得実績</p>
+        </div>
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">LIFF 事前カウンセリング</p>
+          <p class="asset-role">5問フォーム、本番動作確認済み。Scene 1 オンボーディングの基盤。</p>
+          <p class="asset-detail">LIFF ID = 2009962150-475Lr5g8</p>
+        </div>
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">Stripe 決済</p>
+          <p class="asset-role">14日無料トライアル動作確認済み。Customer Portal 実装済み。</p>
+          <p class="asset-detail">スモールプラン → 2プラン化要対応</p>
+        </div>
+        <div class="asset-card live">
+          <div class="asset-status live">★ Live · 本番稼働中</div>
+          <p class="asset-name">Resend メール認証</p>
+          <p class="asset-role">Magic Link 本番動作確認済み。LIFF への代替認証経路として活用可能。</p>
+          <p class="asset-detail">noreply@salonrink.com</p>
+        </div>
+        <div class="asset-card partial">
+          <div class="asset-status partial">⚠ Partial · Meta 審査待ち</div>
+          <p class="asset-name">Instagram 自動投稿</p>
+          <p class="asset-role">3枚カルーセル実装完了、月次トークン更新 cron 稼働。Meta Business Verification 審査中（最短ETA 5月末）。</p>
+          <p class="asset-detail">@salonrink_concierge / IG_ID=17841426464539018</p>
+        </div>
+        <div class="asset-card todo">
+          <div class="asset-status todo">▢ Todo · 未実装</div>
+          <p class="asset-name">salon_menus CRUD</p>
+          <p class="asset-role">RLS 確認 → メニュー編集 UI → menuToPrice 廃止。Sprint 1 で着手。</p>
+          <p class="asset-detail">既存最優先タスク</p>
+        </div>
+        <div class="asset-card todo">
+          <div class="asset-status todo">▢ Todo · 未実装</div>
+          <p class="asset-name">@salonrink-concierge LINE OA</p>
+          <p class="asset-role">美容師向け公式アカウント。Webhook + リッチメニュー + Flex Message 配信。Sprint 3 で着手。</p>
+          <p class="asset-detail">新規 LINE Developers チャネル作成</p>
+        </div>
+        <div class="asset-card todo">
+          <div class="asset-status todo">▢ Todo · 未実装</div>
+          <p class="asset-name">オンボーディング Bot</p>
+          <p class="asset-role">友だち追加〜セットアップ完了の会話ステートマシン。Sprint 4 で着手。</p>
+          <p class="asset-detail">onboarding_sessions テーブル新設</p>
+        </div>
+      </div>
+
+      <h3>キレイ鶴見店（旗艦店・事例第一号）</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">店舗名</span></td><td>キレイ鶴見店（横浜・グレイヘア専門）</td></tr>
+          <tr><td><span class="key">HotPepper Beauty</span></td><td>H000501100</td></tr>
+          <tr><td><span class="key">Instagram</span></td><td>@kirei.tsurumi</td></tr>
+          <tr><td><span class="key">X (Twitter)</span></td><td>@kirei_tsurumi</td></tr>
+          <tr><td><span class="key">位置づけ</span></td><td>AOKAE 自社運営の旗艦店。PMF 確認の実証フィールド、LP事例の第一号</td></tr>
+          <tr><td><span class="key">差別化価値</span></td><td>「運営会社 AOKAE が自ら運営するサロンで実証済み」は競合が真似できない強み</td></tr>
+        </tbody>
+      </table>
+
+      <h3>設計指針</h3>
+      <ul>
+        <li><strong>機能を主役にしない</strong>: 技術自慢を避ける、AI 技術アピール抑制</li>
+        <li><strong>「結果として何が起きているか」を見せる</strong>: 例「あなたが寝ている間に、明日の準備が終わっています」</li>
+        <li><strong>裏方は"見えるが触らない"</strong>: HPB 連携などは「裏でやっている」と一言で示す程度</li>
+        <li><strong>LPコピーは実装可能な範囲内に留める</strong>: 実装にないものを訴求しない</li>
+      </ul>
+    </section>
+
+
+    <!-- ===========================================================
+         PART C — HOW
+    =========================================================== -->
+    <div class="part-divider">
+      <div>
+        <div class="part-divider-label">Part C</div>
+        <div class="part-divider-sub">How — 実装・運用</div>
+      </div>
+    </div>
+
+
+    <!-- ============================================
+         §11 DESIGN TOKENS
+    ============================================ -->
+    <section class="doc-section" id="s11" data-screen-label="11 Design Tokens">
+      <div class="section-num">SECTION 11 · DESIGN TOKENS</div>
+      <h2>デザイントークン</h2>
+      <p class="section-lead">
+        <code>styles.css</code> 冒頭の <code>:root</code> に定義。基本方針は <em>和モダン × LINEグリーン差し色</em>。LP / LIFF / SDK 全体で共通利用。
+      </p>
+
+      <h3>カラー</h3>
+      <div class="tokens-grid">
+        <div class="token"><div class="token-swatch" style="background: #1a1814;"></div><span class="token-name">--ink</span><span class="token-val">#1a1814</span></div>
+        <div class="token"><div class="token-swatch" style="background: #3d3833;"></div><span class="token-name">--ink-2</span><span class="token-val">#3d3833</span></div>
+        <div class="token"><div class="token-swatch" style="background: #6f6a62;"></div><span class="token-name">--ink-3</span><span class="token-val">#6f6a62</span></div>
+        <div class="token"><div class="token-swatch" style="background: #9c968c;"></div><span class="token-name">--ink-4</span><span class="token-val">#9c968c</span></div>
+        <div class="token"><div class="token-swatch" style="background: #faf8f3;"></div><span class="token-name">--bg</span><span class="token-val">#faf8f3</span></div>
+        <div class="token"><div class="token-swatch" style="background: #f2eee4;"></div><span class="token-name">--bg-2</span><span class="token-val">#f2eee4</span></div>
+        <div class="token"><div class="token-swatch" style="background: #ffffff;"></div><span class="token-name">--card</span><span class="token-val">#ffffff</span></div>
+        <div class="token"><div class="token-swatch" style="background: #e6e1d6;"></div><span class="token-name">--line</span><span class="token-val">#e6e1d6</span></div>
+        <div class="token"><div class="token-swatch" style="background: #06C755;"></div><span class="token-name">--accent</span><span class="token-val">#06C755</span></div>
+        <div class="token"><div class="token-swatch" style="background: #00b14b;"></div><span class="token-name">--accent-2</span><span class="token-val">#00b14b</span></div>
+        <div class="token"><div class="token-swatch" style="background: #e6f7ec;"></div><span class="token-name">--accent-soft</span><span class="token-val">#e6f7ec</span></div>
+        <div class="token"><div class="token-swatch" style="background: #054d22;"></div><span class="token-name">--accent-ink</span><span class="token-val">#054d22</span></div>
+        <div class="token"><div class="token-swatch" style="background: #D85A30;"></div><span class="token-name">--coral</span><span class="token-val">#D85A30</span></div>
+        <div class="token"><div class="token-swatch" style="background: #FBEAF0;"></div><span class="token-name">--coral-soft</span><span class="token-val">#FBEAF0</span></div>
+      </div>
+
+      <h3>タイポグラフィ</h3>
+      <table class="tbl">
+        <tbody>
+          <tr>
+            <td class="col-narrow"><span class="key">DISPLAY</span></td>
+            <td style="font-family: var(--font-display); font-size: 22px; font-weight: 600;">Noto Serif JP — 見出し</td>
+            <td class="muted">和モダン感・信頼感（500 / 600）</td>
+          </tr>
+          <tr>
+            <td><span class="key">BODY</span></td>
+            <td style="font-family: var(--font-body); font-size: 16px;">Noto Sans JP — 本文</td>
+            <td class="muted">可読性（400-700）</td>
+          </tr>
+          <tr>
+            <td><span class="key">MONO</span></td>
+            <td style="font-family: var(--font-mono); font-size: 14px;">JetBrains Mono — ラベル・数値</td>
+            <td class="muted">エンジニアリングの信頼感</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>スペーシング / 角丸 / 影</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">セクション縦余白</span></td><td>120px（モバイル 80px）</td></tr>
+          <tr><td><span class="key">コンテナ最大幅</span></td><td>1180px（狭い場合 880px）</td></tr>
+          <tr><td><span class="key">小カード角丸</span></td><td>8〜12px</td></tr>
+          <tr><td><span class="key">大カード角丸</span></td><td>14〜18px</td></tr>
+          <tr><td><span class="key">モーダル / iPhone モック</span></td><td>28〜38px</td></tr>
+          <tr><td><span class="key">標準影</span></td><td>0 1px 2px rgba(0,0,0,0.04)</td></tr>
+          <tr><td><span class="key">FAB 影</span></td><td>0 3px 10px rgba(6,199,85,0.35)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>アイコン</h3>
+      <ul>
+        <li><strong>Tabler Icons React</strong> を採用（線が細く、和モダンUIとの相性が良い）</li>
+        <li><code>npm i @tabler/icons-react</code></li>
+        <li><strong>絵文字は本実装で使わない</strong>（モックの絵文字は Tabler Icon に置換）</li>
+        <li>1要素1アイコン、装飾的な羅列を避ける</li>
+      </ul>
+    </section>
+
+
+    <!-- ============================================
+         §12 FILES & TECH STACK
+    ============================================ -->
+    <section class="doc-section" id="s12" data-screen-label="12 Files">
+      <div class="section-num">SECTION 12 · FILES &amp; STACK</div>
+      <h2>ファイル構成 / 技術スタック</h2>
+      <p class="section-lead">
+        LP は静的HTML優先、LIFF管理画面は Next.js App Router。Tweaks のみ React で動的、本文は静的マークアップ（直接エディタで文言を書き換え可能）。
+      </p>
+
+      <h3>LP プロジェクト</h3>
+      <div class="tree">
+        <span class="label">LP REPOSITORY</span>
+NEW&nbsp;改定/
+├── SalonRink&nbsp;LP.html&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">v1（保存版）</span>
+├── <span class="accent">SalonRink&nbsp;LP&nbsp;v2.html</span>&nbsp;&nbsp;&nbsp;<span class="dim">★ メインLP（最新）</span>
+├── <span class="accent">SalonRink&nbsp;指示書&nbsp;v3.html</span>&nbsp;<span class="dim">★ 本ドキュメント</span>
+├── styles.css&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">全スタイル</span>
+├── tweaks.jsx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">Tweaks 統合</span>
+└── tweaks-panel.jsx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">Tweaks UI ライブラリ</span>
+      </div>
+
+      <h3>SalonRink 本体（Next.js）</h3>
+      <div class="tree">
+        <span class="label">SALONRINK MONOREPO</span>
+salonrink/  <span class="dim">github.com/okuwabara07-gif/salonrink</span>
+├── app/
+│&nbsp;&nbsp;&nbsp;├── api/
+│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── menus/route.ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">GET/POST</span>
+│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── menus/[id]/route.ts&nbsp;<span class="dim">PATCH/DELETE</span>
+│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;├── menus/reorder/route.ts
+│&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;└── line/owner-webhook/route.ts&nbsp;<span class="dim">Sprint 3</span>
+│&nbsp;&nbsp;&nbsp;└── liff/
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="accent">menu/</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">★ Scene 4 · Sprint 1</span>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="accent">dashboard/</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">★ Scene 3 · Sprint 2</span>
+│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── _components/
+├── lib/
+│&nbsp;&nbsp;&nbsp;├── menus/findMenuByName.ts&nbsp;<span class="dim">menuToPrice 置換</span>
+│&nbsp;&nbsp;&nbsp;├── line/flex/*.ts&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">Flex Message テンプレ</span>
+│&nbsp;&nbsp;&nbsp;└── supabase/server.ts
+├── supabase/
+│&nbsp;&nbsp;&nbsp;└── migrations/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">salon_menus RLS</span>
+└── vercel.json&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dim">cron: 07:00 / 21:00 JST</span>
+      </div>
+
+      <h3>技術スタック確定事項</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">Frontend</span></td><td>Next.js 14+ App Router / React / TypeScript strict</td></tr>
+          <tr><td><span class="key">Styling</span></td><td>Tailwind CSS（LIFF）/ 素のCSS（LP本体）</td></tr>
+          <tr><td><span class="key">Icons</span></td><td>Tabler Icons React</td></tr>
+          <tr><td><span class="key">Backend</span></td><td>Vercel Functions + Supabase (fmpmgilgvvfezursmyic)</td></tr>
+          <tr><td><span class="key">LINE</span></td><td>@line/liff + Messaging API</td></tr>
+          <tr><td><span class="key">Validation</span></td><td>Zod</td></tr>
+          <tr><td><span class="key">AI</span></td><td>Claude Haiku（コンテンツ生成のみ）</td></tr>
+          <tr><td><span class="key">VPS</span></td><td>ConoHa Tokyo 160.251.213.197（HPB Bot 専用）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>設計判断</h3>
+      <ul>
+        <li><strong>LP は静的HTML優先</strong>: <code>&lt;section&gt;</code> の静的マークアップで構成。ユーザーが直接エディタで文言を書き換えられる</li>
+        <li><strong>LIFF は Next.js</strong>: API 連携・状態管理が必要なため</li>
+        <li><strong>React は Tweaks と LIFF のみ</strong>: LP本文には使わない（Babel不要に保つ）</li>
+        <li><strong>LINE モックも静的HTML</strong>: コピー編集を直接可能に</li>
+      </ul>
+    </section>
+
+
+    <!-- ============================================
+         §13 IMPLEMENTATION ROADMAP  ★v3新規
+    ============================================ -->
+    <section class="doc-section" id="s13" data-screen-label="13 Roadmap">
+      <div class="section-num">SECTION 13 · ROADMAP · 20 DAYS <span class="v3-badge">NEW</span></div>
+      <h2>実装スプリント計画</h2>
+      <p class="section-lead">
+        既存最優先タスク（salon_menus RLS → メニューCRUD UI → menuToPrice 廃止）を Sprint 1 に置き、Scene 4 → 3 → 2 → 1 の逆順で実装。LP書き換えとLINEミニアプリ昇格は Week 2-3 で並行進行。
+      </p>
+
+      <h3>5スプリント構成</h3>
+      <div class="sprint-timeline">
+        <div class="sprint-row">
+          <div class="sprint-tag">Sprint 1<small>Day 1-3</small></div>
+          <div class="sprint-scope">Scene 4 · MenuCRUD</div>
+          <div class="sprint-deliv">
+            <strong>メニュー CRUD + menuToPrice 廃止</strong>
+            salon_menus RLS 確認・修正 → メニュー CRUD API → LIFF メニュー編集ページ → findMenuByName 置換。完了基準: キレイ鶴見店で実機動作確認。
+          </div>
+        </div>
+        <div class="sprint-row">
+          <div class="sprint-tag">Sprint 2<small>Day 4-7</small></div>
+          <div class="sprint-scope">Scene 3 · Dashboard</div>
+          <div class="sprint-deliv">
+            <strong>LIFF ダッシュボード</strong>
+            KPI 集計関数 (lib/kpi.ts) → /api/kpi → /liff/dashboard → BottomNav 共通コンポーネント。完了基準: KPI 3枚 + 予約一覧 + 承認待ちが 1画面で表示。
+          </div>
+        </div>
+        <div class="sprint-row">
+          <div class="sprint-tag">Sprint 3<small>Day 8-12</small></div>
+          <div class="sprint-scope">Scene 2 · LINE OA</div>
+          <div class="sprint-deliv">
+            <strong>美容師向け LINE OA + コンシェルジュ配信化</strong>
+            @salonrink-concierge-owner 開設 → Webhook → リッチメニュー → 朝7時/夜21時 cron 配信。完了基準: キレイ鶴見店で3日連続 自動配信動作確認。
+          </div>
+        </div>
+        <div class="sprint-row">
+          <div class="sprint-tag">Sprint 4<small>Day 13-17</small></div>
+          <div class="sprint-scope">Scene 1 · Onboarding</div>
+          <div class="sprint-deliv">
+            <strong>オンボーディング Bot</strong>
+            会話ステートマシン → onboarding_sessions テーブル → Stripe Checkout 連携 → 完了通知。完了基準: テスト OA で 5回完走テスト、異常系網羅。
+          </div>
+        </div>
+        <div class="sprint-row">
+          <div class="sprint-tag">Sprint 5<small>Day 18-20</small></div>
+          <div class="sprint-scope">Integration · 実証</div>
+          <div class="sprint-deliv">
+            <strong>統合テスト + キレイ鶴見店で実証</strong>
+            E2E（LP → Bot → Stripe → LIFF → 翌朝配信）→ パフォーマンス・コスト確認 → 営業解禁判断。完了基準: 7日連続動作実証 + LP公開 + 営業候補リスト。
+          </div>
+        </div>
+      </div>
+
+      <h3>並行 Track（LP書き換え + LINEミニアプリ昇格）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-narrow">期間</th><th>LP 書き換え</th><th>LINE ミニアプリ昇格</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Week 1</strong><br /><small>Day 1-7</small></td><td>feature/lp-marketin-v1 ブランチ作業（ヒーロー・FAQ・料金）</td><td>（準備期間）</td></tr>
+          <tr><td><strong>Week 2</strong><br /><small>Day 8-14</small></td><td>LP 仕上げ、In Action セクション埋め込み、Cases セクション追加</td><td>LINE Developers 設定、規約整備（terms / privacy）</td></tr>
+          <tr><td><strong>Week 3</strong><br /><small>Day 15-20</small></td><td>salonrink.com/concierge/ 本番公開</td><td>LIFF → ミニアプリ昇格、サービスメッセージAPI 切替</td></tr>
+        </tbody>
+      </table>
+
+      <h3>リスク管理</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">リスク</th><th>対策</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>salon_menus RLS 設定ミス</td><td>Day 1 SQL を段階適用、テスト SELECT 実行</td></tr>
+          <tr><td>HPB 同期 Bot との整合性が崩れる</td><td>Day 3-α 前に VPS 側の menuToPrice 呼出箇所を完全洗い出し</td></tr>
+          <tr><td>LINE Webhook 署名検証の落とし穴</td><td>開発初期に LINE Developers Console の検証ツールで疎通確認</td></tr>
+          <tr><td>Stripe Webhook 二重課金</td><td>idempotency key 導入、metadata で重複検知</td></tr>
+          <tr><td>キレイ鶴見店データ汚染</td><td>本番投入前にステージング環境で検証</td></tr>
+          <tr><td>Vercel ビルドマシン Elastic 切替</td><td>会話開始時に必ず Standard 維持を確認</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <div class="callout-label">DEFINITION OF DONE</div>
+        各 Sprint 完了基準: ①コード commit（commit message に全角括弧不使用）/ ②Vercel 本番デプロイ / ③キレイ鶴見店アカウントで実機動作確認 / ④エラー時のロールバック手順確認 / ⑤次 Sprint の開始条件が満たされている
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §14 TWEAKS
+    ============================================ -->
+    <section class="doc-section" id="s14" data-screen-label="14 Tweaks">
+      <div class="section-num">SECTION 14 · TWEAKS</div>
+      <h2>Tweaks（プロトタイプの可変要素）</h2>
+      <p class="section-lead">
+        <code>tweaks.jsx</code> で以下を切替可能。永続化対応済み（<code>EDITMODE-BEGIN/END</code> ブロック）。
+      </p>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>キー</th>
+            <th class="col-narrow">種類</th>
+            <th>選択肢</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><code>heroHeadline</code></td><td><span class="badge neutral">Select</span></td><td>4種の見出し（§08 参照）</td></tr>
+          <tr><td><code>accent</code></td><td><span class="badge neutral">Color</span></td><td>LINE緑 / 墨 / 青 / 橙</td></tr>
+          <tr><td><code>pricingMode</code></td><td><span class="badge neutral">Select</span></td><td>2プラン表示 / Solo強調 / Salon強調 <span class="v3-badge">NEW</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ===========================================================
+         PART D — GUARDRAILS
+    =========================================================== -->
+    <div class="part-divider">
+      <div>
+        <div class="part-divider-label">Part D</div>
+        <div class="part-divider-sub">Guardrails — 制約・規律</div>
+      </div>
+    </div>
+
+
+    <!-- ============================================
+         §15 DO / DON'T  ★v3新規（独立分離）
+    ============================================ -->
+    <section class="doc-section" id="s15" data-screen-label="15 Do/Don't">
+      <div class="section-num">SECTION 15 · DO / DON'T <span class="v3-badge">NEW</span></div>
+      <h2>規律 — 守ること / やらないこと</h2>
+      <p class="section-lead">
+        LP / LIFF / Bot メッセージ、すべての成果物に共通する規律。新担当者が最初に読むべきセクション。
+      </p>
+
+      <h3>コピーライティング</h3>
+      <div class="guidance">
+        <div class="guidance-col do">
+          <h4>DO</h4>
+          <ul>
+            <li>主語は必ず「サロンオーナー / スタッフ」</li>
+            <li>機能名ではなく「結果として何が起きるか」を書く</li>
+            <li>数値には「※モデル値・参考値」を必ず明記</li>
+            <li>体験ベースの言い切り（曖昧な「〜できます」を避ける）</li>
+            <li>空状態にも丁寧な案内文を書く</li>
+            <li>エラーは「何が起きたか + どうすればよいか」セット</li>
+          </ul>
+        </div>
+        <div class="guidance-col dont">
+          <h4>DON'T</h4>
+          <ul>
+            <li>来店客向けに読めるコピー（「サロンに、専属コンシェルジュを」型）</li>
+            <li>AI 技術用語（「自動構造化」「ベクトル検索」など）</li>
+            <li>セキュリティ技術用語を前面に出す（AES-256, TLS 1.3, RLS）</li>
+            <li>「いつものLINEで」など個人 LINE で業務できる誤解表現</li>
+            <li>「5分で完了」など LINE 未開設サロンに非現実的な表現</li>
+            <li>「SalonRink (LINE Edition)」表記</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>デザイン</h3>
+      <div class="guidance">
+        <div class="guidance-col do">
+          <h4>DO</h4>
+          <ul>
+            <li>余白を恐れず使う（密度より静寂）</li>
+            <li>数値は JetBrains Mono で揃える（¥4,000 / 60分 / 14日）</li>
+            <li>見出しは Noto Serif JP で品格を出す</li>
+            <li>アクセント色は 1画面に 2-3 要素まで</li>
+            <li>美容師向けは LINEグリーン、顧客向けはコーラルで分離</li>
+            <li>主要 CTA は画面下部、タップ領域 44pt 以上</li>
+          </ul>
+        </div>
+        <div class="guidance-col dont">
+          <h4>DON'T</h4>
+          <ul>
+            <li>過剰な絵文字、装飾アイコンの羅列</li>
+            <li>不要なグラデーション</li>
+            <li>派手なアニメーション、紙吹雪、confetti</li>
+            <li>「コンシェルジュくん」型の AI キャラ擬人化</li>
+            <li>機能を平等に並列表示（優先度のない UI）</li>
+            <li>ダークモードのデフォルト化（warm light モードのみ）</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>実装</h3>
+      <div class="guidance">
+        <div class="guidance-col do">
+          <h4>DO</h4>
+          <ul>
+            <li>commit message は英語、簡潔に（refactor/feat/fix プレフィックス）</li>
+            <li>Vercel チーム デフォルトビルドマシン = Standard 維持</li>
+            <li>キレイ鶴見店で実機動作確認してから他サロン営業</li>
+            <li>LP コピーは実装可能な範囲内に留める</li>
+            <li>機能を訴求する前に「結果」を訴求する</li>
+            <li>API 鍵・トークンは Vercel 環境変数のみ、コミットしない</li>
+          </ul>
+        </div>
+        <div class="guidance-col dont">
+          <h4>DON'T</h4>
+          <ul>
+            <li>commit message に全角括弧（）使用（dquote&gt; シェルハング原因）</li>
+            <li>Hobby プランで商用機能を運用（AdSense / 決済 / アフィリ）</li>
+            <li>個人情報の Supabase テーブル直接編集</li>
+            <li>本番 LINE OA に未検証 Bot を接続</li>
+            <li>LIFF 内で localStorage / sessionStorage に依存</li>
+            <li>Claude API を Haiku 以外で大量呼び出し（コスト爆発）</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         §16 CONSTRAINTS
+    ============================================ -->
+    <section class="doc-section" id="s16" data-screen-label="16 Constraints">
+      <div class="section-num">SECTION 16 · CONSTRAINTS</div>
+      <h2>制約・前提（重要メモ）</h2>
+      <p class="section-lead">
+        新担当者が見落としやすい前提条件と、実装上のガードレール。詳細は各セクションに正本あり。
+      </p>
+
+      <h3>確定済み要件（クロスリファレンス）</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">ペルソナ</span></td><td>ハナ / タカシ / キョウコ — 詳細 → <a href="#s05" style="color: var(--accent-2);">§05</a></td></tr>
+          <tr><td><span class="key">価格</span></td><td>Solo ¥1,980 / Salon ¥2,980 — 詳細 → <a href="#s05" style="color: var(--accent-2);">§05</a></td></tr>
+          <tr><td><span class="key">競合</span></td><td>リピッテ / LiME / サロンコネクト — 詳細 → <a href="#s06" style="color: var(--accent-2);">§06</a></td></tr>
+          <tr><td><span class="key">ブランド表記</span></td><td>SalonRink Concierge（2段） — 詳細 → <a href="#s04" style="color: var(--accent-2);">§04</a></td></tr>
+          <tr><td><span class="key">LP 構成</span></td><td>12 セクション + In Action + Cases + Compare — <a href="#s08" style="color: var(--accent-2);">§08</a></td></tr>
+          <tr><td><span class="key">実装スケジュール</span></td><td>20日5スプリント — <a href="#s13" style="color: var(--accent-2);">§13</a></td></tr>
+        </tbody>
+      </table>
+
+      <h3>LINE 仕様の前提</h3>
+      <div class="callout">
+        <div class="callout-label">CAUTION</div>
+        LINE 公式アカウントの仕様変更があった場合、A方針の前提が変わる可能性あり。<br />
+        特に <strong>Messaging API</strong>・<strong>LIFF</strong>・<strong>LINE Official Account Manager</strong> の利用条件は定期的に確認すべき。<br />
+        ミニアプリ昇格時はガイドラインの再確認必須。
+      </div>
+
+      <h3>インフラ参照値（変更厳禁）</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td class="col-med"><span class="key">Supabase</span></td><td><code>fmpmgilgvvfezursmyic</code></td></tr>
+          <tr><td><span class="key">VPS (HPB Bot)</span></td><td><code>160.251.213.197</code> / <code>/root/salonrink-sync-bot</code></td></tr>
+          <tr><td><span class="key">LIFF ID</span></td><td><code>2009962150-475Lr5g8</code></td></tr>
+          <tr><td><span class="key">IG App ID</span></td><td><code>990581526661487</code></td></tr>
+          <tr><td><span class="key">GitHub</span></td><td><code>okuwabara07-gif/salonrink</code></td></tr>
+          <tr><td><span class="key">Vercel チーム</span></td><td><code>okuwabara07-gifs-projects</code>（Pro）</td></tr>
+        </tbody>
+      </table>
+
+      <h3>コスト管理（月額固定）</h3>
+      <table class="tbl">
+        <tbody>
+          <tr><td><span class="key">Vercel Pro</span></td><td>$20</td></tr>
+          <tr><td><span class="key">Railway</span></td><td>~$5</td></tr>
+          <tr><td><span class="key">Topview Pro</span></td><td>$29</td></tr>
+          <tr><td><span class="key">Claude API (Haiku)</span></td><td>~$5</td></tr>
+          <tr><td><span class="key">ドメイン</span></td><td>~$3</td></tr>
+          <tr><td><span class="key">Supabase Free</span></td><td>$0</td></tr>
+          <tr><td><strong>合計</strong></td><td><strong>~$62/月（¥9,300）</strong></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ============================================
+         §17 NEXT TASKS
+    ============================================ -->
+    <section class="doc-section" id="s17" data-screen-label="17 Next Tasks">
+      <div class="section-num">SECTION 17 · NEXT</div>
+      <h2>次にやるべきこと（v3 優先度）</h2>
+      <p class="section-lead">
+        v2 で High だった項目（ブランド統一・2プラン化・3シーン・事例・競合比較）は LP 側で実装済み。<br />
+        v3 では <strong>LIFF管理画面の実装（Sprint 1-5）</strong>がメインタスク。
+      </p>
+
+      <div class="tasks">
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>Sprint 1 · salon_menus RLS + メニュー CRUD UI</strong>
+            <small>day01_salon_menus_rls.sql 実行 → /api/menus 実装 → /liff/menu ページ実装 → menuToPrice 廃止。詳細 → §13</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>Sprint 2 · LIFF ダッシュボード</strong>
+            <small>KPI 集計 → /liff/dashboard → BottomNav 共通化。詳細 → §13</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>Sprint 3 · 美容師向け LINE OA + コンシェルジュ配信化</strong>
+            <small>@salonrink-concierge-owner 開設 → Webhook → 朝/夜 cron。詳細 → §13</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">✓</span>
+          <div class="task-text">
+            <strong>キレイ鶴見店 実写差し替え</strong>
+            <small>事例セクションの店舗写真・スタイル写真を本物に。HPB・SNS リンクも実物確認</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">✓</span>
+          <div class="task-text">
+            <strong>LINE 実画面スクショ差し替え</strong>
+            <small>3シーン・AIカルテ・顧客 LIFF を本番 LINE で撮影し、CSS 製モックと差し替え</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority high">High</span>
+          <span class="task-check">✓</span>
+          <div class="task-text">
+            <strong>2プランの実 Stripe 商品化</strong>
+            <small>Solo ¥1,980 / Salon ¥2,980 / 追加店舗 +¥1,980 を Stripe Products に登録</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority med">Med</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>Sprint 4 · オンボーディング Bot</strong>
+            <small>会話ステートマシン → onboarding_sessions → Stripe Checkout 連携</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority med">Med</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>LP スマホ表示の追い込み</strong>
+            <small>3シーン mock の縦並び、Pricing 2プランのカード比率、Compare 表の横スクロール</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority med">Med</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>OG 画像・favicon</strong>
+            <small>公開時に必要。SalonRink Concierge のロゴアセット確定</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority med">Med</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>90秒 動画ツアー</strong>
+            <small>朝・夜・顧客の3シーンを実画面でつなぐ。Hero または 04 セクション差し替え用</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority med">Med</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>商標出願検討</strong>
+            <small>Cotobox 経由 3区分（¥160-180k 想定）。PMF 確認後（営業 10サロン超）に着手</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority low">Low</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>LINE ミニアプリ昇格</strong>
+            <small>LIFF → ミニアプリ。Week 2-3 で並行実施可能（§13 並行 Track 参照）</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority low">Low</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>A/B 検証用バリアント</strong>
+            <small>ヒーロー4種・Solo強調/Salon強調 を実トラフィックで検証</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority low">Low</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>移行支援セクション追加</strong>
+            <small>「紙カルテ写真 → AI 取込」「HPB 顧客リスト CSV 取込」の見せ方</small>
+          </div>
+        </div>
+        <div class="task">
+          <span class="task-priority low">Low</span>
+          <span class="task-check">▢</span>
+          <div class="task-text">
+            <strong>資料ダウンロード PDF</strong>
+            <small>「資料をダウンロード」CTA の実体。Pricing 資料・導入事例集</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ===========================================================
+         APPENDIX
+    =========================================================== -->
+    <div class="part-divider">
+      <div>
+        <div class="part-divider-label">Appendix</div>
+        <div class="part-divider-sub">補足資料</div>
+      </div>
+    </div>
+
+
+    <!-- ============================================
+         A-1 FULL CHANGELOG
+    ============================================ -->
+    <section class="doc-section" id="s-apx-changelog" data-screen-label="A1 Full Changelog">
+      <div class="section-num">APPENDIX A1 · CHANGELOG</div>
+      <h2>Full Changelog（v1 → v2 → v3）</h2>
+      <p class="section-lead">
+        全バージョンの変更履歴。v1 → v2 は冒頭 ★V3 セクションでも触れているが、ここでは詳細を保存。
+      </p>
+
+      <h3>v1 → v2（2026.05.21）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">カテゴリ</th><th>v1</th><th>v2</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>ブランド表記</strong></td><td>SalonRink (LINE Edition)</td><td>SalonRink Concierge（2段ブランド）</td></tr>
+          <tr><td><strong>価格設計</strong></td><td>1プラン ¥2,980</td><td>2プラン: Solo ¥1,980 / Salon ¥2,980</td></tr>
+          <tr><td><strong>ペルソナ</strong></td><td>「仮」のまま放置</td><td>3ペルソナと価格を同期</td></tr>
+          <tr><td><strong>「いつものLINE」表現</strong></td><td>「いつものLINEから@お客様名と打つだけ」</td><td>LINE OA Manager 準拠の表現に修正</td></tr>
+          <tr><td><strong>「5分で完了」表現</strong></td><td>既存 LINE 運用済み前提</td><td>未運用サロンの開設代行を標準化</td></tr>
+          <tr><td><strong>競合比較</strong></td><td>サロンボード/サロンアンサー/minimo</td><td>リピッテ/LiME/サロンコネクト</td></tr>
+          <tr><td><strong>既存資産</strong></td><td>触れず</td><td>5資産を明示接続</td></tr>
+          <tr><td><strong>事例</strong></td><td>ベータユーザー声ゼロ</td><td>キレイ鶴見店を第一号</td></tr>
+        </tbody>
+      </table>
+
+      <h3>v2 → v3（2026.05.21）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">カテゴリ</th><th>v2</th><th>v3</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>文書構造</strong></td><td>14セクションフラット</td><td>4パート(Why/What/How/Guardrails)で MECE 再分類</td></tr>
+          <tr><td><strong>LIFF管理画面</strong></td><td>言及なし</td><td>4シーンを §09 で新設</td></tr>
+          <tr><td><strong>プロダクト全体構成</strong></td><td>暗黙</td><td>4レイヤー構造を §07 で図解</td></tr>
+          <tr><td><strong>実装ロードマップ</strong></td><td>タスクリストのみ</td><td>20日スプリントを §13 で新設</td></tr>
+          <tr><td><strong>既存資産マップ</strong></td><td>テーブルのみ</td><td>Live/Partial/Todo 状態カード化</td></tr>
+          <tr><td><strong>Do/Don't 規律</strong></td><td>「制約・前提」内に散在</td><td>§15 として独立、デザイン規律統合</td></tr>
+          <tr><td><strong>ミニアプリ並行戦略</strong></td><td>Low タスク一行</td><td>§13 で時差並行を明示</td></tr>
+          <tr><td><strong>重複の解消</strong></td><td>複数箇所散在</td><td>正本を定義、他はクロスリンク化</td></tr>
+          <tr><td><strong>Appendix</strong></td><td>なし</td><td>Changelog / Decisions Log を分離</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- ============================================
+         A-2 DECISIONS LOG
+    ============================================ -->
+    <section class="doc-section" id="s-apx-decisions" data-screen-label="A2 Decisions Log">
+      <div class="section-num">APPENDIX A2 · DECISIONS</div>
+      <h2>意思決定ログ — 捨てたもの / 作ったもの / 残したもの</h2>
+      <p class="section-lead">
+        既存 LP の構成要素を一つ一つ棚卸しした記録。各意思決定の根拠を保存。
+      </p>
+
+      <h3>🗑　捨てたもの（v1 で）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th>項目</th><th>理由</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>「サロンに、専属コンシェルジュを」コピー</td><td>来店客向けに読める／買い手の意思決定軸とズレ</td></tr>
+          <tr><td>機能8つグリッド（AIカルテ / 予約管理 / 売上 等の平等並列）</td><td>LINE特化なら "LINEで何ができるか" が主役で、機能平等並列は焦点をぼかす</td></tr>
+          <tr><td>3プラン構成（Light / Standard / Premium）</td><td>LINEアドオンなら機能を絞った方がいい。プラン分けは複雑さを生む</td></tr>
+          <tr><td>ホットペッパー連携 / minimo 連携アピール</td><td>"LINEだけ" の世界観と矛盾。裏でやって表に出さない</td></tr>
+          <tr><td>「コンシェルジュからのお便り」擬人化演出</td><td>AIキャラの擬人化は美容業界では好まれない</td></tr>
+          <tr><td>セキュリティ技術用語の前面化（AES-256・TLS 1.3・RLS）</td><td>サロンオーナーには響かない</td></tr>
+          <tr><td>AI 技術アピール（"自動構造化" "自動解析"）</td><td>AI は目的ではなく手段</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🗑　捨てたもの（v2 で追加）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th>項目</th><th>理由</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>「いつものLINEから@お客様名と打つだけ」</td><td>個人 LINE で業務できるかのような誤解、契約後トラブルリスク</td></tr>
+          <tr><td>「5分で完了」誇大表現</td><td>LINE 未開設サロンには非現実的</td></tr>
+          <tr><td>「SalonRink (LINE Edition)」表記</td><td>SalonRink Concierge との命名衝突</td></tr>
+          <tr><td>1プラン ¥2,980 一本化（v1 案）</td><td>フリーランス層を捨てる判断は早すぎる</td></tr>
+          <tr><td>古い競合認識（サロンボード/サロンアンサー/minimo）</td><td>実競合（リピッテ/LiME/サロンコネクト）からズレ</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🆕　作ったもの（v2 で）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">項目</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>SalonRink Concierge ブランド統一</strong></td><td>2段ブランド表記、Header/Footer/Title で統一</td></tr>
+          <tr><td><strong>既存資産との接続セクション</strong></td><td>コンシェルジュ・AIカルテ・HPB同期等を明示</td></tr>
+          <tr><td><strong>LINE 未運用サロン向け訴求</strong></td><td>開設代行を月額に含む</td></tr>
+          <tr><td><strong>04 In Action 3シーン</strong></td><td>朝 07:00・夜 21:00・顧客の LINE 体験</td></tr>
+          <tr><td><strong>07 Cases キレイ鶴見店</strong></td><td>自社運営サロンを事例第一号</td></tr>
+          <tr><td><strong>10 Compare 競合比較</strong></td><td>リピッテ/LiME/サロンコネクト 4社比較</td></tr>
+          <tr><td><strong>2プラン構成（Solo/Salon）</strong></td><td>ペルソナと価格を同期</td></tr>
+          <tr><td><strong>成果連動 Plus オプション</strong></td><td>任意で有効化、収益機会の確保</td></tr>
+          <tr><td><strong>FAQ追加 2問</strong></td><td>「LINE 未開設なら?」「個人 LINE で業務できる?」</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🆕　作ったもの（v3 で）</h3>
+      <table class="tbl">
+        <thead>
+          <tr><th class="col-med">項目</th><th>内容</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>§07 Product Layers</strong></td><td>4 レイヤー構造図（既存ツール → Core → LINE Layer → 接点）</td></tr>
+          <tr><td><strong>§09 Admin UI · 4 Scenes</strong></td><td>オンボーディング / 日常運用 / ダッシュボード / メニュー編集</td></tr>
+          <tr><td><strong>§13 20日スプリント計画</strong></td><td>5 Sprint × Sprint 1 = Scene 4 から逆順実装</td></tr>
+          <tr><td><strong>§15 Do/Don't 独立化</strong></td><td>コピー / デザイン / 実装 の 3カテゴリで分離</td></tr>
+          <tr><td><strong>Appendix Changelog</strong></td><td>v1→v2→v3 全履歴の保存</td></tr>
+          <tr><td><strong>正本セクション化</strong></td><td>ペルソナ・競合等の重複削減、クロスリンク化</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🔄　残したもの（変更なし）</h3>
+      <ul>
+        <li>ビフォー / アフター数字（15分 → 3分、75% 削減） ※モデル値・参考値明記</li>
+        <li>14日無料トライアル</li>
+        <li>運営会社情報・特商法（フッター）</li>
+        <li>HOW IT WORKS 3 ステップ</li>
+        <li>AIカルテ Before/After（LP §05）</li>
+        <li>3レイヤー説明（お客様 / スタッフ / オーナー）</li>
+      </ul>
+    </section>
+
+
+    <!-- Footer -->
+    <div class="doc-footer">
+      <div>SALONRINK · CONCIERGE · INTERNAL BRIEF v3</div>
+      <div>UPDATED 2026.05.21 · AOKAE LLC</div>
+    </div>
+
+  </main>
+</div>
+
+</body>
+</html>

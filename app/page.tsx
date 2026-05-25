@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import LpPage from '@/features/lp-concierge/LpPage';
+import LpPageFinal from '@/features/lp-v2-final/LpPageFinal';
 
 export const metadata: Metadata = {
   title: 'SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。',
@@ -35,5 +35,5 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <LpPage />;
+  return <LpPageFinal />;
 }
