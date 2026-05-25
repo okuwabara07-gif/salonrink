@@ -84,21 +84,27 @@ const PLANS = [
 const IN_ACTION_SCENES = [
   {
     time: 'AM 07:00',
-    title: '朝、その日の予約が届く',
-    desc: 'LINE公式アカウントから、当日の予約一覧が自動で届きます。お客様の前回のメニュー、特記事項、要望もまとめて確認。営業前の3分で全予約把握。',
+    title: '朝のLINEで、今日のサロンが全部見える',
+    desc: 'LINE公式アカウントから、当日の予約一覧が自動で届きます。前回のメニュー・特記事項・要望もまとめて確認。営業前の3分で、1日の段取りが整います。',
     tags: ['自動配信', '予約サマリ'],
   },
   {
-    time: 'PM 21:00',
-    title: '夜、本日の振り返り',
-    desc: '営業終了後、AIが本日のカルテを自動生成。「次回はこの提案が良いかも」「保湿ケアを推奨」などのスタッフ向けメモも添えて。明日の準備が、5分で完了。',
-    tags: ['AI カルテ自動生成', '次回提案'],
+    time: 'AM 09:30',
+    title: 'HPB予約もLINE予約も、一画面で確認',
+    desc: 'ホットペッパー Beauty からの予約が、LINEの予約と同じ画面に自動で並びます。ダブルブッキングの心配なし。顧客情報も自動で取り込み、初回対応の準備が10分で完了。',
+    tags: ['HPB自動連携', '新規顧客取込'],
   },
   {
-    time: 'ANY TIME',
-    title: 'お客様からの予約、いつでも',
-    desc: 'お客様は、いつものLINEで自然に予約。「前回と同じで」も「今日は新しく」も、AIが履歴から適切に提案。お客様の体験は何も変わりません。',
-    tags: ['LINE 予約', '履歴活用'],
+    time: 'AM 10:00',
+    title: '「@田中様」と打つだけで、過去のすべてが瞬時に',
+    desc: 'LINEのトーク画面で「@お客様名」と入力するだけ。前回の施術、好み、敏感肌などの情報が一画面で確認できます。「いつもの」をすぐに思い出せる安心感。',
+    tags: ['LINE内カルテ', '瞬時呼出'],
+  },
+  {
+    time: 'PM 18:00',
+    title: '「次の連絡、誰にする?」を、自動で提案',
+    desc: '営業終了前に、「そろそろの時期」のお客様リストが自動表示。配信文の下書きも用意されているので、確認して送るだけ。リピートのきっかけ作りが、毎日5分で完了。',
+    tags: ['自動リピート提案', '配信文下書き'],
   },
 ];
 
@@ -447,8 +453,8 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>IN ACTION</p>
-            <h2 className={styles.sectionTitle}>1日3シーンで、こう変わる。</h2>
-            <p className={styles.sectionSub}>朝の準備、夜の振り返り、お客様とのやり取り。LINEひとつに集約。</p>
+            <h2 className={styles.sectionTitle}>朝から夜まで、<br/>1日のサロン業務が、こう流れる。</h2>
+            <p className={styles.sectionSub}>朝のサマリー、HPB予約取込、お客様呼出、夕方のリピート提案。<br/>すべてLINEひとつに、自然に流れていきます。</p>
           </div>
           <div className={styles.inActionGrid}>
             {IN_ACTION_SCENES.map((scene, i) => (
