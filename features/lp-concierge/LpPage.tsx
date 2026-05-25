@@ -148,6 +148,33 @@ const FAQ_ITEMS = [
   { q: 'サポートはありますか?', a: 'メールサポート(support@salonrink.com)にて承ります。導入時は個別にオンラインでセットアップをご案内します。' },
 ];
 
+const EFFECTS_CARDS = [
+  {
+    num: '01',
+    id: 'RETENTION',
+    badge: null,
+    title: 'リピートが、自然に増える',
+    sub: '最適タイミングでのご案内が、お客様の心に届く。',
+    bullets: ['来店周期の自動把握', '離脱予兆を早めに検知', '配信文の自動下書き'],
+  },
+  {
+    num: '02',
+    id: 'RELATIONSHIP',
+    badge: 'CORE VALUE',
+    title: 'お客様一人ひとりに、もっと寄り添える',
+    sub: '過去履歴に基づく自然なご提案で、深い関係性を育てられる。',
+    bullets: ['過去カルテを瞬時に呼出', '好み・体質を自動記録', '細部までずれない提案'],
+  },
+  {
+    num: '03',
+    id: 'TIME',
+    badge: null,
+    title: '確認の時間を、接客の時間に変える',
+    sub: 'LINEで名前検索するだけ。事務作業の時間を、お客様との時間に。',
+    bullets: ['カルテ作成を自動化', '過去履歴を一瞬で参照', '配信文を自動で生成'],
+  },
+];
+
 export default function LpPage() {
   const [bannerOpen, setBannerOpen] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -696,6 +723,96 @@ export default function LpPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* EFFECTS - 期待できる効果(数値なし・定性表現のみ) */}
+      <section id="effects" className={styles.effects}>
+        <div className={styles.sectionInner}>
+          <div className={styles.sectionHead}>
+            <p className={styles.sectionKicker}>EXPECTED EFFECTS</p>
+            <h2 className={styles.sectionTitle}>SalonRink Concierge で、<br/><span className={styles.effectsAccent}>期待できる効果</span>。</h2>
+            <p className={styles.sectionSub}>具体的な数値は、あなたのサロンと運用次第。<br/>でも、確かに変わる3つの本質的な価値を、お約束します。</p>
+          </div>
+
+          <div className={styles.effectsGrid}>
+            {EFFECTS_CARDS.map((card, i) => (
+              <article key={i} className={`${styles.effectCard} ${card.badge ? styles.effectCardFeatured : ''}`}>
+                {card.badge && <div className={styles.effectCardBadge}>{card.badge}</div>}
+                <div className={styles.effectCardIconWrap}>
+                  <div className={styles.effectCardIcon} aria-hidden="true">
+                    {card.id === 'RETENTION' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <path d="M16 4v8l5 3" strokeLinecap="round"/>
+                        <circle cx="16" cy="16" r="12"/>
+                      </svg>
+                    )}
+                    {card.id === 'RELATIONSHIP' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <path d="M16 27s-9-5-9-13a5 5 0 019-3 5 5 0 019 3c0 8-9 13-9 13z" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                    {card.id === 'TIME' && (
+                      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                        <circle cx="16" cy="16" r="11"/>
+                        <path d="M16 9v7l4 2" strokeLinecap="round"/>
+                      </svg>
+                    )}
+                  </div>
+                </div>
+                <p className={styles.effectCardNumMark}>{card.num} / {card.id}</p>
+                <h3 className={styles.effectCardTitle}>{card.title}</h3>
+                <p className={styles.effectCardSub}>{card.sub}</p>
+                <ul className={styles.effectCardBullets}>
+                  {card.bullets.map((b, bi) => (
+                    <li key={bi}>{b}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          {/* TRUST BAND */}
+          <div className={styles.effectsTrust}>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <circle cx="10" cy="10" r="8"/>
+                  <path d="M6 10l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>1人サロン特化</div>
+                <div className={styles.trustItemSub}>機能・価格・運用が、1人サロンに最適化</div>
+              </div>
+            </div>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M10 2L3 5v5c0 4 3 7 7 8 4-1 7-4 7-8V5l-7-3z" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>セキュリティ重視</div>
+                <div className={styles.trustItemSub}>AES-256 暗号化、サロン別データ完全分離(RLS)</div>
+              </div>
+            </div>
+            <div className={styles.trustItem}>
+              <div className={styles.trustItemIcon} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.6">
+                  <path d="M3 6l7 5 7-5M3 6v8h14V6M3 6l7-3 7 3" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              <div className={styles.trustItemText}>
+                <div className={styles.trustItemTitle}>14日間無料、月¥1,980〜</div>
+                <div className={styles.trustItemSub}>始めやすく、続けやすい価格設計</div>
+              </div>
+            </div>
+          </div>
+
+          <p className={styles.effectsFootnote}>
+            ※ 上記は SalonRink Concierge により期待される本質的な価値です。具体的な効果は、店舗・業態・運用状況により異なります。
+          </p>
         </div>
       </section>
 
