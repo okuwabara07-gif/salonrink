@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>01 HERO v2 — SalonRink Concierge LP</title>
+<link rel="icon" type="image/png" href="./images/a110_favicon_gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<style>
+  body { background: var(--bg); }
+
+  /* ── Nav ──────────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav__inner {
+    max-width: 1240px; margin: 0 auto; padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav__brand {
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    letter-spacing: 0.04em; color: var(--ink);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav__brand-sub {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    color: var(--brand); letter-spacing: 0.22em; padding-left: 8px;
+    border-left: 1px solid var(--line);
+  }
+  .nav__links { display: flex; align-items: center; gap: 28px; }
+  .nav__links a {
+    font-size: 13px; color: var(--ink-2); font-weight: 500;
+  }
+  .nav__cta {
+    background: var(--accent); color: #fff;
+    padding: 9px 18px; border-radius: 999px;
+    font-size: 12px; font-weight: 700;
+  }
+
+  /* ── Hero main ────────────────────── */
+  .hero {
+    padding: 64px 0 88px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ""; position: absolute; top: -60px; right: -100px;
+    width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+    opacity: 0.7; pointer-events: none;
+  }
+  .hero::after {
+    content: ""; position: absolute; bottom: -80px; left: -100px;
+    width: 360px; height: 360px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    opacity: 0.5; pointer-events: none;
+  }
+  .hero__grid {
+    display: grid; grid-template-columns: 1fr 380px; gap: 64px;
+    align-items: center; position: relative; z-index: 1;
+  }
+
+  /* ── Left ─────────────────────────── */
+  .hero__left { }
+  .hero__eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+    color: var(--brand); letter-spacing: 0.22em;
+    background: var(--brand-soft); padding: 7px 14px; border-radius: 999px;
+    margin-bottom: 22px;
+  }
+  .hero__eyebrow::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--brand);
+  }
+  .hero__h1 {
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(36px, 4.6vw, 56px); line-height: 1.45;
+    letter-spacing: 0.01em; color: var(--ink);
+    margin: 0 0 22px;
+  }
+  .hero__h1 .brand-mark {
+    color: var(--brand); font-style: italic;
+    font-weight: 600; letter-spacing: 0.02em;
+  }
+  .hero__h1 .underline {
+    background: linear-gradient(transparent 70%, var(--brand-soft) 70%);
+    padding: 0 4px;
+  }
+  .hero__sub {
+    font-size: 15px; line-height: 1.95; color: var(--ink-2);
+    margin: 0 0 32px; max-width: 540px;
+  }
+
+  /* 3 stat cards (icon+定性) */
+  .hero__stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 16px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat__icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--brand-soft); color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .stat__label {
+    font-family: var(--serif); font-weight: 700; font-size: 14px;
+    color: var(--ink); line-height: 1.5;
+  }
+  .stat__sub {
+    font-family: var(--mono); font-size: 9px; color: var(--ink-3);
+    letter-spacing: 0.14em; margin-top: 6px;
+  }
+
+  /* Checks */
+  .hero__checks {
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 32px;
+  }
+  .hero__checks li {
+    list-style: none;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; color: var(--ink-2);
+  }
+
+  /* CTAs */
+  .hero__ctas {
+    display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .hero__ctas .sr-btn { padding: 15px 26px; font-size: 14px; }
+  .hero__cta-note {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.08em; margin-left: 4px;
+  }
+  .hero__cta-note b { color: var(--accent); font-weight: 600; }
+
+  /* ── Right: Phone mock ───────────── */
+  .phone {
+    width: 380px; background: #1a1a1a;
+    border-radius: 38px; padding: 10px;
+    box-shadow: 0 28px 80px rgba(15,22,20,0.18),
+                0 8px 24px rgba(15,22,20,0.08);
+    position: relative;
+  }
+  .phone__screen {
+    width: 100%; background: #f4f6f4; border-radius: 28px;
+    overflow: hidden; padding: 14px 10px 18px;
+    min-height: 620px; position: relative;
+  }
+  .phone__head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 8px 12px;
+    border-bottom: 1px solid #e6ebe7;
+  }
+  .phone__head-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background-image: url('./images/a101_hero.png');
+    background-size: cover;
+    background-position: center 25%;
+    flex-shrink: 0;
+  }
+  .phone__head-title {
+    font-family: var(--serif); font-weight: 700; font-size: 14px;
+    color: var(--ink);
+  }
+  .phone__head-sub {
+    font-family: var(--mono); font-size: 9px; color: var(--ink-3);
+    letter-spacing: 0.1em;
+  }
+  .phone__head-icons {
+    margin-left: auto; display: flex; gap: 8px;
+    color: var(--ink-3);
+  }
+  .phone__chat {
+    padding: 14px 6px;
+  }
+  .phone__row {
+    display: flex; gap: 6px; margin-bottom: 12px;
+    align-items: flex-end;
+  }
+  .phone__row--me { justify-content: flex-end; }
+  .phone__avatar-s {
+    width: 26px; height: 26px; border-radius: 50%;
+    background-image: url('./images/a101_hero.png');
+    background-size: cover;
+    background-position: center 25%;
+    flex-shrink: 0;
+  }
+  .phone__msg {
+    background: #fff; padding: 10px 12px; border-radius: 14px;
+    font-size: 12px; line-height: 1.55; color: var(--ink);
+    max-width: 78%; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .phone__msg--me { background: #B2EBC8; }
+  .phone__time {
+    font-family: var(--mono); font-size: 9px; color: var(--ink-3);
+    align-self: flex-end; padding-bottom: 2px;
+  }
+
+  /* Floating bubbles */
+  .float-bubble {
+    position: absolute;
+    background: #fff; border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 12px 28px rgba(15,22,20,0.12);
+    border: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px;
+    z-index: 2;
+    max-width: 220px;
+  }
+  .float-bubble__icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .float-bubble__icon--gold { background: var(--brand-soft); color: var(--brand); }
+  .float-bubble__icon--green { background: var(--accent-soft); color: var(--accent); }
+  .float-bubble__text { line-height: 1.5; color: var(--ink-2); font-size: 11.5px; }
+  .float-bubble__text b { font-family: var(--serif); color: var(--ink); }
+
+  .float-bubble--1 { top: 12%; left: -90px; }
+  .float-bubble--2 { top: 50%; right: -80px; }
+  .float-bubble--3 { bottom: 8%; left: -70px; }
+
+  @media (max-width: 980px) {
+    .hero__grid { grid-template-columns: 1fr; gap: 48px; }
+    .phone { margin: 0 auto; max-width: 320px; }
+    .float-bubble { display: none; }
+    .hero__stats { grid-template-columns: 1fr; }
+    .nav__links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<header class="nav">
+  <div class="nav__inner">
+    <div class="nav__brand">
+      SalonRink<span class="nav__brand-sub">CONCIERGE</span>
+    </div>
+    <nav class="nav__links">
+      <a href="#problem">課題</a>
+      <a href="#solution">仕組み</a>
+      <a href="#case">導入店舗</a>
+      <a href="#plans">料金</a>
+      <a href="#" class="nav__cta">無料ではじめる</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="sr-container">
+    <div class="hero__grid">
+
+      <!-- LEFT -->
+      <div class="hero__left">
+        <div class="hero__eyebrow">FOR INDEPENDENT SALONS</div>
+        <h1 class="hero__h1">
+          <span class="brand-mark">LINE</span>で、もう一度<br>
+          お客様と<span class="underline">向き合う時間</span>を。
+        </h1>
+        <p class="hero__sub">
+          予約も、顧客情報も、リピート対応も、<br>
+          全部いつものLINEに集約。<br>
+          1人サロンが、もう一段、伸びるための仕組み。
+        </p>
+
+        <!-- 3 stat cards (icon+定性) -->
+        <ul class="hero__stats">
+          <li class="stat">
+            <div class="stat__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="stat__label">カルテ確認<br>ゼロ秒</div>
+            <div class="stat__sub">SEARCH</div>
+          </li>
+          <li class="stat">
+            <div class="stat__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21l-7-7c-2-2-2-5 0-7s5-2 7 0l0 0 0 0c2-2 5-2 7 0s2 5 0 7l-7 7z"/></svg>
+            </div>
+            <div class="stat__label">忘れない<br>顧客管理</div>
+            <div class="stat__sub">MEMORY</div>
+          </li>
+          <li class="stat">
+            <div class="stat__icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 14l5-5 4 4 7-7M14 6h6v6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="stat__label">次の来店、<br>自然に提案</div>
+            <div class="stat__sub">REPEAT</div>
+          </li>
+        </ul>
+
+        <!-- Checks -->
+        <ul class="hero__checks">
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>追加アプリ不要 / LINEだけで完結</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約もLINE予約も一画面で</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>1人サロンに最適化された設計</li>
+        </ul>
+
+        <!-- CTAs -->
+        <div class="hero__ctas">
+          <button class="sr-btn sr-btn--primary">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            LINEで無料ではじめる
+          </button>
+          <button class="sr-btn sr-btn--outline">資料をダウンロード</button>
+          <span class="hero__cta-note">月<b>¥1,980〜</b> / 14日間無料</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Phone -->
+      <div class="hero__right" style="position: relative;">
+        <div class="float-bubble float-bubble--1">
+          <div class="float-bubble__icon float-bubble__icon--gold">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="float-bubble__text"><b>過去5回分</b>の<br>カルテを瞬時に表示</div>
+        </div>
+        <div class="float-bubble float-bubble--2">
+          <div class="float-bubble__icon float-bubble__icon--green">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7l3 3 5-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="float-bubble__text"><b>HPB予約</b>も<br>自動で取り込み</div>
+        </div>
+        <div class="float-bubble float-bubble--3">
+          <div class="float-bubble__icon float-bubble__icon--gold">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 11l4-4 3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="float-bubble__text"><b>次回提案</b>を<br>自然なタイミングで</div>
+        </div>
+
+        <div class="phone">
+          <div class="phone__screen">
+            <div class="phone__head">
+              <div class="phone__head-avatar"></div>
+              <div>
+                <div class="phone__head-title">田中 真由美 様</div>
+                <div class="phone__head-sub">CUSTOMER #2841 · 来店18回</div>
+              </div>
+              <div class="phone__head-icons">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="1"/><circle cx="13" cy="8" r="1"/><circle cx="3" cy="8" r="1"/></svg>
+              </div>
+            </div>
+            <div class="phone__chat">
+              <div class="phone__row">
+                <div class="phone__avatar-s"></div>
+                <div class="phone__msg">前回のピンクベージュ、すごく気に入りました🌸<br>今度はもう少し暗めにしたいです</div>
+                <div class="phone__time">10:32</div>
+              </div>
+              <div class="phone__row phone__row--me">
+                <div class="phone__msg phone__msg--me">ありがとうございます🌿<br>前回イルミナ#11でしたので、<br>0.5トーン下の8/2でいかがでしょう?</div>
+                <div class="phone__time">10:35</div>
+              </div>
+              <div class="phone__row">
+                <div class="phone__avatar-s"></div>
+                <div class="phone__msg">それでお願いします!<br>あと敏感肌対応も継続でお願いします</div>
+                <div class="phone__time">10:37</div>
+              </div>
+              <div class="phone__row phone__row--me">
+                <div class="phone__msg phone__msg--me">承知しました🙇<br>ゼロアルカリ低刺激で準備しますね</div>
+                <div class="phone__time">10:38</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 01 / 10 · HERO · v2 MARKET-IN</span>
+    <span><a href="./index.html">← 一覧</a> &nbsp;|&nbsp; <a href="./02_problem.html">02 PROBLEM →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

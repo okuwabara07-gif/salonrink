@@ -1,0 +1,234 @@
+/* SalonRink Concierge — LP Design Tokens v2 (Market-In Edition)
+   ============================================================
+   v1 → v2 変更点:
+   1. ゴールド系 --brand-* を追加(ブランド・装飾用)
+   2. アクセント運用ルールを明文化(下記コメント参照)
+   3. utility class は v1 互換維持
+   ============================================================
+   
+   ★ アクセント使い分けルール (Market-In版)
+   --accent (LINE green) : 機能・LINE連携・CTA・チェック・成果数字
+   --brand  (Gold)        : ブランド装飾・見出しの highlight・高級感
+   --coral                : 課題提示・警告
+   
+   セクション別の主アクセント:
+   01 HERO       : Gold(見出しaccent) + LINE green(CTA)
+   02 PROBLEM    : Coral
+   03 SOLUTION   : LINE green
+   04 FOR EVERYONE: Gold(数字) + LINE green(チェック)
+   05 IN ACTION  : LINE green
+   06 AI KARTE   : LINE green
+   07 NUMBERS    : Gold(信頼性)
+   08 CASE       : LINE green
+   09 ONBOARDING : LINE green(CTA)
+   10 COMPARE    : LINE green
+   ============================================================ */
+
+:root {
+  /* ── Colors: Text ──────────────────── */
+  --ink:        #0f1614;
+  --ink-2:      #3a4340;
+  --ink-3:      #6b746f;
+  --ink-4:      #9aa39e;
+
+  /* ── Colors: Background ────────────── */
+  --bg:         #ffffff;
+  --bg-tint:    #f6f9f6;
+  --bg-soft:    #f0f4f0;
+  --ivory:      #FAF0E0;   /* 高級感背景 (ブランドセクション) */
+
+  /* ── Colors: Line ──────────────────── */
+  --line:       #e6ebe7;
+  --line-soft:  #f0f3f0;
+
+  /* ── Colors: Accent (LINE green) ───── */
+  --accent:     #06C755;
+  --accent-dk:  #05a648;
+  --accent-soft:#e6f7ec;
+  --accent-ink: #054d22;
+
+  /* ── Colors: Brand (Gold) ★NEW v2 ─── */
+  --brand:      #C9A961;
+  --brand-dk:   #a88a44;
+  --brand-soft: #f5ecd6;
+  --brand-ink:  #6b5226;
+
+  /* ── Colors: Coral / Warn ──────────── */
+  --coral:      #D85A30;
+  --coral-soft: #fbe9e1;
+  --warn:       #c98a2b;
+  --warn-soft:  #fbf2dc;
+
+  /* ── Type ──────────────────────────── */
+  --serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --sans:  "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* ── Effects ───────────────────────── */
+  --shadow-sm: 0 1px 2px rgba(15,22,20,0.04), 0 4px 12px rgba(15,22,20,0.04);
+  --shadow-md: 0 2px 6px rgba(15,22,20,0.05), 0 12px 32px rgba(15,22,20,0.06);
+  --shadow-lg: 0 8px 24px rgba(15,22,20,0.08), 0 24px 60px rgba(15,22,20,0.08);
+
+  --radius-sm: 10px;
+  --radius:    14px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+}
+
+/* ── Reset (v1互換) ──────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--sans);
+  font-feature-settings: "palt";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, svg { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* ── Utility classes (v1互換) ────────── */
+.sr-container {
+  max-width: 1240px; margin: 0 auto; padding: 0 32px;
+}
+.sr-mono {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase;
+}
+
+/* Eyebrow: Default (LINE green) */
+.sr-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  color: var(--accent); letter-spacing: 0.18em; text-transform: uppercase;
+}
+.sr-eyebrow::before, .sr-eyebrow::after {
+  content: ""; width: 24px; height: 1px; background: var(--accent); opacity: 0.5;
+}
+
+/* Eyebrow: Brand variant (Gold) ★NEW v2 */
+.sr-eyebrow--brand { color: var(--brand); }
+.sr-eyebrow--brand::before,
+.sr-eyebrow--brand::after { background: var(--brand); }
+
+/* H2 */
+.sr-h2 {
+  font-family: var(--serif); font-weight: 700; font-size: clamp(28px, 3.4vw, 44px);
+  line-height: 1.4; letter-spacing: 0.01em; color: var(--ink);
+  margin: 0; text-align: center;
+}
+.sr-h2 .accent { color: var(--accent); }
+.sr-h2 .brand  { color: var(--brand); }  /* ★NEW v2 */
+
+.sr-lead {
+  font-size: 15px; line-height: 1.9; color: var(--ink-2); text-align: center;
+  margin: 18px auto 0; max-width: 640px;
+}
+
+.sr-check {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%; background: var(--accent-soft);
+  color: var(--accent); flex-shrink: 0;
+}
+.sr-check svg { width: 10px; height: 10px; }
+
+/* ── Section wrapper (v1互換) ────────── */
+.sr-section {
+  padding: clamp(64px, 8vw, 112px) 0;
+  position: relative; overflow: hidden;
+}
+.sr-section--tint  { background: var(--bg-tint); }
+.sr-section--ivory { background: var(--ivory); }   /* ★NEW v2: ブランドセクション用 */
+.sr-section__head {
+  text-align: center; margin-bottom: clamp(40px, 5vw, 64px);
+}
+.sr-section__head .sr-eyebrow { margin-bottom: 18px; }
+
+/* ── Buttons (v1互換 + brand追加) ────── */
+.sr-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 22px; border-radius: 999px;
+  font-family: var(--sans); font-weight: 600; font-size: 14px;
+  border: 1px solid transparent; cursor: pointer; transition: 0.15s;
+  white-space: nowrap;
+}
+.sr-btn--primary { background: var(--accent); color: #fff; }
+.sr-btn--primary:hover { background: var(--accent-dk); }
+.sr-btn--outline { background: #fff; color: var(--ink); border-color: var(--line); }
+.sr-btn--outline:hover { background: var(--bg-tint); }
+.sr-btn--ghost { background: transparent; color: var(--ink-2); }
+
+/* ★NEW v2: ブランド系ボタン (限定使用) */
+.sr-btn--brand { background: var(--brand); color: #fff; }
+.sr-btn--brand:hover { background: var(--brand-dk); }
+
+/* ── Card primitives (v1互換) ────────── */
+.sr-card {
+  background: #fff; border: 1px solid var(--line);
+  border-radius: var(--radius-lg); padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.sr-card--soft {
+  background: var(--bg-soft); border: 1px solid transparent;
+}
+.sr-step-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent);
+  font-family: var(--mono); font-weight: 600; font-size: 12px;
+  border: 1.5px solid var(--accent); letter-spacing: 0.04em;
+}
+.sr-arrow-r {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--accent); color: var(--accent);
+  background: #fff; flex-shrink: 0;
+}
+.sr-dot-grid {
+  display: grid; grid-template-columns: repeat(3, 4px); gap: 6px;
+}
+.sr-dot-grid > i {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); opacity: 0.5;
+}
+.sr-section-foot {
+  margin-top: 48px; padding: 22px 28px;
+  background: var(--bg-soft); border-radius: var(--radius-lg);
+  display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
+}
+.sr-section-foot__hd {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--serif); font-weight: 600; font-size: 15px;
+  color: var(--ink); flex-shrink: 0;
+}
+.sr-section-foot__hd .accent { color: var(--accent); }
+.sr-section-foot__items {
+  display: flex; gap: 24px; flex-wrap: wrap; flex: 1;
+}
+.sr-section-foot__items li {
+  list-style: none; display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--ink-2);
+}
+
+/* ── Meta block (review only) ────────── */
+.sr-meta {
+  background: var(--bg-tint); padding: 32px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+  letter-spacing: 0.1em;
+}
+.sr-meta__inner {
+  max-width: 1240px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center; gap: 24px;
+}
+.sr-meta a { color: var(--accent-ink); font-weight: 500; }
+
+/* ── Reduced motion ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
