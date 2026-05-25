@@ -442,9 +442,7 @@ a { color: inherit; text-decoration: none; }
 ═══════════════════════════════════════════════ */
 .timeline { position: relative; max-width: 1100px; margin: 0 auto; padding: 20px 0; }
 .timeline::before {
-  content: ""; position: absolute; top: 0; bottom: 0; left: 50%;
-  width: 2px; background: linear-gradient(180deg, var(--accent-soft), var(--accent), var(--accent-soft));
-  transform: translateX(-50%);
+  display: none;
 }
 .scene { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 24px; margin-bottom: 56px; align-items: center; position: relative; }
 .scene__body { background: #fff; border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); }
@@ -1165,12 +1163,6 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <span className="everyone__num everyone__num--customers" style={{position: 'absolute', top: '41%', left: '6%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+25%</span>
       <span className="everyone__num everyone__num--staff" style={{position: 'absolute', top: '41%', left: '38%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>−30分/日</span>
       <span className="everyone__num everyone__num--you" style={{position: 'absolute', top: '41%', left: '72%', fontFamily: 'var(--serif)', fontWeight: '700', color: '#06C755', fontSize: 'clamp(20px, 2.6vw, 38px)', lineHeight: '1', pointerEvents: 'none'}}>+15%</span>
-    </div>
-
-    <div className="eband">
-      <span className="eband__icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 2v2M3.5 5l1.5 1.5M18.5 5L17 6.5M2 11h2M18 11h2M11 5a5 5 0 00-3 9v2h6v-2a5 5 0 00-3-9z"/></svg></span>
-      <span className="eband__title">すべては、1人サロンの成長のために。</span>
-      <span className="eband__sub">お客様満足・将来のスタッフの働きやすさ・売上向上を、LINEの中でシンプルに実現します。</span>
     </div>
   </div>
 </section>
