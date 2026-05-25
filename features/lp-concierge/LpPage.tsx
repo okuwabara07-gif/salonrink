@@ -25,7 +25,7 @@ const PROBLEMS = [
 ];
 
 const OWNER_BENEFITS = [
-  { icon: '♥', title: '顧客満足度', desc: '覚えてくれる安心感が、再来店率を高めます。1人1人に向き合う時間を、AIが守ります。' },
+  { icon: '♥', title: '顧客満足度', desc: '覚えてくれる安心感が、再来店率を高めます。1人1人に向き合う時間を、自動化が守ります。' },
   { icon: '↻', title: 'リピート率', desc: '次回のおすすめを自動でご案内。「そろそろの時期」が、お客様の心にちゃんと届きます。' },
   { icon: '⚙', title: '業務効率', desc: 'カウンセリング・カルテ作成・引き継ぎを自動化。本業の「人と向き合う時間」に集中できます。' },
 ];
@@ -354,22 +354,90 @@ export default function LpPage() {
         </div>
       </section>
 
-      {/* FOR OWNERS */}
-      <section id="owners" className={styles.owners}>
+      {/* FOR EVERYONE - 3視点(CUSTOMERS / STAFF / OWNERS) */}
+      <section id="everyone" className={styles.everyone}>
+        <a id="owners" aria-hidden="true"></a>
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
-            <p className={styles.sectionKicker}>FOR SALON OWNERS</p>
-            <h2 className={styles.sectionTitle}>サロンに、専属コンシェルジュを<br/>迎えませんか。</h2>
-            <p className={styles.sectionSub}>美容師の経験 × AI の記憶。お客様1人1人に、ちゃんと向き合う時間を。</p>
+            <p className={styles.sectionKicker}>FOR EVERYONE</p>
+            <h2 className={styles.sectionTitle}>お客様も、スタッフも、<br/>そしてあなたも。<br/>みんなが、続けたくなる仕組み。</h2>
+            <p className={styles.sectionSub}>1人サロンのあなたが軸。<br/>でも、お客様とスタッフ(これから雇う方も)、それぞれの視点で考えました。</p>
           </div>
-          <div className={styles.ownerGrid}>
-            {OWNER_BENEFITS.map((b, i) => (
-              <div key={i} className={styles.ownerCard}>
-                <div className={styles.ownerIcon} aria-hidden>{b.icon}</div>
-                <h3 className={styles.ownerTitle}>{b.title}</h3>
-                <p className={styles.ownerDesc}>{b.desc}</p>
+
+          <div className={styles.everyoneGrid}>
+            {/* FOR CUSTOMERS */}
+            <article className={styles.ecard}>
+              <div className={styles.ecardTop}>
+                <div className={styles.ecardTopIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <circle cx="16" cy="12" r="5"/>
+                    <path d="M6 26c0-5 4-9 10-9s10 4 10 9" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className={styles.ecardTopEyebrow}>FOR CUSTOMERS</div>
+                <div className={styles.ecardTopHeadline}>お客様には、<br/>いつものLINEのまま</div>
               </div>
-            ))}
+              <div className={styles.ecardBody}>
+                <h3 className={styles.ecardTitle}>専用アプリ不要。<br/><span className={styles.ecardAccent}>お客様の負担ゼロ</span>。</h3>
+                <p className={styles.ecardSub}>新しいアプリのインストールもログインも不要。お客様はいつものLINEでメッセージするだけ。</p>
+                <div className={styles.ecardVisual}>
+                  <div className={styles.ecardPhoto}>
+                    <Image
+                      src="/images/a204_customer.png"
+                      alt="LINEで気軽に予約・相談"
+                      width={220} height={260}
+                      sizes="(max-width: 700px) 130px, 110px"
+                    />
+                  </div>
+                  <ul className={styles.ecardChecks}>
+                    <li>アプリ不要、LINEで完結</li>
+                    <li>過去の好みが伝わってる安心感</li>
+                    <li>次回提案も自然に届く</li>
+                  </ul>
+                </div>
+                <div className={styles.ecardQuote}>
+                  <span className={styles.ecardQuoteText}>「いつものLINEで予約できて、<br/>覚えていてくれるのが嬉しい」</span>
+                </div>
+              </div>
+            </article>
+
+            {/* FOR STAFF - 画像1枚で全面置換 */}
+            <article className={`${styles.ecard} ${styles.ecardImageOnly}`}>
+              <Image
+                src="/images/a304_staff.png"
+                alt="FOR STAFF - スタッフが増えても、いつもの品質で"
+                width={440} height={520}
+                sizes="(max-width: 1100px) 90vw, 360px"
+                className={styles.ecardFullImage}
+              />
+            </article>
+
+            {/* FOR OWNERS */}
+            <article className={styles.ecard}>
+              <div className={styles.ecardTop}>
+                <div className={styles.ecardTopIcon} aria-hidden="true">
+                  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.6">
+                    <path d="M4 24h24M7 20V14m6 6V8m6 12V12m6 8v-4" strokeLinecap="round"/>
+                  </svg>
+                </div>
+                <div className={styles.ecardTopEyebrow}>FOR OWNERS</div>
+                <div className={styles.ecardTopHeadline}>あなたには、<br/>本業に集中できる時間を</div>
+              </div>
+              <div className={styles.ecardBody}>
+                <h3 className={styles.ecardTitle}>カルテ作成・記憶・提案を<br/><span className={styles.ecardAccent}>自動化</span>。</h3>
+                <p className={styles.ecardSub}>1人で全部やる時代の終わり。お客様情報の整理は仕組みに任せて、接客と提案に集中。</p>
+                <div className={styles.ecardVisual}>
+                  <ul className={styles.ecardChecks}>
+                    {OWNER_BENEFITS.map((b, i) => (
+                      <li key={i}><b>{b.title}</b>: {b.desc.length > 28 ? b.desc.slice(0, 28) + '…' : b.desc}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className={styles.ecardQuote}>
+                  <span className={styles.ecardQuoteText}>「事務作業の時間が消えて、<br/>お客様と話す時間が増えた」</span>
+                </div>
+              </div>
+            </article>
           </div>
         </div>
       </section>
