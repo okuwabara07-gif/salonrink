@@ -126,22 +126,13 @@ a { color: inherit; text-decoration: none; }
    SECTION 01: HERO
 ═══════════════════════════════════════════════ */
 .hero { padding: 64px 0 96px; position: relative; overflow: hidden; }
-.hero::before {
-  content: ""; position: absolute; top: 80px; right: 44%;
-  width: 160px; height: 160px;
-  background-image: radial-gradient(rgba(6,199,85,0.18) 1.2px, transparent 1.2px);
-  background-size: 14px 14px; pointer-events: none;
-}
-.hero::after {
-  content: ""; position: absolute; right: -80px; top: 100px;
-  width: 400px; height: 400px; border-radius: 50%;
-  background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
-  opacity: 0.6; pointer-events: none;
-}
+.hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.25; pointer-events: none; }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.85)); z-index: 0; pointer-events: none; }
 .hero__inner {
   max-width: 1400px; margin: 0 auto; padding: 0 32px;
   display: grid; grid-template-columns: 1fr 480px; gap: 64px;
   align-items: center; position: relative; z-index: 1;
+  min-height: 600px;
 }
 .hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 .hero__badge .pill {
@@ -962,6 +953,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
+  <img className="hero__bg" src="/images/hero/hero-final.png" alt="" aria-hidden="true"/>
   <div className="hero__inner">
     <div>
       <div className="hero__badge">
