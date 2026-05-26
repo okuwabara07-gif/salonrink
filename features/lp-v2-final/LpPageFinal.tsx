@@ -122,245 +122,133 @@ a { color: inherit; text-decoration: none; }
 .nav__menu a:hover { color: var(--accent-dk); }
 .nav__cta { display: flex; gap: 10px; }
 
-/* ========================================
-   HERO SECTION — クリーン実装
-   過去のルールは全削除してこれに統一
-   ======================================== */
-
 .hero {
-  background: #ffffff;
-  padding: 64px 0 96px;
+  position: relative;
+  min-height: 760px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
+  z-index: 0;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 1.0) 0%,
+    rgba(255, 255, 255, 1.0) 35%,
+    rgba(255, 255, 255, 0.7) 48%,
+    rgba(255, 255, 255, 0.0) 65%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
 }
 
 .hero__inner {
+  position: relative;
+  z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 32px;
-  display: grid;
-  grid-template-columns: minmax(420px, 1fr) 1.2fr;
-  gap: 48px;
-  align-items: stretch;
+  padding: 80px 32px;
+  min-height: 760px;
+  display: flex;
+  align-items: center;
 }
 
-/* ── 左カラム ── */
 .hero__content {
-  max-width: 600px;
+  max-width: 560px;
+  width: 100%;
 }
 
 .hero__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
+  display: inline-flex; align-items: center; gap: 10px;
   margin-bottom: 24px;
 }
 
 .hero__pill {
-  background: #06C755;
-  color: #fff;
+  background: #06C755; color: #fff;
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 11px;
+  font-weight: 700; font-size: 11px;
   letter-spacing: 0.16em;
-  padding: 5px 12px;
-  border-radius: 999px;
+  padding: 5px 12px; border-radius: 999px;
 }
 
-.hero__release {
-  font-size: 13px;
-  color: #3a4340;
-  font-weight: 500;
-}
+.hero__release { font-size: 13px; color: #3a4340; font-weight: 500; }
 
 .hero__title {
   font-family: 'Noto Serif JP', serif;
   font-weight: 700;
-  font-size: clamp(34px, 4vw, 52px);
+  font-size: clamp(34px, 3.8vw, 54px);
   line-height: 1.35;
-  letter-spacing: 0.005em;
   color: #0f1614;
   margin: 0 0 28px;
 }
 
-.hero__accent {
-  color: #06C755;
-}
+.hero__accent { color: #06C755; }
 
 .hero__sub {
-  font-size: 15px;
-  line-height: 1.9;
-  color: #3a4340;
-  margin: 0 0 32px;
+  font-size: 15px; line-height: 1.9; color: #3a4340; margin: 0 0 32px;
 }
 
 .hero__stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 28px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 10px; margin-bottom: 28px;
 }
 
 .hero__stat {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.95);
   border: 1px solid #e6ebe7;
   border-radius: 14px;
-  padding: 16px 14px;
+  padding: 16px 12px;
   text-align: center;
-  box-shadow: 0 1px 2px rgba(15, 22, 20, 0.04);
+  box-shadow: 0 1px 2px rgba(15,22,20,0.04);
+  backdrop-filter: blur(4px);
 }
 
-.hero__stat-label {
-  font-size: 12px;
-  color: #3a4340;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
+.hero__stat-label { font-size: 12px; color: #3a4340; font-weight: 500; margin-bottom: 6px; }
+.hero__stat-value { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 28px; color: #06C755; line-height: 1; letter-spacing: -0.02em; }
+.hero__stat-unit { font-size: 15px; font-weight: 600; margin-left: 2px; }
+.hero__stat-note { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #6b746f; letter-spacing: 0.08em; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f0f3f0; }
 
-.hero__stat-value {
-  font-family: 'Noto Serif JP', serif;
-  font-weight: 700;
-  font-size: 30px;
-  color: #06C755;
-  line-height: 1;
-  letter-spacing: -0.02em;
-}
+.hero__bullets { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 10px; }
+.hero__bullets li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #3a4340; }
+.hero__bullets li::before { content: "✓"; width: 20px; height: 20px; border-radius: 50%; background: #e6f7ec; color: #06C755; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 
-.hero__stat-unit {
-  font-size: 16px;
-  font-weight: 600;
-  margin-left: 2px;
-}
+.hero__cta { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.hero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 26px; border-radius: 999px; font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; }
+.hero__btn--primary { background: #06C755; color: #fff; box-shadow: 0 6px 16px rgba(6,199,85,0.25); }
+.hero__btn--primary:hover { background: #05a648; }
+.hero__btn--outline { background: rgba(255,255,255,0.95); color: #0f1614; border-color: #e6ebe7; }
 
-.hero__stat-note {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
-  color: #6b746f;
-  letter-spacing: 0.08em;
-  margin-top: 10px;
-  padding-top: 8px;
-  border-top: 1px solid #f0f3f0;
-}
+.hero__trust { display: flex; gap: 22px; flex-wrap: wrap; font-size: 12px; color: #6b746f; }
 
-.hero__bullets {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.hero__bullets li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 14px;
-  color: #3a4340;
-}
-
-.hero__bullets li::before {
-  content: "✓";
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #e6f7ec;
-  color: #06C755;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.hero__cta {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.hero__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px 26px;
-  border-radius: 999px;
-  font-family: 'Noto Sans JP', sans-serif;
-  font-weight: 600;
-  font-size: 15px;
-  border: 1px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: 0.15s;
-}
-
-.hero__btn--primary {
-  background: #06C755;
-  color: #fff;
-  box-shadow: 0 6px 16px rgba(6, 199, 85, 0.25);
-}
-
-.hero__btn--primary:hover {
-  background: #05a648;
-}
-
-.hero__btn--outline {
-  background: #fff;
-  color: #0f1614;
-  border-color: #e6ebe7;
-}
-
-.hero__trust {
-  display: flex;
-  gap: 22px;
-  flex-wrap: wrap;
-  font-size: 12px;
-  color: #6b746f;
-}
-
-/* ── 右カラム ── */
-.hero__media {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  min-height: 720px;
-  align-self: stretch;
-}
-
-.hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  border-radius: 0;
-}
-
-/* ── モバイル ── */
 @media (max-width: 980px) {
-  .hero {
-    padding: 32px 0 48px;
+  .hero { min-height: auto; }
+  .hero__bg { object-position: right bottom; }
+  .hero__overlay {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.7) 50%,
+      rgba(255, 255, 255, 0.0) 80%,
+      rgba(255, 255, 255, 0.0) 100%
+    );
   }
-  .hero__inner {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    padding: 0 16px;
-  }
-  .hero__content {
-    max-width: 100%;
-  }
-  .hero__title {
-    font-size: clamp(26px, 6vw, 36px);
-  }
-  .hero__stats {
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-  .hero__image {
-    border-radius: 12px;
-  }
+  .hero__inner { padding: 40px 20px 480px 20px; min-height: auto; }
+  .hero__title { font-size: clamp(26px, 6vw, 36px); }
+  .hero__stats { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
   .nav__menu { display: none; }
 }
 
@@ -1043,25 +931,28 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
+  <img
+    src="/images/hero/hero-right.png"
+    alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面"
+    className="hero__bg"
+    aria-hidden="true"
+  />
+  <div className="hero__overlay" aria-hidden="true"></div>
   <div className="hero__inner">
-    {/* 左カラム: テキスト */}
     <div className="hero__content">
       <div className="hero__badge">
         <span className="hero__pill">NEW</span>
         <span className="hero__release">LINE公式アカウント拡張ツール ・ 2026.05 リリース</span>
       </div>
-
       <h1 className="hero__title">
         いまのLINE公式アカウントを、<br />
         <span className="hero__accent">サロンの売上につながる</span><br />
         業務システムに。
       </h1>
-
       <p className="hero__sub">
         予約・顧客対応・リピート施策まで、LINEの中で完結。<br />
         お客様との関係を深め、サロンの成長を加速させます。
       </p>
-
       <div className="hero__stats">
         <div className="hero__stat">
           <div className="hero__stat-label">顧客対応の工数</div>
@@ -1079,32 +970,20 @@ section#solution .sr-container { position: relative; z-index: 1; }
           <div className="hero__stat-note">※ シミュレーション値</div>
         </div>
       </div>
-
       <ul className="hero__bullets">
         <li>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
         <li>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
         <li>HPB予約も自動取込、ダブルブッキング防止</li>
       </ul>
-
       <div className="hero__cta">
         <button className="hero__btn hero__btn--primary">LINEで無料ではじめる</button>
         <button className="hero__btn hero__btn--outline">1日の動作を見る ▶</button>
       </div>
-
       <div className="hero__trust">
         <span>5分で連携完了</span>
         <span>初期費用0円</span>
         <span>月¥1,980〜 / 14日間無料</span>
       </div>
-    </div>
-
-    {/* 右カラム: 画像のみ */}
-    <div className="hero__media">
-      <img
-        src="/images/hero/hero-right.png"
-        alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面"
-        className="hero__image"
-      />
     </div>
   </div>
 </section>
