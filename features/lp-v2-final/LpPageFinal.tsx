@@ -137,7 +137,7 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto;
   padding: 0 32px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(420px, 1fr) 1.2fr;
   gap: 48px;
   align-items: center;
 }
@@ -322,12 +322,13 @@ a { color: inherit; text-decoration: none; }
 /* ── 右カラム ── */
 .hero__media {
   display: flex;
-  justify-content: center;
+  justify-content: stretch;
+  align-items: center;
 }
 
 .hero__image {
   width: 100%;
-  max-width: 600px;
+  max-width: none;
   height: auto;
   display: block;
   border-radius: 16px;
