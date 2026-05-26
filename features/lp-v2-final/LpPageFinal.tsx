@@ -124,14 +124,16 @@ a { color: inherit; text-decoration: none; }
 
 .hero {
   position: relative;
-  min-height: 760px;
+  min-height: 780px;
   overflow: hidden;
   background: #fff;
+  padding: 0;
 }
 
 .hero__bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -148,11 +150,10 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 1.0) 0%,
-    rgba(255, 255, 255, 1.0) 35%,
-    rgba(255, 255, 255, 0.7) 48%,
-    rgba(255, 255, 255, 0.0) 65%,
-    rgba(255, 255, 255, 0.0) 100%
+    rgba(255,255,255,1) 0%,
+    rgba(255,255,255,1) 32%,
+    rgba(255,255,255,0.6) 50%,
+    rgba(255,255,255,0) 70%
   );
 }
 
@@ -161,8 +162,8 @@ a { color: inherit; text-decoration: none; }
   z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 80px 32px;
-  min-height: 760px;
+  padding: 72px 32px;
+  min-height: 780px;
   display: flex;
   align-items: center;
 }
@@ -172,84 +173,37 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
 }
 
-.hero__badge {
-  display: inline-flex; align-items: center; gap: 10px;
-  margin-bottom: 24px;
-}
-
-.hero__pill {
-  background: #06C755; color: #fff;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700; font-size: 11px;
-  letter-spacing: 0.16em;
-  padding: 5px 12px; border-radius: 999px;
-}
-
+.hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+.hero__pill { background: #06C755; color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; padding: 5px 12px; border-radius: 999px; }
 .hero__release { font-size: 13px; color: #3a4340; font-weight: 500; }
-
-.hero__title {
-  font-family: 'Noto Serif JP', serif;
-  font-weight: 700;
-  font-size: clamp(34px, 3.8vw, 54px);
-  line-height: 1.35;
-  color: #0f1614;
-  margin: 0 0 28px;
-}
-
+.hero__title { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: clamp(34px, 3.8vw, 54px); line-height: 1.35; color: #0f1614; margin: 0 0 28px; }
 .hero__accent { color: #06C755; }
-
-.hero__sub {
-  font-size: 15px; line-height: 1.9; color: #3a4340; margin: 0 0 32px;
-}
-
-.hero__stats {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; margin-bottom: 28px;
-}
-
-.hero__stat {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #e6ebe7;
-  border-radius: 14px;
-  padding: 16px 12px;
-  text-align: center;
-  box-shadow: 0 1px 2px rgba(15,22,20,0.04);
-  backdrop-filter: blur(4px);
-}
-
+.hero__sub { font-size: 15px; line-height: 1.9; color: #3a4340; margin: 0 0 32px; }
+.hero__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 28px; }
+.hero__stat { background: rgba(255,255,255,0.95); border: 1px solid #e6ebe7; border-radius: 14px; padding: 16px 12px; text-align: center; box-shadow: 0 1px 2px rgba(15,22,20,0.04); }
 .hero__stat-label { font-size: 12px; color: #3a4340; font-weight: 500; margin-bottom: 6px; }
 .hero__stat-value { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 28px; color: #06C755; line-height: 1; letter-spacing: -0.02em; }
 .hero__stat-unit { font-size: 15px; font-weight: 600; margin-left: 2px; }
 .hero__stat-note { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #6b746f; letter-spacing: 0.08em; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f0f3f0; }
-
 .hero__bullets { list-style: none; padding: 0; margin: 0 0 32px; display: flex; flex-direction: column; gap: 10px; }
 .hero__bullets li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #3a4340; }
 .hero__bullets li::before { content: "✓"; width: 20px; height: 20px; border-radius: 50%; background: #e6f7ec; color: #06C755; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
-
 .hero__cta { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .hero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 26px; border-radius: 999px; font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; }
 .hero__btn--primary { background: #06C755; color: #fff; box-shadow: 0 6px 16px rgba(6,199,85,0.25); }
 .hero__btn--primary:hover { background: #05a648; }
 .hero__btn--outline { background: rgba(255,255,255,0.95); color: #0f1614; border-color: #e6ebe7; }
-
 .hero__trust { display: flex; gap: 22px; flex-wrap: wrap; font-size: 12px; color: #6b746f; }
 
 @media (max-width: 980px) {
   .hero { min-height: auto; }
   .hero__bg { object-position: right bottom; }
   .hero__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.7) 50%,
-      rgba(255, 255, 255, 0.0) 80%,
-      rgba(255, 255, 255, 0.0) 100%
-    );
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 80%);
   }
-  .hero__inner { padding: 40px 20px 480px 20px; min-height: auto; }
+  .hero__inner { padding: 40px 20px 420px 20px; min-height: auto; }
   .hero__title { font-size: clamp(26px, 6vw, 36px); }
   .hero__stats { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-  .nav__menu { display: none; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -933,9 +887,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
 <section className="hero" id="top">
   <img
     src="/images/hero/hero-right.png"
-    alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面"
-    className="hero__bg"
+    alt=""
     aria-hidden="true"
+    className="hero__bg"
   />
   <div className="hero__overlay" aria-hidden="true"></div>
   <div className="hero__inner">
