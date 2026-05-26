@@ -122,130 +122,240 @@ a { color: inherit; text-decoration: none; }
 .nav__menu a:hover { color: var(--accent-dk); }
 .nav__cta { display: flex; gap: 10px; }
 
-/* ═══════════════════════════════════════════════
-   SECTION 01: HERO
-═══════════════════════════════════════════════ */
+/* ========================================
+   HERO SECTION — クリーン実装
+   過去のルールは全削除してこれに統一
+   ======================================== */
+
 .hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 720px;
-  padding: 0;
-}
-
-.hero__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: right center;
-}
-
-.hero__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.85) 30%,
-    rgba(255, 255, 255, 0.55) 50%,
-    rgba(255, 255, 255, 0.15) 70%,
-    transparent 100%
-  );
-  pointer-events: none;
+  background: #ffffff;
+  padding: 64px 0 96px;
 }
 
 .hero__inner {
-  position: relative;
-  z-index: 2;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 64px 32px 96px;
+  padding: 0 32px;
   display: grid;
-  grid-template-columns: minmax(400px, 600px);
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
   align-items: center;
-  min-height: inherit;
 }
 
-.hero__content { position: relative; }
+/* ── 左カラム ── */
+.hero__content {
+  max-width: 600px;
+}
 
-.hero__media { display: none; }
+.hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.hero__pill {
+  background: #06C755;
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.hero__release {
+  font-size: 13px;
+  color: #3a4340;
+  font-weight: 500;
+}
+
+.hero__title {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 700;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.35;
+  letter-spacing: 0.005em;
+  color: #0f1614;
+  margin: 0 0 28px;
+}
+
+.hero__accent {
+  color: #06C755;
+}
+
+.hero__sub {
+  font-size: 15px;
+  line-height: 1.9;
+  color: #3a4340;
+  margin: 0 0 32px;
+}
+
+.hero__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.hero__stat {
+  background: #fff;
+  border: 1px solid #e6ebe7;
+  border-radius: 14px;
+  padding: 16px 14px;
+  text-align: center;
+  box-shadow: 0 1px 2px rgba(15, 22, 20, 0.04);
+}
+
+.hero__stat-label {
+  font-size: 12px;
+  color: #3a4340;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.hero__stat-value {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 700;
+  font-size: 30px;
+  color: #06C755;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.hero__stat-unit {
+  font-size: 16px;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.hero__stat-note {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: #6b746f;
+  letter-spacing: 0.08em;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #f0f3f0;
+}
+
+.hero__bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero__bullets li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #3a4340;
+}
+
+.hero__bullets li::before {
+  content: "✓";
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e6f7ec;
+  color: #06C755;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.hero__cta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.hero__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 26px;
+  border-radius: 999px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.15s;
+}
+
+.hero__btn--primary {
+  background: #06C755;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(6, 199, 85, 0.25);
+}
+
+.hero__btn--primary:hover {
+  background: #05a648;
+}
+
+.hero__btn--outline {
+  background: #fff;
+  color: #0f1614;
+  border-color: #e6ebe7;
+}
+
+.hero__trust {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: #6b746f;
+}
+
+/* ── 右カラム ── */
+.hero__media {
+  display: flex;
+  justify-content: center;
+}
 
 .hero__image {
   width: 100%;
+  max-width: 600px;
   height: auto;
   display: block;
   border-radius: 16px;
 }
-.hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-.hero__badge .pill {
-  background: var(--accent); color: #fff;
-  font-family: var(--mono); font-weight: 700; font-size: 11px;
-  letter-spacing: 0.16em; padding: 5px 12px; border-radius: 999px;
-}
-.hero__badge .text { font-size: 13px; color: var(--ink-2); font-weight: 500; }
-.hero__title {
-  font-family: var(--serif); font-weight: 700;
-  font-size: clamp(34px, 4.4vw, 56px);
-  line-height: 1.32; color: var(--ink); margin: 0 0 28px;
-}
-.hero__title .accent { color: var(--accent); }
-.hero__sub { font-size: 15px; line-height: 2; color: var(--ink-2); margin: 0 0 32px; }
-.hero__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 28px; }
-.stat {
-  background: #fff; border: 1px solid var(--line);
-  border-radius: var(--radius); padding: 18px 16px;
-  box-shadow: var(--shadow-sm);
-}
-.stat__row { display: flex; align-items: center; gap: 10px; }
-.stat__icon { width: 28px; height: 28px; flex-shrink: 0; color: var(--accent); }
-.stat__label { font-size: 12px; color: var(--ink-2); font-weight: 500; line-height: 1.3; }
-.stat__value {
-  font-family: var(--serif); font-weight: 700;
-  font-size: 28px; color: var(--accent);
-  line-height: 1; margin-top: 4px; letter-spacing: -0.02em;
-  text-align: center;
-}
-.stat__note {
-  font-family: var(--mono); font-size: 8.5px; color: var(--ink-3);
-  letter-spacing: 0.06em; margin-top: 8px;
-  text-align: center; padding-top: 8px; border-top: 1px solid var(--line-soft);
-}
-.hero__bullets { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; padding: 0; }
-.hero__bullets li {
-  list-style: none; display: flex; align-items: center; gap: 12px;
-  font-size: 14px; color: var(--ink-2);
-}
-.hero__cta { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
-.hero__cta .sr-btn { padding: 16px 26px; font-size: 15px; }
-.hero__cta .sr-btn--primary { box-shadow: 0 6px 16px rgba(6,199,85,0.28); }
-.hero__trust { display: flex; flex-wrap: wrap; gap: 22px; font-size: 12px; color: var(--ink-3); }
-.hero__trust span { display: inline-flex; align-items: center; gap: 6px; }
-.hero__trust svg { color: var(--accent); }
 
+/* ── モバイル ── */
 @media (max-width: 980px) {
   .hero {
-    min-height: auto;
+    padding: 32px 0 48px;
   }
   .hero__inner {
     grid-template-columns: 1fr;
-    padding: 32px 16px 480px 16px;
+    gap: 32px;
+    padding: 0 16px;
   }
-  .hero__overlay {
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.95) 0%,
-      rgba(255, 255, 255, 0.85) 30%,
-      rgba(255, 255, 255, 0.3) 60%,
-      transparent 100%
-    );
+  .hero__content {
+    max-width: 100%;
   }
-  .hero__bg {
-    object-position: right bottom;
+  .hero__title {
+    font-size: clamp(26px, 6vw, 36px);
   }
-  .hero__image { border-radius: 12px; }
+  .hero__stats {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .hero__image {
+    border-radius: 12px;
+  }
   .nav__menu { display: none; }
 }
 
@@ -928,66 +1038,68 @@ section#solution .sr-container { position: relative; z-index: 1; }
      SECTION 01 — HERO
 ═══════════════════════════════════════════════════════ */}
 <section className="hero" id="top">
-  <img className="hero__bg" src="/images/hero/hero-final.png" alt="SalonRink Concierge — キレイ鶴見店の店内とLINE公式アカウントのトーク画面。お客様の予約・相談・パーソナライズ提案・業務自動化がLINEの中で完結" />
-  <div className="hero__overlay" aria-hidden="true"></div>
   <div className="hero__inner">
+    {/* 左カラム: テキスト */}
     <div className="hero__content">
       <div className="hero__badge">
-        <span className="pill">NEW</span>
-        <span className="text">LINE公式アカウント拡張ツール · 2026.05 リリース</span>
+        <span className="hero__pill">NEW</span>
+        <span className="hero__release">LINE公式アカウント拡張ツール ・ 2026.05 リリース</span>
       </div>
-      <h1 className="hero__title">いまのLINE公式アカウントを、<br /><span className="accent">サロンの売上につながる</span><br />業務システムに。</h1>
-      <p className="hero__sub">予約・顧客対応・リピート施策まで、LINEの中で完結。<br />お客様との関係を深め、サロンの成長を加速させます。</p>
+
+      <h1 className="hero__title">
+        いまのLINE公式アカウントを、<br />
+        <span className="hero__accent">サロンの売上につながる</span><br />
+        業務システムに。
+      </h1>
+
+      <p className="hero__sub">
+        予約・顧客対応・リピート施策まで、LINEの中で完結。<br />
+        お客様との関係を深め、サロンの成長を加速させます。
+      </p>
 
       <div className="hero__stats">
-        <div className="stat">
-          <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/></svg>
-            <span className="stat__label">顧客対応の工数</span>
-          </div>
-          <div className="stat__value">−30<span style={{fontSize: '18px'}}>分/日</span></div>
-          <div className="stat__note">※ シミュレーション値</div>
+        <div className="hero__stat">
+          <div className="hero__stat-label">顧客対応の工数</div>
+          <div className="hero__stat-value">−30<span className="hero__stat-unit">分/日</span></div>
+          <div className="hero__stat-note">※ シミュレーション値</div>
         </div>
-        <div className="stat">
-          <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
-            <span className="stat__label">リピート率</span>
-          </div>
-          <div className="stat__value">+25<span style={{fontSize: '18px'}}>%</span></div>
-          <div className="stat__note">※ シミュレーション値</div>
+        <div className="hero__stat">
+          <div className="hero__stat-label">リピート率</div>
+          <div className="hero__stat-value">+25<span className="hero__stat-unit">%</span></div>
+          <div className="hero__stat-note">※ シミュレーション値</div>
         </div>
-        <div className="stat">
-          <div className="stat__row">
-            <svg className="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" strokeLinecap="round"/></svg>
-            <span className="stat__label">客単価アップ</span>
-          </div>
-          <div className="stat__value">+15<span style={{fontSize: '18px'}}>%</span></div>
-          <div className="stat__note">※ シミュレーション値</div>
+        <div className="hero__stat">
+          <div className="hero__stat-label">客単価アップ</div>
+          <div className="hero__stat-value">+15<span className="hero__stat-unit">%</span></div>
+          <div className="hero__stat-note">※ シミュレーション値</div>
         </div>
       </div>
 
       <ul className="hero__bullets">
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約も自動取込、ダブルブッキング防止</li>
+        <li>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
+        <li>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
+        <li>HPB予約も自動取込、ダブルブッキング防止</li>
       </ul>
 
       <div className="hero__cta">
-        <button className="sr-btn sr-btn--primary">
-          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
-          LINEで無料ではじめる
-        </button>
-        <button className="sr-btn sr-btn--outline">
-          1日の動作を見る
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M3 1l7 5-7 5z"/></svg>
-        </button>
+        <button className="hero__btn hero__btn--primary">LINEで無料ではじめる</button>
+        <button className="hero__btn hero__btn--outline">1日の動作を見る ▶</button>
       </div>
 
       <div className="hero__trust">
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.5" strokeLinecap="round"/></svg>5分で連携完了</span>
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M7 1l5 2v4c0 3-2.2 5.5-5 6.5C4.2 12.5 2 10 2 7V3l5-2z"/></svg>初期費用0円</span>
-        <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4"><path d="M4 2l7 5-7 5z" strokeLinejoin="round"/></svg>月¥1,980〜 / 14日間無料</span>
+        <span>5分で連携完了</span>
+        <span>初期費用0円</span>
+        <span>月¥1,980〜 / 14日間無料</span>
       </div>
+    </div>
+
+    {/* 右カラム: 画像のみ */}
+    <div className="hero__media">
+      <img
+        src="/images/hero/hero-right.png"
+        alt="キレイ鶴見店の店内とLINE公式アカウントのトーク画面"
+        className="hero__image"
+      />
     </div>
   </div>
 </section>
