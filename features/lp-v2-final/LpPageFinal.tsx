@@ -139,7 +139,7 @@ a { color: inherit; text-decoration: none; }
   display: grid;
   grid-template-columns: minmax(420px, 1fr) 1.2fr;
   gap: 48px;
-  align-items: center;
+  align-items: stretch;
 }
 
 /* ── 左カラム ── */
@@ -322,16 +322,20 @@ a { color: inherit; text-decoration: none; }
 /* ── 右カラム ── */
 .hero__media {
   display: flex;
-  justify-content: stretch;
+  justify-content: center;
   align-items: center;
+  height: 100%;
+  min-height: 720px;
+  align-self: stretch;
 }
 
 .hero__image {
   width: 100%;
-  max-width: none;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
   display: block;
-  border-radius: 16px;
+  border-radius: 0;
 }
 
 /* ── モバイル ── */
