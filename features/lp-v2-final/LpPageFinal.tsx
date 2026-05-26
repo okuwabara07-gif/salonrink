@@ -139,7 +139,7 @@ a { color: inherit; text-decoration: none; }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: right center;
 }
 
 .hero__overlay {
@@ -243,7 +243,7 @@ a { color: inherit; text-decoration: none; }
     );
   }
   .hero__bg {
-    object-position: center bottom;
+    object-position: right bottom;
   }
   .hero__image { border-radius: 12px; }
   .nav__menu { display: none; }
