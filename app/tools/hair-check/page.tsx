@@ -261,12 +261,6 @@ export default function HairCheckPage() {
             >
               この結果をマイカルテに保存する
             </button>
-            <button
-              onClick={() => (window.location.href = '/miniapp/booking')}
-              style={ctaSecondary}
-            >
-              キレイ鶴見店に相談・予約する
-            </button>
 
             <p style={{ textAlign: 'center', marginTop: 20 }}>
               <button onClick={restart} style={linkBtn}>もう一度診断する</button>
