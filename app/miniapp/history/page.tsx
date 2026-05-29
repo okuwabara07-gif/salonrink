@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import MiniappNav from '../MiniappNav'
 import liff from '@line/liff'
 
 type Karte = {
@@ -219,11 +220,7 @@ export default function MiniappHistoryPage() {
           })}
       </div>
 
-      <nav style={navStyle}>
-        <a href="/miniapp" style={navItem}>ホーム</a>
-        <a href="/miniapp/history" style={{ ...navItem, color: C.rose, fontWeight: 700 }}>履歴</a>
-        <a href="/miniapp/booking" style={navItem}>予約</a>
-      </nav>
+      <MiniappNav active="home" />
     </div>
   )
 }
