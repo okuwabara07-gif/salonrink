@@ -21,6 +21,24 @@ type Result = {
   recommended_care: string
   concern_tags: string[]
 }
+type RecoProduct = {
+  id: string
+  name: string
+  brand: string | null
+  price: number
+  volume: string | null
+  effect_text: string | null
+  is_set: boolean
+  set_items: string[]
+  fulfillment_type: 'inhouse' | 'affiliate'
+  ec_url: string | null
+}
+type RecommendData = {
+  entry: RecoProduct | null
+  set: RecoProduct | null
+  affiliate: RecoProduct | null
+}
+
 
 const C = {
   rose: '#C24E40',
@@ -42,8 +60,23 @@ export default function HairCheckPage() {
   const [photoResult, setPhotoResult] = useState<Result | null>(null)
   const [photoLoading, setPhotoLoading] = useState(false)
   const [photoError, setPhotoError] = useState('')
+  const [recommend, setRecommend] = useState<RecommendData | null>(null)
 
   const isResult = result !== null
+  async function loadRecommend(tags: string[]) {
+    try {
+      const res = await fetch('/api/tools/hair-check/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ concern_tags: tags }),
+      })
+      const data = await res.json()
+      if (!data.error) setRecommend(data as RecommendData)
+    } catch (e) {
+      console.warn('[hair-check] recommend load skipped:', e)
+    }
+  }
+
   const total = QUESTIONS.length
 
   // 画像をbase64化(data URLのprefixを除去)してphoto APIへ
@@ -109,6 +142,7 @@ export default function HairCheckPage() {
       const data = await res.json()
       if (data.result) {
         setResult(data.result)
+        loadRecommend(data.result.concern_tags || [])
         // 結果をsessionに保持（LINE登録後の保存用）
         try {
           sessionStorage.setItem('haircheck_result', JSON.stringify(data.result))
@@ -127,6 +161,7 @@ export default function HairCheckPage() {
     setStep(0)
     setAnswers([])
     setResult(null)
+    setRecommend(null)
     setErrorMsg('')
   }
 
@@ -209,6 +244,49 @@ export default function HairCheckPage() {
               <p style={subText}>{result.recommended_care}</p>
             </div>
 
+            {/* おすすめ製品 */}
+            {recommend && (recommend.entry || recommend.set) && (
+              <div style={card}>
+                <div style={{ fontSize: 15, fontWeight: 800, color: C.ink, textAlign: 'center' }}>あなたにおすすめの製品</div>
+                <p style={{ ...subText, fontSize: 12, textAlign: 'center', margin: '4px 0 14px' }}>診断結果に合わせてお選びしました。</p>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  {recommend.entry && (
+                    <div style={recoCard}>
+                      <div style={recoBadgeEntry}>エントリー</div>
+                      <div style={recoFulfill}>サロン発送</div>
+                      <div style={recoName}>{recommend.entry.name}</div>
+                      {recommend.entry.brand && <div style={recoBrand}>{recommend.entry.brand}</div>}
+                      {recommend.entry.effect_text && <p style={recoEffect}>{recommend.entry.effect_text}</p>}
+                      <div style={recoPrice}>¥{recommend.entry.price.toLocaleString()}<span style={recoTax}>税込</span></div>
+                      {recommend.entry.volume && <div style={recoVol}>{recommend.entry.volume}</div>}
+                    </div>
+                  )}
+                  {recommend.set && (
+                    <div style={{ ...recoCard, borderColor: C.rose }}>
+                      <div style={recoBadgeSet}>本命セット</div>
+                      <div style={recoFulfill}>サロン発送</div>
+                      <div style={recoName}>{recommend.set.name}</div>
+                      {recommend.set.brand && <div style={recoBrand}>{recommend.set.brand}</div>}
+                      {recommend.set.effect_text && <p style={recoEffect}>{recommend.set.effect_text}</p>}
+                      <div style={recoPrice}>¥{recommend.set.price.toLocaleString()}<span style={recoTax}>税込</span></div>
+                      {recommend.set.set_items && recommend.set.set_items.length > 0 && (
+                        <div style={recoVol}>{recommend.set.set_items.join(' / ')}</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                {recommend.affiliate && (
+                  <div style={{ ...recoCard, borderStyle: 'dashed', marginTop: 10 }}>
+                    <div style={recoFulfillAff}>Amazon・楽天</div>
+                    <div style={{ ...recoName, fontSize: 13 }}>参考: {recommend.affiliate.name}</div>
+                    {recommend.affiliate.effect_text && <p style={recoEffect}>{recommend.affiliate.effect_text}</p>}
+                    <div style={{ ...recoPrice, fontSize: 14 }}>¥{recommend.affiliate.price.toLocaleString()}<span style={recoTax}>参考価格</span></div>
+                  </div>
+                )}
+                <p style={{ fontSize: 11, color: '#9a8f85', marginTop: 12, textAlign: 'center', lineHeight: 1.6 }}>※製品の購入機能は順次公開予定です。</p>
+              </div>
+            )}
+
             {/* Step2 写真AI診断 */}
             {!photoResult && (
               <div style={card}>
@@ -276,6 +354,17 @@ export default function HairCheckPage() {
   )
 }
 
+const recoCard: React.CSSProperties = { position: 'relative', border: '1px solid #ece6df', borderRadius: 12, padding: '28px 10px 12px', background: '#fff' }
+const recoBadgeEntry: React.CSSProperties = { position: 'absolute', top: 8, left: 8, fontSize: 10, background: '#f3ece1', color: '#8a7a63', borderRadius: 999, padding: '2px 8px' }
+const recoBadgeSet: React.CSSProperties = { position: 'absolute', top: 8, left: 8, fontSize: 10, background: '#fbeae7', color: '#C24E40', borderRadius: 999, padding: '2px 8px' }
+const recoFulfill: React.CSSProperties = { position: 'absolute', top: 8, right: 8, fontSize: 10, border: '1px solid #C24E40', color: '#C24E40', borderRadius: 999, padding: '1px 6px' }
+const recoFulfillAff: React.CSSProperties = { display: 'inline-block', fontSize: 10, background: '#eee', color: '#666', borderRadius: 999, padding: '1px 8px', marginBottom: 4 }
+const recoName: React.CSSProperties = { fontSize: 13, fontWeight: 700, color: '#2b2622', marginTop: 2, lineHeight: 1.4 }
+const recoBrand: React.CSSProperties = { fontSize: 11, color: '#9a8f85', marginTop: 1 }
+const recoEffect: React.CSSProperties = { fontSize: 11, color: '#6f655d', lineHeight: 1.6, margin: '6px 0 0' }
+const recoPrice: React.CSSProperties = { fontSize: 16, fontWeight: 700, color: '#2b2622', marginTop: 8 }
+const recoTax: React.CSSProperties = { fontSize: 10, color: '#9a8f85', marginLeft: 4, fontWeight: 400 }
+const recoVol: React.CSSProperties = { fontSize: 10, color: '#9a8f85', marginTop: 2 }
 const card: React.CSSProperties = {
   background: '#fff',
   borderRadius: 12,
