@@ -56,7 +56,12 @@ export const tabs: NavTab[] = [
     icon: 'bag',
     label: '店販EC',
     path: '/dashboard/ec',
-    badge: { kind: 'tag', text: 'Soon' },
+  },
+  {
+    id: 'reviews',
+    icon: 'sparkle',
+    label: '口コミ承認',
+    path: '/dashboard/reviews',
   },
   { id: 'other',     icon: 'grid',     label: 'その他',   path: '/dashboard/more' },
 ];
