@@ -13,6 +13,7 @@
  */
 
 import { useEffect, useState } from 'react'
+import MiniappNav from '../MiniappNav'
 import liff from '@line/liff'
 
 type Menu = { id: string; name: string; price: number; duration: number; category: string }
@@ -302,11 +303,7 @@ export default function MiniappBookingPage() {
         )}
       </div>
 
-      <nav style={navStyle}>
-        <a href="/miniapp" style={navItem}>ホーム</a>
-        <a href="/miniapp/history" style={navItem}>履歴</a>
-        <a href="/miniapp/booking" style={{ ...navItem, color: C.rose, fontWeight: 700 }}>予約</a>
-      </nav>
+      <MiniappNav active="home" />
     </div>
   )
 }
