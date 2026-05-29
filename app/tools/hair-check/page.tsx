@@ -252,8 +252,10 @@ export default function HairCheckPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   {recommend.entry && (
                     <div style={recoCard}>
-                      <div style={recoBadgeEntry}>エントリー</div>
-                      <div style={recoFulfill}>サロン発送</div>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <div style={recoBadgeEntry}>エントリー</div>
+                        <div style={recoFulfill}>サロン発送</div>
+                      </div>
                       <div style={recoName}>{recommend.entry.name}</div>
                       {recommend.entry.brand && <div style={recoBrand}>{recommend.entry.brand}</div>}
                       {recommend.entry.effect_text && <p style={recoEffect}>{recommend.entry.effect_text}</p>}
@@ -263,8 +265,10 @@ export default function HairCheckPage() {
                   )}
                   {recommend.set && (
                     <div style={{ ...recoCard, borderColor: C.rose }}>
-                      <div style={recoBadgeSet}>本命セット</div>
-                      <div style={recoFulfill}>サロン発送</div>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <div style={recoBadgeSet}>本命セット</div>
+                        <div style={recoFulfill}>サロン発送</div>
+                      </div>
                       <div style={recoName}>{recommend.set.name}</div>
                       {recommend.set.brand && <div style={recoBrand}>{recommend.set.brand}</div>}
                       {recommend.set.effect_text && <p style={recoEffect}>{recommend.set.effect_text}</p>}
@@ -355,9 +359,9 @@ export default function HairCheckPage() {
 }
 
 const recoCard: React.CSSProperties = { position: 'relative', border: '1px solid #ece6df', borderRadius: 12, padding: '28px 10px 12px', background: '#fff' }
-const recoBadgeEntry: React.CSSProperties = { position: 'absolute', top: 8, left: 8, fontSize: 10, background: '#f3ece1', color: '#8a7a63', borderRadius: 999, padding: '2px 8px' }
-const recoBadgeSet: React.CSSProperties = { position: 'absolute', top: 8, left: 8, fontSize: 10, background: '#fbeae7', color: '#C24E40', borderRadius: 999, padding: '2px 8px' }
-const recoFulfill: React.CSSProperties = { position: 'absolute', top: 8, right: 8, fontSize: 10, border: '1px solid #C24E40', color: '#C24E40', borderRadius: 999, padding: '1px 6px' }
+const recoBadgeEntry: React.CSSProperties = { fontSize: 10, background: '#f3ece1', color: '#8a7a63', borderRadius: 999, padding: '2px 8px' }
+const recoBadgeSet: React.CSSProperties = { fontSize: 10, background: '#fbeae7', color: '#C24E40', borderRadius: 999, padding: '2px 8px' }
+const recoFulfill: React.CSSProperties = { fontSize: 10, border: '1px solid #C24E40', color: '#C24E40', borderRadius: 999, padding: '1px 6px' }
 const recoFulfillAff: React.CSSProperties = { display: 'inline-block', fontSize: 10, background: '#eee', color: '#666', borderRadius: 999, padding: '1px 8px', marginBottom: 4 }
 const recoName: React.CSSProperties = { fontSize: 13, fontWeight: 700, color: '#2b2622', marginTop: 2, lineHeight: 1.4 }
 const recoBrand: React.CSSProperties = { fontSize: 11, color: '#9a8f85', marginTop: 1 }
