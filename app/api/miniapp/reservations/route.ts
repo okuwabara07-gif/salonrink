@@ -4,15 +4,22 @@
  * GET相当(POST + action=list): 自分の予約一覧 + メニュー + 営業設定 を返す
  * POST(action=create): 予約を reservations に作成
  *
- * reservations 列: salon_id / customer_id / customer_name / line_user_id /
- *                   datetime / menu / status / source
- *
- * IDトークン検証 → customer 解決 を必須にする(本人以外の予約を作らせない)。
+ * 予約枠調整(Phase 2):
+ * - closed_weekdays(曜日定休) / closed_dates(個別休業日) に該当する日は予約不可
+ * - daily_reservation_limit(1日の予約上限。0=無制限) を超える日は予約不可
+ * - フロントだけでなくサーバー側でも必ず検証する(API直叩き対策)
  */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { verifyCustomerIdToken, getKireiTsurumiSalonId } from '@/lib/miniapp/verify'
+
+function toJstDateParts(d: Date): { ymd: string; weekday: number } {
+  const jst = new Date(d.getTime() + 9 * 60 * 60 * 1000)
+  const ymd = jst.toISOString().slice(0, 10)
+  const weekday = jst.getUTCDay()
+  return { ymd, weekday }
+}
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
@@ -46,7 +53,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const action = body.action || 'list'
 
-    // ---- 一覧 + メニュー + 設定 ----
     if (action === 'list') {
       const [menusRes, settingsRes, reservationsRes] = await Promise.all([
         admin
@@ -56,7 +62,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           .order('sort_order', { ascending: true }),
         admin
           .from('salon_settings')
-          .select('open_time, close_time, last_order_time, slot_minutes, closed_weekdays')
+          .select('open_time, close_time, last_order_time, slot_minutes, closed_weekdays, closed_dates, daily_reservation_limit')
           .eq('salon_id', salonId)
           .maybeSingle(),
         admin
@@ -76,7 +82,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       })
     }
 
-    // ---- 予約作成 ----
     if (action === 'create') {
       const { datetime, menu } = body
       if (!datetime || typeof datetime !== 'string') {
@@ -85,6 +90,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const when = new Date(datetime)
       if (isNaN(when.getTime()) || when.getTime() < Date.now()) {
         return NextResponse.json({ error: '正しい未来の日時を指定してください' }, { status: 400 })
+      }
+
+      const { data: settings, error: setErr } = await admin
+        .from('salon_settings')
+        .select('closed_weekdays, closed_dates, daily_reservation_limit')
+        .eq('salon_id', salonId)
+        .maybeSingle()
+
+      if (setErr) {
+        console.error('[miniapp/reservations] settings lookup error:', setErr)
+        return NextResponse.json({ error: 'Server error' }, { status: 500 })
+      }
+
+      const { ymd, weekday } = toJstDateParts(when)
+      const closedWeekdays = Array.isArray(settings?.closed_weekdays) ? settings.closed_weekdays : []
+      const closedDates = Array.isArray(settings?.closed_dates) ? settings.closed_dates : []
+      const dailyLimit = typeof settings?.daily_reservation_limit === 'number' ? settings.daily_reservation_limit : 0
+
+      if (closedWeekdays.includes(weekday)) {
+        return NextResponse.json({ error: 'その日は定休日のため予約できません' }, { status: 409 })
+      }
+      if (closedDates.includes(ymd)) {
+        return NextResponse.json({ error: 'その日は休業日のため予約できません' }, { status: 409 })
+      }
+
+      if (dailyLimit > 0) {
+        const dayStart = new Date(ymd + 'T00:00:00+09:00')
+        const dayEnd = new Date(ymd + 'T23:59:59+09:00')
+        const { count, error: cntErr } = await admin
+          .from('reservations')
+          .select('id', { count: 'exact', head: true })
+          .eq('salon_id', salonId)
+          .gte('datetime', dayStart.toISOString())
+          .lte('datetime', dayEnd.toISOString())
+          .neq('status', 'cancelled')
+
+        if (cntErr) {
+          console.error('[miniapp/reservations] count error:', cntErr)
+          return NextResponse.json({ error: 'Server error' }, { status: 500 })
+        }
+        if ((count || 0) >= dailyLimit) {
+          return NextResponse.json({ error: 'その日は予約が満員のため受け付けできません' }, { status: 409 })
+        }
       }
 
       const { data: created, error: insErr } = await admin

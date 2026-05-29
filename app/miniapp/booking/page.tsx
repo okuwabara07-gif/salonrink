@@ -22,6 +22,8 @@ type Settings = {
   last_order_time: string
   slot_minutes: number
   closed_weekdays: number[]
+  closed_dates: string[]
+  daily_reservation_limit: number
 } | null
 type Reservation = { id: string; datetime: string; menu: string | null; status: string }
 
@@ -172,11 +174,14 @@ export default function MiniappBookingPage() {
   const dateOptions: { value: string; label: string }[] = []
   {
     const closed = settings?.closed_weekdays || []
+    const closedDates = settings?.closed_dates || []
     const now = new Date()
     for (let i = 0; i < 14; i++) {
       const d = new Date(now)
       d.setDate(now.getDate() + i)
       if (closed.includes(d.getDay())) continue
+      const ymd = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+      if (closedDates.includes(ymd)) continue
       const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
         d.getDate()
       ).padStart(2, '0')}`
