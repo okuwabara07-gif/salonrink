@@ -26,6 +26,7 @@ type Settings = {
   daily_reservation_limit: number
 } | null
 type Reservation = { id: string; datetime: string; menu: string | null; status: string }
+type HpbReservation = { start_time: string; end_time: string }
 
 type State = 'loading' | 'ready' | 'unlinked' | 'error'
 
@@ -50,7 +51,7 @@ function fmtDateTime(iso: string): string {
 }
 
 // 営業設定から指定日の予約可能時刻スロットを生成
-function buildSlots(dateStr: string, s: Settings): string[] {
+function buildSlots(dateStr: string, s: Settings, hpbList: HpbReservation[] = []): string[] {
   if (!s) return ['10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00']
   const toMin = (t: string) => {
     const [h, m] = t.split(':').map(Number)
@@ -59,8 +60,18 @@ function buildSlots(dateStr: string, s: Settings): string[] {
   const start = toMin(s.open_time || '10:00')
   const lastOrder = toMin(s.last_order_time || s.close_time || '19:00')
   const step = s.slot_minutes || 30
+  // その日のHPB予約の時間帯(分単位)を集める
+  const busy = hpbList
+    .map((h) => ({ st: new Date(h.start_time), et: new Date(h.end_time) }))
+    .filter((b) => {
+      const y = `${b.st.getFullYear()}-${String(b.st.getMonth() + 1).padStart(2, '0')}-${String(b.st.getDate()).padStart(2, '0')}`
+      return y === dateStr
+    })
+    .map((b) => ({ s: b.st.getHours() * 60 + b.st.getMinutes(), e: b.et.getHours() * 60 + b.et.getMinutes() }))
   const out: string[] = []
   for (let t = start; t <= lastOrder; t += step) {
+    const blocked = busy.some((b) => t >= b.s && t < b.e)
+    if (blocked) continue
     const h = Math.floor(t / 60)
     const m = t % 60
     out.push(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`)
@@ -74,6 +85,7 @@ export default function MiniappBookingPage() {
   const [menus, setMenus] = useState<Menu[]>([])
   const [settings, setSettings] = useState<Settings>(null)
   const [reservations, setReservations] = useState<Reservation[]>([])
+  const [hpbReservations, setHpbReservations] = useState<HpbReservation[]>([])
   const [errorMsg, setErrorMsg] = useState('')
 
   // フォーム状態
@@ -97,6 +109,7 @@ export default function MiniappBookingPage() {
     setMenus(data.menus || [])
     setSettings(data.settings || null)
     setReservations((data.reservations || []).filter((r: Reservation) => r.status !== 'cancelled'))
+    setHpbReservations(data.hpbReservations || [])
     setState('ready')
   }
 
@@ -189,7 +202,7 @@ export default function MiniappBookingPage() {
       dateOptions.push({ value, label: `${d.getMonth() + 1}/${d.getDate()}(${wd})` })
     }
   }
-  const timeSlots = selDate ? buildSlots(selDate, settings) : []
+  const timeSlots = selDate ? buildSlots(selDate, settings, hpbReservations) : []
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: C.bg, fontFamily: 'sans-serif', paddingBottom: 80 }}>

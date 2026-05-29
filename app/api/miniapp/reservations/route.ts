@@ -54,7 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const action = body.action || 'list'
 
     if (action === 'list') {
-      const [menusRes, settingsRes, reservationsRes] = await Promise.all([
+      const [menusRes, settingsRes, reservationsRes, hpbRes] = await Promise.all([
         admin
           .from('salon_menus')
           .select('id, name, price, duration, category')
@@ -72,6 +72,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           .eq('customer_id', customer.id)
           .gte('datetime', new Date().toISOString())
           .order('datetime', { ascending: true }),
+        admin
+          .from('hpb_reservations')
+          .select('start_time, end_time')
+          .eq('salon_id', salonId)
+          .gte('start_time', new Date().toISOString())
+          .order('start_time', { ascending: true }),
       ])
 
       return NextResponse.json({
@@ -79,6 +85,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         menus: menusRes.data || [],
         settings: settingsRes.data || null,
         reservations: reservationsRes.data || [],
+        hpbReservations: hpbRes.data || [],
       })
     }
 
@@ -113,6 +120,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
       if (closedDates.includes(ymd)) {
         return NextResponse.json({ error: 'その日は休業日のため予約できません' }, { status: 409 })
+      }
+
+      // HPB予約との重複チェック(その時間帯がHPBで埋まっていたら拒否)
+      const { data: hpbList, error: hpbErr } = await admin
+        .from('hpb_reservations')
+        .select('start_time, end_time')
+        .eq('salon_id', salonId)
+      if (hpbErr) {
+        console.error('[miniapp/reservations] hpb lookup error:', hpbErr)
+        return NextResponse.json({ error: 'Server error' }, { status: 500 })
+      }
+      const whenMs = when.getTime()
+      const overlap = (hpbList || []).some((h) => {
+        const st = new Date(h.start_time).getTime()
+        const et = new Date(h.end_time).getTime()
+        return whenMs >= st && whenMs < et
+      })
+      if (overlap) {
+        return NextResponse.json({ error: 'その時間帯は予約が埋まっています' }, { status: 409 })
       }
 
       if (dailyLimit > 0) {
