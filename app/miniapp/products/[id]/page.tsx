@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
+import liff from '@line/liff'
 
 type Product = {
   id: string
@@ -31,6 +32,34 @@ export default function ProductDetailPage() {
   const [count, setCount] = useState(0)
   const [qty, setQty] = useState(1)
   const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [buying, setBuying] = useState(false)
+  const [buyError, setBuyError] = useState('')
+
+  async function handleBuy() {
+    if (!product) return
+    setBuying(true)
+    setBuyError('')
+    try {
+      const liffId = process.env.NEXT_PUBLIC_LIFF_ID_CUSTOMER
+      if (!liffId) throw new Error('設定エラー')
+      await liff.init({ liffId })
+      if (!liff.isLoggedIn()) { liff.login(); return }
+      const token = liff.getIDToken()
+      if (!token) throw new Error('ログイン情報を取得できませんでした')
+      const res = await fetch('/api/miniapp/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: token, items: [{ product_id: product.id, qty }] }),
+      })
+      const data = await res.json()
+      if (data.url) { window.location.href = data.url; return }
+      setBuyError(data.error || '購入手続きを開始できませんでした')
+    } catch (e) {
+      setBuyError(e instanceof Error ? e.message : 'エラーが発生しました')
+    } finally {
+      setBuying(false)
+    }
+  }
 
   useEffect(() => {
     if (!id) return
@@ -105,8 +134,11 @@ export default function ProductDetailPage() {
               <button onClick={() => setQty((q) => q + 1)} style={stepper}>＋</button>
             </div>
           </div>
-          <button disabled style={{ ...buyBtn, opacity: 0.5 }}>購入手続きへ(準備中)</button>
-          <p style={{ fontSize: 11, color: '#9a8f85', marginTop: 10, textAlign: 'center' }}>※購入機能は近日公開予定です。</p>
+          <button onClick={handleBuy} disabled={buying} style={{ ...buyBtn, opacity: buying ? 0.6 : 1 }}>
+            {buying ? '処理中...' : '購入手続きへ'}
+          </button>
+          {buyError && <p style={{ color: C.rose, fontSize: 13, marginTop: 10, textAlign: 'center' }}>{buyError}</p>}
+          <p style={{ fontSize: 11, color: '#9a8f85', marginTop: 10, textAlign: 'center' }}>5,000円以上で送料無料 / 未満は一律700円</p>
         </>
       )}
       <div style={{ height: 40 }} />
