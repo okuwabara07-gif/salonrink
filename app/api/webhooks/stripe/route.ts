@@ -34,6 +34,57 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as any
+
+        // ===== 物販(都度決済 mode=payment)の処理 =====
+        if (session.mode === 'payment') {
+          const orderId = session.metadata?.order_id || session.client_reference_id
+          if (!orderId) {
+            console.warn('[webhook] payment session without order_id')
+            break
+          }
+          // 注文を paid に更新(既に paid ならスキップ=冪等性)
+          const { data: ord } = await supabase
+            .from('orders')
+            .select('id, items, payment_status')
+            .eq('id', orderId)
+            .maybeSingle()
+          if (!ord || ord.payment_status === 'paid') {
+            break
+          }
+          await supabase
+            .from('orders')
+            .update({
+              payment_status: 'paid',
+              stripe_payment_intent: session.payment_intent || null,
+              shipping_name: session.shipping_details?.name || session.customer_details?.name || null,
+              shipping_postal: session.shipping_details?.address?.postal_code || null,
+              shipping_address: [
+                session.shipping_details?.address?.state,
+                session.shipping_details?.address?.city,
+                session.shipping_details?.address?.line1,
+                session.shipping_details?.address?.line2,
+              ].filter(Boolean).join(' ') || null,
+              shipping_phone: session.customer_details?.phone || null,
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', orderId)
+          // 在庫減算
+          const items = Array.isArray(ord.items) ? ord.items : []
+          for (const it of items) {
+            if (!it.product_id) continue
+            const { data: prod } = await supabase
+              .from('products')
+              .select('stock')
+              .eq('id', it.product_id)
+              .maybeSingle()
+            if (prod) {
+              const next = Math.max(0, (prod.stock || 0) - (it.qty || 1))
+              await supabase.from('products').update({ stock: next }).eq('id', it.product_id)
+            }
+          }
+          break
+        }
+        // ===== ここから既存のサブスク処理 =====
         const userId = session.client_reference_id
         const customerId = session.customer
         const subscriptionId = session.subscription
