@@ -19,6 +19,8 @@ type SettingsRow = {
   last_order_time: string;
   slot_minutes: number;
   closed_weekdays: number[];
+  closed_dates: string[];
+  daily_reservation_limit: number;
   close_on_holidays: boolean;
   notif_new_reservation: boolean;
   notif_cancel: boolean;
@@ -39,6 +41,8 @@ const DEFAULT_SETTINGS: SettingsRow = {
   last_order_time: '19:00',
   slot_minutes: 30,
   closed_weekdays: [],
+  closed_dates: [],
+  daily_reservation_limit: 0,
   close_on_holidays: false,
   notif_new_reservation: true,
   notif_cancel: true,
@@ -97,6 +101,8 @@ export default function SettingsPage() {
             last_order_time: st.last_order_time ?? DEFAULT_SETTINGS.last_order_time,
             slot_minutes: st.slot_minutes ?? DEFAULT_SETTINGS.slot_minutes,
             closed_weekdays: Array.isArray(st.closed_weekdays) ? st.closed_weekdays : [],
+            closed_dates: Array.isArray(st.closed_dates) ? st.closed_dates : [],
+            daily_reservation_limit: typeof st.daily_reservation_limit === 'number' ? st.daily_reservation_limit : 0,
             close_on_holidays: !!st.close_on_holidays,
             notif_new_reservation: st.notif_new_reservation ?? true,
             notif_cancel: st.notif_cancel ?? true,
@@ -617,6 +623,33 @@ export default function SettingsPage() {
                 </label>
               ))}
             </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>個別の休業日(不定休)</label>
+            <div className={styles.toggleSub} style={{ marginBottom: 8 }}>カレンダーから休業する日を追加します</div>
+            <input type="date" className={styles.input}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) return;
+                setSettings((s) => s.closed_dates.includes(v) ? s : ({ ...s, closed_dates: [...s.closed_dates, v].sort() }));
+                e.target.value = '';
+              }} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+              {settings.closed_dates.length === 0 && (<span className={styles.toggleSub}>個別休業日は未設定です</span>)}
+              {settings.closed_dates.map((d) => (
+                <span key={d} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: '#f3ece1', fontSize: 13 }}>
+                  {d}
+                  <button type="button" onClick={() => setSettings((s) => ({ ...s, closed_dates: s.closed_dates.filter((x) => x !== d) }))} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#c24e40', fontWeight: 700 }}>x</button>
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>1日の予約上限</label>
+            <div className={styles.toggleSub} style={{ marginBottom: 8 }}>0 にすると無制限です</div>
+            <input type="number" min={0} className={styles.input}
+              value={settings.daily_reservation_limit}
+              onChange={(e) => setSettings((s) => ({ ...s, daily_reservation_limit: Math.max(0, parseInt(e.target.value || '0', 10)) }))} />
           </div>
           <div className={styles.field}>
             <label className={styles.label}>祝日も休業</label>
