@@ -1477,8 +1477,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
 <section className="case sr-section" id="case">
   <div className="sr-container">
     <div className="sr-section__head">
-      <div className="sr-eyebrow">CASE 01 · 導入店舗の声</div>
-      <h2 className="sr-h2">「LINEだけで、<br />サロン業務が<span className="accent">ここまで変わる</span>」</h2>
+      <div className="sr-eyebrow">CASE 01 · 導入サロンの声</div>
+      <h2 className="sr-h2">「LINE上に、<br />顧客資産が<span className="accent">積み上がっていく。</span>」</h2>
     </div>
 
     <article className="case__card">
@@ -1491,16 +1491,16 @@ section#solution .sr-container { position: relative; z-index: 1; }
             REAL PHOTO · 実店舗
           </div>
           <div className="case__photo-bottom" style={{position: 'relative', zIndex: '2'}}>
-            <div className="case__photo-name">キレイ鶴見店</div>
-            <div className="case__photo-meta">WHITE HAIR COLOR SALON · 1人サロン</div>
+            <div className="case__photo-name">デモサロン</div>
+            <div className="case__photo-meta">HAIR COLOR SPECIALIST · 1人オーナー</div>
             <div className="case__photo-meta-links">
-              HPB · H000501100<br />
-              <a href="https://instagram.com/kirei.tsurumi" target="_blank">@kirei.tsurumi</a>
+              LINE公式 · @demo-salon<br />
+              <a href="#" onClick={(e) => e.preventDefault()}>サロン詳細</a>
             </div>
             <div className="case__photo-tags">
-              <span className="case__photo-tag">白髪染め特化</span>
-              <span className="case__photo-tag">1人サロン</span>
-              <span className="case__photo-tag">横浜・鶴見</span>
+              <span className="case__photo-tag">カラー・白髪専門</span>
+              <span className="case__photo-tag">1人運営</span>
+              <span className="case__photo-tag">都市部</span>
             </div>
           </div>
         </div>
@@ -1508,11 +1508,11 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="case__top-body">
           <div className="case__quote-mark">"</div>
           <p className="case__quote">
-            LINEで連絡するタイミングが分かるようになって、<br />
-            自然に<span className="accent">リピートにつながる流れ</span>ができてきました。<br />
-            「いつものお客様」が、もっと深いお付き合いに。
+            LINE上に蓄積される顧客記憶が、<br />
+            そのまま<span className="accent">サロンの無形資産になった。</span><br />
+            「また会いたい」という関係が、自動で深まるのが実感。
           </p>
-          <div className="case__quote-by">— キレイ鶴見店 オーナー</div>
+          <div className="case__quote-by">— デモサロン オーナー</div>
 
           <div className="case__before-after">
             <div className="ba-col">
