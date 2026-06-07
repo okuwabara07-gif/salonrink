@@ -4,28 +4,28 @@
 
 :root {
   /* ── Colors ─────────────────────────── */
-  --ink:        #0f1614;   /* 主要テキスト */
-  --ink-2:      #3a4340;   /* 副テキスト */
-  --ink-3:      #6b746f;   /* 補助 / mono ラベル */
-  --ink-4:      #9aa39e;   /* placeholder / disabled */
+  --ink:        #1c1510;   /* 深いベージュ黒 */
+  --ink-2:      #4a3f37;   /* ウォームグレー */
+  --ink-3:      #7a6e68;   /* 補助 / mono ラベル */
+  --ink-4:      #a89d95;   /* placeholder / disabled */
 
-  --bg:         #ffffff;   /* 白基調 */
-  --bg-tint:    #f6f9f6;   /* セクション交互背景 */
-  --bg-soft:    #f0f4f0;   /* カード入れ子背景 */
+  --bg:         #faf8f6;   /* 薄いベージュ白 */
+  --bg-tint:    #f1ede8;   /* セクション交互背景 */
+  --bg-soft:    #e8e3dd;   /* カード入れ子背景 */
 
-  --line:       #e6ebe7;   /* hairline */
-  --line-soft:  #f0f3f0;   /* 内部区切り */
+  --line:       #d9cfc7;   /* ベージュ hairline */
+  --line-soft:  #e8e3dd;   /* 内部区切り */
 
-  --accent:     #06C755;   /* LINE green */
-  --accent-dk:  #05a648;
-  --accent-soft:#e6f7ec;
-  --accent-ink: #054d22;
+  --accent:     #d4a574;   /* ウォームベージュ / メイン */
+  --accent-dk:  #b8905f;   /* ダークベージュ */
+  --accent-soft:#f4ede5;   /* ベージュ soft */
+  --accent-ink: #5d4a3a;   /* ベージュ ink */
 
-  --coral:      #D85A30;   /* 顧客向け / 初回・注意 */
-  --coral-soft: #fbe9e1;
+  --coral:      #d87e5a;   /* 顧客向け / 初回・注意 */
+  --coral-soft: #f3ddd0;
 
-  --warn:       #c98a2b;
-  --warn-soft:  #fbf2dc;
+  --warn:       #d9a855;
+  --warn-soft:  #f4eade;
 
   /* ── Type ──────────────────────────── */
   --serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
