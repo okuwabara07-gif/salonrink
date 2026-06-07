@@ -1145,7 +1145,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
 <section className="everyone sr-section" id="everyone">
   <div className="sr-container">
     <div className="everyone__visual" style={{position: 'relative', width: '100%', maxWidth: '1240px', margin: '0 auto'}}>
-      <img src="/images/for-everyone/for-everyone-full.png" alt="FOR EVERYONE — お客様も、これから雇うスタッフも、そしてあなた自身も。3つの視点から見たSalonRinkの価値（FOR CUSTOMERS / FOR STAFF / FOR YOU）" style={{width: '100%', height: 'auto', display: 'block'}}/>
+      <img src="/images/for-everyone/for-everyone-full.png" alt="FOR EVERYONE — 顧客は「自分の好みが覚えてもらえる」安心感。スタッフは「過去を検索できる」効率化。店主は「記憶が資産になる」成長。3つの視点からの価値。" style={{width: '100%', height: 'auto', display: 'block'}}/>
     </div>
   </div>
 </section>
@@ -1681,8 +1681,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
   <div className="sr-container">
     <div className="sr-section__head">
       <div className="sr-eyebrow">COMPARE · 他サービスとの違い</div>
-      <h2 className="sr-h2">「LINEを置き換える」ではなく、<br />「LINEを<span className="accent">活かしきる</span>」。</h2>
-      <p className="sr-lead">1人サロンが選ぶべきは、どのタイプ?<br />SalonRink Concierge の立ち位置をご紹介します。</p>
+      <h2 className="sr-h2">カラー・白髪特化サロンに、<br /><span className="accent">ちょうどいい。</span></h2>
+      <p className="sr-lead">顧客の「記憶」を蓄積し、「関係」を深めるサロン向けツール。<br />LINEの中で完結し、導入も運用も簡単。</p>
     </div>
 
     <div className="cmp__table">
