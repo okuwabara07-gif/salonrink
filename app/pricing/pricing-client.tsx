@@ -4,78 +4,62 @@ import { CheckoutButton } from './checkout-button'
 
 const plans = [
   {
-    id: 'freelance',
+    id: 'light',
     internalKey: 'basic' as const,
-    name: 'フリーランス',
-    price: 980,
+    name: 'Light',
+    price: 1980,
     icon: '🌸',
-    target: '自宅サロン・業務委託・出張美容師',
-    tagline: '個人事業主のための、ちいさな相棒。',
+    target: '1人サロン・個人事業主',
+    tagline: '必要最小限の関係構築。',
     features: [
-      'LINE予約管理',
-      '顧客カルテ',
-      '確定申告サポート',
+      'LINE予約・カルテ',
+      'カラー・白髪記録',
       '顧客管理',
-      '記事自動配信',
-      '基本サポート',
+      'AI提案（基本）',
+      'リマインド配信',
+      'メールサポート',
     ],
   },
   {
     id: 'standard',
     internalKey: 'small' as const,
-    name: 'スタンダード',
-    price: 2480,
+    name: 'Standard',
+    price: 2980,
     icon: '🌿',
     popular: true,
-    target: '1〜3席・スタッフ2名まで',
-    tagline: '小規模サロンに、ちょうどいい。',
+    target: '小規模サロン・スタッフ1〜2名',
+    tagline: '成長するサロンのベストチョイス。',
     features: [
       '全機能利用可',
-      'LINE予約・カルテ・EC',
-      'スタッフ2名まで',
-      'クーポン・ポイント機能',
-      'ブログ機能',
+      'AI施術カルテ化',
+      '次提案自動化',
+      'スタッフ共有機能',
+      'クーポン・ポイント',
       '優先サポート',
     ],
   },
   {
-    id: 'pro',
+    id: 'premium',
     internalKey: 'medium' as const,
-    name: 'プロ',
-    price: 3980,
+    name: 'Premium',
+    price: 4580,
     icon: '🌳',
-    target: 'HPB運用中・3〜5席',
-    tagline: 'HPBと共存する、本格運用へ。',
+    target: 'マルチスタッフ・複数店舗',
+    tagline: '本格運用で、顧客資産化を加速。',
     features: [
-      '全機能 + HPB同期込み',
+      '全機能 + 高度な分析',
       'スタッフ無制限',
-      '広告非表示',
-      '高度な分析機能',
-      '専任サポート',
-    ],
-  },
-  {
-    id: 'custom',
-    internalKey: null,
-    name: 'カスタム',
-    price: null,
-    icon: '🏢',
-    target: '5店舗以上・特別要件',
-    tagline: '多店舗・チェーン向け。',
-    features: [
-      '完全カスタマイズ',
-      '専任エンジニア対応',
-      'API連携',
-      'SSO対応',
-      '法人契約',
-      'SLA保証',
+      'HPB完全同期',
+      '画像・動画対応',
+      '拡張API対応',
+      '専任コンシェルジュ',
     ],
   },
 ] satisfies ReadonlyArray<{
   id: string
-  internalKey: 'basic' | 'small' | 'medium' | null
+  internalKey: 'basic' | 'small' | 'medium'
   name: string
-  price: number | null
+  price: number
   icon: string
   target: string
   tagline: string
