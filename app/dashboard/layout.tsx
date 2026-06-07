@@ -24,12 +24,12 @@ interface TitleEntry {
 }
 
 const TITLE_MAP: Record<string, TitleEntry> = {
-  '/dashboard':                 { title: 'ホーム', sub: '本日のサロン状況' },
-  '/dashboard/booking':         { title: 'HPB予約',                              sub: 'タイムテーブル / 予約管理' },
-  '/dashboard/customers':       { title: '顧客一覧',                             sub: '顧客データベース' },
-  '/dashboard/messages':        { title: 'DM配信',                                sub: '自動リマインダー · 来店促進' },
-  '/dashboard/integrations':    { title: '連携サービス',                         sub: '外部システムとの連携' },
-  '/dashboard/more':            { title: 'その他',                                sub: '設定 · ヘルプ · お知らせ' },
+  '/dashboard':                 { title: 'ダッシュボード', sub: 'カラー・白髪施術の記憶と提案' },
+  '/dashboard/booking':         { title: '予約・スケジュール',                    sub: '来店予定・施術時間管理' },
+  '/dashboard/customers':       { title: '顧客カルテ',                            sub: 'カラー履歴・好み・次提案' },
+  '/dashboard/messages':        { title: 'LINE配信',                              sub: 'カラー褪色タイミング・リピート促進' },
+  '/dashboard/integrations':    { title: '外部連携',                              sub: 'LINE · HPB · 他ツール連携' },
+  '/dashboard/more':            { title: 'その他',                                sub: '設定 · サポート · アカウント' },
 };
 
 function resolveTitle(pathname: string): TitleEntry {
@@ -53,10 +53,10 @@ function useSamplePhotoSeed() {
     if (localStorage.getItem('srk-photos-seeded') === '1') return;
 
     const seeds = [
-      { id: 'cust:青山 真理', src: '/sample-photos/1.png' },
-      { id: 'cust:柳田 友香', src: '/sample-photos/2.png' },
-      { id: 'cust:浅野 節子', src: '/sample-photos/3.png' },
-      { id: 'cust:矢野 玲子', src: '/sample-photos/4.png' },
+      { id: 'cust:A様', src: '/sample-photos/1.png' },
+      { id: 'cust:B様', src: '/sample-photos/2.png' },
+      { id: 'cust:C様', src: '/sample-photos/3.png' },
+      { id: 'cust:D様', src: '/sample-photos/4.png' },
     ];
 
     Promise.all(
