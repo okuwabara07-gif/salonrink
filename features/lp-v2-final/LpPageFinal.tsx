@@ -11,23 +11,23 @@ export default function LpPageFinal() {
    DESIGN TOKENS
 ═══════════════════════════════════════════════ */
 :root {
-  --ink: #0f1614;
-  --ink-2: #3a4340;
-  --ink-3: #6b746f;
-  --ink-4: #9aa39e;
-  --bg: #ffffff;
-  --bg-tint: #f6f9f6;
-  --bg-soft: #f0f4f0;
-  --line: #e6ebe7;
-  --line-soft: #f0f3f0;
-  --accent: #06C755;
-  --accent-dk: #05a648;
-  --accent-soft: #e6f7ec;
-  --accent-ink: #054d22;
-  --coral: #D85A30;
-  --coral-soft: #fbe9e1;
-  --warn: #c98a2b;
-  --warn-soft: #fbf2dc;
+  --ink: #1c1510;
+  --ink-2: #4a3f37;
+  --ink-3: #7a6e68;
+  --ink-4: #a89d95;
+  --bg: #faf8f6;
+  --bg-tint: #f1ede8;
+  --bg-soft: #e8e3dd;
+  --line: #d9cfc7;
+  --line-soft: #e8e3dd;
+  --accent: #d4a574;
+  --accent-dk: #b8905f;
+  --accent-soft: #f4ede5;
+  --accent-ink: #5d4a3a;
+  --coral: #d87e5a;
+  --coral-soft: #f3ddd0;
+  --warn: #d9a855;
+  --warn-soft: #f4eade;
   --serif: "Noto Serif JP", "Hiragino Mincho ProN", serif;
   --sans: "Noto Sans JP", "Hiragino Sans", system-ui, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
@@ -174,7 +174,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hero__badge { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-.hero__pill { background: #06C755; color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; padding: 5px 12px; border-radius: 999px; }
+.hero__pill { background: var(--accent); color: #fff; font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.16em; padding: 5px 12px; border-radius: 999px; }
 .hero__release { font-size: 13px; color: #3a4340; font-weight: 500; }
 .hero__title { font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: clamp(34px, 3.8vw, 54px); line-height: 1.35; color: #0f1614; margin: 0 0 28px; }
 .hero__accent { color: #06C755; }
