@@ -1156,9 +1156,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
 <section className="sr-section" id="in-action">
   <div className="sr-container">
     <div className="sr-section__head">
-      <div className="sr-eyebrow">IN ACTION · 1日の動き</div>
-      <h2 className="sr-h2">朝から夜まで、<br />1日のサロン業務が<span className="accent">こう流れる</span>。</h2>
-      <p className="sr-lead">予約・接客・記録・提案・分析まで、<br />1日の業務をLINEの中でつないでいきます。</p>
+      <div className="sr-eyebrow">CUSTOMER JOURNEY</div>
+      <h2 className="sr-h2">来店前から、<br />また会う日まで。<span className="accent">つながる体験。</span></h2>
+      <p className="sr-lead">顧客の一連の流れ：カラーの希望を聞く→施術→施術後のケア提案→<br />次の来店を促す。その全てがLINEでシームレスに。</p>
     </div>
 
     <div className="timeline">
@@ -1172,9 +1172,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
 
         <div className="scene" style={{position: 'relative', zIndex: '1'}}>
           <div className="scene__body scene__body--left">
-            <div className="scene__time">13:45 ／ 来店前</div>
-            <h3 className="scene__title">名前を打つだけで、<br /><span className="accent">過去のすべてが瞬時に</span>。</h3>
-            <p className="scene__desc">LINEのトーク内で「@田中様」と打つだけ。<br />前回履歴・写真・好み・注意事項が、すぐに表示されます。</p>
+            <div className="scene__time">来店前</div>
+            <h3 className="scene__title">前回のカラーを、<br /><span className="accent">一瞬で思い出す。</span></h3>
+            <p className="scene__desc">LINEで「@A様」と打つだけ。<br />前回のカラー明度、色味、ダメージケア内容が表示。</p>
             <div className="scene__tags">
               <span className="scene__tag">@MENTION</span>
               <span className="scene__tag">AUTO CHART</span>
@@ -1185,15 +1185,15 @@ section#solution .sr-container { position: relative; z-index: 1; }
             <div className="scene__phone-screen">
               <div className="scene__phone-head">
                 <span className="back">‹</span>
-                <div className="avatar">田</div>
+                <div className="avatar">A</div>
                 <div style={{flex: '1'}}>
-                  <div style={{fontSize: '11px'}}>田中 真由美 さま</div>
-                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>来店 18回目</div>
+                  <div style={{fontSize: '11px'}}>A様</div>
+                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>来店 12回目</div>
                 </div>
               </div>
               <div className="scene__phone-body">
                 <div className="mini-msg-row mini-msg-row--user">
-                  <div className="mini-msg mini-msg--user">@田中様</div>
+                  <div className="mini-msg mini-msg--user">@A様</div>
                   <div className="mini-time">13:45</div>
                 </div>
                 <div className="mini-msg-row">
@@ -1209,7 +1209,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
                     </div>
                     <div className="mini-card__row"><span>避けたい色</span><b>赤味の強い色</b></div>
                     <div className="mini-card__row"><span>頭皮</span><b style={{color: 'var(--coral)'}}>敏感肌</b></div>
-                    <div className="mini-card__row"><span>最終 3/29</span><b>3ヶ月半 前</b></div>
+                    <div className="mini-card__row"><span>最終施術</span><b>3週間前</b></div>
                   </div>
                 </div>
               </div>
@@ -1222,10 +1222,10 @@ section#solution .sr-container { position: relative; z-index: 1; }
             <div className="scene__phone-screen">
               <div className="scene__phone-head">
                 <span className="back">‹</span>
-                <div className="avatar">K</div>
+                <div className="avatar">S</div>
                 <div style={{flex: '1'}}>
-                  <div style={{fontSize: '11px'}}>キレイ鶴見店</div>
-                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>配信予約済</div>
+                  <div style={{fontSize: '11px'}}>デモサロン</div>
+                  <div style={{fontSize: '8px', color: 'var(--ink-3)', fontWeight: '400'}}>提案生成中</div>
                 </div>
               </div>
               <div className="scene__phone-body">
@@ -1235,9 +1235,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
                     Concierge 提案 — 配信文案
                   </div>
                   <div className="suggest__body">
-                    田中さま、こんにちは🌸<br />
-                    前回のご来店から3ヶ月半が経ちました。<br />
-                    そろそろリタッチのタイミングですね。
+                    A様、こんにちは🌸<br />
+                    前回のカラーから3週間が経ちました。<br />
+                    そろそろメンテナンスのタイミングです。
                   </div>
                 </div>
                 <div className="suggest" style={{background: 'var(--coral-soft)', borderColor: 'var(--coral)'}}>
@@ -1257,9 +1257,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
           </div>
           <div className="scene__dot">04</div>
           <div className="scene__body scene__body--right">
-            <div className="scene__time">18:00 ／ 営業後</div>
-            <h3 className="scene__title">「次の連絡、誰に？」を、<br /><span className="accent">自動で提案</span>。</h3>
-            <p className="scene__desc">過去の周期と履歴から、再来タイミングをConciergeが予測。<br />配信文の下書きまで自動で用意。確認して送るだけ。</p>
+            <div className="scene__time">施術後</div>
+            <h3 className="scene__title">次の来店を促す、<br /><span className="accent">自動提案。</span></h3>
+            <p className="scene__desc">カラーの褪色タイミング、白髪の成長周期をAIが予測。<br />「来月のこの時期、いかがですか？」を自動で提案。</p>
             <div className="scene__tags">
               <span className="scene__tag">AUTO SUGGEST</span>
               <span className="scene__tag">1-TAP SEND</span>
