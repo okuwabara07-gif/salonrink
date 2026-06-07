@@ -949,66 +949,67 @@ section#solution .sr-container { position: relative; z-index: 1; }
   <div className="sr-container">
     <div className="sr-section__head">
       <div className="sr-eyebrow">PROBLEM</div>
-      <h2 className="sr-h2">1人サロンだからこそ、<br />こんな"もったいない"<span className="accent">起きていませんか？</span></h2>
-      <p className="sr-lead">毎日LINEで予約も連絡も受けているのに、<br />お客様1人ひとりの情報は、トーク履歴の海に埋もれていく…</p>
+      <h2 className="sr-h2">施術は上手いのに、<br />なぜか<span className="accent">リピートが伸びない。</span></h2>
+      <p className="sr-lead">「いつもの仕上がり」を提案したくても、<br />前回何をしたか思い出せない。その瞬間が、信頼を失う瞬間。</p>
     </div>
 
     <div className="problem__grid">
       <article className="pcard">
         <div className="pcard__num">01</div>
-        <h3 className="pcard__title">「いつもの田中さま」が、<br /><span className="accent">前回何だったか思い出せない</span></h3>
-        <p className="pcard__body">前回の仕上がり、避けたい色、頭皮の状態…<br />1人で全部覚えるのは限界。<br />忙しい時に限って思い出せない。</p>
+        <h3 className="pcard__title">カラーの仕上がり、<br /><span className="accent">毎回同じに再現できない</span></h3>
+        <p className="pcard__body">明るさ、色味、ダメージケア…<br />「前回これくらいの明度」は、<br />記憶だけでは再現不可能。</p>
         <div className="pcard__demo">
           <div className="demo-chat-row">
             <div className="demo-avatar"></div>
             <div style={{flex: '1'}}>
               <div style={{display: 'flex', gap: '8px', alignItems: 'baseline'}}>
-                <span className="demo-time">10:32</span>
-                <span style={{fontSize: '11px', color: 'var(--ink-2)', fontWeight: '600'}}>田中様　LINE</span>
+                <span className="demo-time">14:18</span>
+                <span style={{fontSize: '11px', color: 'var(--ink-2)', fontWeight: '600'}}>A様　LINE</span>
               </div>
-              <div className="demo-msg">「いつもの感じでお願いします！」</div>
+              <div className="demo-msg">「前回と同じ色でお願いします」</div>
             </div>
           </div>
-          <div className="demo-flag">▸ 前回は…どんなだっけ？</div>
+          <div className="demo-flag">▸ 前回の仕上がりは…？</div>
         </div>
         <div className="pcard__foot">
           <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"/></svg></span>
-          <span className="pcard__foot-text">接客の質が<br />不安定になる</span>
+          <span className="pcard__foot-text">信頼を損失、<br />リピート率↓</span>
         </div>
       </article>
 
       <article className="pcard">
         <div className="pcard__num">02</div>
-        <h3 className="pcard__title">予約管理が、<br /><span className="accent">LINEとHPBで二重</span></h3>
-        <p className="pcard__body">LINE予約とホットペッパーの両方を毎日確認。<br />ダブルブッキングの不安、<br />2画面の行き来で時間がどんどん消えていく。</p>
+        <h3 className="pcard__title">白髪との向き合い方が、<br /><span className="accent">お客様ごとに違う</span></h3>
+        <p className="pcard__body">白髪染めの頻度、ダメージ許容度、<br />色味の好み…「このお客様は何がNGだったか」を<br />履歴から引き出すのが困難。</p>
         <div className="pcard__demo">
           <ul className="demo-list">
-            <li>💬 LINE予約　今日 5件</li>
-            <li>📅 HPB予約　今日 3件</li>
-            <li>🤔 …合計何時に何人？</li>
+            <li>👤 A様：月1回白髪染め希望</li>
+            <li>👤 B様：2ヶ月ごと＋質感重視</li>
+            <li>👤 C様：…何がベストだった？</li>
           </ul>
-          <div className="demo-flag">▸ 二重チェックで時間ロス</div>
+          <div className="demo-flag">▸ 提案が画一的になる</div>
         </div>
         <div className="pcard__foot">
           <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></span>
-          <span className="pcard__foot-text">予約管理だけで<br />1日30分以上の損失</span>
+          <span className="pcard__foot-text">対応品質が<br />安定しない</span>
         </div>
       </article>
 
       <article className="pcard">
         <div className="pcard__num">03</div>
-        <h3 className="pcard__title">「そろそろの時期」を、<br /><span className="accent">いつ送るか分からない</span></h3>
-        <p className="pcard__body">リピートにつながる連絡を送りたい。<br />でも誰に、いつ、どんな文面で？<br />結局送れないまま、お客様が他店に流れる。</p>
+        <h3 className="pcard__title">次の提案タイミングが、<br /><span className="accent">分からないまま</span></h3>
+        <p className="pcard__body">「そろそろカラーが褪せてきた頃では？」<br />を正確に知るすべがない。<br />結果、来店まで音信不通…</p>
         <div className="pcard__demo">
           <ul className="demo-list">
-            <li>👥 LINE友だち　1,284 名</li>
-            <li>💬 最終配信　2ヶ月前</li>
+            <li>📅 前回カラー：いつ？</li>
+            <li>💭 次提案のベストタイミング：？</li>
+            <li>📱 連絡：送れていない状態</li>
           </ul>
-          <div className="demo-flag">▸ 機会損失が積み重なる</div>
+          <div className="demo-flag">▸ 来店機会を見逃す</div>
         </div>
         <div className="pcard__foot">
           <span className="pcard__foot-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" strokeLinecap="round"/></svg></span>
-          <span className="pcard__foot-text">リピート機会の<br />取りこぼし</span>
+          <span className="pcard__foot-text">顧客離脱の<br />悪循環</span>
         </div>
       </article>
     </div>
@@ -1016,13 +1017,13 @@ section#solution .sr-container { position: relative; z-index: 1; }
     <div className="pband">
       <div className="pband__hd">
         <span className="pband__hd-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="9"/><path d="M6 11l3.5 3.5L16 8" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
-        <span className="pband__hd-text">1人サロンに、<br />こんなお悩みはありませんか？</span>
+        <span className="pband__hd-text">ヘアサロン経営者の<br />こんなお悩み、当てはまりますか？</span>
       </div>
       <ul className="pband__items">
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>LINEの返信に時間がかかり、本来の施術に集中できない</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>リピートにつながる連絡のタイミングがつかめない</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>HPB予約とLINE予約の管理で1日が終わる</li>
-        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>過去のお客様情報を引き出せず、提案が画一的になる</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>前回のカラー仕上がりを正確に再現できない</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>白髪染めのベストタイミングを見逃す</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様の「好み」「NG」を記憶に頼るしかない</li>
+        <li><span className="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 6l3 3 5-6"/></svg></span>提案が画一的になり、リピート率が上がらない</li>
       </ul>
     </div>
 
