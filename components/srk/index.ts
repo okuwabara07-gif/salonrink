@@ -12,3 +12,4 @@ export { ServicePills } from './ServicePills';
 export { Avatar } from './Avatar';
 export { Modal } from './Modal';
 export { CustomerPhoto, useCustomerPhoto } from './CustomerPhoto';
+export { LogoMark } from './LogoMark';
