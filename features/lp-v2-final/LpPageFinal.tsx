@@ -899,13 +899,12 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <span className="hero__release">LINE公式アカウント拡張ツール ・ 2026.05 リリース</span>
       </div>
       <h1 className="hero__title">
-        いまのLINE公式アカウントを、<br />
-        <span className="hero__accent">サロンの売上につながる</span><br />
-        業務システムに。
+        また会いたくなる<br />
+        <span className="hero__accent">関係をつくる。</span>
       </h1>
       <p className="hero__sub">
-        予約・顧客対応・リピート施策まで、LINEの中で完結。<br />
-        お客様との関係を深め、サロンの成長を加速させます。
+        LINE上に顧客の「記憶」を残す。施術の度に関係が深まり、<br />
+        自然と予約が増える、サロン経営を目指そう。
       </p>
       <div className="hero__stats">
         <div className="hero__stat">
@@ -925,9 +924,9 @@ section#solution .sr-container { position: relative; z-index: 1; }
         </div>
       </div>
       <ul className="hero__bullets">
-        <li>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
-        <li>1人サロンの店主が、面倒な作業から解放され接客に集中</li>
-        <li>HPB予約も自動取込、ダブルブッキング防止</li>
+        <li>カラーや白髪染めの仕上がり、頭皮の状態をAIが記憶</li>
+        <li>毎回「いつもの仕上がり」を再現、次回施術を自動提案</li>
+        <li>店主は接客に集中、顧客との関係が深まるシステム</li>
       </ul>
       <div className="hero__cta">
         <button className="hero__btn hero__btn--primary">LINEで無料ではじめる</button>
