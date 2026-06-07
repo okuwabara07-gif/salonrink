@@ -21,7 +21,7 @@ type Product = {
 }
 type Review = { id: string; rating: number; body: string | null; created_at: string }
 
-const C = { rose: '#C24E40', gold: '#B08D5E', ink: '#2b2622', muted: '#6f655d', bg: '#faf8f5', line: '#ece6df' }
+const C = { rose: '#C9A961', gold: '#C9A961', ink: '#2b2622', muted: '#6f655d', bg: '#faf8f5', line: '#ece6df' }
 
 export default function ProductDetailPage() {
   const params = useParams()

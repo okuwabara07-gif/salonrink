@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 import { tabs } from './tabs'
 import styles from './Sidebar.module.css'
@@ -28,8 +29,14 @@ export default function Sidebar({ salonName = 'サロン名未設定', ownerName
     <aside className={styles.sidebar}>
       {/* ロゴ */}
       <div className={styles.logo}>
-        <div className={styles.logoTitle}>SalonRink</div>
-        <div className={styles.logoSubtitle}>SalonRink</div>
+        <Image
+          src="/salonrink-logo-overlay-300w.png"
+          alt="SalonRink"
+          width={120}
+          height={40}
+          style={{ width: 'auto', height: '40px' }}
+          priority
+        />
       </div>
 
       {/* ナビゲーション */}

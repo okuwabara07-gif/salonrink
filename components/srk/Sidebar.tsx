@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Icon, type IconName } from './Icon';
@@ -64,18 +65,24 @@ export function Sidebar({
   return (
     <aside className="srk-side" data-collapsed={collapsed ? '1' : '0'}>
       <div className="srk-brand">
-        <div className="srk-mark">
-          <svg viewBox="0 0 32 32" width="22" height="22">
-            <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".55" />
-            <path d="M10 22 Q16 6 22 22" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
-            <circle cx="16" cy="11.5" r="1.4" fill="currentColor" />
-          </svg>
-        </div>
-        {!collapsed && (
-          <div className="srk-brand-text">
-            <div className="srk-brand-name">SalonRink</div>
-            <div className="srk-brand-sub">サロン管理</div>
+        {collapsed ? (
+          <div className="srk-mark">
+            <Image
+              src="/logo/salonrink-concierge-oval.png"
+              alt="SalonRink"
+              width={22}
+              height={22}
+              style={{ width: '22px', height: '22px' }}
+            />
           </div>
+        ) : (
+          <Image
+            src="/salonrink-logo-overlay-300w.png"
+            alt="SalonRink"
+            width={100}
+            height={32}
+            style={{ width: 'auto', height: '32px' }}
+          />
         )}
       </div>
 

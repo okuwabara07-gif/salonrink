@@ -4,7 +4,7 @@ import React, { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import liff from '@line/liff'
 
-const C = { rose: '#C24E40', gold: '#B08D5E', ink: '#2b2622', muted: '#6f655d', line: '#ece6df' }
+const C = { rose: '#C9A961', gold: '#C9A961', ink: '#2b2622', muted: '#6f655d', line: '#ece6df' }
 
 function ReviewForm() {
   const sp = useSearchParams()

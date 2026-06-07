@@ -16,7 +16,7 @@ type Order = {
   created_at: string
 }
 
-const C = { rose: '#C24E40', gold: '#B08D5E', ink: '#2b2622', muted: '#6f655d', bg: '#faf8f5', line: '#ece6df' }
+const C = { rose: '#C9A961', gold: '#C9A961', ink: '#2b2622', muted: '#6f655d', bg: '#faf8f5', line: '#ece6df' }
 
 const FULFILL_LABEL: Record<string, { text: string; bg: string; color: string }> = {
   unshipped: { text: '発送待ち', bg: '#fbeee2', color: '#b5701f' },

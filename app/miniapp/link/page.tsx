@@ -18,8 +18,8 @@ import liff from '@line/liff'
 type State = 'loading' | 'need_phone' | 'submitting' | 'error'
 
 const C = {
-  rose: '#C24E40',
-  gold: '#B08D5E',
+  rose: '#C9A961',
+  gold: '#C9A961',
   ink: '#2b2622',
   bg: '#faf8f5',
   line: '#ece6df',

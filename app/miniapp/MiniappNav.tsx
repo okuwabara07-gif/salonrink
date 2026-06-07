@@ -7,7 +7,7 @@ import React from 'react'
  * active に現在のタブキーを渡すとハイライトされる。
  */
 
-const C = { rose: '#C24E40', muted: '#6f655d', line: '#ece6df' }
+const C = { rose: '#C9A961', muted: '#6f655d', line: '#ece6df' }
 
 type TabKey = 'home' | 'diagnosis' | 'products' | 'history' | 'mypage'
 

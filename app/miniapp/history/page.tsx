@@ -43,8 +43,8 @@ type Detail = {
 type State = 'loading' | 'ready' | 'unlinked' | 'empty' | 'error'
 
 const C = {
-  rose: '#C24E40',
-  gold: '#B08D5E',
+  rose: '#C9A961',
+  gold: '#C9A961',
   ink: '#2b2622',
   muted: '#6f655d',
   bg: '#faf8f5',
@@ -245,7 +245,7 @@ const rowBtn: React.CSSProperties = {
 const thumb: React.CSSProperties = { width: 48, height: 48, borderRadius: 8, objectFit: 'cover', flexShrink: 0 }
 const photoStyle: React.CSSProperties = { width: '100%', borderRadius: 8, marginTop: 4 }
 const block: React.CSSProperties = { marginBottom: 10 }
-const subLabel: React.CSSProperties = { fontSize: 12, color: '#B08D5E', fontWeight: 700, marginBottom: 3 }
+const subLabel: React.CSSProperties = { fontSize: 12, color: '#C9A961', fontWeight: 700, marginBottom: 3 }
 const subText: React.CSSProperties = { color: '#6f655d', fontSize: 14, lineHeight: 1.8, margin: 0 }
 const navStyle: React.CSSProperties = {
   position: 'fixed',

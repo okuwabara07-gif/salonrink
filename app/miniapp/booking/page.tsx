@@ -32,8 +32,8 @@ type HpbReservation = { start_time: string; end_time: string }
 type State = 'loading' | 'ready' | 'unlinked' | 'error'
 
 const C = {
-  rose: '#C24E40',
-  gold: '#B08D5E',
+  rose: '#C9A961',
+  gold: '#C9A961',
   ink: '#2b2622',
   muted: '#6f655d',
   bg: '#faf8f5',

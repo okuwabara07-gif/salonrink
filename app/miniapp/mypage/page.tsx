@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import liff from '@line/liff'
 import MiniappNav from '../MiniappNav'
 
-const C = { rose: '#C24E40', gold: '#B08D5E', ink: '#2b2622', muted: '#6f655d', line: '#ece6df' }
+const C = { rose: '#C9A961', gold: '#C9A961', ink: '#2b2622', muted: '#6f655d', line: '#ece6df' }
 
 export default function MyPage() {
   const [name, setName] = useState<string>('')
