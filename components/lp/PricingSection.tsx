@@ -18,7 +18,7 @@ export default function PricingSection() {
       description: 'AIカルテ・HPB連携(売上を伸ばしたいサロン向け)',
       cta: '無料で試す',
       popular: true,
-      badge: '人気No.1',
+      badge: '推奨',
       borderColor: 'var(--accent-gold)',
     },
     {

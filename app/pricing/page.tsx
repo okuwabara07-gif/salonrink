@@ -37,7 +37,7 @@ export default function PricingPage() {
         '予約統計',
         '自動リマインド',
       ],
-      badge: '人気No.1',
+      badge: '推奨',
       isPopular: true,
     },
     {
@@ -260,7 +260,7 @@ export default function PricingPage() {
                   e.currentTarget.style.transform = 'translateY(0)'
                 }}
               >
-                {/* 人気No.1バッジ */}
+                {/* 推奨バッジ */}
                 {plan.badge && (
                   <div
                     style={{

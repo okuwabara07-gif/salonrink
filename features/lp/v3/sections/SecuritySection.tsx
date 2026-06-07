@@ -44,7 +44,7 @@ export default function SecuritySection() {
         <FadeUp delay={80}>
           <h2 className="h2" style={{ marginTop: 14, textAlign: 'center' }}>
             あなたの顧客データは、<br />
-            <span className="underline-accent">確実に守られています</span>。
+            <span className="underline-accent">適切に保護されています</span>。
           </h2>
         </FadeUp>
         <FadeUp delay={140}>

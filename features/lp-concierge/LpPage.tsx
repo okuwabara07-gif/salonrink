@@ -1070,7 +1070,7 @@ export default function LpPage() {
         <div className={styles.sectionInner}>
           <div className={styles.sectionHead}>
             <p className={styles.sectionKicker}>SECURITY</p>
-            <h2 className={styles.sectionTitle}>あなたの顧客データは、<br/>確実に守られています。</h2>
+            <h2 className={styles.sectionTitle}>あなたの顧客データは、<br/>適切に保護されています。</h2>
             <p className={styles.sectionSub}>美容業界で扱う個人情報を、金融・医療レベルのセキュリティで保護。</p>
           </div>
           <div className={styles.securityGrid}>
