@@ -1044,8 +1044,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
   <div className="sr-container">
     <div className="sr-section__head">
       <div className="sr-eyebrow">SOLUTION</div>
-      <h2 className="sr-h2">LINEを置き換えない。<br />LINEに、"<span className="accent">乗せる</span>"。</h2>
-      <p className="sr-lead">SalonRinkは独立した管理ツールではありません。<br />お使いのLINE公式アカウントに連携する、サロン特化の業務レイヤーです。</p>
+      <h2 className="sr-h2">カラーと白髪染めの<br />「記憶」を、<span className="accent">AIが残す。</span></h2>
+      <p className="sr-lead">LINE上の会話から、毎回の施術内容を自動でカルテ化。<br />お客様との関係が深まり、次の提案も簡単になります。</p>
     </div>
 
     <div className="sol__cols">
@@ -1095,20 +1095,20 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <div className="sol__col">
         <div className="sol__col-eyebrow">SALONRINK — LAYER</div>
         <h3 className="sol__col-title">裏側の業務レイヤー</h3>
-        <p className="sol__col-sub">LINEの会話を読み取り、カルテを自動生成。<br />HPB予約も同じ画面で管理できます。</p>
+        <p className="sol__col-sub">「前回はカラー8レベルの明度」「白髪染めは3週間毎」<br />をLINE上で自動でまとめて、次の提案に活かします。</p>
 
         <div className="sol__feat">
           <div className="feat">
             <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M3 15h12M5 13V8m4 5V5m4 8v-6" strokeLinecap="round"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">AUTO</span><span className="feat__title">会話 → カルテ 自動構造化</span></div>
-              <div className="feat__sub">会話を読み取り、カルテを自動生成。</div>
+              <div className="feat__sub">施術内容、色味、ダメージ度をAIが自動でカルテ化。</div>
             </div>
           </div>
           <div className="feat">
             <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="8" cy="8" r="4.5"/><path d="M11.5 11.5L16 16" strokeLinecap="round"/></svg></div>
             <div className="feat__body">
-              <div className="feat__row"><span className="feat__tag">検索</span><span className="feat__title">LINEで「@田中様」と打つだけ</span></div>
+              <div className="feat__row"><span className="feat__tag">検索</span><span className="feat__title">LINEで「@A様」と打つだけ</span></div>
               <div className="feat__sub">過去の会話・施術履歴・好みを瞬時に呼び出し。</div>
             </div>
           </div>
@@ -1117,16 +1117,16 @@ section#solution .sr-container { position: relative; z-index: 1; }
             <div className="feat__body">
               <div className="feat__row">
                 <span className="feat__tag" style={{background: 'var(--accent)', color: '#fff'}}>NEW</span>
-                <span className="feat__title">HPB予約も一画面で管理</span>
+                <span className="feat__title">次の施術提案を自動生成</span>
               </div>
-              <div className="feat__sub">ホットペッパー予約を自動取込。ダブルブッキング防止。</div>
+              <div className="feat__sub">「カラーから3週間経過」「白髪が目立ち始める時期」を自動検出。</div>
             </div>
           </div>
           <div className="feat">
             <div className="feat__icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 2h8l3 3v11H4V2z"/><path d="M12 2v3h3M6 8h6M6 11h6M6 14h4"/></svg></div>
             <div className="feat__body">
               <div className="feat__row"><span className="feat__tag">提案</span><span className="feat__title">リピート提案を自動下書き</span></div>
-              <div className="feat__sub">「そろそろの時期」のお客様リスト + 配信文の下書きを自動生成。</div>
+              <div className="feat__sub">今週ベストタイミングなお客様を自動抽出し、LINE配信もワンタップ。</div>
             </div>
           </div>
         </div>
@@ -1134,7 +1134,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
     </div>
 
     <div className="sband">
-      <img className="sband__img" src="/images/solution/solution-bottom-panel.png" alt="導入しても、いつものLINEのまま。だから、定着しやすい。1人サロンでもすぐに使い始められる。業務効率が上がり、接客に集中できる。HPB予約も同時に管理。サロンの価値が、自然と積み上がる。"/>
+      <img className="sband__img" src="/images/solution/solution-bottom-panel.png" alt="LINE上で完結。カラー・白髪染めの履歴と好みを蓄積。毎回の施術で関係が深まる。お客様も店主も、新しく覚えることなし。自然とリピート率が上がる。"/>
     </div>
   </div>
 </section>
