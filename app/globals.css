@@ -58,6 +58,10 @@
   --moss:      #5a6b3c;
   --sky:       #3d5a6b;
 
+  /* LINE green (functional color) */
+  --line-green: #06C755;
+  --line-green-dk: #05a648;
+
   /* Typography */
   --serif: var(--font-noto-serif-jp), "Hiragino Mincho ProN", "Yu Mincho", serif;
   --sans:  var(--font-noto-sans-jp), "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;

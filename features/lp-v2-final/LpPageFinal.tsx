@@ -190,8 +190,8 @@ a { color: inherit; text-decoration: none; }
 .hero__bullets li::before { content: "✓"; width: 20px; height: 20px; border-radius: 50%; background: #f4ede5; color: #d4a574; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
 .hero__cta { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
 .hero__btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 26px; border-radius: 999px; font-weight: 600; font-size: 15px; border: 1px solid transparent; cursor: pointer; }
-.hero__btn--primary { background: #d4a574; color: #fff; box-shadow: 0 6px 16px rgba(6,199,85,0.25); }
-.hero__btn--primary:hover { background: #b8905f; }
+.hero__btn--primary { background: var(--line-green); color: #fff; box-shadow: 0 6px 16px rgba(6,199,85,0.25); }
+.hero__btn--primary:hover { background: var(--line-green-dk); }
 .hero__btn--outline { background: rgba(255,255,255,0.95); color: #0f1614; border-color: #e6ebe7; }
 .hero__trust { display: flex; gap: 22px; flex-wrap: wrap; font-size: 12px; color: #6b746f; }
 
@@ -872,7 +872,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <a href="#faq">FAQ</a>
     </nav>
     <div className="nav__cta">
-      <button className="sr-btn sr-btn--primary" style={{padding: '12px 18px'}}>
+      <button className="sr-btn sr-btn--primary" style={{padding: '12px 18px', background: 'var(--line-green)'}}>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
         LINEで始める
       </button>
@@ -1766,7 +1766,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
       <h3>あなたのサロンに、ぴったり合うか<br />14日間、無料でお試しください。</h3>
       <p>クレジットカード登録不要 / 解約料0円 / いつでもキャンセル可</p>
       <div className="cmp__cta-row">
-        <button className="sr-btn sr-btn--primary" style={{padding: '16px 28px', fontSize: '14px'}}>
+        <button className="sr-btn sr-btn--primary" style={{padding: '16px 28px', fontSize: '14px', background: 'var(--line-green)'}}>
           <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
           LINEで無料ではじめる
         </button>

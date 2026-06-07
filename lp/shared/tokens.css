@@ -27,6 +27,9 @@
   --warn:       #d9a855;
   --warn-soft:  #f4eade;
 
+  --line-green: #06C755;    /* LINE 導線専用 / 緑 */
+  --line-green-dk: #05a648; /* LINE ボタン hover */
+
   /* ── Type ──────────────────────────── */
   --serif: "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
   --sans:  "Noto Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
