@@ -66,7 +66,7 @@ export default function CustomerCompletedStep({
           padding: 20,
           backgroundColor: selectedOption === 'referral' ? '#E8F5E9' : '#F9F9F9',
           borderRadius: 12,
-          border: selectedOption === 'referral' ? '2px solid #06C755' : '2px solid #EEE',
+          border: selectedOption === 'referral' ? '2px solid #d4a574' : '2px solid #EEE',
           cursor: 'pointer',
           transition: 'all 0.3s ease',
         }}
@@ -82,7 +82,7 @@ export default function CustomerCompletedStep({
             margin: '0 0 8px 0',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#06C755',
+            color: '#d4a574',
           }}>
             通っているサロンに、この体験を伝えたい
           </h4>
@@ -262,7 +262,7 @@ export default function CustomerCompletedStep({
               fontSize: '15px',
               fontWeight: 'bold',
               color: 'white',
-              backgroundColor: isSubmitting ? '#CCC' : '#06C755',
+              backgroundColor: isSubmitting ? '#CCC' : '#d4a574',
               border: 'none',
               borderRadius: 8,
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
@@ -276,7 +276,7 @@ export default function CustomerCompletedStep({
             }}
             onMouseLeave={(e) => {
               if (!isSubmitting) {
-                e.currentTarget.style.backgroundColor = '#06C755';
+                e.currentTarget.style.backgroundColor = '#d4a574';
                 e.currentTarget.style.transform = 'translateY(0)';
               }
             }}

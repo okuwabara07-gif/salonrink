@@ -219,7 +219,7 @@ export default function KarteDisplayStep({
             border: '1px solid #CCEDE4',
             borderRadius: 12,
             padding: 20,
-            borderLeft: '4px solid #06C755',
+            borderLeft: '4px solid #d4a574',
           }}
         >
           <h3
@@ -262,7 +262,7 @@ export default function KarteDisplayStep({
                     width: 6,
                     height: 6,
                     borderRadius: '50%',
-                    background: '#06C755',
+                    background: '#d4a574',
                     flexShrink: 0,
                     marginTop: 6,
                   }}

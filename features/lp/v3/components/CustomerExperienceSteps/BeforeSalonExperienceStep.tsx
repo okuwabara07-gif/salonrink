@@ -149,7 +149,7 @@ export default function BeforeSalonExperienceStep({ profileId, onNext }: BeforeS
             fontSize: '15px',
             fontWeight: 600,
             color: 'white',
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer',
@@ -160,7 +160,7 @@ export default function BeforeSalonExperienceStep({ profileId, onNext }: BeforeS
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#06C755';
+            e.currentTarget.style.backgroundColor = '#d4a574';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >

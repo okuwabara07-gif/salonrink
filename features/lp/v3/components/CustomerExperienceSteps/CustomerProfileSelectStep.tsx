@@ -76,7 +76,7 @@ export default function CustomerProfileSelectStep({ onSelect }: CustomerProfileS
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = '#06C755';
+              e.currentTarget.style.borderColor = '#d4a574';
               e.currentTarget.style.transform = 'translateY(-4px)';
               e.currentTarget.style.boxShadow = '0 8px 16px rgba(6, 199, 85, 0.15)';
             }}

@@ -111,7 +111,7 @@ export default function SalonReceivedDataStep({ profileId, onNext }: SalonReceiv
           backgroundColor: '#E8F5E9',
           borderRadius: 12,
           padding: 20,
-          borderLeft: '4px solid #06C755',
+          borderLeft: '4px solid #d4a574',
         }}>
           <div style={{
             display: 'flex',
@@ -137,7 +137,7 @@ export default function SalonReceivedDataStep({ profileId, onNext }: SalonReceiv
             backgroundColor: 'white',
             borderRadius: 6,
             fontSize: '12px',
-            color: '#06C755',
+            color: '#d4a574',
             fontWeight: 'bold',
           }}>
             次回方針: {data.nextPlan}
@@ -231,7 +231,7 @@ export default function SalonReceivedDataStep({ profileId, onNext }: SalonReceiv
             fontSize: '15px',
             fontWeight: 600,
             color: 'white',
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer',
@@ -242,7 +242,7 @@ export default function SalonReceivedDataStep({ profileId, onNext }: SalonReceiv
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#06C755';
+            e.currentTarget.style.backgroundColor = '#d4a574';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >

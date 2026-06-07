@@ -128,13 +128,13 @@ export default function SalonDayExperienceStep({ profileId, onNext }: SalonDayEx
           backgroundColor: '#E8F5E9',
           borderRadius: 12,
           padding: 24,
-          borderTop: '4px solid #06C755',
+          borderTop: '4px solid #d4a574',
         }}>
           <h4 style={{
             margin: '0 0 8px 0',
             fontSize: '16px',
             fontWeight: 'bold',
-            color: '#06C755',
+            color: '#d4a574',
           }}>
             ✨ 事前カウンセリングサロン
           </h4>
@@ -142,7 +142,7 @@ export default function SalonDayExperienceStep({ profileId, onNext }: SalonDayEx
             margin: '0 0 16px 0',
             fontSize: '12px',
             fontWeight: 'bold',
-            color: '#06C755',
+            color: '#d4a574',
           }}>
             {exp.afterTime}
           </p>
@@ -209,7 +209,7 @@ export default function SalonDayExperienceStep({ profileId, onNext }: SalonDayEx
             fontSize: '15px',
             fontWeight: 600,
             color: 'white',
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer',
@@ -220,7 +220,7 @@ export default function SalonDayExperienceStep({ profileId, onNext }: SalonDayEx
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#06C755';
+            e.currentTarget.style.backgroundColor = '#d4a574';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >

@@ -7,7 +7,7 @@ const INTEGRATIONS = [
   {
     name: 'LINE',
     icon: 'chat',
-    color: '#06C755',
+    color: '#d4a574',
     bgSoft: '#E8F8EC',
     badge: 'Messaging API 対応',
     cta: '対応済み',

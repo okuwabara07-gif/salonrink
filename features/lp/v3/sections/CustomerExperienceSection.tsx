@@ -28,11 +28,11 @@ export default function CustomerExperienceSection({ onStart }: Props) {
             fontSize: '11px',
             fontWeight: 500,
             letterSpacing: '0.32em',
-            color: '#06C755',
+            color: '#d4a574',
             marginBottom: 28,
             marginTop: 0,
           }}>
-            <span style={{ width: 32, height: '1px', backgroundColor: '#06C755' }} />
+            <span style={{ width: 32, height: '1px', backgroundColor: '#d4a574' }} />
             FOR CUSTOMERS
           </p>
 
@@ -91,7 +91,7 @@ export default function CustomerExperienceSection({ onStart }: Props) {
               fontSize: '16px',
               fontWeight: 600,
               color: 'white',
-              backgroundColor: '#06C755',
+              backgroundColor: '#d4a574',
               border: 'none',
               borderRadius: 8,
               cursor: 'pointer',
@@ -103,7 +103,7 @@ export default function CustomerExperienceSection({ onStart }: Props) {
               e.currentTarget.style.boxShadow = '0 8px 16px rgba(6, 199, 85, 0.3)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#06C755';
+              e.currentTarget.style.backgroundColor = '#d4a574';
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = 'none';
             }}

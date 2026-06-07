@@ -93,7 +93,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
             <span style={{
               fontSize: '12px',
               fontWeight: 'bold',
-              color: '#06C755',
+              color: '#d4a574',
             }}>
               14:00
             </span>
@@ -130,7 +130,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
           <div style={{
             fontSize: '12px',
             fontWeight: 'bold',
-            color: '#06C755',
+            color: '#d4a574',
             marginBottom: 8,
           }}>
             📋 サロン側の記録を確認
@@ -160,7 +160,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
             <span style={{
               fontSize: '12px',
               fontWeight: 'bold',
-              color: '#06C755',
+              color: '#d4a574',
             }}>
               14:02
             </span>
@@ -220,7 +220,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
             <span style={{
               fontSize: '12px',
               fontWeight: 'bold',
-              color: '#06C755',
+              color: '#d4a574',
             }}>
               14:30
             </span>
@@ -296,7 +296,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
             fontSize: '15px',
             fontWeight: 600,
             color: 'white',
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             border: 'none',
             borderRadius: 8,
             cursor: 'pointer',
@@ -307,7 +307,7 @@ export default function RememberedExperienceStep({ profileId, onNext }: Remember
             e.currentTarget.style.transform = 'translateY(-2px)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = '#06C755';
+            e.currentTarget.style.backgroundColor = '#d4a574';
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >

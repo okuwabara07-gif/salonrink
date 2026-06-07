@@ -153,7 +153,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
               <div
                 key={idx}
                 style={{
-                  backgroundColor: choice === data.q1_selected ? '#06C755' : 'white',
+                  backgroundColor: choice === data.q1_selected ? '#d4a574' : 'white',
                   color: choice === data.q1_selected ? 'white' : '#333',
                   borderRadius: '16px',
                   padding: '8px 12px',
@@ -170,7 +170,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
 
         {displayedMessages.includes('customer_choice') && (
           <div style={{
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             color: 'white',
             borderRadius: '16px 4px 16px 16px',
             padding: '10px 14px',
@@ -199,7 +199,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
 
         {displayedMessages.includes('customer_answer2') && (
           <div style={{
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             color: 'white',
             borderRadius: '16px 4px 16px 16px',
             padding: '10px 14px',
@@ -228,7 +228,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
 
         {displayedMessages.includes('customer_answer3') && (
           <div style={{
-            backgroundColor: '#06C755',
+            backgroundColor: '#d4a574',
             color: 'white',
             borderRadius: '16px 4px 16px 16px',
             padding: '10px 14px',
@@ -279,7 +279,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
               fontSize: '15px',
               fontWeight: 600,
               color: 'white',
-              backgroundColor: '#06C755',
+              backgroundColor: '#d4a574',
               border: 'none',
               borderRadius: 8,
               cursor: 'pointer',
@@ -290,7 +290,7 @@ export default function PreCounselingExperienceStep({ profileId, onNext }: PreCo
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#06C755';
+              e.currentTarget.style.backgroundColor = '#d4a574';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >

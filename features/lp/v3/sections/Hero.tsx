@@ -222,7 +222,7 @@ export default function Hero({ onCta }: Props) {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          backgroundColor: '#06C755',
+          backgroundColor: '#d4a574',
         }} />
         現在
         <span style={{
@@ -284,7 +284,7 @@ function PhoneOverlay() {
           width: 6,
           height: 6,
           borderRadius: '50%',
-          backgroundColor: '#06C755',
+          backgroundColor: '#d4a574',
           flexShrink: 0,
         }} />
         LINEだけで動く、AIカウンセリング
@@ -370,7 +370,7 @@ function PhoneOverlay() {
               marginLeft: 'auto',
               display: 'inline-block',
               borderRadius: '9999px',
-              backgroundColor: '#06C755',
+              backgroundColor: '#d4a574',
               paddingLeft: 12,
               paddingRight: 12,
               paddingTop: 6,
