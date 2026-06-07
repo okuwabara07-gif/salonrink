@@ -17,12 +17,12 @@ import {
 // ========================================
 
 const CONCERN_LABELS: Record<ConcernType, string> = {
-  dryness: '乾燥',
-  frizz: '広がり・うねり',
-  split_ends: '枝毛・切れ毛',
-  color_fade: '色落ち',
-  thinning: '細毛・ボリューム',
-  gray: '白髪',
+  dryness: 'カラー後の乾燥・パサつき',
+  frizz: '色落ち・褪色が早い',
+  split_ends: 'ダメージが気になる',
+  color_fade: '前回のカラーイメージが薄れた',
+  thinning: '白髪が増えてきた',
+  gray: '白髪とカラーの相性',
   other: 'その他',
 }
 
@@ -34,10 +34,10 @@ const MOOD_LABELS: Record<MoodType, string> = {
 }
 
 const ALLERGY_LABELS: Record<AllergyType, string> = {
-  hair_color: 'ヘアカラー成分',
-  fragrance: '香り',
-  detergent: '洗剤',
-  none: 'なし',
+  hair_color: 'ヘアカラー剤・漂白剤',
+  fragrance: '香りの強い製品',
+  detergent: 'パーマ液・ケミカル',
+  none: '特になし',
   other: 'その他',
 }
 
@@ -508,7 +508,7 @@ function PreCounselingContent() {
   return (
     <div style={S.page}>
       <header style={S.header}>
-        <h1 style={S.headerTitle}>事前カウンセリング</h1>
+        <h1 style={S.headerTitle}>カラー・白髪染め　ご来店前カウンセリング</h1>
         {counselingInfo && (
           <p style={S.headerSubtitle}>
             {counselingInfo.salon_name}
@@ -520,7 +520,7 @@ function PreCounselingContent() {
       <div style={S.body}>
         {/* Q1: 髪のお悩み */}
         <div style={S.card} role="group" aria-labelledby="q1-label">
-          <span id="q1-label" style={S.questionLabel}>Q1. 髪のお悩みを教えてください（複数選択可）</span>
+          <span id="q1-label" style={S.questionLabel}>Q1. カラー・白髪染めについてのお悩み（複数選択可）</span>
           {(Object.entries(CONCERN_LABELS) as [ConcernType, string][]).map(([val, label], i, arr) => (
             <label
               key={val}
@@ -565,12 +565,12 @@ function PreCounselingContent() {
         {/* Q3: 仕上がりイメージ */}
         <div style={S.card}>
           <label htmlFor="desired-look" style={S.questionLabel}>
-            Q3. ご希望の仕上がりイメージをお聞かせください
+            Q3. ご希望のカラー・仕上がりをお聞かせください
           </label>
           <textarea
             id="desired-look"
             style={S.textarea}
-            placeholder="例: 毎朝のスタイリングが楽になるようなスタイルにしたい"
+            placeholder="例: 明るすぎない自然なブラウン、色持ちが長く続くように"
             value={desiredLook}
             onChange={(e) => setAnswers((prev) => ({ ...prev, desired_look: e.target.value.slice(0, 500) }))}
             maxLength={500}
@@ -581,7 +581,7 @@ function PreCounselingContent() {
 
         {/* Q4: アレルギー・苦手 */}
         <div style={S.card} role="group" aria-labelledby="q4-label">
-          <span id="q4-label" style={S.questionLabel}>Q4. アレルギーや苦手なものがあればお知らせください（複数選択可）</span>
+          <span id="q4-label" style={S.questionLabel}>Q4. カラー剤・ケミカルでの注意事項（複数選択可）</span>
           {(Object.entries(ALLERGY_LABELS) as [AllergyType, string][]).map(([val, label], i, arr) => (
             <label
               key={val}
@@ -608,7 +608,7 @@ function PreCounselingContent() {
           <textarea
             id="stylist-request"
             style={S.textarea}
-            placeholder="例: カラー後のケア方法を教えてほしい"
+            placeholder="例: 白髪補正しながらハイライトは入れてほしい、色持ちケアについて相談したい"
             value={stylistRequest}
             onChange={(e) => setAnswers((prev) => ({ ...prev, stylist_request: e.target.value.slice(0, 500) }))}
             maxLength={500}
