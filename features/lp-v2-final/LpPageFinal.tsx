@@ -929,7 +929,10 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <li>店主は接客に集中、顧客との関係が深まるシステム</li>
       </ul>
       <div className="hero__cta">
-        <button className="hero__btn hero__btn--primary">LINEで無料ではじめる</button>
+        <button className="hero__btn hero__btn--primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" strokeWidth="1.4" strokeLinejoin="round"/></svg>
+          LINEで始める
+        </button>
         <button className="hero__btn hero__btn--outline">1日の動作を見る ▶</button>
       </div>
       <div className="hero__trust">
@@ -1336,7 +1339,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="kr__top">
           <div className="kr__photo"></div>
           <div className="kr__top-body">
-            <div className="kr__name">田中 真由美</div>
+            <div className="kr__name">A様</div>
             <div className="kr__meta">CUSTOMER #2841 · 来店 18 回</div>
             <div className="kr__chips">
               <span className="kr__chip kr__chip--accent">常連</span>
