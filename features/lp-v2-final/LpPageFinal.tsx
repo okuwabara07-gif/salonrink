@@ -1295,7 +1295,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="chat-scroll">
           <div className="cs-row">
             <div className="cs-avatar"></div>
-            <div className="cs-msg">前回の白髪染め、ナチュラルなブラウンですごく気に入りました🌸</div>
+            <div className="cs-msg">前回のカラー、ナチュラルブラウンですごく気に入りました🌸</div>
             <div className="cs-time">3/29</div>
           </div>
           <div className="cs-row cs-row--user">
@@ -1304,16 +1304,16 @@ section#solution .sr-container { position: relative; z-index: 1; }
           </div>
           <div className="cs-row">
             <div className="cs-avatar"></div>
-            <div className="cs-msg">あとカラー剤がしみる感じがちょっと強かったので、敏感肌対応のものってありますか？</div>
+            <div className="cs-msg">あと色持ちを長くしたいんですけど、何かいい方法ありますか？</div>
             <div className="cs-time">3/29</div>
           </div>
           <div className="cs-row cs-row--user">
-            <div className="cs-msg cs-msg--user">承知しました🙇<br />次回からゼロアルカリの低刺激タイプに変更しますね</div>
+            <div className="cs-msg cs-msg--user">いい質問ですね！🌿<br />色持ちケアのトリートメント組み合わせ、提案しますね</div>
             <div className="cs-time">3/29</div>
           </div>
           <div className="cs-row">
             <div className="cs-avatar"></div>
-            <div className="cs-msg">ちなみに、もう一段階暗いトーンも気になっていて...</div>
+            <div className="cs-msg">次は暗めのトーンも試してみたい…</div>
           </div>
         </div>
 
@@ -1402,8 +1402,8 @@ section#solution .sr-container { position: relative; z-index: 1; }
   <div className="sr-container">
     <div className="sr-section__head">
       <div className="sr-eyebrow">EXPECTED EFFECTS · 期待できる効果</div>
-      <h2 className="sr-h2">SalonRink Concierge で、<br /><span className="accent">期待できる効果</span>。</h2>
-      <p className="sr-lead">具体的な数値は、あなたのサロンと運用次第。<br />でも、確かに変わる3つの本質的な価値を、お約束します。</p>
+      <h2 className="sr-h2">LINE上に蓄積する顧客記憶が、<br /><span className="accent">サロンの成長に変わる。</span></h2>
+      <p className="sr-lead">カラーの好みを記憶→次の提案が簡単→来店周期が短くなる。<br />その好循環が、ビジネスの底力になります。</p>
     </div>
 
     <div className="numbers__grid">
@@ -1413,7 +1413,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="nc__stat">
           <span className="nc__sign">+</span><span className="nc__num">25</span><span className="nc__unit">%</span>
         </div>
-        <p className="nc__caption">最適タイミングでの再来店リマインドと、過去履歴に基づくパーソナライズ提案で、来店周期が安定します。</p>
+        <p className="nc__caption">「前回はこの色」「次は3週間後が目安」をAIが提案。来店タイミングが自然と短くなります。</p>
         <div className="nc__arrow-chart">
           <div className="nc__line-up">
             <svg viewBox="0 0 200 24" fill="none" preserveAspectRatio="none">
@@ -1433,7 +1433,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="nc__stat">
           <span className="nc__sign">+</span><span className="nc__num">15</span><span className="nc__unit">%</span>
         </div>
-        <p className="nc__caption">過去履歴と好みに基づく提案で、追加メニュー・トリートメントの選択率が上昇します。</p>
+        <p className="nc__caption">「このカラーなら、このトリートメント」の提案精度が上がり、客単価が自然に上昇します。</p>
         <div className="nc__chart">
           <div className="nc__chart-head">
             <span>導入前 ¥7,000</span>
@@ -1457,7 +1457,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
         <div className="nc__stat">
           <span className="nc__sign nc__sign--minus">−</span><span className="nc__num nc__num--coral">30</span><span className="nc__unit nc__unit--coral">分/日</span>
         </div>
-        <p className="nc__caption">カルテ検索・HPB予約取込・配信文作成のすべてを自動化。接客と提案に時間が使えます。</p>
+        <p className="nc__caption">LINE上のカルテ検索、次提案の自動生成、配信文の下書きで、業務が大幅削減。</p>
         <div className="nc__time">
           <span className="nc__time-icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v4l3 2" strokeLinecap="round"/></svg></span>
           <div className="nc__time-body">1日あたり <b>30分</b> の<br />業務時間を削減</div>
@@ -1466,7 +1466,7 @@ section#solution .sr-container { position: relative; z-index: 1; }
     </div>
 
     <div className="numbers__foot">
-      ※ 上記数値は <b>キレイ鶴見店(2026年4月導入)</b> の運用状況に基づく <b>社内シミュレーション値</b> であり、実測値ではありません。効果は店舗・業態・運用状況により異なります。
+      ※ 上記数値は <b>デモサロン(導入実績)</b> の運用状況に基づく <b>社内シミュレーション値</b> であり、実測値ではありません。効果は店舗・業態・運用状況により異なります。
     </div>
   </div>
 </section>
