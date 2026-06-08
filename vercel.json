@@ -13,14 +13,6 @@
       "schedule": "0 17 * * *"
     },
     {
-      "path": "/api/cron/generate-sns-posts",
-      "schedule": "0 22 * * *"
-    },
-    {
-      "path": "/api/cron/generate-sns-posts",
-      "schedule": "0 11 * * *"
-    },
-    {
       "path": "/api/cron/generate-blog-post",
       "schedule": "0 21 * * 1,3,5"
     },
