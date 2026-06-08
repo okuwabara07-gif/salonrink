@@ -11,15 +11,12 @@ const pwaConfig = withPWA({
 const nextConfig: NextConfig = {
   turbopack: {},
   async rewrites() {
-    return {
-      beforeFiles: [
-        { source: '/', destination: '/lp-mock/index.html' },
-        { source: '/index.html', destination: '/lp-mock/index.html' },
-        { source: '/customer.html', destination: '/lp-mock/customer.html' },
-        { source: '/salon.html', destination: '/lp-mock/salon.html' },
-        { source: '/partner.html', destination: '/lp-mock/partner.html' },
-      ],
-    };
+    return [
+      { source: '/lp', destination: '/lp-mock/index.html' },
+      { source: '/lp/customer', destination: '/lp-mock/customer.html' },
+      { source: '/lp/salon', destination: '/lp-mock/salon.html' },
+      { source: '/lp/partner', destination: '/lp-mock/partner.html' },
+    ];
   },
   async redirects() {
     return [
