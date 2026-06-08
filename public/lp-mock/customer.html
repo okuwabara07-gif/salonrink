@@ -1,149 +1,257 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>お客様｜SalonRink</title>
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>お客様｜SalonRink</title>
+<meta name="robots" content="noindex,follow">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --green:#7BB48E;--green-d:#5D9B74;--navy:#7E9AC2;--gold:#CDAA63;--gold-d:#B9943F;--accent:var(--green);--accent-d:var(--green-d);
+  --green:#7BB48E;--green-d:#5D9B74;--navy:#7E9AC2;--navy-d:#5E7BA6;--gold:#CDAA63;--gold-d:#B9943F;
+  --accent:var(--green);--accent-d:var(--green-d);
   --ink:#403830;--soft:#9A8F80;--line:#EFE8DB;--ivory:#FCF9F3;--ivory2:#F5EEE2;--paper:#fff;
-  --serif:'Noto Serif JP',serif;--sans:'Noto Sans JP',sans-serif;--num:'Cormorant Garamond',serif;--lab:'Cinzel',serif;--wrap:1080px;
+  --serif:'Noto Serif JP',serif;--sans:'Noto Sans JP',sans-serif;--num:'Cormorant Garamond',serif;--lab:'Cinzel',serif;--wrap:1120px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.85;font-size:15px;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--ink);background:#fff;line-height:1.85;font-size:15px;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
 .serif{font-family:var(--serif)} .num{font-family:var(--num);font-weight:700;line-height:1}
 .lab{font-family:var(--lab);letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold-d)}
-.sec-title{font-family:var(--serif);font-weight:600;font-size:27px;text-align:center;letter-spacing:.04em}
+.sec-title{font-family:var(--serif);font-weight:600;font-size:28px;text-align:center;letter-spacing:.04em}
 .sec-lead{text-align:center;color:var(--soft);font-size:14px;margin-top:10px}
 .note{font-size:11px;color:#9a958c;line-height:1.7}
-section{padding:64px 0}.tight{padding:40px 0}
-/* 写真プレースホルダ：人物枠 */
-.photo{background:radial-gradient(120% 100% at 70% 20%,#fff,var(--ivory) 55%,var(--ivory2));border:1px solid var(--line);border-radius:12px;position:relative;overflow:hidden}
-.photo::after{content:"";position:absolute;left:50%;bottom:-18%;width:46%;aspect-ratio:1;background:#e7ddca;border-radius:50% 50% 46% 46%;transform:translateX(-50%);opacity:.7}
-.photo::before{content:"";position:absolute;left:50%;top:18%;width:24%;aspect-ratio:1;background:#e7ddca;border-radius:50%;transform:translateX(-50%);opacity:.7}
-/* ボタン */
+section{padding:66px 0}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;border-radius:999px;padding:13px 24px;cursor:pointer;border:0;transition:.18s}
 .btn-line{background:#06C755;color:#fff}.btn-fill{background:var(--accent);color:#fff}
 .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
-/* header */
-header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.hd{display:flex;align-items:center;gap:26px;height:72px}
-.logo{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:22px}
-.logo .mk{width:36px;height:36px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold-d)}
-.logo small{display:block;font-family:var(--lab);font-size:9px;letter-spacing:.3em;color:var(--gold-d)}
-.gnav{display:flex;gap:20px;margin-left:auto;font-size:13px;color:var(--soft)}.gnav a:hover{color:var(--accent)}
-.hd-cta{display:flex;gap:10px}.hd-cta .btn{padding:9px 16px;font-size:13px}
-/* tabbar */
-.tabbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0}
-.tab{border-radius:10px;padding:12px 14px;color:#fff;text-align:center}
-.tab b{font-family:var(--serif);font-size:14px} .tab span{display:block;font-size:11px;opacity:.92;margin-top:2px}
-.t-green{background:var(--green)}.t-navy{background:var(--navy)}.t-gold{background:var(--gold)}
-.tab:hover{filter:brightness(1.06)}
-/* phone */
-.phone{width:230px;border-radius:30px;background:#1c1c1c;padding:10px;box-shadow:0 24px 50px -18px rgba(40,30,20,.4)}
-.phone .scr{background:#fff;border-radius:22px;overflow:hidden;padding:14px}
-.chat-head{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}
-.chat-head .av{width:26px;height:26px;border-radius:50%;background:#f0d9d2;color:#b06a55;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-.bub{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:11px;margin-top:9px}
-.card-dna{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:9px;text-align:center}
-.card-dna .ttl{font-family:var(--num);letter-spacing:.18em;color:var(--green-d);font-size:12px}
-/* tech card */
-.tcard{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
-.tcard .ui{margin-top:12px;border:1px solid var(--line);border-radius:10px;height:96px;background:linear-gradient(180deg,#fff,var(--ivory));position:relative;overflow:hidden}
-.bars{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:6px;align-items:flex-end;height:54px}
-.bars i{flex:1;background:var(--green);border-radius:3px 3px 0 0;opacity:.85}
-/* metric tiles */
-.mtile{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;position:relative;overflow:hidden}
-.mtile .spark{position:absolute;right:10px;bottom:8px;display:flex;gap:3px;align-items:flex-end;height:30px;opacity:.55}
-.mtile .spark i{width:5px;background:currentColor;border-radius:2px}
-/* eco */
-.eco{position:relative;height:300px}
-.eco .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff,var(--ivory));border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:600}
-.eco .node{position:absolute;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;text-align:center}
-/* table */
-table.cmp{width:100%;border-collapse:collapse;margin-top:12px;font-size:11px;text-align:center}
-table.cmp th,table.cmp td{padding:6px 2px;border-bottom:1px solid var(--line)}
-table.cmp td:first-child,table.cmp th:first-child{text-align:left}
-/* faq */
-details{border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-size:13px}
-details summary{cursor:pointer;font-weight:500;list-style:none}
-details summary::marker{content:""}
-footer{background:var(--ivory);border-top:1px solid var(--line);padding:38px 0;font-size:12px;color:var(--soft)}
-@media(max-width:880px){.gnav{display:none}.tabbar{grid-template-columns:1fr}.hero-grid,.two,.four{grid-template-columns:1fr!important}.six{grid-template-columns:1fr 1fr!important}}
-
+.acc{color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:12px;background:#fff}
+.theme-green{--accent:var(--green);--accent-d:var(--green-d)}
 .theme-navy{--accent:var(--navy);--accent-d:var(--navy-d)}
 .theme-gold{--accent:var(--gold);--accent-d:var(--gold-d)}
-.acc{color:var(--accent)}
-.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;background:#fff}
-.tab.active{outline:2px solid rgba(0,0,0,.0);box-shadow:0 6px 16px -8px rgba(0,0,0,.4);transform:translateY(-1px)}
-
-.logo img{height:46px;width:auto;display:block}
-footer .logo img{height:62px}
-.logo .mk{display:none}
-.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.photo:has(img)::before,.photo:has(img)::after{display:none}.ui img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}</style></head><body><header><div class="wrap hd">
-<a class="logo" href="/lp"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></a>
+.ic{width:40px;height:40px;border-radius:50%;background:var(--ivory2);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--gold-d)}
+.ic svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ic-sm{width:30px;height:30px}.ic-sm svg{width:15px;height:15px}
+.ic-g{color:var(--green-d)}.ic-n{color:var(--navy-d)}
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.hd{display:flex;align-items:center;gap:26px;height:74px}
+.logo img{height:84px;width:auto}.logo .tagline{display:block;font-family:var(--serif);font-size:10px;color:var(--soft);margin-top:4px}
+.gnav{display:flex;gap:20px;margin-left:auto;font-size:13px;color:var(--soft)}.gnav a:hover{color:var(--accent)}
+.hd-cta{display:flex;gap:10px}.hd-cta .btn{padding:9px 16px;font-size:13px}
+.tabbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:16px 0}
+.tab{border-radius:12px;padding:12px 14px;color:#fff;text-align:center}
+.tab .pill{font-family:var(--serif);font-size:13px;display:inline-block;background:rgba(255,255,255,.2);border-radius:999px;padding:2px 14px;margin-bottom:4px}
+.tab span{display:block;font-size:11px;opacity:.95}
+.t-green{background:var(--green)}.t-navy{background:var(--navy)}.t-gold{background:var(--gold)}
+.tab:hover{filter:brightness(1.05)}
+.tab.active{box-shadow:0 8px 18px -8px rgba(0,0,0,.45);transform:translateY(-1px)}
+.hero{position:relative;overflow:hidden}
+.hero .bg{position:absolute;inset:0;background-position:center;background-size:cover}
+.hero .ov{position:absolute;inset:0}
+.hero .in{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:30px;align-items:center;min-height:560px;padding:54px 24px}
+.laurels{display:flex;gap:26px;margin:24px 0 6px;flex-wrap:wrap}
+.laurel{display:flex;align-items:center;gap:4px}
+.laurel .lf{color:var(--gold);font-size:30px;line-height:1;transform:scaleX(-1)}
+.laurel .rf{color:var(--gold);font-size:30px;line-height:1}
+.laurel .v{text-align:center}
+.laurel .v .k{font-family:var(--lab);font-size:9px;letter-spacing:.16em;color:var(--gold-d)}
+.laurel .v .b{font-family:var(--serif);font-weight:700;font-size:17px;white-space:nowrap}
+.hero-right{position:relative;display:flex;justify-content:flex-end;align-items:center;gap:14px}
+.feats{display:grid;gap:10px}
+.feat{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:13px;font-weight:500;box-shadow:0 8px 20px -16px rgba(64,48,32,.5)}
+.feat .ic{width:30px;height:30px}.feat .ic svg{width:15px;height:15px}
+.phone{width:210px;border-radius:28px;background:#1c1c1c;padding:9px;box-shadow:0 24px 50px -18px rgba(40,30,20,.45);flex:0 0 auto}
+.phone .scr{background:#fff;border-radius:20px;overflow:hidden;padding:12px}
+.chat-head{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}
+.chat-head .av{width:24px;height:24px;border-radius:50%;background:#f0d9d2;color:#b06a55;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.bub{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:10px;margin-top:8px}
+.card-dna{border:1px solid var(--line);border-radius:12px;padding:9px;margin-top:8px;text-align:center}
+.card-dna .ttl{font-family:var(--num);letter-spacing:.16em;color:var(--green-d);font-size:11px}
+.story{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-top:34px}
+.step .ph{aspect-ratio:3/4;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--ivory2)}
+.step .ph img{width:100%;height:100%;object-fit:cover}
+.step .hd2{display:flex;align-items:center;gap:8px;margin-top:10px}
+.step .no{font-family:var(--num);font-weight:700;color:var(--gold-d);font-size:20px}
+.step b{font-size:13px}
+.tech{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px}
+.tcard{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff}
+.tcard h3{font-family:var(--serif);font-weight:600;font-size:15px;text-align:center}
+.tcard .sub{font-size:11px;color:var(--soft);text-align:center;margin:6px 0 12px}
+.tcard .panel{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--ivory);margin-bottom:12px;height:120px}
+.tcard .panel img{width:100%;height:100%;object-fit:cover}
+.tcard .panel.tall{height:auto}.tcard .panel.tall img{height:auto;object-fit:contain}
+.frow{display:flex;align-items:center;gap:9px;font-size:12px;margin-top:9px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.mcard{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.mcard .k{font-size:12px;color:var(--soft)}
+.mcard .v{font-family:var(--num);font-size:30px}
+.bars{display:flex;gap:4px;align-items:flex-end;height:48px;margin-top:8px}
+.bars i{flex:1;border-radius:3px 3px 0 0;display:block}
+.up i{background:var(--gold)}.down i{background:var(--green)}
+.voices{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.vc{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.vc .av{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:1px solid var(--line);background:var(--ivory2)}
+.vc .av img{width:100%;height:100%;object-fit:cover}
+.vchips{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.vchip{font-size:11px;color:var(--gold-d)}.vchip b{font-family:var(--num);font-size:14px}
+.eco{display:grid;grid-template-columns:1.3fr .85fr;gap:28px;margin-top:24px;align-items:center}
+.plan{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.plan.hot{border:1.5px solid var(--accent)}
+details{border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-size:13px}
+details summary{cursor:pointer;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px}
+details summary::marker{content:""}
+.band{display:block;width:100%;height:300px;object-fit:cover}
+.chevtabs{display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:18px}
+.chev{position:relative;padding:20px 30px;color:#fff;display:flex;align-items:center;justify-content:space-between;clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%,22px 50%)}
+.chev:first-child{clip-path:polygon(0 0,calc(100% - 22px) 0,100% 50%,calc(100% - 22px) 100%,0 100%)}
+.chev b{font-family:var(--serif);font-size:15px}.chev span{display:block;font-size:11px;opacity:.95}
+.chev .arr{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center}
+.chev .arr svg{width:16px;height:16px;stroke:#fff;stroke-width:2;fill:none}
+footer{background:var(--ivory);border-top:1px solid var(--line);padding:40px 0;font-size:12px;color:var(--soft)}
+footer .logo img{height:60px}
+.benefit{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:30px}
+.bitem{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:16px;background:#fff}
+.bitem b{font-family:var(--serif);font-size:15px}
+.steps6{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px}
+.fstep{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
+.fstep .no{font-family:var(--num);color:var(--gold-d);font-size:20px;flex:0 0 auto}
+@media(max-width:900px){.gnav{display:none}.tabbar,.chevtabs{grid-template-columns:1fr}.hero .in,.metrics,.eco,.benefit{grid-template-columns:1fr}.story,.voices,.steps6{grid-template-columns:1fr 1fr}.tech{grid-template-columns:1fr 1fr}.chev{clip-path:none!important}}
+</style>
+</head>
+<body class="theme-green">
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.1" y2="15.9"/><line x1="14.5" y1="14.5" x2="20" y2="20"/><line x1="8.1" y1="8.1" x2="12" y2="12"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><line x1="8" y1="11" x2="16" y2="11"/><line x1="8" y1="15" x2="13" y2="15"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="12" cy="13" r="3.5"/><path d="M8 7l1.5-2h5L16 7"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-4 4V5z"/><line x1="8" y1="10" x2="16" y2="10"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></symbol>
+<symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2 12h11l2-8H6"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><line x1="4" y1="20" x2="20" y2="20"/><rect x="6" y="12" width="3" height="6"/><rect x="11" y="8" width="3" height="10"/><rect x="16" y="5" width="3" height="13"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6"/><path d="M17 14a6 6 0 0 1 4 6"/></symbol>
+<symbol id="i-trend" viewBox="0 0 24 24"><polyline points="4,16 9,11 13,14 20,6"/><polyline points="15,6 20,6 20,11"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 1.3-2.2-.7-1.2 0-2.3 1.4-2.3H17a4 4 0 0 0 4-4c0-5-4-7.5-9-7.5z"/><circle cx="8" cy="11" r="1"/><circle cx="12" cy="8" r="1"/><circle cx="16" cy="11" r="1"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.5A3.5 3.5 0 0 1 12 7a3.5 3.5 0 0 1 7 3.5C19 15.6 12 20 12 20z"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3 8-7 10-4-2-7-5-7-10V6z"/><polyline points="9,12 11,14 15,10"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><line x1="20" y1="20" x2="15.5" y2="15.5"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2"/><line x1="4" y1="9" x2="20" y2="9"/><line x1="9" y1="3" x2="9" y2="6"/><line x1="15" y1="3" x2="15" y2="6"/></symbol>
+<symbol id="i-coin" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M3 7v10l9 4 9-4V7"/><line x1="12" y1="11" x2="12" y2="21"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><line x1="9" y1="7" x2="15" y2="7"/></symbol>
+<symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7z"/><polyline points="14,3 14,7 18,7"/><line x1="10" y1="13" x2="15" y2="13"/><line x1="10" y1="16" x2="15" y2="16"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24"><line x1="4" y1="12" x2="19" y2="12"/><polyline points="13,6 19,12 13,18"/></symbol>
+</svg>
+<header><div class="wrap hd">
+<a class="logo" href="/lp"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"><span class="tagline">美容を、もっとフェアに。</span></a>
 <nav class="gnav"><a href="/lp/customer">お客様</a><a href="/lp/salon">サロン</a><a href="/lp/partner">代理店</a><a href="/lp">サロンリンクとは</a></nav>
-<div class="hd-cta"><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-line" href="https://lin.ee/6hraAKM">LINEで始める</a></div>
-</div></header><div class="wrap"><div class="tabbar">
-<a class="tab t-green active" href="/lp/customer"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
-<a class="tab t-navy" href="/lp/salon"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
-<a class="tab t-gold" href="/lp/partner"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
+<div class="hd-cta"><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-line" href="https://lin.ee/6hraAKM">無料で始める（14日間）</a></div>
+</div></header>
+<div class="wrap"><div class="tabbar">
+<a class="tab t-green active" href="/lp/customer"><span class="pill">お客様のためのページ</span><span>理想の美容体験を、もっと自分らしく。</span></a>
+<a class="tab t-navy" href="/lp/salon"><span class="pill">美容師・サロンのためのページ</span><span>サロンワークを、もっとスマートに。</span></a>
+<a class="tab t-gold" href="/lp/partner"><span class="pill">代理店・販売店のためのページ</span><span>美容業界の未来を、一緒に創る。</span></a>
 </div></div>
-<section class="hero" style="position:relative;overflow:hidden;padding:0"><div style="position:absolute;inset:0;background:url('/images/lp/winwin-customer-female.jpg') center top/cover"></div><div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(252,249,243,.96) 0%,rgba(252,249,243,.86) 30%,rgba(252,249,243,.32) 58%,rgba(252,249,243,0) 100%)"></div><div class="wrap hero-grid" style="position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;min-height:540px;padding:52px 24px">
-<div><p class="lab">For Customers</p>
-<h1 class="serif" style="font-size:40px;line-height:1.45;font-weight:700;margin:14px 0 18px">また会いたくなる、<br><span class="acc">自分だけ</span>の美容体験を。</h1>
-<p style="color:var(--soft);max-width:32em">30秒の無料診断で、髪質や好みの傾向を可視化。あなたに「合うケア」と、ずっと通いたいサロンが見つかります。</p>
-<div style="display:flex;gap:8px;flex-wrap:wrap;margin:22px 0">
-<span class="chip">&#9711; LINEだけで完結</span><span class="chip">&#9711; 30秒診断</span><span class="chip">&#9711; 合うケア提案</span><span class="chip">&#9711; マイカルテ保存</span></div>
-<div style="display:flex;gap:12px"><a class="btn btn-fill" href="/tools/hair-check">無料で診断する</a><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a></div></div>
-<div style="display:flex;justify-content:flex-end;align-items:center"><div class="phone"><div class="scr">
-<div class="chat-head"><span class="av">S</span><div><b style="font-size:12px">&#9711;&#9711;ヘアサロン</b><div class="note">サロン公式アカウント</div></div></div>
-<div class="bub">診断おつかれさまでした。「Beauty DNA」が出ました &#10024;</div>
-<div class="card-dna"><div class="ttl">YOUR BEAUTY DNA</div>
-<svg viewBox="0 0 160 150" width="100%" height="116"><polygon points="80,18 140,62 117,132 43,132 20,62" fill="none" stroke="#e3dccd"/><polygon points="80,48 116,70 104,116 56,116 44,70" fill="rgba(123,180,142,.20)" stroke="var(--accent)" stroke-width="1.5"/></svg></div>
-<div class="bub">うるおい傾向が高めです。合うケアをご提案しますね &#127807;</div></div></div></div>
+
+<section class="hero" style="padding:0">
+  <div class="bg" style="background-image:url('/images/v3/hero.png');transform:scaleX(-1)"></div>
+  <div class="ov" style="background:linear-gradient(100deg,rgba(252,249,243,.97) 0%,rgba(252,249,243,.9) 30%,rgba(252,249,243,.7) 55%,rgba(252,249,243,.35) 100%)"></div>
+  <div class="wrap in">
+    <div>
+      <p class="lab">For Beauty &amp; Customers</p>
+      <h1 class="serif" style="font-size:42px;line-height:1.4;font-weight:700;margin:14px 0 16px">また会いたくなる、<br>自分だけの<span class="acc">美容体験</span>を。</h1>
+      <p style="color:#6f6658;max-width:30em">AI診断とLINEで、あなたに合う美容師・ケアに出会える。施術の記録も提案も、ぜんぶスマホの中に。</p>
+      <div class="laurels">
+        <div class="laurel"><span class="lf">&#127807;</span><div class="v"><div class="k">ビューティ診断</div><div class="b acc">無料</div></div><span class="rf">&#127807;</span></div>
+        <div class="laurel"><span class="lf">&#127807;</span><div class="v"><div class="k">サロンとの連絡</div><div class="b acc">LINE</div></div><span class="rf">&#127807;</span></div>
+        <div class="laurel"><span class="lf">&#127807;</span><div class="v"><div class="k">あなたのカルテ</div><div class="b acc">専用</div></div><span class="rf">&#127807;</span></div>
+      </div>
+      <p class="note">※画面・内容はイメージです。</p>
+      <div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap">
+        <a class="btn btn-fill" href="/tools/hair-check">無料で美容診断をはじめる</a>
+        <a class="btn btn-ghost" href="https://lin.ee/6hraAKM">公式LINEとつながる</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="phone"><div class="scr">
+        <div class="chat-head"><span class="av">S</span><div><b style="font-size:11px">&#9711;&#9711;ヘアサロン</b><div class="note">サロン公式アカウント</div></div></div>
+        <div class="bub">診断おつかれさまでした。「Beauty DNA」が出ました &#10024;</div>
+        <div class="card-dna"><div class="ttl">YOUR BEAUTY DNA</div>
+          <svg viewBox="0 0 160 130" width="100%" height="92"><polygon points="80,14 134,52 113,114 47,114 26,52" fill="none" stroke="#e3dccd"/><polygon points="80,40 110,58 100,100 60,100 50,58" fill="rgba(123,180,142,.2)" stroke="var(--green)" stroke-width="1.5"/></svg>
+        </div>
+        <div class="bub">うるおい傾向が高めです。合うケアをご提案しますね &#127807;</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--ivory)"><div class="wrap">
+  <h2 class="sec-title">あなたの美容体験が、こう変わる</h2>
+  <p class="sec-lead">出会いから次回まで。SalonRinkがつくる「また会いたくなる」体験。</p>
+  <div class="story">
+    <div class="step"><div class="ph"><img src="/images/v3/story-01.png" loading="lazy"></div><div class="hd2"><span class="no">01</span><b>出会い</b></div><p class="note">来店前カウンセリングで不安を解消</p></div>
+    <div class="step"><div class="ph"><img src="/images/v3/story-02.png" loading="lazy"></div><div class="hd2"><span class="no">02</span><b>AI診断</b></div><p class="note">5つの診断であなたを深く理解</p></div>
+    <div class="step"><div class="ph"><img src="/images/v3/story-03.png" loading="lazy"></div><div class="hd2"><span class="no">03</span><b>最適な提案</b></div><p class="note">あなたに合うメニュー・ケアを提案</p></div>
+    <div class="step"><div class="ph"><img src="/images/v3/story-04.png" loading="lazy"></div><div class="hd2"><span class="no">04</span><b>施術後も安心</b></div><p class="note">LINEでアフターフォロー・相談</p></div>
+    <div class="step"><div class="ph"><img src="/images/v3/story-05.png" loading="lazy"></div><div class="hd2"><span class="no">05</span><b>次回も楽しみ</b></div><p class="note">合った提案で次回もスムーズに</p></div>
+    <div class="step"><div class="ph"><img src="/images/v3/story-06.png" loading="lazy"></div><div class="hd2"><span class="no">06</span><b>ずっと、あなたらしく</b></div><p class="note">信頼の積み重ねで、ずっと通えるサロンに</p></div>
+  </div>
 </div></section>
 
-<section style="background:var(--ivory)"><div class="wrap"><h2 class="sec-title">5つの体験</h2>
-<div class="four" style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:30px">
-<div class="tcard"><b class="serif acc">01</b><p style="font-size:13px;font-weight:700;margin-top:4px">無料のAI診断</p><p class="note">30秒で髪質・好みの傾向を可視化。</p></div>
-<div class="tcard"><b class="serif acc">02</b><p style="font-size:13px;font-weight:700;margin-top:4px">「合うケア」提案</p><p class="note">あなたの傾向に合わせた提案。</p></div>
-<div class="tcard"><b class="serif acc">03</b><p style="font-size:13px;font-weight:700;margin-top:4px">LINEでいつでも相談</p><p class="note">気軽に質問・スタイル相談。</p></div>
-<div class="tcard"><b class="serif acc">04</b><p style="font-size:13px;font-weight:700;margin-top:4px">マイカルテで記録</p><p class="note">過去の施術・好みをいつでも。</p></div>
-<div class="tcard"><b class="serif acc">05</b><p style="font-size:13px;font-weight:700;margin-top:4px">サロンとつながる</p><p class="note">お気に入りサロンと継続的に。</p></div>
-</div></div></section>
+<section><div class="wrap">
+  <h2 class="sec-title">5つのAIビューティ診断</h2>
+  <p class="sec-lead">一人ひとりに合わせた、最適なケアと提案を。</p>
+  <div style="display:grid;grid-template-columns:.9fr 1.1fr;gap:30px;align-items:center;margin-top:24px">
+    <div class="card" style="padding:16px"><img src="/images/v3/tech-diagnosis.png" style="width:100%;border-radius:10px" alt="AIビューティ診断"></div>
+    <div class="benefit" style="margin-top:0">
+      <div class="bitem"><span class="ic ic-g"><svg><use href="#i-palette"/></svg></span><div><b>肌・髪の状態を可視化</b><p class="note">いまの状態をやさしく見える化。</p></div></div>
+      <div class="bitem"><span class="ic"><svg><use href="#i-spark"/></svg></span><div><b>Beauty DNA診断</b><p class="note">あなたの傾向から提案の精度を高める。</p></div></div>
+      <div class="bitem"><span class="ic ic-n"><svg><use href="#i-heart"/></svg></span><div><b>合うケアの提案</b><p class="note">無理のない、あなたに合うケアを。</p></div></div>
+      <div class="bitem"><span class="ic"><svg><use href="#i-chat"/></svg></span><div><b>そのままLINEで相談</b><p class="note">気になることはいつでも気軽に。</p></div></div>
+    </div>
+  </div>
+  <p class="note" style="text-align:center;margin-top:14px">※画面はイメージです。診断は美容に関する一般的な情報提供であり、医療行為ではありません。</p>
+</div></section>
 
-<section><div class="wrap"><h2 class="sec-title">お客様の声</h2>
-<div class="four" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px">
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/persona-hana.jpg" loading="lazy" onerror="this.remove()"></div><div><b>20代・女性</b></div></div><p class="note" style="margin-top:10px">診断結果が分かりやすく、自分に合うケアが見つかりました。</p></div>
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/persona-kyoko.jpg" loading="lazy" onerror="this.remove()"></div><div><b>30代・女性</b></div></div><p class="note" style="margin-top:10px">LINEで相談できるので、通うのが楽しみになりました。</p></div>
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/voice-owner-kirei.jpg" loading="lazy" onerror="this.remove()"></div><div><b>40代・女性</b></div></div><p class="note" style="margin-top:10px">記録が残るので、毎回ていねいに見てもらえる感覚です。</p></div>
-</div><p class="note" style="text-align:right;margin-top:8px">※コメントはイメージです。</p></div></section>
+<section style="background:var(--ivory)"><div class="wrap">
+  <h2 class="sec-title">お客様の声</h2>
+  <div class="voices">
+    <div class="vc"><div class="av"><img src="/images/voice-owner-b.jpg" loading="lazy"></div><div><b style="font-size:13px">20代・女性</b><p class="note">自分に合うケアがわかって、髪の調子が整ってきた気がします。</p></div></div>
+    <div class="vc"><div class="av"><img src="/images/voice-owner-c.jpg" loading="lazy"></div><div><b style="font-size:13px">30代・女性</b><p class="note">LINEで相談できるので、次の予約まで安心して過ごせます。</p></div></div>
+    <div class="vc"><div class="av"><img src="/images/voice-owner-d.jpg" loading="lazy"></div><div><b style="font-size:13px">40代・女性</b><p class="note">前回の施術が記録されていて、毎回ちゃんと続きから話せるのが嬉しい。</p></div></div>
+  </div>
+  <p class="note" style="text-align:right;margin-top:8px">※コメントはイメージです。感じ方には個人差があります。</p>
+</div></section>
 
-<section style="background:var(--ivory)"><div class="wrap"><h2 class="sec-title">ご利用の流れ</h2>
-<div class="six" style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:30px">
-<div><span class="num acc" style="font-size:22px">01</span><p style="font-size:13px;font-weight:700">LINE登録</p><p class="note">友だち追加するだけ</p></div>
-<div><span class="num acc" style="font-size:22px">02</span><p style="font-size:13px;font-weight:700">30秒診断</p><p class="note">かんたんな質問に回答</p></div>
-<div><span class="num acc" style="font-size:22px">03</span><p style="font-size:13px;font-weight:700">結果を受け取る</p><p class="note">Beauty DNAが届く</p></div>
-<div><span class="num acc" style="font-size:22px">04</span><p style="font-size:13px;font-weight:700">サロンに共有</p><p class="note">来店時にスムーズ</p></div>
-<div><span class="num acc" style="font-size:22px">05</span><p style="font-size:13px;font-weight:700">来店・施術</p><p class="note">合うケアを提案</p></div>
-<div><span class="num acc" style="font-size:22px">06</span><p style="font-size:13px;font-weight:700">継続でつながる</p><p class="note">記録が積み重なる</p></div>
-</div></div></section>
-
-<section><div class="wrap two" style="display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center">
-<div><p class="lab">App</p><h2 class="serif" style="font-size:26px;font-weight:600;margin:8px 0">あなたの美容データを、<br>いつでも手のひらに。</h2><p class="note">診断・カルテ・サロンとのやり取りをLINEひとつで。</p>
-<div style="display:flex;gap:12px;margin-top:16px"><a class="btn btn-fill" href="/tools/hair-check">無料で診断する</a><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a></div></div>
-<div style="display:flex;justify-content:center"><div class="phone"><div class="scr">
-<div class="chat-head"><span class="av">S</span><div><b style="font-size:12px">&#9711;&#9711;ヘアサロン</b><div class="note">サロン公式アカウント</div></div></div>
-<div class="bub">診断おつかれさまでした。「Beauty DNA」が出ました &#10024;</div>
-<div class="card-dna"><div class="ttl">YOUR BEAUTY DNA</div>
-<svg viewBox="0 0 160 150" width="100%" height="116"><polygon points="80,18 140,62 117,132 43,132 20,62" fill="none" stroke="#e3dccd"/><polygon points="80,48 116,70 104,116 56,116 44,70" fill="rgba(123,180,142,.20)" stroke="var(--accent)" stroke-width="1.5"/></svg></div>
-<div class="bub">うるおい傾向が高めです。合うケアをご提案しますね &#127807;</div></div></div></div></div></section>
-<div class="wrap"><div class="tabbar">
-<a class="tab t-green" href="/lp/customer"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
-<a class="tab t-navy" href="/lp/salon"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
-<a class="tab t-gold" href="/lp/partner"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
+<section style="position:relative;overflow:hidden;padding:0">
+  <div style="position:absolute;inset:0;background:url('/images/v3/cta-bg.png') center/cover"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(252,249,243,.96),rgba(252,249,243,.82) 55%,rgba(252,249,243,.5))"></div>
+  <div class="wrap" style="position:relative;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:64px 24px">
+    <div>
+      <h2 class="serif" style="font-size:28px;font-weight:600;line-height:1.5">まずは無料で、<br>あなたの「合う」を見つけよう。</h2>
+      <p class="note">美容を、もっと自分らしく、もっとフェアに。</p>
+    </div>
+    <div class="card" style="padding:24px">
+      <b>無料のAI美容診断からはじめる</b>
+      <div style="display:grid;gap:10px;margin-top:14px">
+        <a class="btn btn-fill" href="/tools/hair-check">無料で美容診断をはじめる</a>
+        <a class="btn btn-ghost" href="https://lin.ee/6hraAKM">公式LINEとつながる</a>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="wrap"><div class="chevtabs">
+<a class="chev t-green" href="/lp/customer"><div><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></div><span class="arr"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12,6 18,12 12,18"/></svg></span></a>
+<a class="chev t-navy" href="/lp/salon"><div><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></div><span class="arr"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12,6 18,12 12,18"/></svg></span></a>
+<a class="chev t-gold" href="/lp/partner"><div><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></div><span class="arr"><svg viewBox="0 0 24 24"><line x1="4" y1="12" x2="18" y2="12"/><polyline points="12,6 18,12 12,18"/></svg></span></a>
 </div></div>
-<footer><div class="wrap"><div class="logo" style="font-size:18px"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></div>
-<p class="note" style="margin-top:12px">※本ページの数値・グラフ・お客様の声はシミュレーションまたはイメージであり、効果・実績を保証するものではありません。効果には個人差があります。画面はすべてイメージです。表示価格は税込です。提供：AOKAE合同会社。</p></div></footer></body></html>
+<footer><div class="wrap">
+<div class="logo"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></div>
+<p class="note" style="margin-top:12px">※本ページの数値・グラフ・お客様の声はシミュレーションまたはイメージであり、効果・実績を保証するものではありません。効果には個人差があります。画面はすべてイメージです。表示価格は税込です。提供：AOKAE合同会社。</p>
+</div></footer>
+</body>
+</html>

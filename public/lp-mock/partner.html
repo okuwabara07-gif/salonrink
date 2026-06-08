@@ -3,8 +3,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --green:#7BB48E;--green-d:#5D9B74;--navy:#7E9AC2;--navy-d:#6480A8;--gold:#CDAA63;--gold-d:#B9943F;--accent:var(--green);--accent-d:var(--green-d);
-  --ink:#403830;--soft:#9A8F80;--line:#EFE8DB;--ivory:#FCF9F3;--ivory2:#F5EEE2;--paper:#fff;
+  --green:#2E7D5B;--green-d:#256a4c;--navy:#1f3a5f;--navy-d:#172c47;--gold:#C9A961;--gold-d:#b08d3f;--accent:var(--green);--accent-d:var(--green-d);
+  --ink:#272320;--soft:#615b51;--line:#e8e2d6;--ivory:#faf7f1;--ivory2:#f2eadc;--paper:#fff;
   --serif:'Noto Serif JP',serif;--sans:'Noto Sans JP',sans-serif;--num:'Cormorant Garamond',serif;--lab:'Cinzel',serif;--wrap:1080px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -77,28 +77,24 @@ footer{background:var(--ivory);border-top:1px solid var(--line);padding:38px 0;f
 .acc{color:var(--accent)}
 .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;background:#fff}
 .tab.active{outline:2px solid rgba(0,0,0,.0);box-shadow:0 6px 16px -8px rgba(0,0,0,.4);transform:translateY(-1px)}
-
-.logo img{height:46px;width:auto;display:block}
-footer .logo img{height:62px}
-.logo .mk{display:none}
-.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}.photo:has(img)::before,.photo:has(img)::after{display:none}.ui img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}</style></head><body class="theme-gold">
+</style></head><body class="theme-gold">
 <header><div class="wrap hd">
-<a class="logo" href="/lp"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></a>
-<nav class="gnav"><a href="/lp/customer">お客様</a><a href="/lp/salon">サロン</a><a href="/lp/partner">代理店</a><a href="/lp">サロンリンクとは</a></nav>
-<div class="hd-cta"><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-line" href="https://lin.ee/6hraAKM">LINEで始める</a></div>
+<a class="logo" href="index.html"><span class="mk">&#10087;</span><span>SalonRink<small>Concierge</small></span></a>
+<nav class="gnav"><a href="customer.html">お客様</a><a href="salon.html">サロン</a><a href="partner.html">代理店</a><a href="index.html">サロンリンクとは</a></nav>
+<div class="hd-cta"><a class="btn btn-ghost" href="#">資料をLINEで受け取る</a><a class="btn btn-line" href="#">LINEで始める</a></div>
 </div></header><div class="wrap"><div class="tabbar">
-<a class="tab t-green" href="/lp/customer"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
-<a class="tab t-navy" href="/lp/salon"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
-<a class="tab t-gold active" href="/lp/partner"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
+<a class="tab t-green" href="customer.html"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
+<a class="tab t-navy" href="salon.html"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
+<a class="tab t-gold active" href="partner.html"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
 </div></div>
-<section class="hero" style="position:relative;overflow:hidden;padding:0"><div style="position:absolute;inset:0;background:url('/images/partner-hero-desk.jpg') center/cover"></div><div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(252,249,243,.96) 0%,rgba(252,249,243,.86) 30%,rgba(252,249,243,.32) 58%,rgba(252,249,243,0) 100%)"></div><div class="wrap hero-grid" style="position:relative;display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center;min-height:540px;padding:52px 24px">
+<section class="tight"><div class="wrap hero-grid" style="display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center">
 <div><p class="lab">For Partners</p>
 <h1 class="serif" style="font-size:38px;line-height:1.45;font-weight:700;margin:14px 0 18px">美容業界の未来を、<br><span class="acc">一緒に創る</span>パートナーへ。</h1>
 <p style="color:var(--soft);max-width:32em">ストック型の収益モデルと充実のサポート。初期費用・在庫リスクなしで、SalonRinkの提案ビジネスを始められます。</p>
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin:22px 0">
 <span class="chip">&#9711; ストック収益</span><span class="chip">&#9711; 在庫リスクなし</span><span class="chip">&#9711; 研修制度</span><span class="chip">&#9711; 提案資料完備</span></div>
-<div style="display:flex;gap:12px"><a class="btn btn-fill" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">代理店について相談する</a></div></div>
-
+<div style="display:flex;gap:12px"><a class="btn btn-fill" href="#">資料をLINEで受け取る</a><a class="btn btn-ghost" href="#">代理店について相談する</a></div></div>
+<div style="display:flex;justify-content:center"><div class="photo" style="width:300px;aspect-ratio:4/3"></div></div>
 </div></section>
 
 <section style="background:var(--ivory)"><div class="wrap"><h2 class="sec-title">代理店メリット</h2>
@@ -126,9 +122,9 @@ footer .logo img{height:62px}
 
 <section><div class="wrap"><h2 class="sec-title">パートナーの声</h2>
 <div class="four" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:26px">
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/voice-owner-b.jpg" loading="lazy" onerror="this.remove()"></div><div><b>代理店A様</b></div></div><p class="note" style="margin-top:10px">提案資料が揃っていて、立ち上げがスムーズでした。</p></div>
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/voice-owner-c.jpg" loading="lazy" onerror="this.remove()"></div><div><b>代理店B様</b></div></div><p class="note" style="margin-top:10px">継続課金なので収益が読みやすいのが魅力です。</p></div>
-<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"><img src="/images/voice-owner-d.jpg" loading="lazy" onerror="this.remove()"></div><div><b>代理店C様</b></div></div><p class="note" style="margin-top:10px">サポート体制が手厚く、安心して提案できます。</p></div>
+<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"></div><div><b>代理店A様</b></div></div><p class="note" style="margin-top:10px">提案資料が揃っていて、立ち上げがスムーズでした。</p></div>
+<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"></div><div><b>代理店B様</b></div></div><p class="note" style="margin-top:10px">継続課金なので収益が読みやすいのが魅力です。</p></div>
+<div class="tcard"><div style="display:flex;gap:10px;align-items:center"><div class="photo" style="width:42px;height:42px;border-radius:50%"></div><div><b>代理店C様</b></div></div><p class="note" style="margin-top:10px">サポート体制が手厚く、安心して提案できます。</p></div>
 </div><p class="note" style="text-align:right;margin-top:8px">※コメントはイメージです。</p></div></section>
 
 <section style="background:var(--ivory)"><div class="wrap"><h2 class="sec-title">パートナーサポート</h2>
@@ -138,11 +134,11 @@ footer .logo img{height:62px}
 <div class="tcard"><b class="serif">専任サポート</b><p class="note">立ち上げ後も継続的に伴走。</p></div>
 <div class="tcard"><b class="serif">定期勉強会</b><p class="note">最新事例・ノウハウを共有。</p></div>
 </div>
-<div style="display:flex;justify-content:center;gap:12px;margin-top:26px"><a class="btn btn-fill" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">代理店について相談する</a></div></div></section>
+<div style="display:flex;justify-content:center;gap:12px;margin-top:26px"><a class="btn btn-fill" href="#">資料をLINEで受け取る</a><a class="btn btn-ghost" href="#">代理店について相談する</a></div></div></section>
 <div class="wrap"><div class="tabbar">
-<a class="tab t-green" href="/lp/customer"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
-<a class="tab t-navy" href="/lp/salon"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
-<a class="tab t-gold" href="/lp/partner"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
+<a class="tab t-green" href="customer.html"><b>お客様のためのページ</b><span>理想の美容体験を、もっと自分らしく。</span></a>
+<a class="tab t-navy" href="salon.html"><b>美容師・サロンのためのページ</b><span>サロンワークを、もっとスマートに。</span></a>
+<a class="tab t-gold" href="partner.html"><b>代理店・販売店のためのページ</b><span>美容業界の未来を、一緒に創る。</span></a>
 </div></div>
-<footer><div class="wrap"><div class="logo" style="font-size:18px"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></div>
+<footer><div class="wrap"><div class="logo" style="font-size:18px"><span class="mk">&#10087;</span><span>SalonRink<small>Concierge</small></span></div>
 <p class="note" style="margin-top:12px">※本ページの数値・グラフ・お客様の声はシミュレーションまたはイメージであり、効果・実績を保証するものではありません。効果には個人差があります。画面はすべてイメージです。表示価格は税込です。提供：AOKAE合同会社。</p></div></footer></body></html>
