@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&family=Cinzel:wght@500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --green:#2E7D5B;--green-d:#256a4c;--navy:#1f3a5f;--gold:#C9A961;--gold-d:#b08d3f;
-  --ink:#272320;--soft:#615b51;--line:#e8e2d6;--ivory:#faf7f1;--ivory2:#f2eadc;--paper:#fff;
+  --green:#8FA386;--green-d:#728a69;--navy:#7E8CA0;--gold:#B5985F;--gold-d:#9b7f48;
+  --ink:#43392F;--soft:#8C8072;--line:#E9DECB;--ivory:#FAF5EE;--ivory2:#F2E9DB;--paper:#fff;
   --serif:'Noto Serif JP',serif;--sans:'Noto Sans JP',sans-serif;--num:'Cormorant Garamond',serif;--lab:'Cinzel',serif;--wrap:1080px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -75,13 +75,17 @@ details summary{cursor:pointer;font-weight:500;list-style:none}
 details summary::marker{content:""}
 footer{background:var(--ivory);border-top:1px solid var(--line);padding:38px 0;font-size:12px;color:var(--soft)}
 @media(max-width:880px){.gnav{display:none}.tabbar{grid-template-columns:1fr}.hero-grid,.two,.four{grid-template-columns:1fr!important}.six{grid-template-columns:1fr 1fr!important}}
+
+.logo img{height:46px;width:auto;display:block}
+footer .logo img{height:62px}
+.logo .mk{display:none}
 </style>
 </head>
 <body>
 
 <header>
   <div class="wrap hd">
-    <a class="logo" href="#"><span class="mk">&#10087;</span><span>SalonRink<small>Concierge</small></span></a>
+    <a class="logo" href="#"><img src="assets/logo.png" alt="SalonRink Concierge"></a>
     <nav class="gnav"><a href="#tech">機能一覧</a><a href="#voice">導入事例</a><a href="#price">料金プラン</a><a href="#faq">よくある質問</a></nav>
     <div class="hd-cta"><a class="btn btn-ghost" href="#">資料をLINEで受け取る</a><a class="btn btn-line" href="#">無料で始める（14日間）</a></div>
   </div>
@@ -309,7 +313,7 @@ footer{background:var(--ivory);border-top:1px solid var(--line);padding:38px 0;f
 
 <footer>
   <div class="wrap">
-    <div class="logo" style="font-size:18px"><span class="mk">&#10087;</span><span>SalonRink<small>Concierge</small></span></div>
+    <div class="logo" style="font-size:18px"><img src="assets/logo.png" alt="SalonRink Concierge"></div>
     <p class="note" style="margin-top:12px">※本ページの数値・グラフ・お客様の声はシミュレーションまたはイメージであり、効果・実績を保証するものではありません。効果には個人差があります。画面はすべてイメージです。表示価格は税込です。提供：AOKAE合同会社。</p>
   </div>
 </footer>
