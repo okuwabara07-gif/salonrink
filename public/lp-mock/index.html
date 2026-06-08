@@ -35,7 +35,7 @@ section{padding:66px 0}
 /* header */
 header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .hd{display:flex;align-items:center;gap:26px;height:74px}
-.logo img{height:46px;width:auto}
+.logo img{height:84px;width:auto}.logo .tagline{display:block;font-family:var(--serif);font-size:10px;color:var(--soft);margin-top:4px}
 .gnav{display:flex;gap:20px;margin-left:auto;font-size:13px;color:var(--soft)}.gnav a:hover{color:var(--green)}
 .hd-cta{display:flex;gap:10px}.hd-cta .btn{padding:9px 16px;font-size:13px}
 /* top tabs */
@@ -47,7 +47,7 @@ header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.93);backdro
 .tab:hover{filter:brightness(1.05)}
 /* hero */
 .hero{position:relative;overflow:hidden}
-.hero .bg{position:absolute;inset:0;background:url('/images/solution/solution-bg-stylist.png') center/cover;transform:scaleX(-1)}
+.hero .bg{position:absolute;inset:0;background:url('/images/v3/hero.png') center/cover;transform:scaleX(-1)}
 .hero .ov{position:absolute;inset:0;background:linear-gradient(100deg,rgba(252,249,243,.97) 0%,rgba(252,249,243,.9) 30%,rgba(252,249,243,.55) 55%,rgba(252,249,243,.12) 100%)}
 .hero .in{position:relative;display:grid;grid-template-columns:1.02fr .98fr;gap:30px;align-items:center;min-height:600px;padding:54px 0}
 .laurels{display:flex;gap:26px;margin:24px 0 6px}
@@ -167,7 +167,7 @@ footer .logo img{height:60px}
 
 <header>
   <div class="wrap hd">
-    <a class="logo" href="/lp"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"></a>
+    <a class="logo" href="/lp"><img src="/lp-mock/assets/logo.png" alt="SalonRink Concierge"><span class="tagline">美容を、もっとフェアに。</span></a>
     <nav class="gnav"><a href="#tech">機能一覧</a><a href="#voice">導入事例</a><a href="#price">料金プラン</a><a href="#faq">よくある質問</a></nav>
     <div class="hd-cta"><a class="btn btn-ghost" href="https://lin.ee/6hraAKM">資料をLINEで受け取る</a><a class="btn btn-line" href="https://lin.ee/6hraAKM">無料で始める（14日間）</a></div>
   </div>
@@ -226,12 +226,12 @@ footer .logo img{height:60px}
     <h2 class="sec-title">1人のお客様の物語</h2>
     <p class="sec-lead">SalonRinkがつくる「また会いたくなる」体験</p>
     <div class="story">
-      <div class="step"><div class="ph"><img src="/images/in-action/scene1-phone-woman.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">01</span><b>初めての出会い</b></div><p class="note">来店前カウンセリングで不安を解消</p></div>
-      <div class="step"><div class="ph"><img src="/images/in-action/scene1-tablet-woman.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">02</span><b>AIで理解する</b></div><p class="note">5つの診断であなたを深く理解</p></div>
-      <div class="step"><div class="ph"><img src="/images/in-action/scene2-stylist-customer.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">03</span><b>最適な施術を提案</b></div><p class="note">AIカルテをもとに最適なメニューを</p></div>
-      <div class="step"><div class="ph"><img src="/images/in-action/scene3-consult-smile.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">04</span><b>施術後もつながる</b></div><p class="note">LINEでアフターフォロー・相談</p></div>
-      <div class="step"><div class="ph"><img src="/images/in-action/scene4-counter-consult.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">05</span><b>次回も楽しみに</b></div><p class="note">合った提案で次回予約につなぐ</p></div>
-      <div class="step"><div class="ph"><img src="/images/in-action/scene4-wave-goodbye.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">06</span><b>ファンになり、紹介</b></div><p class="note">信頼の積み重ねでサロンのファンに</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-01.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">01</span><b>初めての出会い</b></div><p class="note">来店前カウンセリングで不安を解消</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-02.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">02</span><b>AIで理解する</b></div><p class="note">5つの診断であなたを深く理解</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-03.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">03</span><b>最適な施術を提案</b></div><p class="note">AIカルテをもとに最適なメニューを</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-04.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">04</span><b>施術後もつながる</b></div><p class="note">LINEでアフターフォロー・相談</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-05.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">05</span><b>次回も楽しみに</b></div><p class="note">合った提案で次回予約につなぐ</p></div>
+      <div class="step"><div class="ph"><img src="/images/v3/story-06.png" loading="lazy" onerror="this.parentNode.style.background='var(--ivory2)'"></div><div class="hd2"><span class="no">06</span><b>ファンになり、紹介</b></div><p class="note">信頼の積み重ねでサロンのファンに</p></div>
     </div>
   </div>
 </section>
@@ -241,13 +241,13 @@ footer .logo img{height:60px}
   <div class="wrap">
     <h2 class="sec-title">その体験を支える、SalonRinkのテクノロジー</h2>
     <div class="tech">
-      <div class="tcard"><h3>AIカルテ（マイカルテ）</h3><p class="sub">すべての情報を一元管理。「今」と「未来」がすぐわかる。</p><div class="panel"><img src="/images/mycarte-ui.png" loading="lazy"></div>
+      <div class="tcard"><h3>AIカルテ（マイカルテ）</h3><p class="sub">すべての情報を一元管理。「今」と「未来」がすぐわかる。</p><div class="panel"><img src="/images/v3/tech-karte.png" loading="lazy"></div>
         <div class="frow"><span class="ic ic-sm"><svg><use href="#i-scissors"/></svg></span>施術履歴・経過管理</div>
         <div class="frow"><span class="ic ic-sm"><svg><use href="#i-clip"/></svg></span>体質・アレルギー情報</div>
         <div class="frow"><span class="ic ic-sm"><svg><use href="#i-camera"/></svg></span>写真・BeforeAfter管理</div>
         <div class="frow"><span class="ic ic-sm"><svg><use href="#i-bell"/></svg></span>提案・メモ・次回提案</div>
       </div>
-      <div class="tcard"><h3>LINEでつながる</h3><p class="sub">いつでも気軽に安心感を、信頼関係を深める。</p><div class="panel"><img src="/images/lp/feature-03-line.webp" loading="lazy"></div>
+      <div class="tcard"><h3>LINEでつながる</h3><p class="sub">いつでも気軽に安心感を、信頼関係を深める。</p><div class="panel"><img src="/images/v3/tech-line.png" loading="lazy"></div>
         <div class="frow"><span class="ic ic-sm ic-g"><svg><use href="#i-bell"/></svg></span>来店通知</div>
         <div class="frow"><span class="ic ic-sm ic-g"><svg><use href="#i-chat"/></svg></span>アフターフォロー</div>
         <div class="frow"><span class="ic ic-sm ic-g"><svg><use href="#i-cal"/></svg></span>予約・リマインド</div>
@@ -263,7 +263,7 @@ footer .logo img{height:60px}
         </div>
         <div class="panel" style="height:96px;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 120 70" width="80%" height="70"><polygon points="60,8 104,34 88,64 32,64 16,34" fill="none" stroke="#e3dccd"/><polygon points="60,26 86,40 76,58 44,58 34,40" fill="rgba(205,170,99,.22)" stroke="var(--gold)"/></svg></div>
       </div>
-      <div class="tcard"><h3>美容師ダッシュボード</h3><p class="sub">サロンの「今」を見える化し、未来の戦略をサポート。</p><div class="panel"><img src="/images/lp/feature-08-pc-dashboard.webp" loading="lazy"></div>
+      <div class="tcard"><h3>美容師ダッシュボード</h3><p class="sub">サロンの「今」を見える化し、未来の戦略をサポート。</p><div class="panel"><img src="/images/v3/tech-dashboard.png" loading="lazy"></div>
         <div class="frow"><span class="ic ic-sm ic-n"><svg><use href="#i-chart"/></svg></span>売上・来客管理</div>
         <div class="frow"><span class="ic ic-sm ic-n"><svg><use href="#i-trend"/></svg></span>顧客傾向・リピート分析</div>
         <div class="frow"><span class="ic ic-sm ic-n"><svg><use href="#i-search"/></svg></span>KPI管理</div>
@@ -274,7 +274,7 @@ footer .logo img{height:60px}
   </div>
 </section>
 
-<img class="band" src="/images/kirei_real_interior.jpg" alt="サロン店内" loading="lazy" onerror="this.style.display='none'">
+<img class="band" src="/images/v3/band.png" alt="サロン店内" loading="lazy" onerror="this.style.display='none'">
 
 <!-- サロンはこう変わる -->
 <section style="background:var(--ivory)">
@@ -395,7 +395,7 @@ footer .logo img{height:60px}
 
 <!-- final CTA -->
 <section style="position:relative;overflow:hidden;padding:0">
-  <div style="position:absolute;inset:0;background:url('/images/lp/winwin-bg.jpg') center/cover"></div>
+  <div style="position:absolute;inset:0;background:url('/images/v3/cta-bg.png') center/cover"></div>
   <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(252,249,243,.96),rgba(252,249,243,.82) 55%,rgba(252,249,243,.5))"></div>
   <div class="wrap" style="position:relative;display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center;padding:64px 24px">
     <div>
