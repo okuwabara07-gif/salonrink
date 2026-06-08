@@ -21,16 +21,13 @@ a{color:inherit;text-decoration:none}
 .sec-lead{text-align:center;color:var(--soft);font-size:14px;margin-top:10px}
 .note{font-size:11px;color:#9a958c;line-height:1.7}
 section{padding:64px 0}.tight{padding:40px 0}
-/* 写真プレースホルダ：人物枠 */
 .photo{background:radial-gradient(120% 100% at 70% 20%,#fff,var(--ivory) 55%,var(--ivory2));border:1px solid var(--line);border-radius:12px;position:relative;overflow:hidden}
 .photo::after{content:"";position:absolute;left:50%;bottom:-18%;width:46%;aspect-ratio:1;background:#e7ddca;border-radius:50% 50% 46% 46%;transform:translateX(-50%);opacity:.7}
 .photo::before{content:"";position:absolute;left:50%;top:18%;width:24%;aspect-ratio:1;background:#e7ddca;border-radius:50%;transform:translateX(-50%);opacity:.7}
-/* ボタン */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:14px;border-radius:999px;padding:13px 24px;cursor:pointer;border:0;transition:.18s}
 .btn-line{background:#06C755;color:#fff}.btn-fill{background:var(--green);color:#fff}
 .btn-ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
 .btn-ghost:hover{border-color:var(--green);color:var(--green)}
-/* header */
 header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .hd{display:flex;align-items:center;gap:26px;height:72px}
 .logo{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:22px}
@@ -38,13 +35,11 @@ header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdro
 .logo small{display:block;font-family:var(--lab);font-size:9px;letter-spacing:.3em;color:var(--gold-d)}
 .gnav{display:flex;gap:20px;margin-left:auto;font-size:13px;color:var(--soft)}.gnav a:hover{color:var(--green)}
 .hd-cta{display:flex;gap:10px}.hd-cta .btn{padding:9px 16px;font-size:13px}
-/* tabbar */
 .tabbar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:14px 0}
 .tab{border-radius:10px;padding:12px 14px;color:#fff;text-align:center}
 .tab b{font-family:var(--serif);font-size:14px} .tab span{display:block;font-size:11px;opacity:.92;margin-top:2px}
 .t-green{background:var(--green)}.t-navy{background:var(--navy)}.t-gold{background:var(--gold)}
 .tab:hover{filter:brightness(1.06)}
-/* phone */
 .phone{width:230px;border-radius:30px;background:#1c1c1c;padding:10px;box-shadow:0 24px 50px -18px rgba(40,30,20,.4)}
 .phone .scr{background:#fff;border-radius:22px;overflow:hidden;padding:14px}
 .chat-head{display:flex;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding-bottom:8px}
@@ -52,27 +47,23 @@ header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdro
 .bub{background:var(--ivory);border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:11px;margin-top:9px}
 .card-dna{border:1px solid var(--line);border-radius:12px;padding:10px;margin-top:9px;text-align:center}
 .card-dna .ttl{font-family:var(--num);letter-spacing:.18em;color:var(--green-d);font-size:12px}
-/* tech card */
 .tcard{border:1px solid var(--line);border-radius:14px;padding:18px;background:#fff}
 .tcard .ui{margin-top:12px;border:1px solid var(--line);border-radius:10px;height:96px;background:linear-gradient(180deg,#fff,var(--ivory));position:relative;overflow:hidden}
 .bars{position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:6px;align-items:flex-end;height:54px}
 .bars i{flex:1;background:var(--green);border-radius:3px 3px 0 0;opacity:.85}
-/* metric tiles */
 .mtile{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;position:relative;overflow:hidden}
 .mtile .spark{position:absolute;right:10px;bottom:8px;display:flex;gap:3px;align-items:flex-end;height:30px;opacity:.55}
 .mtile .spark i{width:5px;background:currentColor;border-radius:2px}
-/* eco */
 .eco{position:relative;height:300px}
-.eco .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#fff,var(--ivory));border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:600}
+.eco .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:120px;height:120px;border-radius:50%;border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-weight:600}
 .eco .node{position:absolute;background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px;text-align:center}
-/* table */
 table.cmp{width:100%;border-collapse:collapse;margin-top:12px;font-size:11px;text-align:center}
 table.cmp th,table.cmp td{padding:6px 2px;border-bottom:1px solid var(--line)}
 table.cmp td:first-child,table.cmp th:first-child{text-align:left}
-/* faq */
 details{border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-size:13px}
 details summary{cursor:pointer;font-weight:500;list-style:none}
 details summary::marker{content:""}
+.band{display:block;width:100%;height:320px;object-fit:cover}
 footer{background:var(--ivory);border-top:1px solid var(--line);padding:38px 0;font-size:12px;color:var(--soft)}
 @media(max-width:880px){.gnav{display:none}.tabbar{grid-template-columns:1fr}.hero-grid,.two,.four{grid-template-columns:1fr!important}.six{grid-template-columns:1fr 1fr!important}}
 
@@ -116,7 +107,7 @@ footer .logo img{height:62px}
       </div>
     </div>
     <div style="display:flex;justify-content:center;gap:18px;align-items:flex-end">
-      <div class="photo" style="width:200px;aspect-ratio:3/4"><img src="/images/salon-hero-stylist.jpg" loading="lazy" onerror="this.remove()"></div>
+      <div class="photo" style="width:210px;aspect-ratio:3/4"><img src="/images/a101_hero.png" loading="lazy" onerror="this.remove()"></div>
       <div class="phone">
         <div class="scr">
           <div class="chat-head"><span class="av">S</span><div><b style="font-size:12px">&#9711;&#9711;ヘアサロン</b><div class="note">サロン公式アカウント</div></div></div>
@@ -146,12 +137,12 @@ footer .logo img{height:62px}
     <h2 class="sec-title">1人のお客様の物語</h2>
     <p class="sec-lead">SalonRinkがつくる「また会いたくなる」体験</p>
     <div class="six" style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:34px">
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/persona-hana.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">01</p><b style="font-size:13px">初めての出会い</b><p class="note">来店前カウンセリングで不安を解消</p></div>
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/persona-kyoko.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">02</p><b style="font-size:13px">AIで理解する</b><p class="note">5つの診断であなたを深く理解</p></div>
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/persona-takashi.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">03</p><b style="font-size:13px">最適な施術を提案</b><p class="note">AIカルテをもとに最適なメニューを</p></div>
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/salon-hero-stylist.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">04</p><b style="font-size:13px">施術後もつながる</b><p class="note">LINEでアフターフォロー・相談</p></div>
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/partner-hero-desk.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">05</p><b style="font-size:13px">次回も楽しみに</b><p class="note">合った提案で次回予約につなぐ</p></div>
-      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/persona-hana.jpg" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">06</p><b style="font-size:13px">ファンになり、紹介</b><p class="note">信頼の積み重ねでサロンのファンに</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene1-phone-woman.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">01</p><b style="font-size:13px">初めての出会い</b><p class="note">来店前カウンセリングで不安を解消</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene1-tablet-woman.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">02</p><b style="font-size:13px">AIで理解する</b><p class="note">5つの診断であなたを深く理解</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene2-stylist-customer.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">03</p><b style="font-size:13px">最適な施術を提案</b><p class="note">AIカルテをもとに最適なメニューを</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene3-consult-smile.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">04</p><b style="font-size:13px">施術後もつながる</b><p class="note">LINEでアフターフォロー・相談</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene4-counter-consult.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">05</p><b style="font-size:13px">次回も楽しみに</b><p class="note">合った提案で次回予約につなぐ</p></div>
+      <div><div class="photo" style="aspect-ratio:3/4"><img src="/images/in-action/scene4-wave-goodbye.png" loading="lazy" onerror="this.remove()"></div><p class="num" style="color:var(--gold-d);font-size:22px;margin-top:8px">06</p><b style="font-size:13px">ファンになり、紹介</b><p class="note">信頼の積み重ねでサロンのファンに</p></div>
     </div>
   </div>
 </section>
@@ -161,14 +152,17 @@ footer .logo img{height:62px}
   <div class="wrap">
     <h2 class="sec-title">その体験を支える、SalonRinkのテクノロジー</h2>
     <div class="four" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:30px">
-      <div class="tcard"><b class="serif">AIカルテ（マイカルテ）</b><p class="note">すべての情報を一元管理。「今」と「未来」がすぐわかる。</p><div class="ui"><img src="/images/mycarte-ui.png" onerror="this.remove()"></div></div>
-      <div class="tcard"><b class="serif">LINEでつながる</b><p class="note">いつでも気軽に安心感を、信頼関係を深める。</p><div class="ui"><div style="position:absolute;left:12px;right:12px;top:12px;display:grid;gap:6px"><div class="bub" style="margin:0;width:70%">ご予約ありがとうございます</div><div class="bub" style="margin:0;width:60%;margin-left:auto;background:#dff3e6;border-color:#bfe6cd">承知しました &#10024;</div></div></div></div>
-      <div class="tcard"><b class="serif">5つのAIビューティ診断</b><p class="note">一人ひとりに合わせた最適な提案を実現。</p><div class="ui"><svg viewBox="0 0 120 80" width="100%" height="80"><polygon points="60,14 96,40 82,72 38,72 24,40" fill="none" stroke="#e3dccd"/><polygon points="60,30 84,44 74,64 46,64 38,44" fill="rgba(205,170,99,.22)" stroke="var(--gold)"/></svg></div></div>
-      <div class="tcard"><b class="serif">美容師ダッシュボード</b><p class="note">サロンの今を見える化し、未来の戦略をサポート。</p><div class="ui"><div class="bars"><i style="height:50%;background:var(--navy)"></i><i style="height:75%;background:var(--navy)"></i><i style="height:60%;background:var(--navy)"></i><i style="height:90%;background:var(--navy)"></i></div></div></div>
+      <div class="tcard"><b class="serif">AIカルテ（マイカルテ）</b><p class="note">すべての情報を一元管理。「今」と「未来」がすぐわかる。</p><div class="ui"><img src="/images/mycarte-ui.png" loading="lazy" onerror="this.remove()"></div></div>
+      <div class="tcard"><b class="serif">LINEでつながる</b><p class="note">いつでも気軽に安心感を、信頼関係を深める。</p><div class="ui"><img src="/images/lp/feature-03-line.webp" loading="lazy" onerror="this.remove()"></div></div>
+      <div class="tcard"><b class="serif">5つのAIビューティ診断</b><p class="note">一人ひとりに合わせた最適な提案を実現。</p><div class="ui"><img src="/images/ai-karte/feat2-color-palette.png" loading="lazy" onerror="this.remove()"></div></div>
+      <div class="tcard"><b class="serif">美容師ダッシュボード</b><p class="note">サロンの今を見える化し、未来の戦略をサポート。</p><div class="ui"><img src="/images/lp/feature-08-pc-dashboard.webp" loading="lazy" onerror="this.remove()"></div></div>
     </div>
     <p class="note" style="text-align:center;margin-top:14px">※画面はイメージです。</p>
   </div>
 </section>
+
+<!-- 実店舗バンド -->
+<img class="band" src="/images/kirei_real_interior.jpg" alt="サロン店内" loading="lazy" onerror="this.style.display='none'">
 
 <!-- サロンはこう変わる -->
 <section style="background:var(--ivory)">
@@ -207,7 +201,7 @@ footer .logo img{height:62px}
     <p class="sec-lead">お客様を中心に、美容業界のすべての関係者がつながる、SalonRinkのプラットフォーム。</p>
     <div class="two" style="display:grid;grid-template-columns:1.25fr .9fr;gap:26px;margin-top:24px;align-items:center">
       <div class="eco">
-        <div class="hub">お客様</div>
+        <div class="hub" style="background:linear-gradient(rgba(64,56,48,.30),rgba(64,56,48,.45)),url('/images/lp/winwin-customer-female.jpg') center/cover;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.45)">お客様</div>
         <div class="node" style="left:2%;top:14%">美容師・サロン</div>
         <div class="node" style="right:2%;top:14%">代理店・パートナー</div>
         <div class="node" style="left:2%;bottom:14%">メーカー・ブランド</div>
@@ -287,7 +281,7 @@ footer .logo img{height:62px}
 </section>
 
 <!-- final CTA -->
-<section style="background:var(--ivory)">
+<section style="background:linear-gradient(rgba(252,249,243,.85),rgba(252,249,243,.92)),url('/images/lp/winwin-bg.jpg') center/cover">
   <div class="wrap two" style="display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center">
     <div>
       <h2 class="serif" style="font-size:29px;font-weight:600;line-height:1.5">美容データを、あなたの手に。<br>美容師とお客様を、一生でつなぐ。</h2>
