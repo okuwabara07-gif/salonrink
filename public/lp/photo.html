@@ -275,8 +275,20 @@ function renderResult(scores) {
     '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
     '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。画像の解析・保存はモックです。提供：AOKAE合同会社。</p>';
   document.getElementById('saveBtn').addEventListener('click', function () {
-    this.textContent = '保存しました（モック）';
-    this.disabled = true;
+    var self=this;
+    if (!window.__lineUserId) {
+      self.textContent='LINEログインが必要です';
+      window.open('https://lin.ee/6hraAKM?ref=photo-save-needlogin','_blank');
+      return;
+    }
+    self.textContent='保存中…'; self.disabled=true;
+    fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-karte', {
+      method:'POST', headers:{'content-type':'application/json'},
+      body: JSON.stringify({ session_id: SR_SID, line_user_id: window.__lineUserId })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d && d.ok) { self.textContent='✓ マイカルテに保存しました'; }
+      else { self.textContent='保存に失敗しました'; self.disabled=false; }
+    }).catch(function(){ self.textContent='保存に失敗しました'; self.disabled=false; });
   });
   var lineBtn = document.getElementById('lineResultBtn');
   if (lineBtn) lineBtn.addEventListener('click', function(){
