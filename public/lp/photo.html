@@ -107,7 +107,7 @@
 // ============ 解析モック（裏側差し替えポイント） ============
 // 本実装: 画像 → ビジョンAI → スコアJSON(0-100)。ここを置き換えるだけでUIはそのまま動く。
 const HAIR_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose";
-const LIFF_ID = ""; // ← エンドユーザー診断用LIFF ID(空=匿名で動作)
+const LIFF_ID = "2010171194-hAIlg1lG"; // ← エンドユーザー診断用LIFF ID(空=匿名で動作)
 window.__lineUserId = null;
 const SR_SID = (function(){ try{ let v=localStorage.getItem('sr_sid'); if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+Math.random().toString(16).slice(2)); localStorage.setItem('sr_sid',v);} return v; }catch(e){ return String(Date.now()); } })();
 (async function initLiff(){ if(!LIFF_ID||!window.liff) return; try{ await liff.init({liffId:LIFF_ID}); if(liff.isLoggedIn()){ const pr=await liff.getProfile(); window.__lineUserId=pr.userId; } }catch(e){ console.warn('LIFF skip',e); } })();
