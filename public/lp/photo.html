@@ -211,6 +211,38 @@ function radarSVG(scores) {
 }
 
 // ============ 結果 ============
+function srLineFlex(scores, t){
+  var rows = Object.keys(scores).map(function(k){
+    var v = scores[k];
+    return { type:'box', layout:'horizontal', margin:'sm', alignItems:'center', contents:[
+      { type:'text', text:k, size:'sm', color:'#66716A', flex:4 },
+      { type:'box', layout:'vertical', flex:7, height:'10px', backgroundColor:'#E8EAE6', cornerRadius:'5px', contents:[
+        { type:'box', layout:'vertical', width:(v+'%'), height:'10px', backgroundColor:'#5E9270', cornerRadius:'5px', contents:[{ type:'filler' }] }
+      ]},
+      { type:'text', text:String(v), size:'xs', color:'#3F6B50', align:'end', flex:2 }
+    ]};
+  });
+  var items = t.items.map(function(id){ return PX_STORE[id].name; }).join(' / ');
+  return {
+    type:'bubble',
+    body:{ type:'box', layout:'vertical', spacing:'md', contents:[
+      { type:'text', text:'写真AI診断の結果（目安）', size:'xs', color:'#93482F', weight:'bold' },
+      { type:'text', text:t.name, size:'lg', weight:'bold', wrap:true, color:'#2F3833' },
+      { type:'text', text:t.copy, size:'sm', wrap:true, color:'#66716A' },
+      { type:'separator', margin:'md' },
+      { type:'box', layout:'vertical', margin:'md', spacing:'sm', contents: rows },
+      { type:'separator', margin:'md' },
+      { type:'text', text:'おすすめケア', size:'sm', weight:'bold', color:'#2F3833' },
+      { type:'text', text:items, size:'sm', wrap:true, color:'#66716A' }
+    ]},
+    footer:{ type:'box', layout:'vertical', spacing:'sm', contents:[
+      { type:'button', style:'primary', color:'#5E9270', action:{ type:'uri', label:'おすすめケアを見る', uri:'https://salonrink.com/lp/ec.html?ref=line-flex' } },
+      { type:'button', style:'secondary', action:{ type:'uri', label:'サロンに相談する', uri:'https://lin.ee/6hraAKM?ref=line-flex' } }
+    ]},
+    styles:{ footer:{ separator:true } }
+  };
+}
+
 function renderResult(scores) {
   const lowest = Object.keys(scores).reduce((a, b) => (scores[a] <= scores[b] ? a : b));
   const t = PX_TYPES[lowest];
@@ -236,7 +268,7 @@ function renderResult(scores) {
       }).join('') +
     '</div></div>' +
     '<div class="dx-cta">' +
-      '<a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=photo-result-line" target="_blank" rel="noreferrer">LINEで結果を受け取る</a>' +
+      '<button class="sr-btn sr-btn-line sr-btn-lg" id="lineResultBtn">LINEで結果を受け取る</button>' +
       '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
       '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">おすすめケアをストアで見る</a>' +
     '</div>' +
@@ -245,6 +277,19 @@ function renderResult(scores) {
   document.getElementById('saveBtn').addEventListener('click', function () {
     this.textContent = '保存しました（モック）';
     this.disabled = true;
+  });
+  var lineBtn = document.getElementById('lineResultBtn');
+  if (lineBtn) lineBtn.addEventListener('click', function(){
+    var self=this;
+    try{
+      if (window.liff && liff.isApiAvailable && liff.isApiAvailable('sendMessages')) {
+        liff.sendMessages([{ type:'flex', altText: t.name + '｜写真AI診断の結果', contents: srLineFlex(scores, t) }])
+          .then(function(){ self.textContent='✓ LINEに結果を送りました'; self.disabled=true; if(window.liff && liff.isInClient && liff.isInClient()){ setTimeout(function(){ try{ liff.closeWindow(); }catch(e){} }, 1400); } })
+          .catch(function(){ window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank'); });
+      } else {
+        window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank');
+      }
+    }catch(e){ window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank'); }
   });
   document.getElementById('retryBtn').addEventListener('click', () => show('guide'));
   applyRef(el);
