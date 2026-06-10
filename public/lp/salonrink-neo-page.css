@@ -1,0 +1,429 @@
+/* salonrink-neo-page.css — ニューモーフィズムをページモード(スクロールページ)で使う拡張
+   salonrink-neo.css の後に読み込むこと。テラコッタ(02)固定。 */
+
+/* ============ テーマ固定(テラコッタ・深さ1.5) ============ */
+body { background: #E3D9CF; margin: 0; padding: 0; font-family: 'Zen Kaku Gothic New', sans-serif; }
+.sr.sr-page {
+  --neo-bg: #EFE8E2;
+  --sr-tint: #EFE8E2;
+  --sr-accent: #C06B4F;
+  --sr-accent-ink: #93482F;
+  --sr-grad: linear-gradient(145deg, #CD7758, #AE5C40);
+  --neo-dark: rgba(186, 166, 150, 0.8);
+  --neo-light: rgba(255, 255, 255, 1);
+  background: var(--neo-bg);
+}
+
+/* ============ ページモード(電話フレームなし) ============ */
+.sr.sr-page {
+  height: auto; overflow: visible;
+  max-width: 480px; margin: 0 auto; min-height: 100vh;
+  padding-bottom: 104px; box-sizing: border-box;
+  box-shadow: 0 0 40px rgba(120, 95, 75, 0.18);
+}
+.sr-page .sr-header {
+  top: 0; padding: 12px 16px 10px;
+}
+.sr-page .sr-neonav {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  width: calc(100% - 28px); max-width: 452px;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+}
+.sr-page .sr-drawer-wrap { position: fixed; }
+
+/* ============ ストーリー写真をソフトUIに統一(ページ版のみ) ============ */
+.sr-page .sr-story-card { padding: 10px; }
+.sr-page .sr-story-img {
+  aspect-ratio: auto; padding: 8px; border-radius: 14px;
+  background: color-mix(in srgb, #FFFFFF 40%, var(--neo-bg));
+  box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light);
+}
+.sr-page .sr-story-img img { aspect-ratio: 4 / 3; height: auto; border-radius: 9px; }
+.sr-page.sr-tinted .sr-story-img::after { inset: 8px; border-radius: 9px; opacity: 0.24; }
+.sr-page.sr-tinted .sr-story-img img { filter: saturate(0.62) contrast(0.96) brightness(1.05); }
+.sr-page .sr-story-body { padding: 4px 8px 10px; }
+.sr-page .sr-voice-head img { filter: saturate(0.7) contrast(0.96) brightness(1.04); }
+.sr-page .sr-neonav a { white-space: nowrap; font-size: 10px; }
+.sr-page .sr-drawer { right: max(0px, calc(50% - 240px)); width: min(82%, 380px); padding-top: 24px; }
+.sr-page .sr-footer { padding-bottom: 30px; }
+.sr-page .sr-tab.on {
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light),
+    inset 0 0 0 1.5px color-mix(in srgb, var(--sr-accent) 65%, transparent);
+}
+
+/* 番号サークルの統一(ストーリー) */
+.sr-page .sr-story-no {
+  font-size: 22px; transform: none; text-shadow: none;
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--neo-bg); margin: -30px 0 6px 0;
+  box-shadow: 5px 5px 10px var(--neo-dark), -5px -5px 10px var(--neo-light);
+}
+
+/* ============ 導入の流れ → 横長カード(ページ版) ============ */
+.sr-page .sr-flow { display: flex; flex-direction: column; gap: 16px; margin-top: 24px; }
+.sr-page .sr-flow li {
+  align-items: center; gap: 15px; padding: 14px 16px; border-radius: 18px;
+  background: var(--neo-bg);
+  box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
+}
+.sr-page .sr-flow li, .sr-page .sr-flow li:last-child { padding-bottom: 14px; }
+.sr-page .sr-flow li:not(:last-child)::before { display: none; }
+.sr-page .sr-flow p { font-size: 12.5px; }
+.sr-page .sr-flow-no {
+  font-family: 'Caveat', cursive; font-size: 24px; font-weight: 700;
+  color: var(--sr-accent); background: var(--neo-bg); width: 40px; height: 40px;
+}
+.sr-page .sr-flow .flow-img {
+  flex-shrink: 0; width: 66px; height: 66px; border-radius: 14px; padding: 5px;
+  margin-left: auto; box-sizing: border-box;
+  background: color-mix(in srgb, #FFFFFF 40%, var(--neo-bg));
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.sr-page .sr-flow .flow-img img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 9px; display: block;
+  filter: saturate(0.72) contrast(0.96) brightness(1.04);
+}
+
+/* ============ デモバー → ソフトUIセグメント(プレビュー用) ============ */
+.demo-bar {
+  display: flex; padding: 4px; border-radius: 999px;
+  margin: 12px 64px 4px;
+  background: var(--neo-bg);
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.demo-bar a {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  min-height: 30px; border-radius: 999px; text-decoration: none;
+  font-size: 11.5px; font-weight: 700; color: var(--sr-muted); background: none;
+}
+.demo-bar a.on {
+  color: #fff; background: var(--sr-grad);
+  box-shadow: 3px 3px 8px var(--neo-dark);
+}
+
+/* ============ FAQ(バニラJS用) ============ */
+.sr-faq-item > p[hidden] { display: none; }
+
+/* ============ 診断フック ============ */
+.diag-hook {
+  margin: 10px 20px 42px; padding: 28px 22px; text-align: center; border-radius: 26px;
+  background: var(--neo-bg);
+  box-shadow: 9px 9px 18px var(--neo-dark), -9px -9px 18px var(--neo-light);
+}
+.diag-hook h2 { font-size: 18px; color: var(--sr-accent-ink); margin-bottom: 6px; }
+.diag-hook p { font-size: 13px; color: var(--sr-muted); margin-bottom: 18px; }
+
+/* ════════════ EC ════════════ */
+.ec-cats { display: flex; gap: 8px; overflow-x: auto; padding: 12px 16px 4px; scrollbar-width: none; }
+.ec-cats::-webkit-scrollbar { display: none; }
+.ec-cat {
+  flex-shrink: 0; padding: 7px 15px; border-radius: 999px; cursor: pointer;
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  background: var(--neo-bg); color: var(--sr-muted); border: none;
+  box-shadow: 3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+}
+.ec-cat.on {
+  color: var(--sr-accent-ink);
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.ec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 14px 16px 30px; }
+.ec-card {
+  background: var(--neo-bg); border-radius: 20px; padding: 12px; border: none; text-align: left;
+  font-family: inherit; cursor: pointer;
+  box-shadow: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ec-thumb {
+  aspect-ratio: 1; border-radius: 14px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, #FFFFFF 50%, var(--neo-bg));
+  box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light);
+  color: var(--sr-accent); font-size: 28px; font-weight: 900;
+}
+.ec-thumb small { position: absolute; bottom: 7px; right: 9px; font-size: 8.5px; font-weight: 700; letter-spacing: 0.12em; color: var(--sr-muted); }
+.ec-name { font-size: 12px; font-weight: 700; line-height: 1.55; color: var(--sr-ink); }
+.ec-price { font-size: 15px; font-weight: 900; color: var(--sr-accent-ink); }
+.ec-price small { font-size: 10px; color: var(--sr-muted); font-weight: 500; }
+.ec-add {
+  min-height: 38px; border-radius: 999px; border: none; cursor: pointer;
+  background: var(--neo-bg); color: var(--sr-accent-ink);
+  font-family: inherit; font-size: 12px; font-weight: 700;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.ec-add:active { box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light); }
+
+/* 詳細 */
+.ec-detail { padding: 0 18px 30px; }
+.ec-back {
+  display: inline-flex; align-items: center; gap: 6px; margin: 16px 0 12px;
+  border: none; background: none; color: var(--sr-muted); font-family: inherit;
+  font-size: 13px; font-weight: 700; cursor: pointer; padding: 6px 0;
+}
+.ec-hero {
+  aspect-ratio: 1; border-radius: 22px; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, #FFFFFF 50%, var(--neo-bg));
+  box-shadow: inset 5px 5px 10px var(--neo-dark), inset -5px -5px 10px var(--neo-light);
+  color: var(--sr-accent); font-size: 60px; font-weight: 900;
+}
+.ec-hero small { position: absolute; bottom: 12px; right: 14px; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; color: var(--sr-muted); }
+.ec-thumbs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin-top: 14px; }
+.ec-thumbs button {
+  aspect-ratio: 1; width: 100%; border-radius: 14px; cursor: pointer; font-family: inherit;
+  background: var(--neo-bg); color: var(--sr-accent); font-size: 16px; font-weight: 900; border: none;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.ec-thumbs button.on { box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light); color: var(--sr-accent-ink); }
+.ec-dname { font-size: 19px; font-weight: 900; margin: 18px 0 0; line-height: 1.5; }
+.ec-dprice { font-size: 24px; font-weight: 900; color: var(--sr-accent-ink); margin: 6px 0 10px; }
+.ec-dprice small { font-size: 12px; color: var(--sr-muted); font-weight: 500; }
+.ec-label { font-size: 12px; font-weight: 700; color: var(--sr-muted); margin: 18px 0 10px; }
+.ec-vars { display: flex; gap: 10px; flex-wrap: wrap; }
+.ec-var {
+  padding: 9px 18px; border-radius: 999px; cursor: pointer; font-family: inherit;
+  font-size: 13px; font-weight: 700; background: var(--neo-bg); color: var(--sr-muted); border: none;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.ec-var.on { color: var(--sr-accent-ink); box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light); }
+.ec-qty {
+  display: inline-flex; align-items: center; border-radius: 999px;
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.ec-qty button {
+  width: 46px; height: 46px; border: none; background: none; cursor: pointer;
+  font-size: 18px; font-weight: 700; color: var(--sr-accent-ink); font-family: inherit;
+}
+.ec-qty output { min-width: 36px; text-align: center; font-weight: 900; font-size: 15px; }
+.ec-cta { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
+.ec-desc { font-size: 13.5px; line-height: 1.9; margin-top: 20px; }
+.ec-rel-title { font-size: 15px; font-weight: 900; margin: 28px 0 14px; }
+.ec-rel { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; padding: 4px 2px 10px; }
+.ec-rel::-webkit-scrollbar { display: none; }
+.ec-rel .ec-card { flex: 0 0 132px; }
+
+/* カートシート */
+.ec-cart-wrap { position: fixed; inset: 0; z-index: 100; visibility: hidden; }
+.ec-cart-wrap.open { visibility: visible; }
+.ec-scrim { position: absolute; inset: 0; background: rgba(74,63,55,0.45); opacity: 0; transition: opacity 0.25s; }
+.ec-cart-wrap.open .ec-scrim { opacity: 1; }
+.ec-sheet {
+  position: absolute; left: 50%; transform: translate(-50%, 105%); bottom: 0;
+  width: 100%; max-width: 480px; box-sizing: border-box;
+  background: var(--neo-bg); border-radius: 26px 26px 0 0;
+  padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+  transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1); max-height: 78vh; overflow-y: auto;
+  box-shadow: 0 -10px 30px rgba(74,63,55,0.25);
+}
+.ec-cart-wrap.open .ec-sheet { transform: translate(-50%, 0); }
+.ec-cart-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.ec-cart-head h2 { font-size: 17px; font-weight: 900; margin: 0; }
+.ec-close {
+  width: 40px; height: 40px; border: none; border-radius: 50%; cursor: pointer;
+  background: var(--neo-bg); color: var(--sr-accent-ink); font-size: 17px;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.ec-empty { text-align: center; color: var(--sr-muted); font-size: 13.5px; padding: 28px 0; }
+.ec-item { display: flex; gap: 12px; align-items: center; padding: 12px 0; }
+.ec-item + .ec-item { border-top: 1px solid rgba(186,166,150,0.3); }
+.ec-ithumb {
+  width: 54px; height: 54px; border-radius: 12px; flex-shrink: 0;
+  background: color-mix(in srgb, #FFFFFF 50%, var(--neo-bg));
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--sr-accent); font-size: 17px; font-weight: 900;
+}
+.ec-iinfo { flex: 1; min-width: 0; }
+.ec-iname { font-size: 12.5px; font-weight: 700; line-height: 1.5; }
+.ec-ivar { font-size: 11px; color: var(--sr-muted); }
+.ec-iprice { font-size: 13.5px; font-weight: 900; color: var(--sr-accent-ink); }
+.ec-iqty { display: flex; align-items: center; gap: 2px; }
+.ec-iqty button {
+  width: 32px; height: 32px; border-radius: 10px; border: none; cursor: pointer;
+  background: var(--neo-bg); color: var(--sr-accent-ink); font-weight: 700; font-family: inherit;
+  box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
+}
+.ec-iqty output { min-width: 26px; text-align: center; font-weight: 700; font-size: 13px; }
+.ec-sum { display: flex; align-items: baseline; justify-content: space-between; padding: 16px 2px 8px; }
+.ec-sum .lbl { font-size: 13px; color: var(--sr-muted); font-weight: 700; }
+.ec-sum .val { font-size: 22px; font-weight: 900; color: var(--sr-accent-ink); }
+.ec-sum .val small { font-size: 11px; color: var(--sr-muted); font-weight: 500; }
+
+/* 固定カートバー */
+.ec-bar {
+  position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 100%; max-width: 480px; box-sizing: border-box; z-index: 40;
+  display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: center;
+  padding: 12px 18px calc(14px + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--neo-bg) 96%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 -6px 20px rgba(74,63,55,0.12);
+}
+.ec-bar .sum { font-size: 12px; color: var(--sr-muted); font-weight: 700; line-height: 1.5; }
+.ec-bar .sum strong { display: block; font-size: 17px; font-weight: 900; color: var(--sr-accent-ink); }
+
+/* カートボタン(ヘッダー) */
+.ec-cartbtn {
+  position: relative; width: 44px; height: 44px; border: none; cursor: pointer; border-radius: 50%;
+  background: var(--neo-bg); color: var(--sr-ink);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.ec-cartbtn svg { width: 20px; height: 20px; }
+.ec-count {
+  position: absolute; top: -3px; right: -3px; min-width: 18px; height: 18px;
+  border-radius: 999px; background: var(--sr-grad); color: #fff;
+  font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  padding: 0 4px; box-sizing: border-box;
+}
+
+.ec-toast {
+  position: fixed; bottom: 112px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: #4A3F37; color: #F5EFE8; font-size: 12.5px; font-weight: 700;
+  padding: 10px 20px; border-radius: 999px; opacity: 0; transition: all 0.25s; pointer-events: none; z-index: 90;
+}
+.ec-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hidden { display: none !important; }
+
+/* ============ EC: 選びやすさ(診断連携・悩みチップ・バッジ) ============ */
+.ec-reco {
+  margin: 14px 16px 0; padding: 16px 16px 10px; border-radius: 20px;
+  background: var(--neo-bg);
+  box-shadow: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
+}
+.ec-reco-title { display: flex; align-items: center; gap: 8px; font-size: 13.5px; font-weight: 900; color: var(--sr-accent-ink); }
+.ec-reco-title svg { width: 16px; height: 16px; flex-shrink: 0; }
+.ec-reco > p { font-size: 11.5px; color: var(--sr-muted); margin: 2px 0 10px; }
+.ec-reco .rail { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding: 4px 2px 10px; }
+.ec-reco .rail::-webkit-scrollbar { display: none; }
+.ec-reco .rail .ec-card { flex: 0 0 126px; }
+.ec-banner {
+  display: flex; align-items: center; gap: 11px; margin: 12px 16px 0; padding: 10px 14px;
+  border-radius: 16px; text-decoration: none;
+  background: var(--neo-bg);
+  box-shadow: 5px 5px 10px var(--neo-dark), -5px -5px 10px var(--neo-light);
+}
+.ec-banner .ic {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--sr-accent-ink);
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.ec-banner .ic svg { width: 16px; height: 16px; }
+.ec-banner strong { font-size: 12.5px; color: var(--sr-ink); display: block; line-height: 1.5; }
+.ec-banner .sub { display: none; }
+.ec-banner .go { margin-left: auto; color: var(--sr-accent); font-weight: 900; font-size: 16px; }
+.ec-concern-label { display: none; }
+.ec-concerns { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 2px; scrollbar-width: none; }
+.ec-concerns::-webkit-scrollbar { display: none; }
+.ec-concern {
+  flex-shrink: 0; padding: 5px 13px; border-radius: 999px; cursor: pointer;
+  font-family: inherit; font-size: 11px; font-weight: 700; color: var(--sr-accent-ink);
+  background: none; border: 1px solid color-mix(in srgb, var(--sr-accent) 38%, transparent);
+  box-shadow: none;
+}
+.ec-concern.on { background: var(--sr-grad); color: #fff; border-color: transparent; box-shadow: 3px 3px 8px var(--neo-dark); }
+.ec-thumb { position: relative; }
+.ec-badge {
+  position: absolute; top: 8px; left: 8px; padding: 3px 9px; border-radius: 999px;
+  background: var(--sr-grad); color: #fff; font-size: 9.5px; font-weight: 700;
+  box-shadow: 2px 2px 5px var(--neo-dark);
+}
+
+/* ============ LINE導線(LIFF想定)の注記 ============ */
+.liff-note {
+  text-align: center; font-size: 10px; color: var(--sr-muted);
+  margin: 8px 16px 0; letter-spacing: 0.04em; line-height: 1.6;
+}
+
+/* ════════════ 写真AI診断(LIFF・カメラ) ════════════ */
+.px-guide { display: flex; flex-direction: column; gap: 14px; margin: 22px 0; text-align: left; }
+.px-guide-row {
+  display: flex; align-items: center; gap: 13px; padding: 13px 16px; border-radius: 18px;
+  background: var(--neo-bg);
+  box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
+}
+.px-guide-row .ic {
+  flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; color: var(--sr-accent-ink);
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.px-guide-row .ic svg { width: 20px; height: 20px; }
+.px-guide-row strong { font-size: 13.5px; display: block; line-height: 1.5; }
+.px-guide-row p { font-size: 11.5px; color: var(--sr-muted); line-height: 1.6; }
+.px-camera { position: relative; overflow: hidden; }
+.px-camera input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.px-preview {
+  margin: 20px auto; width: 230px; aspect-ratio: 3 / 4; border-radius: 24px; padding: 10px;
+  box-sizing: border-box; background: color-mix(in srgb, #FFFFFF 40%, var(--neo-bg));
+  box-shadow: inset 5px 5px 10px var(--neo-dark), inset -5px -5px 10px var(--neo-light);
+}
+.px-preview img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
+.px-loading { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 70px 0 80px; }
+.px-spin {
+  width: 68px; height: 68px; border-radius: 50%; position: relative;
+  box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light);
+}
+.px-spin::after {
+  content: ''; position: absolute; inset: 7px; border-radius: 50%;
+  border: 3px solid transparent; border-top-color: var(--sr-accent);
+  animation: pxspin 0.9s linear infinite;
+}
+@keyframes pxspin { to { transform: rotate(360deg); } }
+.px-loading p { font-size: 13px; font-weight: 700; color: var(--sr-muted); }
+.px-radar { display: flex; justify-content: center; margin: 4px 0 0; }
+.px-radar text { font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 10.5px; font-weight: 700; fill: var(--sr-muted); }
+
+/* ════════════ AI診断 ════════════ */
+.dx-progress { padding: 18px 22px 0; }
+.dx-track {
+  height: 12px; border-radius: 999px; overflow: hidden;
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.dx-fill { height: 100%; border-radius: 999px; background: var(--sr-grad); width: 0%; transition: width 0.35s cubic-bezier(0.2,0.8,0.2,1); }
+.dx-plabel { font-size: 11.5px; font-weight: 700; color: var(--sr-muted); margin-top: 8px; text-align: right; }
+
+.dx-screen { padding: 28px 22px 50px; display: none; flex-direction: column; }
+.dx-screen.on { display: flex; }
+.dx-intro { text-align: center; }
+.dx-intro h1 { font-size: 25px; font-weight: 900; line-height: 1.5; margin: 14px 0 0; }
+.dx-intro > p { color: var(--sr-muted); font-size: 13.5px; line-height: 1.9; margin: 14px auto 24px; max-width: 300px; }
+.dx-badge {
+  display: inline-flex; padding: 7px 18px; border-radius: 999px; white-space: nowrap;
+  color: var(--sr-accent-ink); font-size: 12px; font-weight: 700;
+  box-shadow: 4px 4px 8px var(--neo-dark), -4px -4px 8px var(--neo-light);
+}
+.dx-meta { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
+.dx-meta span {
+  padding: 5px 14px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: var(--sr-muted);
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+
+.dx-qno { font-family: 'Caveat', cursive; font-size: 40px; font-weight: 700; color: var(--sr-accent); transform: rotate(-6deg); display: inline-block; margin-bottom: 6px; line-height: 1; }
+.dx-qtitle { font-size: 20px; font-weight: 900; margin: 0 0 24px; line-height: 1.55; }
+.dx-opts { display: flex; flex-direction: column; gap: 16px; }
+.dx-opt {
+  display: flex; align-items: center; gap: 13px; text-align: left;
+  min-height: 60px; padding: 12px 16px; border-radius: 18px;
+  background: var(--neo-bg); border: none; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 700; color: var(--sr-ink);
+  box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
+}
+.dx-opt .k {
+  flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+  color: var(--sr-accent-ink); font-size: 13px; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+}
+.dx-opt.picked {
+  color: var(--sr-accent-ink);
+  box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light);
+}
+.dx-back {
+  margin-top: 26px; border: none; background: none; color: var(--sr-muted); white-space: nowrap;
+  font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer; align-self: center; padding: 8px;
+}
+
+.dx-rhead { text-align: center; margin-bottom: 24px; }
+.dx-type { font-size: 23px; font-weight: 900; color: var(--sr-accent-ink); margin: 14px 0 0; line-height: 1.5; }
+.dx-copy { color: var(--sr-muted); font-size: 13.5px; line-height: 1.9; margin-top: 10px; }
+.dx-cta { display: flex; flex-direction: column; gap: 12px; margin-top: 26px; }

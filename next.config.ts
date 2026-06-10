@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [
         { source: '/', destination: '/lp-mock/index.html' },
-        { source: '/lp', destination: '/lp-mock/index.html' },
+        { source: '/lp', destination: '/lp/index.html' },
         { source: '/lp/customer', destination: '/lp-mock/customer.html' },
         { source: '/lp/salon', destination: '/lp-mock/salon.html' },
         { source: '/lp/partner', destination: '/lp-mock/partner.html' },

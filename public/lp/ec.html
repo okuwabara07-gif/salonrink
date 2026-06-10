@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink Store — EC（ニューモーフィズム）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+</head>
+<body>
+<div class="sr sr-page" id="app" data-screen-label="EC（ニューモーフィズム）">
+
+  <div class="demo-bar">
+    <a href="index.html">ホーム</a>
+    <a class="on" href="ec.html">ストア</a>
+    <a href="diagnosis.html">AI診断</a>
+    <a href="photo.html">写真診断</a>
+  </div>
+  <p class="liff-note">提供面：LINEミニアプリ(LIFF)想定・LINEログイン済み（モック）</p>
+
+  <header class="sr-header">
+    <img class="sr-logo" src="assets/logo.webp" alt="SalonRink Concierge">
+    <button class="ec-cartbtn" id="cartBtn" aria-label="カート">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.8H9a1.8 1.8 0 0 1-1.8-1.8L6 7z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+      <span class="ec-count hidden" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <div id="viewList" data-screen-label="商品一覧">
+    <div id="reco"></div>
+    <nav class="ec-cats" id="cats"></nav>
+    <div class="ec-concern-label">悩み・目的から選ぶ</div>
+    <nav class="ec-concerns" id="concerns"></nav>
+    <div class="ec-grid" id="grid"></div>
+    <p class="sr-note" style="padding: 0 18px;">※価格は税込です。商品・画像はダミーデータ（プレースホルダー）です。</p>
+  </div>
+
+  <div id="viewDetail" class="ec-detail hidden" data-screen-label="商品詳細"></div>
+
+  <div class="ec-bar" id="cartBar">
+    <div class="sum"><span id="barCount">0点</span><strong id="barTotal">¥0</strong></div>
+    <button class="sr-btn sr-btn-line" id="barCheckout" style="border-radius: 999px; min-height: 48px;">購入手続きへ</button>
+  </div>
+
+  <div class="ec-cart-wrap" id="cartWrap" data-screen-label="カート">
+    <div class="ec-scrim" id="cartScrim"></div>
+    <div class="ec-sheet">
+      <div class="ec-cart-head">
+        <h2>カート</h2>
+        <button class="ec-close" id="cartClose">×</button>
+      </div>
+      <div id="cartItems"></div>
+      <div class="ec-sum"><span class="lbl" id="sumCount">0点</span><span class="val" id="sumTotal">¥0<small>（税込）</small></span></div>
+      <button class="sr-btn sr-btn-line sr-btn-lg" id="checkoutBtn">LINEミニアプリで購入手続きへ</button>
+      <p class="sr-note">※実際の決済は遷移先（Stripe）で行います。本画面はフロントUIのモックです。</p>
+    </div>
+  </div>
+
+  <div class="ec-toast" id="toast">カートに追加しました</div>
+</div>
+
+<script>
+// ============ ダミー商品データ（差し替え前提のJSON） ============
+const PRODUCTS = [
+  { id: 'oil',    cat: 'ヘアケア',   name: 'コンシェルジュ ヘアオイル 100mL', price: 3520, initial: 'オ', vars: ['しっとり', 'さらさら'], tags: ['うるおい', '時短'], badge: '人気No.1', desc: 'サロン帰りの質感を毎日に。AIカルテの髪質データに合わせて選べる2タイプ。濡れた髪に2〜3滴なじませてから乾かしてください。' },
+  { id: 'shampoo',cat: 'ヘアケア',   name: 'モイスト シャンプー 300mL',        price: 2860, initial: 'シ', vars: ['300mL', '詰替 250mL'], tags: ['うるおい', '頭皮ケア'], desc: 'うるおいを守りながらやさしく洗う、アミノ酸系シャンプー。カラー後のデリケートな髪にも。' },
+  { id: 'treat',  cat: 'ヘアケア',   name: 'リペア トリートメント 250g',        price: 3080, initial: 'ト', vars: ['250g'], tags: ['ダメージ補修'], badge: '迷ったらこれ', desc: '毛先までするんとまとまる集中ケア。週2〜3回のスペシャルケアにおすすめです。' },
+  { id: 'scalp',  cat: 'スカルプ',   name: '頭皮美容液 スカルプセラム 80mL',    price: 4180, initial: 'セ', vars: ['80mL'], tags: ['頭皮ケア'], desc: '頭皮診断の結果に合わせて使いたい、うるおいタイプの頭皮用美容液。お風呂上がりの頭皮にやさしくなじませます。' },
+  { id: 'mist',   cat: 'スタイリング', name: 'モーニング ヘアミスト 150mL',     price: 2420, initial: 'ミ', vars: ['150mL'], tags: ['時短'], desc: '寝ぐせ直しと保湿を1本で。朝のスタイリング前にひと吹き。' },
+  { id: 'brush',  cat: '雑貨',      name: 'パドルブラシ（天然毛）',            price: 1980, initial: 'ブ', vars: ['ナチュラル'], tags: ['頭皮ケア', 'ギフト'], desc: '頭皮マッサージにも使える天然毛のパドルブラシ。静電気を抑えてつやを引き出します。' },
+  { id: 'cap',    cat: '雑貨',      name: 'シルク ナイトキャップ',             price: 2200, initial: 'ナ', vars: ['アイボリー', 'グレージュ'], tags: ['ギフト', 'ダメージ補修'], desc: '就寝中の摩擦から髪を守るシルク100%のナイトキャップ。翌朝のまとまりが変わります。' },
+  { id: 'set',    cat: 'ヘアケア',   name: 'トラベルセット（3点入り）',          price: 3960, initial: 'セ', vars: ['3点セット'], tags: ['ギフト', '時短'], badge: 'ギフト向き', desc: 'シャンプー・トリートメント・オイルのミニサイズセット。旅行やお試しに。' },
+];
+const CATS = ['すべて', 'ヘアケア', 'スカルプ', 'スタイリング', '雑貨'];
+const CONCERNS = ['うるおい', 'ダメージ補修', '頭皮ケア', '時短', 'ギフト'];
+const yen = (n) => '¥' + n.toLocaleString('ja-JP');
+const state = { cat: 'すべて', concern: null, cart: [], variant: 0, qty: 1 };
+
+// ============ 一覧 ============
+const catsEl = document.getElementById('cats');
+const gridEl = document.getElementById('grid');
+function renderCats() {
+  catsEl.innerHTML = '';
+  CATS.forEach((c) => {
+    const b = document.createElement('button');
+    b.className = 'ec-cat' + (state.cat === c ? ' on' : '');
+    b.textContent = c;
+    b.addEventListener('click', () => { state.cat = c; renderCats(); renderGrid(); });
+    catsEl.appendChild(b);
+  });
+}
+function productCard(p, compact) {
+  const card = document.createElement('div');
+  card.className = 'ec-card';
+  card.innerHTML =
+    '<div class="ec-thumb">' + p.initial + '<small>PHOTO</small>' +
+    (p.badge && !compact ? '<span class="ec-badge">' + p.badge + '</span>' : '') + '</div>' +
+    '<span class="ec-name">' + p.name + '</span>' +
+    '<span class="ec-price">' + yen(p.price) + '<small>（税込）</small></span>' +
+    (compact ? '' : '<button class="ec-add">カートに入れる</button>');
+  card.addEventListener('click', (e) => {
+    if (e.target.classList.contains('ec-add')) { addToCart(p.id, 0, 1); return; }
+    openDetail(p.id);
+  });
+  return card;
+}
+function renderGrid() {
+  gridEl.innerHTML = '';
+  PRODUCTS
+    .filter((p) => state.cat === 'すべて' || p.cat === state.cat)
+    .filter((p) => !state.concern || (p.tags || []).includes(state.concern))
+    .forEach((p) => gridEl.appendChild(productCard(p)));
+}
+
+// 悩みチップ
+const concernsEl = document.getElementById('concerns');
+function renderConcerns() {
+  concernsEl.innerHTML = '';
+  CONCERNS.forEach((c) => {
+    const b = document.createElement('button');
+    b.className = 'ec-concern' + (state.concern === c ? ' on' : '');
+    b.textContent = c;
+    b.addEventListener('click', () => {
+      state.concern = state.concern === c ? null : c;
+      renderConcerns(); renderGrid();
+    });
+    concernsEl.appendChild(b);
+  });
+}
+
+// 診断連携: 結果があればおすすめ棚、なければ診断への誘導
+function renderReco() {
+  const el = document.getElementById('reco');
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem('sr-diag-reco') || 'null'); } catch (e) { saved = null; }
+  if (saved && Array.isArray(saved.items) && saved.items.length) {
+    el.innerHTML =
+      '<div class="ec-reco">' +
+      '<div class="ec-reco-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>AI診断のおすすめ</div>' +
+      '<p>「' + saved.type + '」のサロンに人気の物販アイテム</p>' +
+      '<div class="rail"></div></div>';
+    const rail = el.querySelector('.rail');
+    saved.items.forEach((id) => {
+      const p = PRODUCTS.find((x) => x.id === id);
+      if (p) { rail.appendChild(productCard(p, true)); }
+    });
+  } else {
+    el.innerHTML =
+      '<a class="ec-banner" href="diagnosis.html?ref=ec-banner">' +
+      '<span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>' +
+      '<span><strong>30秒のAI診断で、ぴったりが見つかる</strong>' +
+      '<span class="sub">4問に答えるとおすすめアイテムを表示します</span></span>' +
+      '<span class="go">›</span></a>';
+  }
+}
+
+// ============ 詳細 ============
+const viewList = document.getElementById('viewList');
+const viewDetail = document.getElementById('viewDetail');
+function openDetail(id) {
+  const p = PRODUCTS.find((x) => x.id === id);
+  state.variant = 0; state.qty = 1;
+  viewDetail.innerHTML =
+    '<button class="ec-back" id="backBtn">‹ 商品一覧にもどる</button>' +
+    '<div class="ec-hero">' + p.initial + '<small>PHOTO</small></div>' +
+    '<div class="ec-thumbs">' + [0,1,2,3,4,5].map((i) =>
+      '<button data-i="' + i + '" class="' + (i === 0 ? 'on' : '') + '">' + p.initial + '</button>').join('') + '</div>' +
+    '<h1 class="ec-dname">' + p.name + '</h1>' +
+    '<div class="ec-dprice">' + yen(p.price) + '<small>（税込）</small></div>' +
+    '<div class="sr-chips"><span>' + p.cat + '</span></div>' +
+    '<div class="ec-label">バリエーション</div>' +
+    '<div class="ec-vars">' + p.vars.map((v, i) =>
+      '<button class="ec-var' + (i === 0 ? ' on' : '') + '" data-i="' + i + '">' + v + '</button>').join('') + '</div>' +
+    '<div class="ec-label">数量</div>' +
+    '<div class="ec-qty"><button id="qMinus">−</button><output id="qVal">1</output><button id="qPlus">＋</button></div>' +
+    '<div class="ec-cta">' +
+      '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="addBtn">カートに入れる</button>' +
+      '<button class="sr-btn sr-btn-line sr-btn-lg" id="buyBtn">いますぐ購入（LINEミニアプリ）</button>' +
+    '</div>' +
+    '<p class="ec-desc">' + p.desc + '</p>' +
+    '<p class="sr-note">※価格は税込です。画像はプレースホルダーです。実際の在庫・決済はミニアプリ側で処理されます。</p>' +
+    '<h2 class="ec-rel-title">関連商品</h2>' +
+    '<div class="ec-rel" id="relRow"></div>';
+  const rel = document.getElementById('relRow');
+  PRODUCTS.filter((x) => x.id !== p.id && x.cat === p.cat).slice(0, 4)
+    .forEach((x) => rel.appendChild(productCard(x, true)));
+  document.getElementById('backBtn').addEventListener('click', closeDetail);
+  viewDetail.querySelectorAll('.ec-thumbs button').forEach((b) =>
+    b.addEventListener('click', () => {
+      viewDetail.querySelectorAll('.ec-thumbs button').forEach((x) => x.classList.remove('on'));
+      b.classList.add('on');
+    }));
+  viewDetail.querySelectorAll('.ec-var').forEach((b) =>
+    b.addEventListener('click', () => {
+      state.variant = +b.dataset.i;
+      viewDetail.querySelectorAll('.ec-var').forEach((x) => x.classList.remove('on'));
+      b.classList.add('on');
+    }));
+  document.getElementById('qMinus').addEventListener('click', () => setQty(state.qty - 1));
+  document.getElementById('qPlus').addEventListener('click', () => setQty(state.qty + 1));
+  document.getElementById('addBtn').addEventListener('click', () => addToCart(p.id, state.variant, state.qty));
+  document.getElementById('buyBtn').addEventListener('click', () => { addToCart(p.id, state.variant, state.qty); openCart(); });
+  viewList.classList.add('hidden');
+  viewDetail.classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+function setQty(n) {
+  state.qty = Math.max(1, Math.min(9, n));
+  document.getElementById('qVal').textContent = state.qty;
+}
+function closeDetail() {
+  viewDetail.classList.add('hidden');
+  viewList.classList.remove('hidden');
+}
+
+// ============ カート ============
+function addToCart(id, variant, qty) {
+  const found = state.cart.find((c) => c.id === id && c.variant === variant);
+  if (found) { found.qty = Math.min(9, found.qty + qty); }
+  else { state.cart.push({ id, variant, qty }); }
+  syncCart(); toast('カートに追加しました');
+}
+function cartTotal() { return state.cart.reduce((s, c) => s + PRODUCTS.find((p) => p.id === c.id).price * c.qty, 0); }
+function cartCount() { return state.cart.reduce((s, c) => s + c.qty, 0); }
+function syncCart() {
+  const n = cartCount();
+  const cc = document.getElementById('cartCount');
+  cc.textContent = n; cc.classList.toggle('hidden', n === 0);
+  document.getElementById('barCount').textContent = n + '点';
+  document.getElementById('barTotal').textContent = yen(cartTotal());
+  renderCartItems();
+}
+function renderCartItems() {
+  const wrap = document.getElementById('cartItems');
+  wrap.innerHTML = '';
+  if (state.cart.length === 0) {
+    wrap.innerHTML = '<p class="ec-empty">カートは空です。<br>お気に入りのアイテムを見つけてください。</p>';
+  }
+  state.cart.forEach((c, idx) => {
+    const p = PRODUCTS.find((x) => x.id === c.id);
+    const row = document.createElement('div');
+    row.className = 'ec-item';
+    row.innerHTML =
+      '<div class="ec-ithumb">' + p.initial + '</div>' +
+      '<div class="ec-iinfo"><div class="ec-iname">' + p.name + '</div>' +
+      '<div class="ec-ivar">' + p.vars[c.variant] + '</div>' +
+      '<div class="ec-iprice">' + yen(p.price * c.qty) + '</div></div>' +
+      '<div class="ec-iqty"><button data-d="-1">−</button><output>' + c.qty + '</output><button data-d="1">＋</button></div>';
+    row.querySelectorAll('.ec-iqty button').forEach((b) =>
+      b.addEventListener('click', () => {
+        c.qty += +b.dataset.d;
+        if (c.qty <= 0) { state.cart.splice(idx, 1); }
+        syncCart();
+      }));
+    wrap.appendChild(row);
+  });
+  document.getElementById('sumCount').textContent = '小計（' + cartCount() + '点）';
+  document.getElementById('sumTotal').innerHTML = yen(cartTotal()) + '<small>（税込）</small>';
+}
+const cartWrap = document.getElementById('cartWrap');
+function openCart() { renderCartItems(); cartWrap.classList.add('open'); }
+function closeCart() { cartWrap.classList.remove('open'); }
+document.getElementById('cartBtn').addEventListener('click', openCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+document.getElementById('cartScrim').addEventListener('click', closeCart);
+document.getElementById('barCheckout').addEventListener('click', openCart);
+document.getElementById('checkoutBtn').addEventListener('click', () => toast('決済モック：LINEミニアプリ決済へ遷移します' + (window.SR_REF ? '（ref=' + window.SR_REF + '）' : '')));
+
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+renderCats(); renderConcerns(); renderReco(); renderGrid(); syncCart();
+
+// ============ LINE導線: ?ref= をページ間・LINE CTAまで引き継ぐ(モック) ============
+// LIFF実装時は liff.state から取得して同じ window.SR_REF に流し込む
+(function () {
+  var ref = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    ref = q.get('ref');
+    if (ref) { sessionStorage.setItem('sr-ref', ref); }
+    else { ref = sessionStorage.getItem('sr-ref'); }
+  } catch (e) {}
+  window.SR_REF = ref || '';
+  if (!window.SR_REF) { return; }
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') { return; }
+    try {
+      var url = new URL(href, location.href);
+      var cur = url.searchParams.get('ref');
+      url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF);
+      a.href = url.toString();
+    } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

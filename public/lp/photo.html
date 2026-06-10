@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink 写真AI診断 — 髪の今をチェック（LIFF）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+<style>
+  .sr.sr-page { display: flex; flex-direction: column; padding-bottom: 40px; }
+  .dx-screen { flex: 1; }
+</style>
+<script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+<div class="sr sr-page" id="app" data-screen-label="写真AI診断（LIFF）">
+
+  <div class="demo-bar">
+    <a href="index.html">ホーム</a>
+    <a href="ec.html">ストア</a>
+    <a href="diagnosis.html">AI診断</a>
+    <a class="on" href="photo.html">写真診断</a>
+  </div>
+  <p class="liff-note">提供面：LINEミニアプリ(LIFF)想定・LINEログイン済み（モック）</p>
+
+  <header class="sr-header" style="justify-content: center;">
+    <img class="sr-logo" src="assets/logo.webp" alt="SalonRink Concierge">
+  </header>
+
+  <!-- イントロ -->
+  <section class="dx-screen dx-intro on" id="scrIntro" data-screen-label="写真診断 イントロ">
+    <div><span class="dx-badge">写真AI診断</span></div>
+    <h1>写真でわかる、<br>髪の「今」の傾向。</h1>
+    <p>1枚撮るだけで、髪の見た目の傾向と、合うケアの目安をお届けします。</p>
+    <div class="dx-meta">
+      <span>撮影して約30秒</span>
+      <span>無料</span>
+    </div>
+    <button class="sr-btn sr-btn-line sr-btn-lg" id="startBtn">無料で診断する</button>
+    <label class="px-consent" style="display:flex;gap:8px;align-items:flex-start;margin:14px 6px 0;font-size:11.5px;color:var(--sr-muted);line-height:1.65;cursor:pointer;">
+      <input type="checkbox" id="consentStats" style="margin-top:2px;flex:0 0 auto;width:16px;height:16px;accent-color:var(--sr-accent);">
+      <span>診断結果（スコア等の<b>匿名データ</b>）をサービス改善・統計・PR・おすすめ精度向上に活用することに同意します（任意）。<b>写真は保存しません。</b></span>
+    </label>
+    <p class="sr-note" style="text-align:center;">※AIによる髪の「見た目の傾向」とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
+  </section>
+
+  <!-- 撮り方ガイド + カメラ -->
+  <section class="dx-screen" id="scrGuide" data-screen-label="写真診断 撮り方ガイド">
+    <span class="dx-qno">撮り方</span>
+    <h2 class="dx-qtitle">きれいに撮れると、<br>結果の目安も正確に。</h2>
+    <div class="px-guide">
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></span>
+        <div><strong>明るい場所で</strong><p>自然光がいちばんきれいに写ります。逆光は避けて。</p></div>
+      </div>
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+        <div><strong>髪全体が入るように</strong><p>頭頂部から毛先まで。肩より少し引いた距離が目安。</p></div>
+      </div>
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span>
+        <div><strong>後ろ向きもOK</strong><p>うしろ姿の1枚でも傾向をチェックできます。</p></div>
+      </div>
+    </div>
+    <label class="sr-btn sr-btn-line sr-btn-lg px-camera">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      カメラで撮影する
+      <input type="file" accept="image/*" capture="user" id="cameraInput">
+    </label>
+    <label class="sr-btn sr-btn-ghost sr-btn-lg px-camera" style="margin-top: 12px;">
+      アルバムから選ぶ
+      <input type="file" accept="image/*" id="albumInput">
+    </label>
+    <button class="dx-back" id="guideBack">‹ はじめにもどる</button>
+    <p class="sr-note">撮影・送信はご本人の同意のもとで行われます。顔が写った写真はトリミングを推奨します。画像は結果表示のためにのみ使用し、保持は最小限にとどめます（モック環境では端末外へ送信されません）。</p>
+  </section>
+
+  <!-- プレビュー -->
+  <section class="dx-screen dx-intro" id="scrPreview" data-screen-label="写真診断 プレビュー">
+    <div><span class="dx-badge">プレビュー</span></div>
+    <h1 style="font-size: 21px;">この写真で進めますか?</h1>
+    <div class="px-preview"><img id="previewImg" alt="撮影した写真のプレビュー"></div>
+    <button class="sr-btn sr-btn-line sr-btn-lg" id="analyzeBtn">この写真で診断する</button>
+    <label class="sr-btn sr-btn-ghost sr-btn-lg px-camera" style="margin-top: 12px;">
+      撮り直す
+      <input type="file" accept="image/*" capture="user" id="retakeInput">
+    </label>
+  </section>
+
+  <!-- ローディング -->
+  <section class="dx-screen" id="scrLoading" data-screen-label="写真診断 解析中">
+    <div class="px-loading">
+      <div class="px-spin"></div>
+      <p>髪の傾向を解析しています…</p>
+    </div>
+  </section>
+
+  <!-- 結果 -->
+  <section class="dx-screen" id="scrResult" data-screen-label="写真診断 結果"></section>
+
+</div>
+<script>
+// ============ 解析モック（裏側差し替えポイント） ============
+// 本実装: 画像 → ビジョンAI → スコアJSON(0-100)。ここを置き換えるだけでUIはそのまま動く。
+const HAIR_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose";
+const LIFF_ID = ""; // ← エンドユーザー診断用LIFF ID(空=匿名で動作)
+window.__lineUserId = null;
+const SR_SID = (function(){ try{ let v=localStorage.getItem('sr_sid'); if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+Math.random().toString(16).slice(2)); localStorage.setItem('sr_sid',v);} return v; }catch(e){ return String(Date.now()); } })();
+(async function initLiff(){ if(!LIFF_ID||!window.liff) return; try{ await liff.init({liffId:LIFF_ID}); if(liff.isLoggedIn()){ const pr=await liff.getProfile(); window.__lineUserId=pr.userId; } }catch(e){ console.warn('LIFF skip',e); } })();
+function __fileToDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+function __toJpegDataURL(file,maxW,q){ maxW=maxW||1280; q=q||0.85; return new Promise((resolve)=>{ const url=URL.createObjectURL(file); const im=new Image(); im.onload=function(){ try{ const sc=Math.min(1,maxW/(im.naturalWidth||maxW)); const w=Math.max(1,Math.round((im.naturalWidth||maxW)*sc)),h=Math.max(1,Math.round((im.naturalHeight||maxW)*sc)); const c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg',q)); }catch(e){ URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve);} }; im.onerror=function(){ URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve);} ; im.src=url; }); }
+async function analyzeHair(image) {
+  const f = window.__photoFile;
+  try {
+    if (!f) throw new Error('no file');
+    const dataUrl = await __toJpegDataURL(f);
+    const r = await fetch(HAIR_ENDPOINT, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ image: dataUrl, session_id: SR_SID, line_user_id: window.__lineUserId || undefined, consent_stats: !!(document.getElementById('consentStats')||{}).checked, consent_photo: false }) });
+    const data = await r.json().catch(()=>({}));
+    if (!r.ok || !data.ok) { alert(data.message || '診断に失敗しました。通信環境を確認して、もう一度お試しください。'); show('intro'); return null; }
+    const s2 = (data.result && data.result.scores) || {};
+    return { 'ツヤ':Math.round(s2.tsuya??50), 'まとまり':Math.round(s2.matomari??50), 'うるおい':Math.round(s2.uruoi??50), 'ボリューム':Math.round(s2.volume??50), 'ハリ・コシ':Math.round(s2.hari_koshi??50) };
+  } catch (e) {
+    console.error('hair-diagnose failed', e);
+    alert('診断に失敗しました。通信環境を確認して、もう一度お試しください。');
+    show('intro'); return null;
+  }
+}
+
+// いちばん低い軸 → 傾向タイプとおすすめケア(モック)
+const PX_TYPES = {
+  'ツヤ': { name: 'ツヤ のびしろヘア', copy: '光をはね返すツヤに伸びしろあり。オイルで表面を整えるケアが目安です。', items: ['oil', 'mist'] },
+  'まとまり': { name: 'まとまり のびしろヘア', copy: '広がりやすい傾向が見えます。保湿×補修のケアで扱いやすさUPが目安。', items: ['treat', 'oil'] },
+  'うるおい': { name: 'うるおい のびしろヘア', copy: '乾燥ぎみの傾向。やさしい洗浄と集中保湿の組み合わせが目安です。', items: ['shampoo', 'treat'] },
+  'ボリューム': { name: 'ふんわり のびしろヘア', copy: '根もとのふんわり感に伸びしろ。頭皮ケアから整えるのが目安です。', items: ['scalp', 'shampoo'] },
+  'ハリ・コシ': { name: 'ハリ・コシ のびしろヘア', copy: '芯のしなやかさに伸びしろ。頭皮ケア×補修ケアの両輪が目安です。', items: ['scalp', 'treat'] },
+};
+const PX_STORE = {
+  oil:     { name: 'コンシェルジュ ヘアオイル', price: 3520, initial: 'オ' },
+  shampoo: { name: 'モイスト シャンプー', price: 2860, initial: 'シ' },
+  treat:   { name: 'リペア トリートメント', price: 3080, initial: 'ト' },
+  scalp:   { name: 'スカルプセラム', price: 4180, initial: 'セ' },
+  mist:    { name: 'モーニング ヘアミスト', price: 2420, initial: 'ミ' },
+};
+const pxYen = (n) => '¥' + n.toLocaleString('ja-JP');
+
+// ============ 画面制御 ============
+const screens = {
+  intro: document.getElementById('scrIntro'),
+  guide: document.getElementById('scrGuide'),
+  preview: document.getElementById('scrPreview'),
+  loading: document.getElementById('scrLoading'),
+  result: document.getElementById('scrResult'),
+};
+let photoURL = null;
+function show(key) {
+  Object.values(screens).forEach((s) => s.classList.remove('on'));
+  screens[key].classList.add('on');
+  window.scrollTo(0, 0);
+}
+document.getElementById('startBtn').addEventListener('click', () => show('guide'));
+document.getElementById('guideBack').addEventListener('click', () => show('intro'));
+
+function onPick(input) {
+  input.addEventListener('change', () => {
+    const f = input.files && input.files[0];
+    if (!f) { return; }
+    if (photoURL) { URL.revokeObjectURL(photoURL); }
+    photoURL = URL.createObjectURL(f); window.__photoFile = f;
+    document.getElementById('previewImg').src = photoURL;
+    show('preview');
+  });
+}
+onPick(document.getElementById('cameraInput'));
+onPick(document.getElementById('albumInput'));
+onPick(document.getElementById('retakeInput'));
+
+document.getElementById('analyzeBtn').addEventListener('click', async () => {
+  show('loading');
+  const scores = await analyzeHair(photoURL);
+  if (scores) renderResult(scores);
+});
+
+// ============ レーダーチャート(SVG) ============
+function radarSVG(scores) {
+  const keys = Object.keys(scores);
+  const cx = 130, cy = 120, R = 78;
+  const pt = (i, r) => {
+    const a = -Math.PI / 2 + (i * 2 * Math.PI) / keys.length;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  };
+  const ring = (ratio) => keys.map((_, i) => pt(i, R * ratio).map((v) => v.toFixed(1)).join(',')).join(' ');
+  const valuePoly = keys.map((k, i) => pt(i, R * (scores[k] / 100)).map((v) => v.toFixed(1)).join(',')).join(' ');
+  const labels = keys.map((k, i) => {
+    const [x, y] = pt(i, R + 22);
+    return '<text x="' + x.toFixed(1) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="middle">' + k + '</text>';
+  }).join('');
+  const axes = keys.map((_, i) => {
+    const [x, y] = pt(i, R);
+    return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="rgba(186,166,150,0.45)" stroke-width="1"/>';
+  }).join('');
+  return '<svg width="260" height="244" viewBox="0 0 260 244" role="img" aria-label="髪の傾向チャート">' +
+    [1, 0.66, 0.33].map((r) => '<polygon points="' + ring(r) + '" fill="none" stroke="rgba(186,166,150,0.5)" stroke-width="1"/>').join('') +
+    axes +
+    '<polygon points="' + valuePoly + '" fill="rgba(192,107,79,0.30)" stroke="#C06B4F" stroke-width="2" stroke-linejoin="round"/>' +
+    keys.map((k, i) => { const [x, y] = pt(i, R * (scores[k] / 100)); return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="3.5" fill="#C06B4F"/>'; }).join('') +
+    labels + '</svg>';
+}
+
+// ============ 結果 ============
+function renderResult(scores) {
+  const lowest = Object.keys(scores).reduce((a, b) => (scores[a] <= scores[b] ? a : b));
+  const t = PX_TYPES[lowest];
+  const el = screens.result;
+  el.innerHTML =
+    '<div class="dx-rhead">' +
+      '<span class="dx-badge">結果（目安）</span>' +
+      '<h1 class="dx-type">' + t.name + '</h1>' +
+      '<p class="dx-copy">' + t.copy + '</p>' +
+    '</div>' +
+    '<div class="neo-panel" style="padding: 14px 10px 6px;">' +
+      '<div class="neo-panel-title" style="padding-left: 8px;">HAIR BALANCE</div>' +
+      '<div class="px-radar">' + radarSVG(scores) + '</div>' +
+    '</div>' +
+    '<h2 style="font-size: 15px; font-weight: 900; margin: 24px 0 14px;">おすすめのケア</h2>' +
+    '<div class="ec-reco" style="margin: 0; padding-top: 12px;"><div class="rail">' +
+      t.items.map((id) => {
+        const s = PX_STORE[id];
+        return '<a class="ec-card" style="flex: 0 0 126px; text-decoration: none;" href="ec.html?ref=photo-reco">' +
+          '<div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div>' +
+          '<span class="ec-name">' + s.name + '</span>' +
+          '<span class="ec-price">' + pxYen(s.price) + '<small>（税込）</small></span></a>';
+      }).join('') +
+    '</div></div>' +
+    '<div class="dx-cta">' +
+      '<a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=photo-result-line" target="_blank" rel="noreferrer">LINEで結果を受け取る</a>' +
+      '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
+      '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">おすすめケアをストアで見る</a>' +
+    '</div>' +
+    '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
+    '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。画像の解析・保存はモックです。提供：AOKAE合同会社。</p>';
+  document.getElementById('saveBtn').addEventListener('click', function () {
+    this.textContent = '保存しました（モック）';
+    this.disabled = true;
+  });
+  document.getElementById('retryBtn').addEventListener('click', () => show('guide'));
+  applyRef(el);
+  show('result');
+}
+
+// ============ LINE導線: ?ref= 引き継ぎ(モック) — LIFFでは liff.state から同様に取得 ============
+(function () {
+  var ref = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    ref = q.get('ref');
+    if (ref) { sessionStorage.setItem('sr-ref', ref); }
+    else { ref = sessionStorage.getItem('sr-ref'); }
+  } catch (e) {}
+  window.SR_REF = ref || '';
+})();
+function applyRef(scope) {
+  if (!window.SR_REF) { return; }
+  scope.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') { return; }
+    try {
+      var url = new URL(href, location.href);
+      var cur = url.searchParams.get('ref');
+      if (cur && cur.indexOf('__') !== -1) { return; }
+      url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF);
+      a.href = url.toString();
+    } catch (e) {}
+  });
+}
+applyRef(document);
+</script>
+</body>
+</html>
