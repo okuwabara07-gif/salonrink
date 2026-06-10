@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: '/', destination: '/lp', permanent: false },
       { source: '/dashboard/karte', destination: '/dashboard/customers', permanent: true },
       { source: '/dashboard/karte/:path*', destination: '/dashboard/customers/:path*', permanent: true },
       { source: '/dashboard/line', destination: '/dashboard/integrations/line', permanent: true },
