@@ -110,7 +110,10 @@ const HAIR_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hai
 const LIFF_ID = "2010171194-hAIlg1lG"; // ← エンドユーザー診断用LIFF ID(空=匿名で動作)
 window.__lineUserId = null;
 const SR_SID = (function(){ try{ let v=localStorage.getItem('sr_sid'); if(!v){ v=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(String(Date.now())+Math.random().toString(16).slice(2)); localStorage.setItem('sr_sid',v);} return v; }catch(e){ return String(Date.now()); } })();
-(async function initLiff(){ if(!LIFF_ID||!window.liff) return; try{ await liff.init({liffId:LIFF_ID}); if(liff.isLoggedIn()){ const pr=await liff.getProfile(); window.__lineUserId=pr.userId; } }catch(e){ console.warn('LIFF skip',e); } })();
+async function srInitLiff(){ if(!LIFF_ID||!window.liff) return; try{ await liff.init({liffId:LIFF_ID}); if(liff.isLoggedIn()){ const pr=await liff.getProfile(); window.__lineUserId=pr.userId; } }catch(e){ console.warn('LIFF skip',e); } }
+function srLoginWithPending(action, scores){ try{ sessionStorage.setItem('sr_pending', JSON.stringify({action:action, scores:scores})); }catch(e){} if(window.liff && liff.login){ liff.login({ redirectUri: location.href }); } else { window.open('https://lin.ee/6hraAKM?ref=photo-needlogin','_blank'); } }
+function srResumePending(){ if(!window.__lineUserId) return; var raw=null; try{ raw=sessionStorage.getItem('sr_pending'); }catch(e){} if(!raw) return; try{ sessionStorage.removeItem('sr_pending'); }catch(e){} var o=null; try{ o=JSON.parse(raw); }catch(e){ return; } if(!o||!o.scores) return; try{ renderResult(o.scores); }catch(e){ return; } setTimeout(function(){ var id=(o.action==='line')?'lineResultBtn':'saveBtn'; var b=document.getElementById(id); if(b) b.click(); }, 500); }
+srInitLiff().then(function(){ srResumePending(); });
 function __fileToDataURL(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
 function __toJpegDataURL(file,maxW,q){ maxW=maxW||1280; q=q||0.85; return new Promise((resolve)=>{ const url=URL.createObjectURL(file); const im=new Image(); im.onload=function(){ try{ const sc=Math.min(1,maxW/(im.naturalWidth||maxW)); const w=Math.max(1,Math.round((im.naturalWidth||maxW)*sc)),h=Math.max(1,Math.round((im.naturalHeight||maxW)*sc)); const c=document.createElement('canvas'); c.width=w;c.height=h; c.getContext('2d').drawImage(im,0,0,w,h); URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg',q)); }catch(e){ URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve);} }; im.onerror=function(){ URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve);} ; im.src=url; }); }
 async function analyzeHair(image) {
@@ -277,8 +280,8 @@ function renderResult(scores) {
   document.getElementById('saveBtn').addEventListener('click', function () {
     var self=this;
     if (!window.__lineUserId) {
-      self.textContent='LINEログインが必要です';
-      window.open('https://lin.ee/6hraAKM?ref=photo-save-needlogin','_blank');
+      self.textContent='LINEに接続中…';
+      srLoginWithPending('save', scores);
       return;
     }
     self.textContent='保存中…'; self.disabled=true;
@@ -297,11 +300,21 @@ function renderResult(scores) {
       if (window.liff && liff.isApiAvailable && liff.isApiAvailable('sendMessages')) {
         liff.sendMessages([{ type:'flex', altText: t.name + '｜写真AI診断の結果', contents: srLineFlex(scores, t) }])
           .then(function(){ self.textContent='✓ LINEに結果を送りました'; self.disabled=true; if(window.liff && liff.isInClient && liff.isInClient()){ setTimeout(function(){ try{ liff.closeWindow(); }catch(e){} }, 1400); } })
-          .catch(function(){ window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank'); });
+          .catch(function(){ self.textContent='送信に失敗しました'; self.disabled=false; });
+      } else if (window.__lineUserId) {
+        self.textContent='送信中…'; self.disabled=true;
+        fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/line-push', {
+          method:'POST', headers:{'content-type':'application/json'},
+          body: JSON.stringify({ line_user_id: window.__lineUserId, scores: scores, type_key: lowest })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.ok) { self.textContent='✓ LINEに結果を送りました'; self.disabled=true; }
+          else { self.textContent=(d && d.message) || '送信に失敗しました'; self.disabled=false; }
+        }).catch(function(){ self.textContent='送信に失敗しました'; self.disabled=false; });
       } else {
-        window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank');
+        self.textContent='LINEに接続中…';
+        srLoginWithPending('line', scores);
       }
-    }catch(e){ window.open('https://lin.ee/6hraAKM?ref=photo-result-line','_blank'); }
+    }catch(e){ self.textContent='送信に失敗しました'; self.disabled=false; }
   });
   document.getElementById('retryBtn').addEventListener('click', () => show('guide'));
   applyRef(el);
