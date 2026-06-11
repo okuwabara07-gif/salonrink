@@ -51,18 +51,21 @@ export async function POST(req: Request) {
           if (!ord || ord.payment_status === 'paid') {
             break
           }
+          // Stripe API 2026-03-25.dahlia 以降は配送先が collected_information.shipping_details に移動(旧 shipping_details はフォールバック)
+          const ship = session.collected_information?.shipping_details || session.shipping_details || null
+          const addr = ship?.address || null
           await supabase
             .from('orders')
             .update({
               payment_status: 'paid',
               stripe_payment_intent: session.payment_intent || null,
-              shipping_name: session.shipping_details?.name || session.customer_details?.name || null,
-              shipping_postal: session.shipping_details?.address?.postal_code || null,
+              shipping_name: ship?.name || session.customer_details?.name || null,
+              shipping_postal: addr?.postal_code || null,
               shipping_address: [
-                session.shipping_details?.address?.state,
-                session.shipping_details?.address?.city,
-                session.shipping_details?.address?.line1,
-                session.shipping_details?.address?.line2,
+                addr?.state,
+                addr?.city,
+                addr?.line1,
+                addr?.line2,
               ].filter(Boolean).join(' ') || null,
               shipping_phone: session.customer_details?.phone || null,
               updated_at: new Date().toISOString(),
