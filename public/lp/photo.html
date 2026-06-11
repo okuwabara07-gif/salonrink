@@ -124,6 +124,7 @@ async function analyzeHair(image) {
     const r = await fetch(HAIR_ENDPOINT, { method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({ image: dataUrl, session_id: SR_SID, line_user_id: window.__lineUserId || undefined, consent_stats: !!(document.getElementById('consentStats')||{}).checked, consent_photo: false }) });
     const data = await r.json().catch(()=>({}));
     if (!r.ok || !data.ok) { alert(data.message || '診断に失敗しました。通信環境を確認して、もう一度お試しください。'); show('intro'); return null; }
+    window.__shareCode = data.share_code || null;
     const s2 = (data.result && data.result.scores) || {};
     return { 'ツヤ':Math.round(s2.tsuya??50), 'まとまり':Math.round(s2.matomari??50), 'うるおい':Math.round(s2.uruoi??50), 'ボリューム':Math.round(s2.volume??50), 'ハリ・コシ':Math.round(s2.hari_koshi??50) };
   } catch (e) {
@@ -260,38 +261,24 @@ function renderResult(scores) {
       '<div class="neo-panel-title" style="padding-left: 8px;">HAIR BALANCE</div>' +
       '<div class="px-radar">' + radarSVG(scores) + '</div>' +
     '</div>' +
-    '<h2 style="font-size: 15px; font-weight: 900; margin: 24px 0 14px;">おすすめのケア</h2>' +
-    '<div class="ec-reco" style="margin: 0; padding-top: 12px;"><div class="rail">' +
-      t.items.map((id) => {
-        const s = PX_STORE[id];
-        return '<a class="ec-card" style="flex: 0 0 126px; text-decoration: none;" href="ec.html?ref=photo-reco">' +
-          '<div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div>' +
-          '<span class="ec-name">' + s.name + '</span>' +
-          '<span class="ec-price">' + pxYen(s.price) + '<small>（税込）</small></span></a>';
-      }).join('') +
-    '</div></div>' +
-    '<div class="dx-cta">' +
-      '<button class="sr-btn sr-btn-line sr-btn-lg" id="lineResultBtn">LINEで結果を受け取る</button>' +
-      '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
-      '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">おすすめケアをストアで見る</a>' +
+    '<div class="neo-panel" style="margin-top:18px;padding:18px 16px;text-align:center;">' +
+      '<div style="font-size:13px;font-weight:900;color:#93482F;letter-spacing:.04em;">🔒 続きはLINEで（無料）</div>' +
+      '<p style="font-size:12.5px;color:#66716A;line-height:1.7;margin:8px 0 14px;">詳しいスコアの内訳と、<b>あなた専用のおすすめケア</b>、カルテ保存はLINEで受け取れます。</p>' +
+      '<div style="font-size:12px;color:#66716A;margin-bottom:6px;">合言葉コード</div>' +
+      '<div style="font-size:30px;font-weight:900;letter-spacing:.18em;color:#2F3833;background:#F3EFEA;border-radius:12px;padding:12px 8px;margin-bottom:6px;">' + (window.__shareCode || '------') + '</div>' +
+      '<button class="sr-btn sr-btn-ghost" id="copyCodeBtn" style="margin:0 auto 14px;display:inline-block;">コードをコピー</button>' +
+      '<ol style="text-align:left;font-size:12.5px;color:#4A554E;line-height:1.9;margin:0 0 14px;padding-left:1.2em;"><li>下のボタンで<b>LINE友だち追加</b></li><li>トークに<b>上のコード</b>を送信</li><li>詳しい結果が届く（<b>自動でカルテ保存</b>）</li></ol>' +
+      '<a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=photo-gate" target="_blank" rel="noreferrer">LINEで受け取る（友だち追加）</a>' +
     '</div>' +
+    '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store" style="margin-top:10px;">ストアを見る</a>' +
     '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
     '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。画像の解析・保存はモックです。提供：AOKAE合同会社。</p>';
-  document.getElementById('saveBtn').addEventListener('click', function () {
-    var self=this;
-    if (!window.__lineUserId) {
-      self.textContent='LINEに接続中…';
-      srLoginWithPending('save', scores);
-      return;
-    }
-    self.textContent='保存中…'; self.disabled=true;
-    fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-karte', {
-      method:'POST', headers:{'content-type':'application/json'},
-      body: JSON.stringify({ session_id: SR_SID, line_user_id: window.__lineUserId })
-    }).then(function(r){ return r.json(); }).then(function(d){
-      if (d && d.ok) { self.textContent='✓ マイカルテに保存しました'; }
-      else { self.textContent='保存に失敗しました'; self.disabled=false; }
-    }).catch(function(){ self.textContent='保存に失敗しました'; self.disabled=false; });
+  var copyBtn = document.getElementById('copyCodeBtn');
+  if (copyBtn) copyBtn.addEventListener('click', function () {
+    var self=this; var code = window.__shareCode || '';
+    if (!code) { self.textContent='コードがありません'; return; }
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(code).then(function(){ self.textContent='✓ コピーしました'; }).catch(function(){ self.textContent='コード: '+code; }); } else { self.textContent='コード: '+code; } }
+    catch (e) { self.textContent='コード: '+code; }
   });
   var lineBtn = document.getElementById('lineResultBtn');
   if (lineBtn) lineBtn.addEventListener('click', function(){
