@@ -66,16 +66,8 @@
 
 <script>
 // ============ ダミー商品データ（差し替え前提のJSON） ============
-const PRODUCTS = [
-  { id: 'oil',    cat: 'ヘアケア',   name: 'コンシェルジュ ヘアオイル 100mL', price: 3520, initial: 'オ', vars: ['しっとり', 'さらさら'], tags: ['うるおい', '時短'], badge: '人気No.1', desc: 'サロン帰りの質感を毎日に。AIカルテの髪質データに合わせて選べる2タイプ。濡れた髪に2〜3滴なじませてから乾かしてください。' },
-  { id: 'shampoo',cat: 'ヘアケア',   name: 'モイスト シャンプー 300mL',        price: 2860, initial: 'シ', vars: ['300mL', '詰替 250mL'], tags: ['うるおい', '頭皮ケア'], desc: 'うるおいを守りながらやさしく洗う、アミノ酸系シャンプー。カラー後のデリケートな髪にも。' },
-  { id: 'treat',  cat: 'ヘアケア',   name: 'リペア トリートメント 250g',        price: 3080, initial: 'ト', vars: ['250g'], tags: ['ダメージ補修'], badge: '迷ったらこれ', desc: '毛先までするんとまとまる集中ケア。週2〜3回のスペシャルケアにおすすめです。' },
-  { id: 'scalp',  cat: 'スカルプ',   name: '頭皮美容液 スカルプセラム 80mL',    price: 4180, initial: 'セ', vars: ['80mL'], tags: ['頭皮ケア'], desc: '頭皮診断の結果に合わせて使いたい、うるおいタイプの頭皮用美容液。お風呂上がりの頭皮にやさしくなじませます。' },
-  { id: 'mist',   cat: 'スタイリング', name: 'モーニング ヘアミスト 150mL',     price: 2420, initial: 'ミ', vars: ['150mL'], tags: ['時短'], desc: '寝ぐせ直しと保湿を1本で。朝のスタイリング前にひと吹き。' },
-  { id: 'brush',  cat: '雑貨',      name: 'パドルブラシ（天然毛）',            price: 1980, initial: 'ブ', vars: ['ナチュラル'], tags: ['頭皮ケア', 'ギフト'], desc: '頭皮マッサージにも使える天然毛のパドルブラシ。静電気を抑えてつやを引き出します。' },
-  { id: 'cap',    cat: '雑貨',      name: 'シルク ナイトキャップ',             price: 2200, initial: 'ナ', vars: ['アイボリー', 'グレージュ'], tags: ['ギフト', 'ダメージ補修'], desc: '就寝中の摩擦から髪を守るシルク100%のナイトキャップ。翌朝のまとまりが変わります。' },
-  { id: 'set',    cat: 'ヘアケア',   name: 'トラベルセット（3点入り）',          price: 3960, initial: 'セ', vars: ['3点セット'], tags: ['ギフト', '時短'], badge: 'ギフト向き', desc: 'シャンプー・トリートメント・オイルのミニサイズセット。旅行やお試しに。' },
-];
+let PRODUCTS = [];
+function mapProduct(r){return {id:r.id,cat:r.category||'ヘアケア',name:r.name+(r.volume?(' '+r.volume):''),price:r.price,initial:(r.name||'　').slice(0,1),image_url:r.image_url||'',vars:['通常'],tags:Array.isArray(r.target_hair_types)?r.target_hair_types:[],badge:r.is_entry?'入門':'',desc:r.effect_text||r.usage_text||''};}
 const CATS = ['すべて', 'ヘアケア', 'スカルプ', 'スタイリング', '雑貨'];
 const CONCERNS = ['うるおい', 'ダメージ補修', '頭皮ケア', '時短', 'ギフト'];
 const yen = (n) => '¥' + n.toLocaleString('ja-JP');
@@ -279,7 +271,8 @@ function toast(msg) {
   toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
 }
 
-renderCats(); renderConcerns(); renderReco(); renderGrid(); syncCart();
+function ecRenderAll(){ renderCats(); renderConcerns(); renderReco(); renderGrid(); syncCart(); }
+fetch('/api/miniapp/products').then(function(r){return r.json();}).then(function(d){ PRODUCTS=(d.products||[]).map(mapProduct); ecRenderAll(); }).catch(function(){ ecRenderAll(); });
 
 // ============ LINE導線: ?ref= をページ間・LINE CTAまで引き継ぐ(モック) ============
 // LIFF実装時は liff.state から取得して同じ window.SR_REF に流し込む

@@ -13,7 +13,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
-        { source: '/', destination: '/lp-mock/index.html' },
+        { source: '/', destination: '/neo/index.html' },
         { source: '/lp', destination: '/lp/index.html' },
         { source: '/lp/customer', destination: '/lp-mock/customer.html' },
         { source: '/lp/salon', destination: '/lp-mock/salon.html' },
@@ -23,7 +23,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: '/', destination: '/lp', permanent: false },
       { source: '/dashboard/karte', destination: '/dashboard/customers', permanent: true },
       { source: '/dashboard/karte/:path*', destination: '/dashboard/customers/:path*', permanent: true },
       { source: '/dashboard/line', destination: '/dashboard/integrations/line', permanent: true },

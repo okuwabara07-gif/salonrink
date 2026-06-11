@@ -12,7 +12,7 @@ export async function GET(): Promise<NextResponse> {
     const salonId = getKireiTsurumiSalonId()
     const { data, error } = await admin
       .from('products')
-      .select('id, name, brand, price, volume, image_url, is_set, fulfillment_type, is_entry')
+      .select('id, name, brand, price, volume, image_url, category, target_hair_types, effect_text, usage_text, is_set, fulfillment_type, is_entry')
       .eq('salon_id', salonId)
       .eq('is_active', true)
       .eq('agency_locked', false)

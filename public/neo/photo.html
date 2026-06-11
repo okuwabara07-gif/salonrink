@@ -9,28 +9,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="salonrink-neo.css">
 <link rel="stylesheet" href="salonrink-neo-page.css">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
   .sr.sr-page { display: flex; flex-direction: column; padding-bottom: 40px; }
   .dx-screen { flex: 1; }
-  /* 実装追加: ケアの目安リスト */
   .px-tips { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 8px; }
   .px-tips li { position: relative; padding: 12px 14px 12px 34px; border-radius: 14px; background: #FEFEFD; box-shadow: 0 6px 14px var(--neo-dark); font-size: 13.5px; line-height: 1.7; color: var(--sr-ink); }
   .px-tips li::before { content: ""; position: absolute; left: 14px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--sr-grad); }
   .px-h2 { font-size: 15px; font-weight: 900; margin: 24px 0 14px; color: var(--sr-ink); }
-  /* 実装追加: 合言葉コード */
-  .px-code-box { margin: 22px 0 6px; padding: 18px 16px; border-radius: 18px; background: var(--neo-bg); box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light); text-align: center; }
-  .px-code-lead { font-size: 12.5px; font-weight: 700; color: var(--sr-accent-ink); margin: 0 0 10px; }
-  .px-code { font-family: 'Caveat', cursive; font-weight: 700; font-size: 38px; letter-spacing: 6px; color: var(--sr-ink); background: #FEFEFD; border-radius: 12px; padding: 6px 4px; box-shadow: 0 6px 14px var(--neo-dark); }
-  .px-code-copy { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--sr-accent-ink); background: none; border: none; cursor: pointer; text-decoration: underline; }
-  .px-code-help { font-size: 11px; color: var(--sr-muted); margin: 10px 4px 0; line-height: 1.6; }
-  /* 実装追加: エラー表示 */
+  .gate-title { font-size: 13px; font-weight: 900; color: var(--sr-accent-ink); letter-spacing: .04em; }
+  .gate-lead { font-size: 12.5px; color: var(--sr-muted); line-height: 1.7; margin: 8px 0 14px; }
+  .gate-codelabel { font-size: 12px; color: var(--sr-muted); margin-bottom: 6px; }
+  .px-code { font-family: 'Caveat', cursive; font-weight: 700; font-size: 38px; letter-spacing: 6px; color: var(--sr-ink); background: #FEFEFD; border-radius: 12px; padding: 8px 4px; box-shadow: 0 6px 14px var(--neo-dark); }
+  .px-code-copy { margin: 10px auto 14px; display: inline-block; font-size: 12px; font-weight: 700; color: var(--sr-accent-ink); background: none; border: none; cursor: pointer; text-decoration: underline; }
+  .gate-steps { text-align: left; font-size: 12.5px; color: #4A554E; line-height: 1.9; margin: 0 0 14px; padding-left: 1.2em; }
   #pxError { display: none; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #FBEDEA; color: #93482F; font-size: 13px; line-height: 1.6; }
 </style>
 </head>
 <body>
 <div class="sr sr-page" id="app" data-screen-label="写真AI診断">
 
-  <p class="liff-note">無料・登録なしでお試しいただけます</p>
+  <p class="liff-note" id="liffNote">無料・登録なしでお試しいただけます</p>
 
   <header class="sr-header" style="justify-content: center;">
     <img class="sr-logo" src="assets/logo.png" alt="SalonRink Concierge">
@@ -110,46 +109,131 @@
 (function () {
   'use strict';
 
-  // ============ 本番API（差し替え完了） ============
-  var ENDPOINT = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose';
-  var LINE_ADD = 'https://lin.ee/6hraAKM';
+  // ============ エンドポイント / ID ============
+  var HAIR_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose";
+  var SAVE_KARTE    = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-karte";
+  var LINE_PUSH     = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/line-push";
+  var LIFF_ID       = "2010171194-hAIlg1lG"; // エンドユーザー診断用LIFF（空=匿名動作）
+  var LINE_ADD      = "https://lin.ee/6hraAKM";
 
   function byId(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var pxYen = function (n) { return '¥' + Number(n).toLocaleString('ja-JP'); };
 
-  // 匿名セッションID（同一画像の再診断防止・レート管理用。サーバ側で使用）
-  function sessionId() {
-    try {
-      var k = 'sr-session-id', s = localStorage.getItem(k);
-      if (!s) { s = 'web-' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem(k, s); }
-      return s;
-    } catch (e) { return 'web-' + Date.now(); }
+  window.__lineUserId = null;
+  window.__shareCode = null;
+  window.__lastResult = null;
+  window.__photoFile = null;
+
+  // 匿名セッションID（dedup/レート/保存対象特定に使用）
+  var SR_SID = (function () {
+    try { var v = localStorage.getItem('sr_sid'); if (!v) { v = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (String(Date.now()) + Math.random().toString(16).slice(2)); localStorage.setItem('sr_sid', v); } return v; }
+    catch (e) { return String(Date.now()); }
+  })();
+
+  // ref引き継ぎ
+  (function () {
+    var ref = null;
+    try { var q = new URLSearchParams(location.search); ref = q.get('ref'); if (ref) { sessionStorage.setItem('sr-ref', ref); } else { ref = sessionStorage.getItem('sr-ref'); } } catch (e) {}
+    window.SR_REF = ref || '';
+  })();
+  function applyRef(scope) {
+    if (!window.SR_REF) { return; }
+    scope.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#') { return; }
+      try { var url = new URL(href, location.href); var cur = url.searchParams.get('ref'); if (cur && cur.indexOf('__') !== -1) { return; } url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF); a.href = url.toString(); } catch (e) {}
+    });
+  }
+  function lineHref(tag) { var base = LINE_ADD + '?ref=' + tag; return window.SR_REF ? (base + '__' + encodeURIComponent(window.SR_REF)) : base; }
+
+  // ============ LIFF ============
+  function srInitLiff() {
+    if (!LIFF_ID || !window.liff) return Promise.resolve();
+    return liff.init({ liffId: LIFF_ID }).then(function () {
+      if (liff.isLoggedIn()) { return liff.getProfile().then(function (pr) { window.__lineUserId = pr.userId; }); }
+    }).catch(function (e) { console.warn('LIFF skip', e); });
+  }
+  function srLoginWithPending(action) {
+    try { sessionStorage.setItem('sr_pending', JSON.stringify({ action: action, result: window.__lastResult })); } catch (e) {}
+    if (window.liff && liff.login) { liff.login({ redirectUri: location.href }); }
+    else { window.open(lineHref('photo-needlogin'), '_blank'); }
+  }
+  function srResumePending() {
+    if (!window.__lineUserId) return;
+    var raw = null; try { raw = sessionStorage.getItem('sr_pending'); } catch (e) {}
+    if (!raw) return; try { sessionStorage.removeItem('sr_pending'); } catch (e) {}
+    var o = null; try { o = JSON.parse(raw); } catch (e) { return; }
+    if (!o || !o.result) return;
+    renderResult(o.result);
+    setTimeout(function () { var id = (o.action === 'line') ? 'lineResultBtn' : 'saveBtn'; var b = byId(id); if (b) b.click(); }, 500);
+  }
+  function refreshLiffNote() {
+    var n = byId('liffNote'); if (!n) return;
+    if (window.__lineUserId) { n.textContent = 'LINEログイン中：結果をそのままマイカルテに保存できます'; }
+  }
+  srInitLiff().then(function () { refreshLiffNote(); srResumePending(); });
+
+  // ============ 画像 → JPEG圧縮(最大1280px) ============
+  function __fileToDataURL(file) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = rej; r.readAsDataURL(file); }); }
+  function __toJpegDataURL(file, maxW, q) {
+    maxW = maxW || 1280; q = q || 0.85;
+    return new Promise(function (resolve) {
+      var url = URL.createObjectURL(file); var im = new Image();
+      im.onload = function () {
+        try {
+          var sc = Math.min(1, maxW / (im.naturalWidth || maxW));
+          var w = Math.max(1, Math.round((im.naturalWidth || maxW) * sc));
+          var h = Math.max(1, Math.round((im.naturalHeight || maxW) * sc));
+          var c = document.createElement('canvas'); c.width = w; c.height = h;
+          c.getContext('2d').drawImage(im, 0, 0, w, h);
+          URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', q));
+        } catch (e) { URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve); }
+      };
+      im.onerror = function () { URL.revokeObjectURL(url); __fileToDataURL(file).then(resolve); };
+      im.src = url;
+    });
   }
 
-  // 流入ref（?ref= を sessionStorage に保持しLINE導線へ連結）
-  var SR_REF = '';
-  try {
-    var q = new URLSearchParams(location.search);
-    var r = q.get('ref');
-    if (r) { sessionStorage.setItem('sr-ref', r); }
-    SR_REF = r || sessionStorage.getItem('sr-ref') || '';
-  } catch (e) {}
-
-  // scores: サーバ(英語キー) → 表示(日本語ラベル)
+  // ============ 解析（hair-diagnose） ============
   var SCORE_KEYS = ['tsuya', 'matomari', 'uruoi', 'volume', 'hari_koshi'];
   var SCORE_LABELS = { tsuya: 'ツヤ', matomari: 'まとまり', uruoi: 'うるおい', volume: 'ボリューム', hari_koshi: 'ハリ・コシ' };
-  function toRadar(scores) {
-    var o = {};
-    SCORE_KEYS.forEach(function (k) {
-      var v = Number(scores && scores[k]);
-      o[SCORE_LABELS[k]] = isFinite(v) ? Math.max(0, Math.min(100, v)) : 50;
+  function toRadar(s) { var o = {}; SCORE_KEYS.forEach(function (k) { var v = Number(s && s[k]); o[SCORE_LABELS[k]] = isFinite(v) ? Math.max(0, Math.min(100, Math.round(v))) : 50; }); return o; }
+
+  function analyzeHair() {
+    var f = window.__photoFile;
+    if (!f) return Promise.resolve(null);
+    return __toJpegDataURL(f).then(function (dataUrl) {
+      return fetch(HAIR_ENDPOINT, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ image: dataUrl, session_id: SR_SID, line_user_id: window.__lineUserId || undefined, consent_stats: true, consent_photo: false })
+      });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (data) {
+        if (!r.ok || !data.ok) {
+          var msg = data.message || (r.status === 413 ? '画像が大きすぎます（もう少し小さい写真でお試しください）' : '診断に失敗しました。通信環境を確認して、もう一度お試しください。');
+          throw new Error(msg);
+        }
+        var res = data.result || {};
+        window.__shareCode = data.share_code || null;
+        return {
+          scores: toRadar(res.scores || {}),
+          type: res.type || '',
+          comment: res.comment || '',
+          care_tips: Array.isArray(res.care_tips) ? res.care_tips : [],
+          share_code: data.share_code || null
+        };
+      });
     });
-    return o;
   }
 
-  // 最低スコア軸 → 合いそうなケア（商品はイメージ。後日 products に差し替え）
+  // ============ おすすめ（モック。後日 products へ） ============
   var PX_TYPES = {
-    'ツヤ': { items: ['oil', 'mist'] }, 'まとまり': { items: ['treat', 'oil'] }, 'うるおい': { items: ['shampoo', 'treat'] },
-    'ボリューム': { items: ['scalp', 'shampoo'] }, 'ハリ・コシ': { items: ['scalp', 'treat'] }
+    'ツヤ': { name: 'ツヤ のびしろヘア', copy: '光をはね返すツヤに伸びしろあり。オイルで表面を整えるケアが目安です。', items: ['oil', 'mist'] },
+    'まとまり': { name: 'まとまり のびしろヘア', copy: '広がりやすい傾向が見えます。保湿×補修のケアで扱いやすさUPが目安。', items: ['treat', 'oil'] },
+    'うるおい': { name: 'うるおい のびしろヘア', copy: '乾燥ぎみの傾向。やさしい洗浄と集中保湿の組み合わせが目安です。', items: ['shampoo', 'treat'] },
+    'ボリューム': { name: 'ふんわり のびしろヘア', copy: '根もとのふんわり感に伸びしろ。頭皮ケアから整えるのが目安です。', items: ['scalp', 'shampoo'] },
+    'ハリ・コシ': { name: 'ハリ・コシ のびしろヘア', copy: '芯のしなやかさに伸びしろ。頭皮ケア×補修ケアの両輪が目安です。', items: ['scalp', 'treat'] }
   };
   var PX_STORE = {
     oil: { name: 'コンシェルジュ ヘアオイル', price: 3520, initial: 'オ' },
@@ -158,88 +242,35 @@
     scalp: { name: 'スカルプセラム', price: 4180, initial: 'セ' },
     mist: { name: 'モーニング ヘアミスト', price: 2420, initial: 'ミ' }
   };
-  var yen = function (n) { return '¥' + Number(n).toLocaleString('ja-JP'); };
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
   // ============ 画面制御 ============
-  var screens = {
-    intro: byId('scrIntro'), guide: byId('scrGuide'), preview: byId('scrPreview'),
-    loading: byId('scrLoading'), result: byId('scrResult')
-  };
-  function show(key) {
-    Object.keys(screens).forEach(function (k) { screens[k].classList.remove('on'); });
-    screens[key].classList.add('on');
-    window.scrollTo(0, 0);
-  }
-
-  var pickedFile = null, photoURL = null;
-  byId('startBtn').addEventListener('click', function () { hideError(); show('guide'); });
-  byId('guideBack').addEventListener('click', function () { show('intro'); });
-
-  function onPick(input) {
-    input.addEventListener('change', function () {
-      var f = input.files && input.files[0];
-      if (!f) { return; }
-      pickedFile = f;
-      if (photoURL) { URL.revokeObjectURL(photoURL); }
-      photoURL = URL.createObjectURL(f);
-      byId('previewImg').src = photoURL;
-      show('preview');
-    });
-  }
-  onPick(byId('cameraInput'));
-  onPick(byId('albumInput'));
-  onPick(byId('retakeInput'));
-
+  var screens = { intro: byId('scrIntro'), guide: byId('scrGuide'), preview: byId('scrPreview'), loading: byId('scrLoading'), result: byId('scrResult') };
+  function show(key) { Object.keys(screens).forEach(function (k) { screens[k].classList.remove('on'); }); screens[key].classList.add('on'); window.scrollTo(0, 0); }
   function hideError() { var b = byId('pxError'); if (b) { b.style.display = 'none'; b.textContent = ''; } }
   function showError(msg) { var b = byId('pxError'); if (b) { b.textContent = msg; b.style.display = 'block'; } }
 
-  // File → base64（dataURIの接頭辞を除去）
-  function fileToB64(file) {
-    return new Promise(function (res, rej) {
-      var r = new FileReader();
-      r.onload = function () { var s = String(r.result); var i = s.indexOf(','); res({ data: i >= 0 ? s.slice(i + 1) : s, media_type: file.type || 'image/jpeg' }); };
-      r.onerror = function () { rej(new Error('画像の読み込みに失敗しました')); };
-      r.readAsDataURL(file);
+  var photoURL = null;
+  byId('startBtn').addEventListener('click', function () { hideError(); show('guide'); });
+  byId('guideBack').addEventListener('click', function () { show('intro'); });
+  function onPick(input) {
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0]; if (!f) { return; }
+      if (photoURL) { URL.revokeObjectURL(photoURL); }
+      photoURL = URL.createObjectURL(f); window.__photoFile = f;
+      byId('previewImg').src = photoURL; show('preview');
     });
   }
-
-  // 実API呼び出し（hair-diagnose）
-  function analyze(file) {
-    return fileToB64(file).then(function (b) {
-      return fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ image: b.data, media_type: b.media_type, session_id: sessionId(), consent_stats: true, consent_photo: true })
-      });
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (j) {
-        if (!res.ok) {
-          var fallback = { forbidden_origin: 'このページからは診断できません', parse_failed: '解析に失敗しました。もう一度お試しください。' };
-          var msg = j.message || fallback[j.error] || (res.status === 413 ? '画像が大きすぎます（5MB以下にしてください）' : '診断に失敗しました。時間をおいてお試しください。');
-          var err = new Error(msg); err.status = res.status; throw err;
-        }
-        return j; // { ok, result:{scores,type,comment,care_tips}, share_code }
-      });
-    });
-  }
+  onPick(byId('cameraInput')); onPick(byId('albumInput')); onPick(byId('retakeInput'));
 
   byId('analyzeBtn').addEventListener('click', function () {
-    if (!pickedFile) { show('guide'); return; }
-    hideError();
-    show('loading');
-    analyze(pickedFile).then(function (resp) {
-      renderResult(resp);
-    }).catch(function (e) {
-      show('guide');
-      showError(e.message || '診断に失敗しました。時間をおいてお試しください。');
-    });
+    hideError(); show('loading');
+    analyzeHair().then(function (R) { if (R) renderResult(R); else { show('guide'); } })
+      .catch(function (e) { show('guide'); showError(e.message || '診断に失敗しました。'); });
   });
 
   // ============ レーダーチャート(SVG) ============
   function radarSVG(scores) {
-    var keys = Object.keys(scores);
-    var cx = 130, cy = 120, R = 78;
+    var keys = Object.keys(scores); var cx = 130, cy = 120, R = 78;
     function pt(i, r) { var a = -Math.PI / 2 + (i * 2 * Math.PI) / keys.length; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
     function ring(ratio) { return keys.map(function (_, i) { return pt(i, R * ratio).map(function (v) { return v.toFixed(1); }).join(','); }).join(' '); }
     var valuePoly = keys.map(function (k, i) { return pt(i, R * (scores[k] / 100)).map(function (v) { return v.toFixed(1); }).join(','); }).join(' ');
@@ -247,82 +278,144 @@
     var axes = keys.map(function (_, i) { var p = pt(i, R); return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '" stroke="rgba(186,166,150,0.45)" stroke-width="1"/>'; }).join('');
     return '<svg width="260" height="244" viewBox="0 0 260 244" role="img" aria-label="髪の傾向チャート">' +
       [1, 0.66, 0.33].map(function (r) { return '<polygon points="' + ring(r) + '" fill="none" stroke="rgba(186,166,150,0.5)" stroke-width="1"/>'; }).join('') +
-      axes +
-      '<polygon points="' + valuePoly + '" fill="rgba(192,107,79,0.30)" stroke="#C06B4F" stroke-width="2" stroke-linejoin="round"/>' +
+      axes + '<polygon points="' + valuePoly + '" fill="rgba(192,107,79,0.30)" stroke="#C06B4F" stroke-width="2" stroke-linejoin="round"/>' +
       keys.map(function (k, i) { var p = pt(i, R * (scores[k] / 100)); return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#C06B4F"/>'; }).join('') +
       labels + '</svg>';
   }
 
-  // ============ 結果（実データ） ============
-  function renderResult(resp) {
-    var result = (resp && resp.result) || {};
-    var share = (resp && resp.share_code) || '';
-    var scores = toRadar(result.scores || {});
-    var type = result.type || 'あなたの髪タイプ';
-    var comment = result.comment || '';
-    var tips = Array.isArray(result.care_tips) ? result.care_tips : [];
-    var lowest = Object.keys(scores).reduce(function (a, b) { return scores[a] <= scores[b] ? a : b; });
-    var items = (PX_TYPES[lowest] && PX_TYPES[lowest].items) || ['oil', 'treat'];
+  // ============ LINE Flex（sendMessages用） ============
+  function srLineFlex(scores, t, R) {
+    var rows = Object.keys(scores).map(function (k) {
+      var v = scores[k];
+      return { type: 'box', layout: 'horizontal', margin: 'sm', alignItems: 'center', contents: [
+        { type: 'text', text: k, size: 'sm', color: '#66716A', flex: 4 },
+        { type: 'box', layout: 'vertical', flex: 7, height: '10px', backgroundColor: '#E8EAE6', cornerRadius: '5px', contents: [
+          { type: 'box', layout: 'vertical', width: (v + '%'), height: '10px', backgroundColor: '#5E9270', cornerRadius: '5px', contents: [{ type: 'filler' }] }
+        ] },
+        { type: 'text', text: String(v), size: 'xs', color: '#3F6B50', align: 'end', flex: 2 }
+      ] };
+    });
+    var items = t.items.map(function (id) { return PX_STORE[id].name; }).join(' / ');
+    var copy = (R && R.comment) ? R.comment : t.copy;
+    return {
+      type: 'bubble',
+      body: { type: 'box', layout: 'vertical', spacing: 'md', contents: [
+        { type: 'text', text: '写真AI診断の結果（目安）', size: 'xs', color: '#93482F', weight: 'bold' },
+        { type: 'text', text: (R && R.type) || t.name, size: 'lg', weight: 'bold', wrap: true, color: '#2F3833' },
+        { type: 'text', text: copy, size: 'sm', wrap: true, color: '#66716A' },
+        { type: 'separator', margin: 'md' },
+        { type: 'box', layout: 'vertical', margin: 'md', spacing: 'sm', contents: rows },
+        { type: 'separator', margin: 'md' },
+        { type: 'text', text: 'おすすめケア', size: 'sm', weight: 'bold', color: '#2F3833' },
+        { type: 'text', text: items, size: 'sm', wrap: true, color: '#66716A' }
+      ] },
+      footer: { type: 'box', layout: 'vertical', spacing: 'sm', contents: [
+        { type: 'button', style: 'primary', color: '#5E9270', action: { type: 'uri', label: 'おすすめケアを見る', uri: 'https://salonrink.com/neo/ec.html?ref=line-flex' } },
+        { type: 'button', style: 'secondary', action: { type: 'uri', label: 'サロンに相談する', uri: 'https://lin.ee/6hraAKM?ref=line-flex' } }
+      ] },
+      styles: { footer: { separator: true } }
+    };
+  }
 
-    var tipsHTML = tips.length ? ('<h2 class="px-h2">おすすめのケアの目安</h2><ul class="px-tips">' + tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>') : '';
+  // ============ 結果（ハイブリッド: inLine=フル / Web=ゲート） ============
+  function renderResult(R) {
+    R = R || {};
+    var scores = R.scores || {};
+    if (R.share_code) window.__shareCode = R.share_code;
+    window.__lastResult = R;
+    var keys = Object.keys(scores);
+    var lowest = keys.length ? keys.reduce(function (a, b) { return scores[a] <= scores[b] ? a : b; }) : 'うるおい';
+    var t = PX_TYPES[lowest] || PX_TYPES['うるおい'];
+    var displayType = R.type || t.name;
+    var comment = R.comment || t.copy;
+    var tips = (R.care_tips && R.care_tips.length) ? R.care_tips : null;
+    var inLine = !!window.__lineUserId;
+    var el = screens.result;
 
-    var productsHTML = '<h2 class="px-h2">合いそうなケア</h2><div class="ec-reco" style="margin:0;padding-top:12px;"><div class="rail">' +
-      items.map(function (id) {
-        var s = PX_STORE[id];
-        return '<a class="ec-card" style="flex:0 0 126px;text-decoration:none;" href="ec.html?ref=photo-reco">' +
-          '<div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div>' +
-          '<span class="ec-name">' + esc(s.name) + '</span>' +
-          '<span class="ec-price">' + yen(s.price) + '<small>（税込）</small></span></a>';
-      }).join('') +
-      '</div></div>';
+    var head = '<div class="dx-rhead">' +
+      '<span class="dx-badge">' + (inLine ? '結果（目安）' : '結果（一部・目安）') + '</span>' +
+      '<h1 class="dx-type">' + esc(displayType) + '</h1>' +
+      (inLine ? '<p class="dx-copy">' + esc(comment) + '</p>' : '') +
+      '</div>';
+    var radar = '<div class="neo-panel" style="padding:14px 10px 6px;">' +
+      '<div class="neo-panel-title" style="padding-left:8px;">HAIR BALANCE</div>' +
+      '<div class="px-radar">' + radarSVG(scores) + '</div></div>';
 
-    var codeHTML = share ? (
-      '<div class="px-code-box">' +
-        '<p class="px-code-lead">この結果をLINEで受け取る・カルテに保存</p>' +
-        '<div class="px-code" id="shareCode">' + esc(share) + '</div>' +
-        '<button class="px-code-copy" id="copyCode">コードをコピー</button>' +
-        '<p class="px-code-help">LINEで「SalonRink」を友だち追加し、この6桁を送ると、結果カードが届いてマイカルテに残せます。</p>' +
-      '</div>'
-    ) : '';
-
-    var lineHref = LINE_ADD + (SR_REF ? ('?ref=photo-result__' + encodeURIComponent(SR_REF)) : '?ref=photo-result');
-
-    screens.result.innerHTML =
-      '<div class="dx-rhead">' +
-        '<span class="dx-badge">結果（目安）</span>' +
-        '<h1 class="dx-type">' + esc(type) + '</h1>' +
-        (comment ? '<p class="dx-copy">' + esc(comment) + '</p>' : '') +
-      '</div>' +
-      '<div class="neo-panel" style="padding:14px 10px 6px;">' +
-        '<div class="neo-panel-title" style="padding-left:8px;">HAIR BALANCE</div>' +
-        '<div class="px-radar">' + radarSVG(scores) + '</div>' +
-      '</div>' +
-      tipsHTML +
-      productsHTML +
-      codeHTML +
-      '<div class="dx-cta">' +
-        '<a class="sr-btn sr-btn-line sr-btn-lg" href="' + lineHref + '" target="_blank" rel="noreferrer">LINEで結果を受け取る</a>' +
+    var bodyHtml, ctaHtml;
+    if (inLine) {
+      var tipsHtml = tips ? ('<h2 class="px-h2">おすすめのケアの目安</h2><ul class="px-tips">' + tips.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>') : '';
+      var prodHtml = '<h2 class="px-h2">合いそうなケア</h2><div class="ec-reco" style="margin:0;padding-top:12px;"><div class="rail">' +
+        t.items.map(function (id) { var s = PX_STORE[id]; return '<a class="ec-card" style="flex:0 0 126px;text-decoration:none;" href="ec.html?ref=photo-reco"><div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div><span class="ec-name">' + esc(s.name) + '</span><span class="ec-price">' + pxYen(s.price) + '<small>（税込）</small></span></a>'; }).join('') +
+        '</div></div>';
+      bodyHtml = tipsHtml + prodHtml;
+      ctaHtml = '<div class="dx-cta">' +
+        '<button class="sr-btn sr-btn-line sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
+        '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="lineResultBtn">LINEに結果を送る</button>' +
         '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">合いそうなケアをストアで見る</a>' +
-      '</div>' +
-      '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
-      '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。商品はイメージを含みます。提供：AOKAE合同会社。</p>';
-
-    var copyBtn = byId('copyCode');
-    if (copyBtn) {
-      copyBtn.addEventListener('click', function () {
-        var t = share;
-        try {
-          if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(t).then(function () { copyBtn.textContent = 'コピーしました'; });
-          } else { throw new Error('no clipboard'); }
-        } catch (e) {
-          var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
-          try { document.execCommand('copy'); copyBtn.textContent = 'コピーしました'; } catch (e2) {}
-          document.body.removeChild(ta);
-        }
-      });
+        '</div>';
+    } else {
+      bodyHtml = '<div class="neo-panel" style="margin-top:18px;padding:18px 16px;text-align:center;">' +
+        '<div class="gate-title">🔒 続きはLINEで（無料）</div>' +
+        '<p class="gate-lead">詳しいスコアの内訳と、<b>あなた専用のおすすめケア</b>、カルテ保存はLINEで受け取れます。</p>' +
+        '<div class="gate-codelabel">合言葉コード</div>' +
+        '<div class="px-code" id="shareCode">' + esc(window.__shareCode || '------') + '</div>' +
+        '<button class="px-code-copy" id="copyCodeBtn">コードをコピー</button>' +
+        '<ol class="gate-steps"><li>下のボタンで<b>LINE友だち追加</b></li><li>トークに<b>上のコード</b>を送信</li><li>詳しい結果が届く（<b>自動でカルテ保存</b>）</li></ol>' +
+        '</div>';
+      ctaHtml = '<div class="dx-cta">' +
+        '<a class="sr-btn sr-btn-line sr-btn-lg" href="' + lineHref('photo-gate') + '" target="_blank" rel="noreferrer">LINEで受け取る（友だち追加）</a>' +
+        '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">ストアを見る</a>' +
+        '</div>';
     }
-    byId('retryBtn').addEventListener('click', function () { show('guide'); });
+
+    el.innerHTML = head + radar + bodyHtml + ctaHtml +
+      '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
+      '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。' + (inLine ? '商品はイメージを含みます。' : '') + '提供：AOKAE合同会社。</p>';
+
+    // コピー
+    var copyBtn = byId('copyCodeBtn');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      var self = this, code = window.__shareCode || '';
+      if (!code) { self.textContent = 'コードがありません'; return; }
+      try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(code).then(function () { self.textContent = '✓ コピーしました'; }).catch(function () { self.textContent = 'コード: ' + code; }); } else { self.textContent = 'コード: ' + code; } }
+      catch (e) { self.textContent = 'コード: ' + code; }
+    });
+
+    // 保存（save-karte）
+    var saveBtn = byId('saveBtn');
+    if (saveBtn) saveBtn.addEventListener('click', function () {
+      var self = this;
+      if (!window.__lineUserId) { self.textContent = 'LINEに接続中…'; srLoginWithPending('save'); return; }
+      self.textContent = '保存中…'; self.disabled = true;
+      fetch(SAVE_KARTE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ session_id: SR_SID, line_user_id: window.__lineUserId }) })
+        .then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.ok) { self.textContent = '✓ マイカルテに保存しました'; }
+          else { self.textContent = (d && d.message) || '保存に失敗しました'; self.disabled = false; }
+        }).catch(function () { self.textContent = '保存に失敗しました'; self.disabled = false; });
+    });
+
+    // LINE送信（sendMessages / line-push / login）
+    var lineBtn = byId('lineResultBtn');
+    if (lineBtn) lineBtn.addEventListener('click', function () {
+      var self = this;
+      try {
+        if (window.liff && liff.isApiAvailable && liff.isApiAvailable('sendMessages')) {
+          liff.sendMessages([{ type: 'flex', altText: ((R.type || t.name) + '｜写真AI診断の結果'), contents: srLineFlex(scores, t, R) }])
+            .then(function () { self.textContent = '✓ LINEに結果を送りました'; self.disabled = true; if (window.liff && liff.isInClient && liff.isInClient()) { setTimeout(function () { try { liff.closeWindow(); } catch (e) {} }, 1400); } })
+            .catch(function () { self.textContent = '送信に失敗しました'; self.disabled = false; });
+        } else if (window.__lineUserId) {
+          self.textContent = '送信中…'; self.disabled = true;
+          fetch(LINE_PUSH, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ line_user_id: window.__lineUserId, scores: scores, type_key: lowest }) })
+            .then(function (r) { return r.json(); }).then(function (d) {
+              if (d && d.ok) { self.textContent = '✓ LINEに結果を送りました'; self.disabled = true; }
+              else { self.textContent = (d && d.message) || '送信に失敗しました'; self.disabled = false; }
+            }).catch(function () { self.textContent = '送信に失敗しました'; self.disabled = false; });
+        } else { self.textContent = 'LINEに接続中…'; srLoginWithPending('line'); }
+      } catch (e) { self.textContent = '送信に失敗しました'; self.disabled = false; }
+    });
+
+    var retry = byId('retryBtn'); if (retry) retry.addEventListener('click', function () { show('guide'); });
+    applyRef(el);
     show('result');
   }
 })();
