@@ -212,15 +212,10 @@ function renderResult() {
       '<a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=diag-result-doc" target="_blank" rel="noreferrer">LINEで詳しい結果を受け取る</a>' +
       '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=diag-store">おすすめ物販アイテムを見る</a>' +
       '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="https://lin.ee/6hraAKM?ref=diag-result-trial" target="_blank" rel="noreferrer">14日間 無料で始める</a>' +
-      '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
     '</div>' +
     '<button class="dx-back" id="retryBtn">もう一度診断する</button>' +
     '<p class="sr-note">※結果・スコアはシミュレーションであり、実績・効果を保証するものではありません。提供：AOKAE合同会社。</p>';
   document.getElementById('retryBtn').addEventListener('click', () => { state.step = -1; state.answers = []; setProgress(); show(scrIntro); });
-  document.getElementById('saveBtn').addEventListener('click', function () {
-    this.textContent = '保存しました（モック）';
-    this.disabled = true;
-  });
   show(scrResult);
   applyRef(scrResult);
   requestAnimationFrame(() => {
