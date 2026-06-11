@@ -14,6 +14,8 @@ var MK_LIFF_ID = '2010171194-hAIlg1lG';
 var GET_MYCARTE = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte';
 var SAVE_MEMO = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-memo';
 var SAVE_PHOTO = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-photo';
+var DEEP_ADVICE = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/deep-advice';
+var CREATE_CHECKOUT = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/create-checkout';
 var MK_ORDER = ['ツヤ','まとまり','うるおい','ボリューム','ハリ・コシ'];
 window.__mkById = {};
 function mkEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -30,6 +32,7 @@ function mkParse(d){
 }
 function mkRenderDetail(p){
   if(!p){ return; }
+  window.__mkCurrentDiagId = p.id;
   var setT=function(sel,txt){ var ele=document.querySelector('#scrDetail '+sel); if(ele){ ele.textContent=txt; } };
   setT('.mk-ov-type', p.type);
   if(p.comment){ setT('.mk-ov-copy', p.comment); }
@@ -47,6 +50,7 @@ function mkRenderDetail(p){
 function mkHydrateHome(data){
   var ds=(data.diagnoses)||[];
   mkRenderPhotos(data);
+  (function(){ var cr=document.querySelector('#scrDetail .mk-credit'); if(cr){ var cc=(data.plan&&data.plan.advice_credits)||0; var prem=(data.plan&&data.plan.is_premium); cr.innerHTML='残りクレジット '+cc+'回'+(prem?'（プレミアム月5回無料）':' · <a href="#" id="mkBuyCredit">5回まとめて ¥500</a>'); var bc=document.getElementById('mkBuyCredit'); if(bc){ bc.onclick=function(){ mkCheckout('credit'); return false; }; } } })();
   window.__mkById={};
   ds.forEach(function(d){ var p=mkParse(d); window.__mkById[p.id]=p; });
   if(!ds.length){ return; }
@@ -59,6 +63,27 @@ function mkHydrateHome(data){
     hist.querySelectorAll('.mk-hist-row').forEach(function(el){ el.addEventListener('click', function(){ var p=window.__mkById[el.dataset.diag]; if(p){ mkRenderDetail(p); } mkShow('scrDetail'); }); });
   }
   mkRenderDetail(latest);
+}
+function mkShowAdvice(text){
+  var box=document.getElementById('mkAdviceBox');
+  if(!box){ box=document.createElement('div'); box.id='mkAdviceBox'; box.className='mk-card'; box.style.marginTop='12px';
+    var aiBtn=document.getElementById('aiBtn'); if(aiBtn&&aiBtn.parentNode){ aiBtn.parentNode.insertBefore(box, aiBtn.nextSibling); } }
+  box.innerHTML='<div class="mk-h"><h2>AIからの深掘りアドバイス</h2></div><p style="font-size:13px;line-height:1.9;white-space:pre-wrap;">'+mkEsc(text)+'</p><p class="mk-note" style="margin-top:10px;">※美容師監修のAIによる目安です。効果を保証するものではありません。</p>';
+  if(box.scrollIntoView){ box.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+function mkCheckout(kind){
+  if(!window.__mkLineUserId){ mkToast('LINEから開くと購入できます'); return; }
+  mkToast('決済ページを開きます…');
+  fetch(CREATE_CHECKOUT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:window.__mkLineUserId, kind:kind})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d&&d.url){ if(window.liff&&liff.openWindow){ liff.openWindow({url:d.url, external:true}); } else { location.href=d.url; } }
+      else { mkToast((d&&d.message)?d.message:'決済の準備に失敗しました'); }
+    }).catch(function(){ mkToast('通信に失敗しました'); });
+}
+function mkShowPaywall(info){
+  var price=(info&&info.price)||110;
+  var go=window.confirm('AI深掘りは1回¥'+price+'です。\n[OK] ¥'+price+'で購入 ／ [キャンセル] プレミアム(月¥480・月5回無料)');
+  if(go){ mkCheckout('deep'); } else { mkCheckout('premium_month'); }
 }
 function mkRenderPhotos(data){
   var photos=(data.photos)||[];
@@ -97,6 +122,7 @@ function mkInit(){
   }).catch(function(e){ console.warn('LIFF skip',e); });
 }
 mkInit();
+(function(){ try{ var q=new URLSearchParams(location.search); if(q.get('paid')){ setTimeout(function(){ mkToast('お支払いありがとうございます。反映しました'); if(typeof mkReload==='function'){ mkReload(); } }, 900); } }catch(e){} })();
 </script>
 </head>
 <body>
@@ -463,7 +489,20 @@ document.getElementById('newDiagBtn').addEventListener('click', function () {
 });
 document.getElementById('saveImgBtn').addEventListener('click', function () { mkToast('画像を保存しました（モック）'); });
 document.getElementById('shareBtn').addEventListener('click', function () { mkToast('LINEのシェアシートを開きます（モック）'); });
-document.getElementById('aiBtn').addEventListener('click', function () { mkToast('クレジットが不足しています。5回 ¥500 で追加できます'); });
+document.getElementById('aiBtn').addEventListener('click', function () {
+  if (!window.__mkLineUserId) { mkToast('LINEから開くと利用できます'); return; }
+  if (!window.__mkCurrentDiagId) { mkToast('履歴から診断を選んでください'); return; }
+  var btn = this; btn.disabled = true; mkToast('AIが考えています…');
+  fetch(DEEP_ADVICE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ diagnosis_id: window.__mkCurrentDiagId, line_user_id: window.__mkLineUserId }) })
+    .then(function (r) { return r.json().then(function (j) { return { status: r.status, body: j }; }); })
+    .then(function (res) {
+      if (res.status === 200 && res.body && res.body.ok) { mkShowAdvice(res.body.advice); mkReload(); }
+      else if (res.status === 402) { mkShowPaywall(res.body); }
+      else { mkToast((res.body && res.body.message) ? res.body.message : 'エラーが発生しました'); }
+    })
+    .catch(function () { mkToast('通信に失敗しました'); })
+    .then(function () { btn.disabled = false; });
+});
 document.getElementById('saveMemoBtn').addEventListener('click', function () {
   if (!window.__mkLineUserId) { mkToast('LINEから開くと保存できます'); return; }
   var concerns = [];
