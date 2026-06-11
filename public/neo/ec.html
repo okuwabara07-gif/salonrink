@@ -27,7 +27,7 @@
     <div class="ec-concern-label">悩み・目的から選ぶ</div>
     <nav class="ec-concerns" id="concerns"></nav>
     <div class="ec-grid" id="grid"></div>
-    <p class="sr-note" style="padding: 0 18px;">※価格は税込です。商品・画像はダミーデータ（プレースホルダー）です。</p>
+    <p class="sr-note" style="padding: 0 18px;">※価格は税込です。送料は決済画面でご確認ください。</p>
   </div>
 
   <div id="viewDetail" class="ec-detail hidden" data-screen-label="商品詳細"></div>
@@ -47,7 +47,7 @@
       <div id="cartItems"></div>
       <div class="ec-sum"><span class="lbl" id="sumCount">0点</span><span class="val" id="sumTotal">¥0<small>（税込）</small></span></div>
       <button class="sr-btn sr-btn-line sr-btn-lg" id="checkoutBtn">LINEミニアプリで購入手続きへ</button>
-      <p class="sr-note">※実際の決済は遷移先（Stripe）で行います。本画面はフロントUIのモックです。</p>
+      <p class="sr-note">※決済は遷移先（Stripe）で安全に行われます。</p>
     </div>
   </div>
 
@@ -251,7 +251,23 @@ document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('cartClose').addEventListener('click', closeCart);
 document.getElementById('cartScrim').addEventListener('click', closeCart);
 document.getElementById('barCheckout').addEventListener('click', openCart);
-document.getElementById('checkoutBtn').addEventListener('click', () => toast('決済モック：LINEミニアプリ決済へ遷移します' + (window.SR_REF ? '（ref=' + window.SR_REF + '）' : '')));
+// ============ 実決済: カート → Stripe Checkout ============
+var CART_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/create-cart-checkout";
+function getLineUid(){ try { return sessionStorage.getItem('sr-line-uid') || null; } catch(e){ return null; } }
+document.getElementById('checkoutBtn').addEventListener('click', function(){
+  if (!state.cart.length) { toast('カートが空です'); return; }
+  var btn = this, prev = btn.textContent;
+  btn.disabled = true; btn.textContent = '決済ページへ移動中…';
+  var items = state.cart.map(function(c){ return { product_id: c.id, qty: c.qty }; });
+  fetch(CART_ENDPOINT, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ items: items, line_user_id: getLineUid(), session_id: (window.SR_REF || null) })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.ok && d.url) { window.location.href = d.url; }
+    else { toast((d && d.message) || '決済を開始できませんでした'); btn.disabled = false; btn.textContent = prev; }
+  }).catch(function(){ toast('通信エラーが発生しました'); btn.disabled = false; btn.textContent = prev; });
+});
 
 let toastTimer;
 function toast(msg) {
