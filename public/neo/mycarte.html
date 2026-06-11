@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink マイカルテ — MY KARTE（LIFF）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mycarte.css?v=4">
+</head>
+<body>
+<div class="mk" id="app" data-screen-label="マイカルテ（LIFF）">
+
+  <div class="demo-bar">
+    <a href="index.html">ホーム</a>
+    <a href="ec.html">ストア</a>
+    <a href="diagnosis.html">のびしろ診断</a>
+    <a href="photo.html">写真AI診断</a>
+    <a href="miniapp.html">ミニアプリ</a>
+    <a class="on" href="mycarte.html">マイカルテ</a>
+  </div>
+
+  <header class="mk-header">
+    <span class="en">My Karte</span>
+    <h1>SalonRink マイカルテ</h1>
+    <div class="mk-hairline"></div>
+  </header>
+
+  <!-- ════════ 画面A: ホーム ════════ -->
+  <section class="mk-screen on" id="scrHome" data-screen-label="A ホーム">
+    <div class="mk-section">
+      <div class="mk-card mk-state" id="latestCard">
+        <span class="date">JUNE 11, 2026</span>
+        <h2 class="type">ボリュームケアタイプ</h2>
+        <p class="copy">根もとのふんわり感を、これから育てていける髪です</p>
+        <div class="mk-radar" id="homeRadar"></div>
+        <p class="mk-note">タップして詳細・シェア用カードへ　※10段階評価</p>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <button class="mk-btn mk-btn-rose" id="newDiagBtn">＋ 新しく診断する</button>
+      <div class="mk-usage">
+        <span>今月の診断</span>
+        <b>2 / 2 回</b>
+        <a href="#" onclick="return false;">プレミアムなら月5回 ›</a>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>診断の記録</h2><span class="en">History</span></div>
+      <div class="mk-history">
+        <button class="mk-hist-row" data-go="scrDetail">
+          <span class="d">6/11</span>
+          <span><strong>ボリュームケアタイプ</strong><span class="sub">写真AI診断</span></span>
+          <span class="chev">›</span>
+        </button>
+        <button class="mk-hist-row" data-go="scrDetail">
+          <span class="d">5/20</span>
+          <span><strong>うるおいケアタイプ</strong><span class="sub">Beauty DNA 診断</span></span>
+          <span class="chev">›</span>
+        </button>
+        <button class="mk-hist-row" data-go="scrDetail">
+          <span class="d">4/12</span>
+          <span><strong>まとまりケアタイプ</strong><span class="sub">写真AI診断</span></span>
+          <span class="chev">›</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>写真の記録</h2><a href="#" style="font-size: 11.5px; color: var(--mk-rose); font-weight: 700; text-decoration: none;" data-go="scrPhotos">すべて見る ›</a></div>
+      <div class="mk-photostrip">
+        <span class="ph"><img src="assets/story-03.png" alt=""><span class="tag after">アフター</span></span>
+        <span class="ph"><img src="assets/story-06.png" alt=""><span class="tag">ビフォア</span></span>
+        <span class="ph"><img src="assets/story-02.png" alt=""><span class="tag">ビフォア</span></span>
+        <span class="ph"><img src="assets/story-01.png" alt=""><span class="tag after">アフター</span></span>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <button class="mk-hist-row" data-go="scrPhotos">
+        <span class="d" style="width:auto;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2"/><path d="m21 16-4.5-4.5L9 19"/></svg>
+        </span>
+        <span><strong>ビフォア・アフター画像の管理</strong><span class="sub" id="homePhotoCount">6枚 保存済み</span></span>
+        <span class="chev">›</span>
+      </button>
+      <p class="mk-note" style="text-align:center; margin-top: 16px;">※診断結果は見た目の傾向の目安です。提供：AOKAE合同会社</p>
+    </div>
+  </section>
+
+  <!-- ════════ 画面B: 診断の詳細（写真オーバーレイ） ════════ -->
+  <section class="mk-screen" id="scrDetail" data-screen-label="B 診断の詳細">
+    <button class="mk-back" data-go="scrHome">‹ 6月11日の診断</button>
+
+    <div class="mk-aspects">
+      <button class="mk-aspect on" data-aspect="11">正方形</button>
+      <button class="mk-aspect" data-aspect="45">縦長</button>
+      <button class="mk-aspect" data-aspect="916">ストーリー</button>
+    </div>
+
+    <div class="mk-overlay-wrap">
+      <figure class="mk-overlay" id="overlay" style="margin:0;">
+        <div class="mk-ov-photo">
+          <img src="assets/story-03.png" alt="診断に使った髪の写真">
+          <span class="date">2026.06.11</span>
+        </div>
+        <div class="mk-ov-karte">
+          <div class="mk-ov-rep">Hair Balance Report</div>
+          <h2 class="mk-ov-type">ボリュームケアタイプ</h2>
+          <p class="mk-ov-copy">根もとのふんわり感を、これから育てていける髪</p>
+          <div class="mk-ov-grid">
+            <div class="mk-ov-cell"><b>7</b><span>ツヤ</span></div>
+            <div class="mk-ov-cell"><b>6</b><span>まとまり</span></div>
+            <div class="mk-ov-cell"><b>7</b><span>うるおい</span></div>
+            <div class="mk-ov-cell"><b>5</b><span>ボリューム</span></div>
+            <div class="mk-ov-cell"><b>6</b><span>ハリ・コシ</span></div>
+          </div>
+          <div class="mk-ov-foot">
+            <span class="brand">SalonRink</span>
+            <span class="d">my karte</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="mk-share-row">
+      <button class="mk-btn mk-btn-line2" id="saveImgBtn">画像を保存</button>
+      <button class="mk-btn mk-btn-rose" id="shareBtn">シェアする</button>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>スコア内訳</h2><span class="en">Hair Balance</span></div>
+      <div class="mk-card">
+        <div class="mk-scores">
+          <div class="mk-score"><span class="lbl">ツヤ</span><span class="track"><span class="fill" style="width:72%"></span></span><span class="val">7</span></div>
+          <div class="mk-score"><span class="lbl">まとまり</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="val">6</span></div>
+          <div class="mk-score"><span class="lbl">うるおい</span><span class="track"><span class="fill" style="width:68%"></span></span><span class="val">7</span></div>
+          <div class="mk-score"><span class="lbl">ボリューム</span><span class="track"><span class="fill" style="width:46%"></span></span><span class="val">5</span></div>
+          <div class="mk-score"><span class="lbl">ハリ・コシ</span><span class="track"><span class="fill" style="width:61%"></span></span><span class="val">6</span></div>
+        </div>
+        <p class="mk-note" style="margin-top: 12px;">※10段階評価の目安です</p>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>おすすめケア</h2><span class="en">Care</span></div>
+      <div class="mk-card mk-care">
+        <div class="mk-care-row">
+          <span class="n">1</span>
+          <span><strong>スカルプセラム</strong><p>根もとから整える頭皮用美容液</p></span>
+        </div>
+        <div class="mk-care-row">
+          <span class="n">2</span>
+          <span><strong>モイスト シャンプー</strong><p>ふんわり仕上げのやさしい洗浄</p></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <button class="mk-btn mk-btn-rose" id="aiBtn">
+        AIにもっと深く相談する<span class="sub">¥110</span>
+      </button>
+      <p class="mk-credit">残りクレジット 0回 · <a href="#" onclick="return false;">5回まとめて ¥500</a></p>
+      <button class="mk-btn mk-btn-line2" data-go="scrMemo" style="margin-top: 10px;">相談メモに追加</button>
+      <div class="mk-ai-note"><span class="dot"></span>AIが回答します（美容師監修のAIコンシェルジュ）</div>
+      <p class="mk-note" style="text-align:center; margin-top: 10px;">※結果は見た目の傾向の目安であり、状態・効果を保証するものではありません。</p>
+    </div>
+  </section>
+
+  <!-- ════════ 画面C: 相談メモ ════════ -->
+  <section class="mk-screen" id="scrMemo" data-screen-label="C 相談メモ">
+    <div class="mk-section">
+      <div class="mk-h"><h2>サロンに相談したいこと</h2><span class="en">Memo</span></div>
+      <div class="mk-checks">
+        <label class="mk-check"><input type="checkbox" checked><span class="box">✓</span><span>広がりが気になる</span></label>
+        <label class="mk-check"><input type="checkbox"><span class="box">✓</span><span>ツヤがほしい</span></label>
+        <label class="mk-check"><input type="checkbox" checked><span class="box">✓</span><span>ボリュームを出したい</span></label>
+        <label class="mk-check"><input type="checkbox"><span class="box">✓</span><span>カラーの相談</span></label>
+      </div>
+    </div>
+    <div class="mk-section">
+      <div class="mk-h"><h2>自由メモ</h2></div>
+      <textarea class="mk-textarea" placeholder="例：梅雨どきの広がりがいちばんの悩みです。朝のセットを楽にしたい…">朝のスタイリングに時間がかかるのが悩み。トップのボリュームが夕方にはぺたんとなる。</textarea>
+    </div>
+    <div class="mk-section">
+      <div class="mk-h"><h2>添付する診断</h2></div>
+      <div class="mk-attach">
+        <span class="mk-chip">6/11の診断 <span class="x">×</span></span>
+        <span class="mk-chip">5/20の診断 <span class="x">×</span></span>
+      </div>
+    </div>
+    <div class="mk-section">
+      <button class="mk-btn mk-btn-rose" id="saveMemoBtn">保存する</button>
+      <p class="mk-note" style="text-align:center; margin-top: 12px;">保存したメモは「サロン」タブからいつでも送れます。</p>
+    </div>
+  </section>
+
+  <!-- ════════ 画面D: 送り先 ════════ -->
+  <section class="mk-screen" id="scrSend" data-screen-label="D 送り先">
+    <div class="mk-section">
+      <div class="mk-h"><h2>どこに相談する？</h2><span class="en">Send To</span></div>
+      <div class="mk-fav" id="favSalon">
+        <button class="mk-fav-add"><span class="plus">＋</span>お気に入り店舗を登録</button>
+      </div>
+      <div class="mk-fav" id="favStylist">
+        <button class="mk-fav-add"><span class="plus">＋</span>お気に入り美容師を登録</button>
+      </div>
+      <p class="mk-note" style="margin-top: 12px;">登録した店舗・美容師にカルテと相談メモを送れます。登録はいつでも解除できます。</p>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>個人に共有</h2><span class="en">Share</span></div>
+      <div class="mk-card mk-sharecard">
+        <p class="lead">読み取り専用のリンクを発行して、友人や別の美容師さんにLINEなどで見せられます。</p>
+        <button class="mk-btn mk-btn-line2" id="issueLinkBtn" style="min-height: 46px; font-size: 13px;">読み取り専用リンクを発行</button>
+        <div class="mk-linkbox" id="linkBox" hidden>
+          <code>salonrink.com/mycarte/s/k7f3…9d</code>
+          <button id="copyLinkBtn">コピー</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-h"><h2>送る内容</h2><span class="en">Preview</span></div>
+      <div class="mk-preview">
+        <span class="mk-chip">カルテ（6/11の診断）</span>
+        <span class="mk-chip">相談メモ（3件）</span>
+        <span class="mk-chip">ビフォア画像 2枚</span>
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <button class="mk-btn mk-btn-rose" id="sendBtn">登録した送り先に送る</button>
+      <div class="mk-sent" id="sentMsg">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+        送信しました。送り先から連絡が届きます
+      </div>
+    </div>
+
+    <div class="mk-section">
+      <div class="mk-coming">
+        <span><strong>美容師に相談（¥1,000〜）</strong><p>オンライン相談・来店前カウンセリング</p></span>
+        <span class="badge">近日公開</span>
+      </div>
+      <p class="mk-note" style="text-align:center; margin-top: 16px;">※送信・共有はモックです。提供：AOKAE合同会社</p>
+    </div>
+  </section>
+
+  <!-- ════════ 画面E: ビフォア画像の管理 ════════ -->
+  <section class="mk-screen" id="scrPhotos" data-screen-label="E ビフォア画像">
+    <button class="mk-back" data-go="scrHome">‹ マイカルテにもどる</button>
+    <div class="mk-section" style="padding-top: 10px;">
+      <div class="mk-h"><h2>写真の記録</h2><span class="en">Photos</span></div>
+
+      <div class="mk-month"><span class="m">6月</span>2026</div>
+      <div class="mk-photos">
+        <div class="mk-photo"><img src="assets/story-03.png" alt=""><span class="tag after">アフター</span><button class="del" aria-label="削除">×</button></div>
+        <div class="mk-photo"><img src="assets/story-06.png" alt=""><span class="tag">ビフォア</span><button class="del" aria-label="削除">×</button></div>
+        <button class="mk-photo-add" id="addPhotoBtn"><span class="plus">＋</span>写真を追加</button>
+      </div>
+
+      <div class="mk-month"><span class="m">5月</span>2026</div>
+      <div class="mk-photos">
+        <div class="mk-photo"><img src="assets/story-02.png" alt=""><span class="tag">ビフォア</span><button class="del" aria-label="削除">×</button></div>
+        <div class="mk-photo"><img src="assets/story-01.png" alt=""><span class="tag after">アフター</span><button class="del" aria-label="削除">×</button></div>
+      </div>
+
+      <div class="mk-month"><span class="m">4月</span>2026</div>
+      <div class="mk-photos">
+        <div class="mk-photo"><img src="assets/story-04.png" alt=""><span class="tag">ビフォア</span><button class="del" aria-label="削除">×</button></div>
+        <div class="mk-photo"><img src="assets/story-05.png" alt=""><span class="tag">ビフォア</span><button class="del" aria-label="削除">×</button></div>
+      </div>
+
+      <div class="mk-limit">
+        <span>保存できる枚数</span>
+        <b id="limitCount">6 / 20 枚</b>
+        <span style="font-size: 10.5px; color: var(--mk-hint);">プレミアム · 無料は3枚まで</span>
+      </div>
+      <div class="mk-tip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg>
+        <span>明るい場所で、髪全体が入るように撮るときれいに記録できます。</span>
+      </div>
+    </div>
+  </section>
+
+  <nav class="mk-nav" data-screen-label="下部タブ">
+    <button class="on" data-tab="scrHome">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+      カルテ
+    </button>
+    <button data-tab="scrMemo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      相談メモ
+    </button>
+    <button data-tab="scrSend">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+      サロン
+    </button>
+  </nav>
+
+  <div class="mk-toast" id="toast">保存しました</div>
+</div>
+
+<script>
+// ============ 画面遷移 ============
+var TAB_SCREENS = { scrHome: 'scrHome', scrMemo: 'scrMemo', scrSend: 'scrSend' };
+function mkShow(id) {
+  document.querySelectorAll('.mk-screen').forEach(function (s) {
+    s.classList.toggle('on', s.id === id);
+  });
+  var nav = document.querySelector('.mk-nav');
+  var tabId = TAB_SCREENS[id] || (id === 'scrDetail' || id === 'scrPhotos' ? 'scrHome' : id);
+  nav.querySelectorAll('button').forEach(function (b) {
+    b.classList.toggle('on', b.dataset.tab === tabId);
+  });
+  window.scrollTo(0, 0);
+}
+document.querySelector('.mk-nav').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) { return; }
+  mkShow(b.dataset.tab);
+});
+document.querySelectorAll('[data-go]').forEach(function (el) {
+  el.addEventListener('click', function () { mkShow(el.dataset.go); });
+});
+document.getElementById('latestCard').addEventListener('click', function () { mkShow('scrDetail'); });
+
+// ============ レーダー(画面A) ============
+function mkRadar(scores) {
+  var keys = Object.keys(scores);
+  var cx = 110, cy = 104, R = 58;
+  function pt(i, r) {
+    var a = -Math.PI / 2 + (i * 2 * Math.PI) / keys.length;
+    return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+  }
+  function ring(ratio) {
+    return keys.map(function (_, i) { return pt(i, R * ratio).map(function (v) { return v.toFixed(1); }).join(','); }).join(' ');
+  }
+  var poly = keys.map(function (k, i) { return pt(i, R * (scores[k] / 100)).map(function (v) { return v.toFixed(1); }).join(','); }).join(' ');
+  var labels = keys.map(function (k, i) {
+    var p = pt(i, R + 24);
+    var n = Math.round(scores[k] / 10);
+    return '<text x="' + p[0].toFixed(1) + '" y="' + (p[1] - 1).toFixed(1) + '" text-anchor="middle">' + k + '</text>' +
+      '<text x="' + p[0].toFixed(1) + '" y="' + (p[1] + 13).toFixed(1) + '" text-anchor="middle" style="font-size:13px; font-weight:700; fill:#93482F;">' + n + '</text>';
+  }).join('');
+  var axes = keys.map(function (_, i) {
+    var p = pt(i, R);
+    return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '" stroke="rgba(186,166,150,0.55)" stroke-width="0.9"/>';
+  }).join('');
+  return '<svg width="220" height="216" viewBox="0 0 220 216" role="img" aria-label="ヘアバランス">' +
+    [1, 0.66, 0.33].map(function (r) { return '<polygon points="' + ring(r) + '" fill="none" stroke="rgba(186,166,150,0.6)" stroke-width="0.9"/>'; }).join('') +
+    axes +
+    '<polygon points="' + poly + '" fill="rgba(192,107,79,0.25)" stroke="#C06B4F" stroke-width="1.8" stroke-linejoin="round"/>' +
+    keys.map(function (k, i) { var p = pt(i, R * (scores[k] / 100)); return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="2.8" fill="#C06B4F"/>'; }).join('') +
+    labels + '</svg>';
+}
+document.getElementById('homeRadar').innerHTML = mkRadar({
+  'ツヤ': 72, 'まとまり': 64, 'うるおい': 68, 'ボリューム': 46, 'ハリ・コシ': 61
+});
+
+// ============ 画面B: アスペクト切替 ============
+document.querySelectorAll('.mk-aspect').forEach(function (b) {
+  b.addEventListener('click', function () {
+    document.querySelectorAll('.mk-aspect').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.getElementById('overlay').dataset.aspect = b.dataset.aspect;
+  });
+});
+
+// ============ トースト ============
+var toastTimer;
+function mkToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.classList.remove('show'); }, 1800);
+}
+
+// ============ アクション(モック) ============
+document.getElementById('newDiagBtn').addEventListener('click', function () {
+  mkToast('今月の無料枠を使い切りました。プレミアムなら月5回まで');
+});
+document.getElementById('saveImgBtn').addEventListener('click', function () { mkToast('画像を保存しました（モック）'); });
+document.getElementById('shareBtn').addEventListener('click', function () { mkToast('LINEのシェアシートを開きます（モック）'); });
+document.getElementById('aiBtn').addEventListener('click', function () { mkToast('クレジットが不足しています。5回 ¥500 で追加できます'); });
+document.getElementById('saveMemoBtn').addEventListener('click', function () { mkToast('相談メモを保存しました'); });
+document.getElementById('issueLinkBtn').addEventListener('click', function () {
+  document.getElementById('linkBox').hidden = false;
+  this.style.display = 'none';
+});
+document.getElementById('copyLinkBtn').addEventListener('click', function () { mkToast('リンクをコピーしました（モック）'); });
+document.getElementById('sendBtn').addEventListener('click', function () {
+  if (!document.querySelector('.mk-salon')) { mkToast('送り先を登録してください'); return; }
+  document.getElementById('sentMsg').classList.add('show');
+  this.disabled = true; this.style.opacity = '0.55';
+});
+
+// お気に入り登録・解除(モック)
+function mkFav(wrapId, kind, icon) {
+  var wrap = document.getElementById(wrapId);
+  function renderEmpty() {
+    wrap.innerHTML = '<button class="mk-fav-add"><span class="plus">＋</span>お気に入り' + kind + 'を登録</button>';
+    wrap.querySelector('.mk-fav-add').addEventListener('click', renderFilled);
+  }
+  function renderFilled() {
+    wrap.innerHTML =
+      '<div class="mk-salon sel">' +
+      '<span class="ava">' + icon + '</span>' +
+      '<span><strong>登録済みの' + kind + '</strong><p>送信先に設定中</p></span>' +
+      '<button class="mk-unreg">解除</button>' +
+      '</div>';
+    wrap.querySelector('.mk-unreg').addEventListener('click', function (e) {
+      e.stopPropagation();
+      renderEmpty();
+      mkToast(kind + 'の登録を解除しました');
+    });
+    mkToast(kind + 'を登録しました（モック）');
+  }
+  renderEmpty();
+}
+mkFav('favSalon', '店舗', 'S');
+mkFav('favStylist', '美容師', 'B');
+document.getElementById('addPhotoBtn').addEventListener('click', function () {
+  mkToast('写真を追加します（モック）・無料は3枚まで');
+});
+function mkPhotoCount() {
+  var n = document.querySelectorAll('#scrPhotos .mk-photo').length;
+  document.getElementById('limitCount').textContent = n + ' / 20 枚';
+  var h = document.getElementById('homePhotoCount');
+  if (h) { h.textContent = n + '枚 保存済み'; }
+}
+document.querySelectorAll('.mk-photo .del').forEach(function (b) {
+  b.addEventListener('click', function () {
+    b.closest('.mk-photo').remove();
+    mkPhotoCount();
+  });
+});
+</script>
+</body>
+</html>

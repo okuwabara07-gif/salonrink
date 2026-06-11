@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink ミニアプリ — マイカルテ（LIFF）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+<style>
+  /* ============ LIFFクローム(LINEアプリ内ヘッダーの再現・モック) ============ */
+  .liff-chrome {
+    position: sticky; top: 30px; z-index: 50;
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 14px; background: color-mix(in srgb, var(--neo-bg) 94%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  .liff-chrome .ttl { flex: 1; font-size: 13.5px; font-weight: 700; color: var(--sr-ink); display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .liff-chrome .ttl img { height: 30px; }
+  .liff-verified {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 9.5px; font-weight: 700; color: var(--sr-accent-ink);
+    padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+    box-shadow: inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);
+  }
+  .liff-chrome .act { display: flex; gap: 8px; }
+  .liff-chrome .act button {
+    width: 34px; height: 34px; border: none; border-radius: 50%; cursor: pointer;
+    background: var(--neo-bg); color: var(--sr-muted); font-size: 15px; font-weight: 700;
+    box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
+    display: flex; align-items: center; justify-content: center; font-family: inherit;
+  }
+
+  /* ============ タブ画面 ============ */
+  .mini-screen { display: none; padding-bottom: 8px; }
+  .mini-screen.on { display: block; }
+
+  /* あいさつ */
+  .mini-hello { display: flex; align-items: center; gap: 13px; padding: 18px 20px 4px; }
+  .mini-hello img {
+    width: 54px; height: 54px; border-radius: 50%; object-fit: cover;
+    border: 2px solid #FEFEFD; box-shadow: 0 5px 12px var(--neo-dark);
+  }
+  .mini-hello strong { font-size: 17px; font-weight: 900; display: block; line-height: 1.4; }
+  .mini-hello .sub { font-size: 11.5px; color: var(--sr-muted); }
+
+  /* 次回予約 */
+  .mini-resv {
+    margin: 16px 20px 0; padding: 16px 18px; border-radius: 20px;
+    background: var(--neo-bg);
+    box-shadow: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .mini-resv .date {
+    flex-shrink: 0; width: 58px; height: 58px; border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+  }
+  .mini-resv .date b { font-size: 19px; font-weight: 900; color: var(--sr-accent-ink); line-height: 1.1; }
+  .mini-resv .date span { font-size: 10px; font-weight: 700; color: var(--sr-muted); }
+  .mini-resv .info { flex: 1; min-width: 0; }
+  .mini-resv .info strong { font-size: 13.5px; display: block; line-height: 1.5; }
+  .mini-resv .info p { font-size: 11.5px; color: var(--sr-muted); }
+  .mini-resv .chg {
+    flex-shrink: 0; border: none; cursor: pointer; font-family: inherit;
+    font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink);
+    padding: 8px 13px; border-radius: 999px; background: var(--neo-bg);
+    box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
+  }
+
+  /* セクション小見出し */
+  .mini-h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    padding: 26px 20px 12px;
+  }
+  .mini-h h2 { font-size: 16px; font-weight: 900; margin: 0; }
+  .mini-h a { font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink); text-decoration: none; }
+
+  /* 診断タブ */
+  .diag-list { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
+  .diag-row {
+    display: flex; align-items: center; gap: 13px; padding: 14px 16px;
+    border-radius: 18px; text-decoration: none; color: var(--sr-ink);
+    background: var(--neo-bg);
+    box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
+  }
+  .diag-row .ic {
+    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: var(--sr-accent-ink);
+    box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
+  }
+  .diag-row .ic svg { width: 20px; height: 20px; }
+  .diag-row strong { font-size: 13.5px; display: block; line-height: 1.5; }
+  .diag-row p { font-size: 11px; color: var(--sr-muted); line-height: 1.55; }
+  .diag-row .st { margin-left: auto; flex-shrink: 0; }
+  .diag-done {
+    font-size: 10px; font-weight: 700; color: var(--sr-accent-ink);
+    padding: 4px 10px; border-radius: 999px;
+    box-shadow: inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);
+  }
+  .diag-go {
+    font-size: 10px; font-weight: 700; color: #fff;
+    padding: 5px 11px; border-radius: 999px; background: var(--sr-grad);
+    box-shadow: 2px 2px 5px var(--neo-dark);
+  }
+
+  /* ストアタブ */
+  .mini-store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 20px; }
+
+  /* 下部タブ(ページ内切替) */
+  .mini-nav {
+    position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    width: calc(100% - 28px); max-width: 452px;
+    display: flex; gap: 6px; padding: 8px;
+    background: color-mix(in srgb, var(--neo-bg) 96%, transparent);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-radius: 999px;
+    box-shadow: 8px 8px 18px var(--neo-dark), -6px -6px 14px var(--neo-light);
+  }
+  .mini-nav button {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    min-height: 50px; justify-content: center; border: none; cursor: pointer;
+    background: none; border-radius: 999px; font-family: inherit;
+    font-size: 10px; font-weight: 700; color: var(--sr-muted); white-space: nowrap;
+  }
+  .mini-nav button svg { width: 18px; height: 18px; }
+  .mini-nav button.on {
+    color: #fff; background: var(--sr-grad);
+    box-shadow: 3px 3px 8px var(--neo-dark);
+  }
+</style>
+</head>
+<body>
+<div class="sr sr-page" id="app" data-screen-label="LINEミニアプリ（LIFF）">
+
+  <div class="demo-bar">
+    <a href="index.html">ホーム</a>
+    <a href="ec.html">ストア</a>
+    <a href="diagnosis.html">のびしろ診断</a>
+    <a href="photo.html">写真AI診断</a>
+    <a class="on" href="miniapp.html">ミニアプリ</a>
+    <a href="mycarte.html">マイカルテ</a>
+  </div>
+
+  <header class="liff-chrome" data-screen-label="LIFFヘッダー">
+    <div class="ttl">
+      <img src="assets/logo.png" alt="SalonRink Concierge" style="filter: brightness(0.82) saturate(1.45) contrast(1.12);">
+      <span class="liff-verified">LINEログイン済み</span>
+    </div>
+    <div class="act">
+      <button aria-label="メニュー">⋯</button>
+      <button aria-label="閉じる">×</button>
+    </div>
+  </header>
+
+  <!-- ════════ タブ1: マイカルテ ════════ -->
+  <section class="mini-screen on" id="tabKarte" data-screen-label="マイカルテ">
+    <div class="mini-hello">
+      <img src="assets/voice-owner-c.jpg" alt="">
+      <div>
+        <strong>佐藤 美咲 さん</strong>
+        <span class="sub">来店 12回 · SalonRink会員</span>
+      </div>
+    </div>
+
+    <div class="mini-resv">
+      <div class="date"><b>7/2</b><span>木 14:00</span></div>
+      <div class="info">
+        <strong>カット + カラー</strong>
+        <p>担当: 高橋（指名）</p>
+      </div>
+      <button class="chg">変更</button>
+    </div>
+
+    <div class="mini-h"><h2>マイカルテ</h2></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-panel">
+        <div class="neo-tagchips"><em>カラー履歴</em><em>敏感肌</em><em>くせ毛</em></div>
+        <div class="neo-entry"><b>5/20</b>カット+カラー。アッシュ系8トーン、頭皮弱め。</div>
+        <div class="neo-entry"><b>4/12</b>トリートメント。毛先の乾燥が改善傾向。</div>
+        <div class="neo-entry"><b>3/8</b>カット。前髪は眉ラインでキープ希望。</div>
+      </div>
+    </div>
+
+    <div class="mini-h"><h2>Beauty DNA</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-panel">
+        <div class="neo-meters">
+          <div class="neo-meter"><span class="lbl">うるおい</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="val">82%</span></div>
+          <div class="neo-meter"><span class="lbl">ハリ・コシ</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="val">64%</span></div>
+          <div class="neo-meter"><span class="lbl">頭皮ケア</span><span class="track"><span class="fill" style="width:71%"></span></span><span class="val">71%</span></div>
+        </div>
+        <p class="sr-note" style="margin-top: 10px;">※診断結果は見た目の傾向の目安です。最終更新 5/20</p>
+      </div>
+    </div>
+
+    <div class="mini-h"><h2>担当からのひとこと</h2></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-screen" style="padding: 14px;">
+        <div class="neo-chat-row">
+          <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 9 10 4 20 4c0 10-5 16-15 15z"/><path d="M5 19c2-5 5-8 9-10"/></svg></span>
+          <div class="neo-bubble">カラーの色持ちが良くなってきましたね。次回は毛先の保湿ケアを足すのがおすすめです</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-h"><h2>あなたへのおすすめ</h2><a href="ec.html?ref=mini-reco">ストアへ ›</a></div>
+    <div style="padding: 0 20px;">
+      <div class="ec-reco" style="margin: 0; padding-top: 14px;">
+        <div class="rail" id="recoRail"></div>
+      </div>
+    </div>
+    <p class="sr-note" style="padding: 0 22px; text-align: center;">※画面はイメージです。提供：AOKAE合同会社</p>
+  </section>
+
+  <!-- ════════ タブ2: 診断 ════════ -->
+  <section class="mini-screen" id="tabDiag" data-screen-label="診断">
+    <div class="mini-h" style="padding-top: 20px;"><h2>5つのAIビューティ診断</h2></div>
+    <p style="padding: 0 22px 14px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">あなたを深く理解して、ぴったりの提案につなげます。<br>すべて無料・約30秒。</p>
+    <div class="diag-list">
+      <a class="diag-row" href="photo.html?ref=mini-photo">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+        <div><strong>写真AI診断</strong><p>1枚撮るだけで髪の傾向をチェック</p></div>
+        <span class="st diag-go">はじめる</span>
+      </a>
+      <a class="diag-row" href="#" onclick="return false;">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg></span>
+        <div><strong>Beauty DNA 診断</strong><p>あなたの美容タイプを総合分析</p></div>
+        <span class="st diag-done">済 5/20</span>
+      </a>
+      <a class="diag-row" href="#" onclick="return false;">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 1.2 2.4 2 4 2s3-.8 4-2"/><circle cx="9" cy="10" r="0.5"/><circle cx="15" cy="10" r="0.5"/></svg></span>
+        <div><strong>肌診断</strong><p>肌の見た目の傾向とケアの目安</p></div>
+        <span class="st diag-done">済 4/12</span>
+      </a>
+      <a class="diag-row" href="#" onclick="return false;">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/></svg></span>
+        <div><strong>髪質診断</strong><p>クセ・太さ・ダメージの傾向</p></div>
+        <span class="st diag-go">はじめる</span>
+      </a>
+      <a class="diag-row" href="#" onclick="return false;">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="6"/><path d="M9 20c.8-1.5 1.8-2 3-2s2.2.5 3 2"/></svg></span>
+        <div><strong>頭皮・スカルプ診断</strong><p>頭皮環境の傾向をチェック</p></div>
+        <span class="st diag-go">はじめる</span>
+      </a>
+    </div>
+    <p class="sr-note" style="padding: 14px 22px 0; text-align: center;">※AIによる見た目の傾向とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
+  </section>
+
+  <!-- ════════ タブ3: ストア ════════ -->
+  <section class="mini-screen" id="tabStore" data-screen-label="ストア">
+    <div class="mini-h" style="padding-top: 20px;"><h2>サロンセレクト ストア</h2><a href="ec.html?ref=mini-store">すべて見る ›</a></div>
+    <p style="padding: 0 22px 16px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">カルテと診断結果をもとに、あなたに合うアイテムを。</p>
+    <div class="mini-store-grid" id="storeGrid"></div>
+    <div style="padding: 22px 20px 0;">
+      <a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=mini-store-all">ストアですべての商品を見る</a>
+    </div>
+    <p class="sr-note" style="padding: 14px 22px 0; text-align: center;">※価格は税込です。商品・画像はダミーデータです。<br>実際の決済はLINEミニアプリ内で行われます（モック）。</p>
+  </section>
+
+  <nav class="mini-nav" data-screen-label="ミニアプリ下部タブ">
+    <button class="on" data-tab="tabKarte">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+      マイカルテ
+    </button>
+    <button data-tab="tabDiag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      診断
+    </button>
+    <button data-tab="tabStore">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.8H9a1.8 1.8 0 0 1-1.8-1.8L6 7z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+      ストア
+    </button>
+  </nav>
+
+</div>
+<script>
+// ============ タブ切替 ============
+(function () {
+  var nav = document.querySelector('.mini-nav');
+  nav.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) { return; }
+    nav.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+    document.querySelectorAll('.mini-screen').forEach(function (s) {
+      s.classList.toggle('on', s.id === b.dataset.tab);
+    });
+    window.scrollTo(0, 0);
+  });
+  document.getElementById('toDiagLink').addEventListener('click', function (e) {
+    e.preventDefault();
+    nav.querySelector('[data-tab="tabDiag"]').click();
+  });
+})();
+
+// ============ 商品(ECと同じダミーJSON・差し替え前提) ============
+var MINI_PRODUCTS = [
+  { id: 'oil',     name: 'コンシェルジュ ヘアオイル', price: 3520, initial: 'オ', badge: '人気No.1' },
+  { id: 'treat',   name: 'リペア トリートメント', price: 3080, initial: 'ト', badge: 'カルテおすすめ' },
+  { id: 'shampoo', name: 'モイスト シャンプー', price: 2860, initial: 'シ' },
+  { id: 'scalp',   name: 'スカルプセラム', price: 4180, initial: 'セ' },
+];
+function miniYen(n) { return '¥' + n.toLocaleString('ja-JP'); }
+function miniCard(p, compact) {
+  var a = document.createElement('a');
+  a.className = 'ec-card';
+  a.style.textDecoration = 'none';
+  if (compact) { a.style.flex = '0 0 126px'; }
+  a.href = 'ec.html?ref=mini-' + p.id;
+  a.innerHTML =
+    '<div class="ec-thumb">' + p.initial + '<small>PHOTO</small>' +
+    (p.badge && !compact ? '<span class="ec-badge">' + p.badge + '</span>' : '') + '</div>' +
+    '<span class="ec-name">' + p.name + '</span>' +
+    '<span class="ec-price">' + miniYen(p.price) + '<small>（税込）</small></span>';
+  return a;
+}
+// マイカルテのおすすめ棚: 診断結果があればその商品、なければ定番
+(function () {
+  var rail = document.getElementById('recoRail');
+  var ids = ['oil', 'treat'];
+  try {
+    var saved = JSON.parse(localStorage.getItem('sr-diag-reco') || 'null');
+    if (saved && Array.isArray(saved.items) && saved.items.length) { ids = saved.items; }
+  } catch (e) {}
+  ids.forEach(function (id) {
+    var p = MINI_PRODUCTS.find(function (x) { return x.id === id; }) ||
+      { id: id, name: id, price: 0, initial: '商' };
+    rail.appendChild(miniCard(p, true));
+  });
+})();
+// ストアタブ
+(function () {
+  var grid = document.getElementById('storeGrid');
+  MINI_PRODUCTS.forEach(function (p) { grid.appendChild(miniCard(p)); });
+})();
+
+// ============ ref引き継ぎ(LIFFでは liff.state から取得) ============
+(function () {
+  var ref = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    ref = q.get('ref');
+    if (ref) { sessionStorage.setItem('sr-ref', ref); }
+    else { ref = sessionStorage.getItem('sr-ref'); }
+  } catch (e) {}
+  if (!ref) { return; }
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') { return; }
+    try {
+      var url = new URL(href, location.href);
+      var cur = url.searchParams.get('ref');
+      if (cur && cur.indexOf('__') !== -1) { return; }
+      url.searchParams.set('ref', cur ? cur + '__' + ref : ref);
+      a.href = url.toString();
+    } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

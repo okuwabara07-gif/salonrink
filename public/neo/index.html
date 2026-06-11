@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink Concierge — LP（ニューモーフィズム）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+<style>
+  /* 信頼の循環(このページのみ) */
+  .cycle { position: relative; margin-top: 26px; display: flex; flex-direction: column; gap: 16px; padding-right: 30px; }
+  .cycle-step {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px;
+    background: var(--neo-bg);
+    box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
+  }
+  .cycle-no {
+    font-family: 'Caveat', cursive; font-size: 24px; font-weight: 700; line-height: 1;
+    color: var(--sr-accent); flex-shrink: 0;
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--neo-bg);
+    box-shadow: 5px 5px 10px var(--neo-dark), -5px -5px 10px var(--neo-light);
+  }
+  .cycle-step strong { display: block; font-size: 14.5px; line-height: 1.5; }
+  .cycle-step p { font-size: 12px; color: var(--sr-muted); line-height: 1.6; }
+  .cycle-arc {
+    position: absolute; top: 30px; bottom: 30px; right: 4px; width: 22px;
+    border: 2px dashed color-mix(in srgb, var(--sr-accent) 55%, transparent);
+    border-left: none; border-radius: 0 24px 24px 0;
+  }
+  .cycle-arc::after {
+    content: ''; position: absolute; left: -7px; bottom: -6px;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+    border-right: 9px solid var(--sr-accent);
+  }
+  .cycle-arc span {
+    position: absolute; right: -9px; top: 50%; transform: translateY(-50%);
+    writing-mode: vertical-rl; font-size: 10.5px; font-weight: 700; letter-spacing: 0.2em;
+    color: var(--sr-accent-ink); background: var(--neo-bg); padding: 6px 0;
+  }
+</style>
+</head>
+<body>
+<div class="sr sr-page sr-tinted" id="app" data-screen-label="LP（ニューモーフィズム）">
+
+  <div class="demo-bar">
+    <a class="on" href="index.html">ホーム</a>
+    <a href="ec.html">ストア</a>
+    <a href="diagnosis.html">のびしろ診断</a>
+    <a href="photo.html">写真AI診断</a>
+    <a href="miniapp.html">ミニアプリ</a>
+    <a href="mycarte.html">マイカルテ</a>
+  </div>
+
+  <header class="sr-header">
+    <img class="sr-logo" src="assets/logo.png" alt="SalonRink Concierge">
+    <button class="sr-burger" id="menuBtn" aria-label="メニュー"><span></span><span></span><span></span></button>
+  </header>
+
+  <nav class="sr-tabs">
+    <a class="sr-tab" href="#" onclick="return false;">お客様</a>
+    <a class="sr-tab on" href="#" onclick="return false;">美容師・サロン</a>
+    <a class="sr-tab" href="#" onclick="return false;">代理店</a>
+  </nav>
+
+  <section class="sr-hero">
+    <span class="sr-hero-badge">導入サロン 第1期募集中</span>
+    <h1>美容師とお客様を、<br>一生でつなぐ。</h1>
+    <p class="sr-hero-sub">AIカルテとLINE連携で、<br>出会いから未来までをサポート。<br>「また会いたくなる」関係を、テクノロジーで。</p>
+    <a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=hero-trial" target="_blank" rel="noreferrer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.03 3.58 7.4 8.42 8.04.33.07.78.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55 1.09-.46 5.87-3.46 8.01-5.92C21.57 13.31 22 11.78 22 10.13 22 5.64 17.52 2 12 2z"/></svg>
+      無料で始める（14日間）
+    </a>
+    <a class="sr-btn sr-btn-ghost sr-btn-lg sr-btn-diag" href="diagnosis.html?ref=hero-diag">AI診断を試してみる（30秒）</a>
+    <a class="sr-link-sub" href="https://lin.ee/6hraAKM?ref=hero-doc" target="_blank" rel="noreferrer">資料をLINEで受け取る ›</a>
+    <div class="sr-hero-visual">
+      <div class="neo-screen" style="min-height: 230px;">
+        <div class="neo-chat-row">
+          <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 14 3 21l7-2"/><path d="M5 14c0-1 4-7 6-6s-5 7-6 6z"/><path d="m14 5 .5-2M19 9l2-.5M16.5 7.5 19 4"/></svg></span>
+          <div class="neo-bubble">診断おつかれさまでした。<br>「Beauty DNA」が出ました</div>
+        </div>
+        <div class="neo-panel">
+          <div class="neo-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg> Beauty DNA 診断結果</div>
+          <div class="neo-meters">
+            <div class="neo-meter"><span class="lbl">うるおい</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="val">82%</span></div>
+            <div class="neo-meter"><span class="lbl">ハリ・コシ</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="val">64%</span></div>
+            <div class="neo-meter"><span class="lbl">頭皮ケア</span><span class="track"><span class="fill" style="width:71%"></span></span><span class="val">71%</span></div>
+          </div>
+        </div>
+        <div class="neo-chat-row">
+          <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 9 10 4 20 4c0 10-5 16-15 15z"/><path d="M5 19c2-5 5-8 9-10"/></svg></span>
+          <div class="neo-bubble">うるおい傾向が高めです。<br>合うケアをご提案しますね</div>
+        </div>
+      </div>
+    </div>
+    <ul class="sr-hero-points">
+      <li>AIカルテで<br>施術を深く理解</li>
+      <li>LINEで<br>いつでもつながる</li>
+      <li>診断で<br>最適な提案をサポート</li>
+      <li>データで<br>サロンの未来を可視化</li>
+    </ul>
+    <p class="sr-note" style="margin-top: 20px;">※数値・画面はシミュレーションです。<br>実績を保証するものではありません。</p>
+  </section>
+
+  <section class="sr-section">
+    <h2>1人のお客様の物語</h2>
+    <p class="sr-lede">SalonRinkがつくる「また会いたくなる」体験</p>
+    <div class="sr-carousel" id="storyCar">
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-01.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">01</span><strong>初めての出会い</strong><p>来店前カウンセリングで不安を解消</p></div></article>
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-02.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">02</span><strong>AIで理解する</strong><p>5つの診断であなたを深く理解</p></div></article>
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-03.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">03</span><strong>最適な施術を提案</strong><p>AIカルテをもとに最適なメニューを</p></div></article>
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-04.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">04</span><strong>施術後もつながる</strong><p>LINEでアフターフォロー・相談</p></div></article>
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-05.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">05</span><strong>次回も楽しみに</strong><p>合った提案で次回予約につなぐ</p></div></article>
+      <article class="sr-story-card"><div class="sr-story-img"><img src="assets/story-06.png" alt=""></div><div class="sr-story-body"><span class="sr-story-no">06</span><strong>ファンになり、紹介</strong><p>信頼の積み重ねでサロンのファンに</p></div></article>
+    </div>
+    <div class="sr-dots" id="storyDots"></div>
+  </section>
+
+  <section class="sr-section" id="tech">
+    <h2>体験を支えるテクノロジー</h2>
+    <p class="sr-lede">横にスワイプして4つの機能をチェック</p>
+    <div class="sr-carousel sr-carousel-tech">
+      <article class="sr-tech-card sr-tech-card-swipe">
+        <div class="sr-tech-img">
+          <div class="neo-screen">
+            <div class="neo-panel">
+              <div class="neo-client">
+                <img class="neo-ava-img" src="assets/voice-owner-c.jpg" alt="">
+                <strong>佐藤 美咲 様<span class="sub">来店 12回 · 前回 5/20</span></strong>
+              </div>
+              <div class="neo-tagchips"><em>カラー履歴</em><em>敏感肌</em><em>くせ毛</em></div>
+              <div class="neo-entry"><b>5/20</b>カット+カラー。アッシュ系8トーン、頭皮弱め。</div>
+              <div class="neo-entry"><b>4/12</b>トリートメント。毛先の乾燥が改善傾向。</div>
+            </div>
+          </div>
+        </div>
+        <h3>AIカルテ（マイカルテ）</h3>
+        <p>すべての情報を一元管理。「今」と「未来」がすぐわかる。</p>
+        <div class="sr-chips"><span>施術履歴・経過管理</span><span>体質・アレルギー情報</span><span>提案・メモ</span></div>
+      </article>
+      <article class="sr-tech-card sr-tech-card-swipe">
+        <div class="sr-tech-img">
+          <div class="neo-screen">
+            <div class="neo-chat-row">
+              <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 9 10 4 20 4c0 10-5 16-15 15z"/><path d="M5 19c2-5 5-8 9-10"/></svg></span>
+              <div class="neo-bubble">本日はご来店ありがとうございました。仕上がりはいかがですか?</div>
+            </div>
+            <div class="neo-chat-row me"><div class="neo-bubble me">とても気に入りました!次回もお願いします</div></div>
+            <div class="neo-chat-row">
+              <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 9 10 4 20 4c0 10-5 16-15 15z"/><path d="M5 19c2-5 5-8 9-10"/></svg></span>
+              <div class="neo-bubble">次回のご予約は 7/2(木) がおすすめです</div>
+            </div>
+          </div>
+        </div>
+        <h3>LINEでつながる</h3>
+        <p>いつでも気軽に安心感を。信頼関係を深める。</p>
+        <div class="sr-chips"><span>来店通知</span><span>アフターフォロー</span><span>予約・リマインド</span></div>
+      </article>
+      <article class="sr-tech-card sr-tech-card-swipe">
+        <div class="sr-tech-img">
+          <div class="neo-screen">
+            <div class="neo-panel">
+              <div class="neo-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M3 12h18"/></svg> 5つのAIビューティ診断</div>
+              <div class="neo-meters">
+                <div class="neo-meter"><span class="lbl">肌診断</span><span class="track"><span class="fill" style="width:76%"></span></span><span class="val">76%</span></div>
+                <div class="neo-meter"><span class="lbl">髪質診断</span><span class="track"><span class="fill" style="width:88%"></span></span><span class="val">88%</span></div>
+                <div class="neo-meter"><span class="lbl">DNA</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="val">82%</span></div>
+                <div class="neo-meter"><span class="lbl">頭皮</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="val">64%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <h3>5つのAIビューティ診断</h3>
+        <p>一人ひとりに合わせた最適な提案を実現。</p>
+        <div class="sr-chips"><span>肌診断</span><span>髪質診断</span><span>Beauty DNA診断</span></div>
+      </article>
+      <article class="sr-tech-card sr-tech-card-swipe">
+        <div class="sr-tech-img">
+          <div class="neo-screen">
+            <div class="neo-panel">
+              <div class="neo-panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V14M10 20V9M16 20v-7M22 20H2"/></svg> 今週のサロン</div>
+              <div class="neo-kpis">
+                <div class="neo-kpi"><strong>128人</strong><span>来客数</span></div>
+                <div class="neo-kpi"><strong>68%</strong><span>リピート率</span></div>
+              </div>
+              <div class="neo-bars">
+                <span class="neo-bar" style="height:38%"></span><span class="neo-bar" style="height:55%"></span><span class="neo-bar" style="height:44%"></span><span class="neo-bar" style="height:70%"></span><span class="neo-bar" style="height:62%"></span><span class="neo-bar" style="height:86%"></span><span class="neo-bar" style="height:78%"></span>
+              </div>
+              <div class="neo-days"><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span><span>日</span></div>
+            </div>
+          </div>
+        </div>
+        <h3>美容師ダッシュボード</h3>
+        <p>サロンの「今」を見える化し、未来の戦略をサポート。</p>
+        <div class="sr-chips"><span>売上・来客管理</span><span>リピート分析</span><span>KPI管理</span></div>
+      </article>
+    </div>
+    <p class="sr-note">※画面はイメージです。</p>
+  </section>
+
+  <section class="sr-section sr-section-tint">
+    <h2>SalonRinkで、サロンはこう変わる</h2>
+    <div class="sr-benefit-grid">
+      <div class="sr-benefit-card"><strong>カルテがラクに</strong><p>紙やExcel管理から解放。探す・書く・共有の時間を削減。</p></div>
+      <div class="sr-benefit-card"><strong>提案がラクに</strong><p>AIが最適な提案をサポート。自信を持っておすすめ。</p></div>
+      <div class="sr-benefit-card"><strong>リピートが増える</strong><p>LINEフォローと提案で「また来たい」をつくる。</p></div>
+      <div class="sr-benefit-card"><strong>売上・生産性UP</strong><p>データ活用で売上UPと効率化を同時に。</p></div>
+    </div>
+    <h2 style="margin-top: 38px;">信頼の循環が生まれる</h2>
+    <div class="cycle">
+      <div class="cycle-arc"><span>くり返す</span></div>
+      <div class="cycle-step"><span class="cycle-no">1</span><div><strong>深く理解する</strong><p>AIカルテと診断で、好みと変化を記録</p></div></div>
+      <div class="cycle-step"><span class="cycle-no">2</span><div><strong>提案が届く</strong><p>LINEでぴったりのケアを、ちょうどいいタイミングで</p></div></div>
+      <div class="cycle-step"><span class="cycle-no">3</span><div><strong>また会える</strong><p>次回予約・ご紹介につながる</p></div></div>
+    </div>
+  </section>
+
+  <section class="sr-section" id="voice">
+    <h2>導入サロンの声</h2>
+    <div class="sr-carousel sr-carousel-voice">
+      <article class="sr-voice-card">
+        <div class="sr-voice-head"><img src="assets/voice-owner-b.jpg" alt=""><strong>A社 美容室</strong></div>
+        <p>「AIカルテでお客様を深く理解でき、リピート傾向が向上。」</p>
+        <div class="sr-chips sr-chips-accent"><span>リピート UP</span><span>客単価 UP</span></div>
+      </article>
+      <article class="sr-voice-card">
+        <div class="sr-voice-head"><img src="assets/voice-owner-c.jpg" alt=""><strong>B社 美容室</strong></div>
+        <p>「スタッフ全員の情報共有が簡単になり、チームで成果を。」</p>
+        <div class="sr-chips sr-chips-accent"><span>客単価 UP</span><span>満足度 高</span></div>
+      </article>
+      <article class="sr-voice-card">
+        <div class="sr-voice-head"><img src="assets/voice-owner-d.jpg" alt=""><strong>C社 美容室</strong></div>
+        <p>「LINEフォロー自動化で、次回来店につながる実感。」</p>
+        <div class="sr-chips sr-chips-accent"><span>LINE開封 UP</span><span>再来 UP</span></div>
+      </article>
+    </div>
+    <p class="sr-note">※コメントはイメージです。効果には個人差があります。</p>
+  </section>
+
+  <section class="sr-section sr-section-tint">
+    <h2>選ばれる理由</h2>
+    <p class="sr-lede">他社サービスとの比較</p>
+    <div class="sr-compare">
+      <div class="sr-compare-head"><span></span><span class="sr-us">当社</span><span>A社</span><span>B社</span><span>C社</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">AIカルテ活用</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">△</span><span class="sr-mark">✕</span><span class="sr-mark">△</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">LINE連携</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">△</span><span class="sr-mark">△</span><span class="sr-mark">✕</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">AI診断</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">✕</span><span class="sr-mark">✕</span><span class="sr-mark">△</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">来店傾向最適化</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">△</span><span class="sr-mark">✕</span><span class="sr-mark">✕</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">ダッシュボード</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">△</span><span class="sr-mark">△</span><span class="sr-mark">△</span></div>
+      <div class="sr-compare-row"><span class="sr-compare-feat">代理店制度</span><span class="sr-mark sr-mark-us">○</span><span class="sr-mark">✕</span><span class="sr-mark">✕</span><span class="sr-mark">✕</span></div>
+    </div>
+  </section>
+
+  <section class="sr-section">
+    <h2>導入までの流れ</h2>
+    <ol class="sr-flow">
+      <li><span class="sr-flow-no">01</span><div><strong>無料トライアル</strong><p>14日間すべて体験</p></div><span class="flow-img"><img src="assets/story-01.png" alt=""></span></li>
+      <li><span class="sr-flow-no">02</span><div><strong>初期設定・データ移行</strong><p>専任サポートが案内</p></div><span class="flow-img"><img src="assets/tech-karte.png" alt=""></span></li>
+      <li><span class="sr-flow-no">03</span><div><strong>運用開始・サポート</strong><p>活用方法を継続支援</p></div><span class="flow-img"><img src="assets/story-04.png" alt=""></span></li>
+      <li><span class="sr-flow-no">04</span><div><strong>継続的な改善提案</strong><p>データで成長を加速</p></div><span class="flow-img"><img src="assets/tech-dashboard.png" alt=""></span></li>
+    </ol>
+  </section>
+
+  <section class="diag-hook" id="diagnosis">
+    <h2>30秒のAI診断</h2>
+    <p>4つの質問で、あなたのサロンの「のびしろ」をチェック。</p>
+    <a class="sr-btn sr-btn-ghost sr-btn-lg" href="diagnosis.html?ref=hook-diag">診断をはじめる ›</a>
+  </section>
+
+  <section class="sr-section sr-section-tint" id="price" style="padding-top: 0;">
+    <h2>料金プラン</h2>
+    <p class="sr-lede">規模に合わせて選べる3プラン</p>
+    <div class="sr-plans">
+      <div class="sr-plan"><strong>Light</strong><div class="sr-plan-price">¥1,980<small>/月</small></div></div>
+      <div class="sr-plan sr-plan-popular"><span class="sr-plan-badge">人気</span><strong>Standard</strong><div class="sr-plan-price">¥2,980<small>/月</small></div></div>
+      <div class="sr-plan"><strong>Premium</strong><div class="sr-plan-price">¥4,580<small>/月</small></div></div>
+    </div>
+    <p class="sr-note" style="text-align:center;">税込・初期費用0円・14日間無料</p>
+    <a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=price-trial" target="_blank" rel="noreferrer">無料で始める（14日間）</a>
+  </section>
+
+  <section class="sr-section" id="faq">
+    <h2>よくあるご質問</h2>
+    <div class="sr-faq" id="faqList">
+      <div class="sr-faq-item"><button><span>本当に14日間無料ですか？</span><span class="sr-faq-icon">+</span></button><p hidden>はい。初期費用0円で、期間中はすべての機能をお試しいただけます。</p></div>
+      <div class="sr-faq-item"><button><span>他システムからのデータ移行はできますか？</span><span class="sr-faq-icon">+</span></button><p hidden>専任サポートが移行をご案内します。</p></div>
+      <div class="sr-faq-item"><button><span>LINE公式アカウントは必要ですか？</span><span class="sr-faq-icon">+</span></button><p hidden>あると連携機能を最大限ご活用いただけます。</p></div>
+      <div class="sr-faq-item"><button><span>契約期間の縛りはありますか？</span><span class="sr-faq-icon">+</span></button><p hidden>月単位でご利用いただけます。</p></div>
+      <div class="sr-faq-item"><button><span>スタッフが使いこなせるか不安です。</span><span class="sr-faq-icon">+</span></button><p hidden>直感的なUIと操作サポートをご用意しています。</p></div>
+      <div class="sr-faq-item"><button><span>解約は簡単にできますか？</span><span class="sr-faq-icon">+</span></button><p hidden>管理画面からいつでも手続きいただけます。</p></div>
+    </div>
+  </section>
+
+  <section class="sr-final">
+    <h2>美容データを、あなたの手に。<br>美容師とお客様を、一生でつなぐ。</h2>
+    <p>まずは14日間、無料でお試しください。</p>
+    <a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=final-trial" target="_blank" rel="noreferrer">無料で始める（14日間）</a>
+    <a class="sr-link-sub" href="https://lin.ee/6hraAKM?ref=final-doc" target="_blank" rel="noreferrer">資料をLINEで受け取る ›</a>
+  </section>
+
+  <footer class="sr-footer">
+    <img src="assets/logo.png" alt="SalonRink Concierge">
+    <p>美容を、もっとあたたかく、もっと豊かに。</p>
+    <p class="sr-note">※本ページの数値・グラフ・お客様の声はシミュレーションまたはイメージであり、効果・実績を保証するものではありません。表示価格は税込です。提供：AOKAE合同会社。</p>
+  </footer>
+
+  <nav class="sr-neonav">
+    <a class="on" href="#" onclick="return false;">
+      <span class="sr-navicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span><span>ホーム</span>
+    </a>
+    <a href="diagnosis.html?ref=nav-diag">
+      <span class="sr-navicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="18" height="18"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span><span>AI診断</span>
+    </a>
+    <a href="#price">
+      <span class="sr-navicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span><span>料金</span>
+    </a>
+    <a class="sr-nav-cta" href="https://lin.ee/6hraAKM?ref=nav-trial" target="_blank" rel="noreferrer">
+      <span class="sr-navicon"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.03 3.58 7.4 8.42 8.04.33.07.78.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55 1.09-.46 5.87-3.46 8.01-5.92C21.57 13.31 22 11.78 22 10.13 22 5.64 17.52 2 12 2z"/></svg></span><span>無料で始める</span>
+    </a>
+  </nav>
+
+  <div class="sr-drawer-wrap" id="drawerWrap">
+    <div class="sr-drawer-scrim" id="drawerScrim"></div>
+    <div class="sr-drawer">
+      <div class="sr-drawer-top">
+        <img src="assets/logo.png" alt="SalonRink" style="height: 56px;">
+        <button class="sr-drawer-close" id="drawerClose">×</button>
+      </div>
+      <nav class="sr-drawer-nav">
+        <a href="#tech">機能一覧<span class="sr-chev">›</span></a>
+        <a href="#price">料金プラン<span class="sr-chev">›</span></a>
+        <a href="#faq">よくある質問<span class="sr-chev">›</span></a>
+        <a href="diagnosis.html?ref=menu-diag">AI診断（30秒）<span class="sr-chev">›</span></a>
+        <a href="ec.html?ref=menu-ec">オンラインストア<span class="sr-chev">›</span></a>
+      </nav>
+      <a class="sr-btn sr-btn-line" href="https://lin.ee/6hraAKM?ref=menu-trial" target="_blank" rel="noreferrer">無料で始める（14日間）</a>
+    </div>
+  </div>
+
+</div>
+<script>
+// ドロワー
+(function () {
+  var wrap = document.getElementById('drawerWrap');
+  document.getElementById('menuBtn').addEventListener('click', function () { wrap.classList.add('open'); });
+  document.getElementById('drawerClose').addEventListener('click', function () { wrap.classList.remove('open'); });
+  document.getElementById('drawerScrim').addEventListener('click', function () { wrap.classList.remove('open'); });
+  wrap.querySelectorAll('.sr-drawer-nav a').forEach(function (a) {
+    a.addEventListener('click', function () { wrap.classList.remove('open'); });
+  });
+})();
+
+// ストーリーカルーセルのドット
+(function () {
+  var car = document.getElementById('storyCar');
+  var dots = document.getElementById('storyDots');
+  var n = car.children.length;
+  for (var i = 0; i < n; i++) { dots.appendChild(document.createElement('span')); }
+  function update() {
+    var i = Math.round(car.scrollLeft / (car.scrollWidth / n));
+    i = Math.max(0, Math.min(n - 1, i));
+    Array.prototype.forEach.call(dots.children, function (d, j) { d.classList.toggle('on', j === i); });
+  }
+  car.addEventListener('scroll', update, { passive: true });
+  update();
+})();
+
+// FAQアコーディオン
+(function () {
+  document.querySelectorAll('#faqList .sr-faq-item').forEach(function (item) {
+    var btn = item.querySelector('button');
+    var p = item.querySelector('p');
+    var icon = item.querySelector('.sr-faq-icon');
+    btn.addEventListener('click', function () {
+      var open = !p.hidden;
+      document.querySelectorAll('#faqList .sr-faq-item p').forEach(function (x) { x.hidden = true; });
+      document.querySelectorAll('#faqList .sr-faq-icon').forEach(function (x) { x.textContent = '+'; });
+      p.hidden = open;
+      icon.textContent = open ? '+' : '−';
+    });
+  });
+})();
+
+// ============ LINE導線: ?ref= をページ間・LINE CTAまで引き継ぐ(モック) ============
+(function () {
+  var ref = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    ref = q.get('ref');
+    if (ref) { sessionStorage.setItem('sr-ref', ref); }
+    else { ref = sessionStorage.getItem('sr-ref'); }
+  } catch (e) {}
+  window.SR_REF = ref || '';
+  if (!window.SR_REF) { return; }
+  document.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') { return; }
+    try {
+      var url = new URL(href, location.href);
+      var cur = url.searchParams.get('ref');
+      url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF);
+      a.href = url.toString();
+    } catch (e) {}
+  });
+})();
+</script>
+</body>
+</html>

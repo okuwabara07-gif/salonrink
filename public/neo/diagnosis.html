@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink AI診断 — のびしろチェック（ニューモーフィズム）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+<style>
+  .sr.sr-page { display: flex; flex-direction: column; padding-bottom: 40px; }
+  .dx-screen { flex: 1; }
+</style>
+</head>
+<body>
+<div class="sr sr-page" id="app" data-screen-label="AI診断（ニューモーフィズム）">
+
+  <div class="demo-bar">
+    <a href="index.html">ホーム</a>
+    <a href="ec.html">ストア</a>
+    <a class="on" href="diagnosis.html">のびしろ診断</a>
+    <a href="photo.html">写真AI診断</a>
+    <a href="miniapp.html">ミニアプリ</a>
+    <a href="mycarte.html">マイカルテ</a>
+  </div>
+
+  <header class="sr-header" style="justify-content: center;">
+    <img class="sr-logo" src="assets/logo.png" alt="SalonRink Concierge">
+  </header>
+
+  <div class="dx-progress" id="progressWrap" style="visibility:hidden;">
+    <div class="dx-track"><div class="dx-fill" id="progressFill"></div></div>
+    <div class="dx-plabel" id="progressLabel"></div>
+  </div>
+
+  <!-- イントロ -->
+  <section class="dx-screen dx-intro on" id="scrIntro" data-screen-label="診断イントロ">
+    <div><span class="dx-badge">サロン向け AI診断</span></div>
+    <h1>あなたのサロンの<br>「のびしろ」チェック</h1>
+    <p>4つの質問に答えるだけで、サロンの強みと、まだ眠っている可能性がわかります。</p>
+    <div class="dx-meta">
+      <span>所要 約30秒</span>
+      <span>全4問</span>
+      <span>無料</span>
+    </div>
+    <button class="sr-btn sr-btn-line sr-btn-lg" id="startBtn">診断をはじめる</button>
+    <p class="sr-note" style="text-align:center;">※結果はシミュレーションです。<br>実績・効果を保証するものではありません。</p>
+  </section>
+
+  <!-- 質問 -->
+  <section class="dx-screen" id="scrQ" data-screen-label="診断 質問"></section>
+
+  <!-- 結果 -->
+  <section class="dx-screen" id="scrResult" data-screen-label="診断 結果"></section>
+
+</div>
+<script>
+// ============ 質問定義（フック→悩み→現状→希望） ============
+const QUESTIONS = [
+  { q: 'いま、いちばん気になることは?', opts: ['リピート率を上げたい', '客単価を上げたい', '新規のお客様を増やしたい', '事務作業を減らしたい'] },
+  { q: 'カルテの管理は、いまどうしていますか?', opts: ['紙のカルテ', 'Excel・スプレッドシート', '他社のアプリ・POS', 'ほぼ記憶が頼り'] },
+  { q: '施術後のアフターフォローは?', opts: ['毎回欠かさずしている', 'たまにしている', 'ほとんどできていない'] },
+  { q: '理想のサロン像にいちばん近いのは?', opts: ['ファンに愛されるサロン', '売上がしっかり伸びるサロン', 'スタッフが疲弊しないサロン'] },
+];
+
+// ============ 結果ロジック（モック：リポジトリ側で差し替え） ============
+function calcResult(answers) {
+  const seed = answers.reduce((s, a) => s + a, 0);
+  const TYPES = [
+    { name: 'ファンづくり のびしろタイプ', copy: 'お客様との関係づくりに大きな伸びしろ。LINEのつながりを足すだけで「また会いたい」が増えていきます。',
+      scores: { つながり: 48, データ活用: 62, 提案力: 70, 効率化: 58 }, suggest: ['line', 'karte'], items: ['cap', 'oil'] },
+    { name: 'データ活用 のびしろタイプ', copy: '日々の施術に眠るデータが宝の山。AIカルテで「なんとなく」を「確信」に変えられます。',
+      scores: { つながり: 66, データ活用: 42, 提案力: 60, 効率化: 64 }, suggest: ['karte', 'dash'], items: ['scalp', 'shampoo'] },
+    { name: '提案力 のびしろタイプ', copy: '信頼はもう十分。AI診断を添えるだけで、提案の説得力がぐっと上がるタイプです。',
+      scores: { つながり: 72, データ活用: 58, 提案力: 45, 効率化: 62 }, suggest: ['diag', 'karte'], items: ['oil', 'treat'] },
+    { name: '効率化 のびしろタイプ', copy: 'がんばりで回している状態。記録と連絡を自動化すれば、接客に使える時間が戻ってきます。',
+      scores: { つながり: 64, データ活用: 56, 提案力: 66, 効率化: 40 }, suggest: ['dash', 'line'], items: ['set', 'mist'] },
+  ];
+  return TYPES[seed % TYPES.length];
+}
+
+const FEATURES = {
+  line: { name: 'LINEでつながる', desc: '来店通知・アフターフォロー・リマインドを自動で。',
+    icon: '<svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.03 3.58 7.4 8.42 8.04.33.07.78.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55 1.09-.46 5.87-3.46 8.01-5.92C21.57 13.31 22 11.78 22 10.13 22 5.64 17.52 2 12 2z"/></svg>' },
+  karte: { name: 'AIカルテ', desc: '施術履歴・体質・提案メモを一元管理。',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>' },
+  diag: { name: '5つのAI診断', desc: '肌・髪質・Beauty DNAで提案に根拠を。',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>' },
+  dash: { name: 'ダッシュボード', desc: '売上・リピートを見える化、KPIを管理。',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="22" height="22"><path d="M4 20V14M10 20V9M16 20v-7M22 20H2"/></svg>' },
+};
+
+// ストアの代表商品(診断結果に自動表示するミニカード用)
+const STORE_ITEMS = {
+  oil:     { name: 'コンシェルジュ ヘアオイル', price: 3520, initial: 'オ' },
+  shampoo: { name: 'モイスト シャンプー', price: 2860, initial: 'シ' },
+  treat:   { name: 'リペア トリートメント', price: 3080, initial: 'ト' },
+  scalp:   { name: 'スカルプセラム', price: 4180, initial: 'セ' },
+  mist:    { name: 'モーニング ヘアミスト', price: 2420, initial: 'ミ' },
+  set:     { name: 'トラベルセット', price: 3960, initial: 'セ' },
+  cap:     { name: 'シルク ナイトキャップ', price: 2200, initial: 'ナ' },
+};
+const dxYen = (n) => '¥' + n.toLocaleString('ja-JP');
+
+// ============ ウィザード制御 ============
+const state = { step: -1, answers: [] };
+const scrIntro = document.getElementById('scrIntro');
+const scrQ = document.getElementById('scrQ');
+const scrResult = document.getElementById('scrResult');
+const progressWrap = document.getElementById('progressWrap');
+
+function show(el) {
+  [scrIntro, scrQ, scrResult].forEach((s) => s.classList.remove('on'));
+  el.classList.add('on');
+  window.scrollTo(0, 0);
+}
+function setProgress() {
+  const total = QUESTIONS.length;
+  const done = Math.max(0, state.step);
+  progressWrap.style.visibility = state.step >= 0 && state.step < total ? 'visible' : 'hidden';
+  document.getElementById('progressFill').style.width = (done / total * 100) + '%';
+  document.getElementById('progressLabel').textContent = 'Q' + Math.min(total, done + 1) + ' / ' + total;
+}
+function renderQuestion() {
+  const i = state.step;
+  const q = QUESTIONS[i];
+  scrQ.innerHTML =
+    '<span class="dx-qno">Q' + (i + 1) + '</span>' +
+    '<h2 class="dx-qtitle">' + q.q + '</h2>' +
+    '<div class="dx-opts">' + q.opts.map((o, j) =>
+      '<button class="dx-opt" data-j="' + j + '"><span class="k">' + 'ABCD'[j] + '</span>' + o + '</button>'
+    ).join('') + '</div>' +
+    '<button class="dx-back" id="qBack">‹ ' + (i === 0 ? 'はじめにもどる' : 'ひとつ前にもどる') + '</button>';
+  scrQ.querySelectorAll('.dx-opt').forEach((b) =>
+    b.addEventListener('click', () => {
+      b.classList.add('picked');
+      state.answers[i] = +b.dataset.j;
+      setTimeout(next, 240);
+    }));
+  document.getElementById('qBack').addEventListener('click', back);
+  setProgress();
+  show(scrQ);
+}
+function next() {
+  state.step++;
+  if (state.step >= QUESTIONS.length) { renderResult(); } else { renderQuestion(); }
+}
+function back() {
+  state.step--;
+  if (state.step < 0) { state.step = -1; setProgress(); show(scrIntro); } else { renderQuestion(); }
+}
+document.getElementById('startBtn').addEventListener('click', () => { state.step = 0; state.answers = []; renderQuestion(); });
+
+// ============ LINE導線: ?ref= を引き継ぐ(モック) ============
+// ※本診断はサロンオーナー向け「のびしろ診断」→ CTAは友だち追加(lin.ee)。
+//   エンドユーザー向け美容診断(肌/髪質/DNA)はLIFFミニアプリ側で別実装。
+(function () {
+  var ref = null;
+  try {
+    var q = new URLSearchParams(location.search);
+    ref = q.get('ref');
+    if (ref) { sessionStorage.setItem('sr-ref', ref); }
+    else { ref = sessionStorage.getItem('sr-ref'); }
+  } catch (e) {}
+  window.SR_REF = ref || '';
+})();
+function applyRef(scope) {
+  if (!window.SR_REF) { return; }
+  scope.querySelectorAll('a[href]').forEach(function (a) {
+    var href = a.getAttribute('href');
+    if (!href || href.charAt(0) === '#') { return; }
+    try {
+      var url = new URL(href, location.href);
+      var cur = url.searchParams.get('ref');
+      if (cur && cur.indexOf('__') !== -1) { return; }
+      url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF);
+      a.href = url.toString();
+    } catch (e) {}
+  });
+}
+applyRef(document);
+
+// ============ 結果 ============
+function renderResult() {
+  setProgress();
+  const r = calcResult(state.answers);
+  // EC連携: おすすめ物販をストア側で表示できるように保存(モック)
+  try { localStorage.setItem('sr-diag-reco', JSON.stringify({ type: r.name, items: r.items })); } catch (e) {}
+  scrResult.innerHTML =
+    '<div class="dx-rhead">' +
+      '<span class="dx-badge">診断結果</span>' +
+      '<h1 class="dx-type">' + r.name + '</h1>' +
+      '<p class="dx-copy">' + r.copy + '</p>' +
+    '</div>' +
+    '<div class="neo-panel" style="padding: 16px 16px 12px;">' +
+      '<div class="neo-panel-title">SALON SCORE</div>' +
+      '<div class="neo-meters">' +
+      Object.entries(r.scores).map(([k, v]) =>
+        '<div class="neo-meter"><span class="lbl">' + k + '</span><span class="track"><span class="fill" data-v="' + v + '" style="width:0%"></span></span><span class="val">' + v + '%</span></div>'
+      ).join('') + '</div>' +
+      '<p class="sr-note">※スコアはシミュレーションです。</p>' +
+    '</div>' +
+    '<h2 style="font-size: 15px; font-weight: 900; margin: 24px 0 14px;">あなたのサロンに効く機能</h2>' +
+    '<div class="sr-featlist" style="margin-top: 0;">' + r.suggest.map((key) => {
+      const f = FEATURES[key];
+      return '<div class="sr-feat-row"><span class="sr-feat-icon">' + f.icon + '</span><div><strong>' + f.name + '</strong><p>' + f.desc + '</p></div></div>';
+    }).join('') + '</div>' +
+    '<h2 style="font-size: 15px; font-weight: 900; margin: 24px 0 14px;">おすすめの物販アイテム</h2>' +
+    '<div class="ec-reco" style="margin: 0; padding-top: 12px;"><div class="rail">' +
+      r.items.map((id) => {
+        const s = STORE_ITEMS[id];
+        if (!s) { return ''; }
+        return '<a class="ec-card" style="flex: 0 0 126px; text-decoration: none;" href="ec.html?ref=diag-reco">' +
+          '<div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div>' +
+          '<span class="ec-name">' + s.name + '</span>' +
+          '<span class="ec-price">' + dxYen(s.price) + '<small>（税込）</small></span></a>';
+      }).join('') +
+    '</div></div>' +
+    '<div class="dx-cta">' +
+      '<a class="sr-btn sr-btn-line sr-btn-lg" href="https://lin.ee/6hraAKM?ref=diag-result-doc" target="_blank" rel="noreferrer">LINEで詳しい結果を受け取る</a>' +
+      '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=diag-store">おすすめ物販アイテムを見る</a>' +
+      '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="https://lin.ee/6hraAKM?ref=diag-result-trial" target="_blank" rel="noreferrer">14日間 無料で始める</a>' +
+      '<button class="sr-btn sr-btn-ghost sr-btn-lg" id="saveBtn">カルテに保存する</button>' +
+    '</div>' +
+    '<button class="dx-back" id="retryBtn">もう一度診断する</button>' +
+    '<p class="sr-note">※結果・スコアはシミュレーションであり、実績・効果を保証するものではありません。提供：AOKAE合同会社。</p>';
+  document.getElementById('retryBtn').addEventListener('click', () => { state.step = -1; state.answers = []; setProgress(); show(scrIntro); });
+  document.getElementById('saveBtn').addEventListener('click', function () {
+    this.textContent = '保存しました（モック）';
+    this.disabled = true;
+  });
+  show(scrResult);
+  applyRef(scrResult);
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      scrResult.querySelectorAll('.fill').forEach((f) => { f.style.width = f.dataset.v + '%'; });
+    }, 60);
+  });
+}
+</script>
+</body>
+</html>

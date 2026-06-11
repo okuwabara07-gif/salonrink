@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SalonRink 写真AI診断 — 髪の今をチェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="salonrink-neo.css">
+<link rel="stylesheet" href="salonrink-neo-page.css">
+<style>
+  .sr.sr-page { display: flex; flex-direction: column; padding-bottom: 40px; }
+  .dx-screen { flex: 1; }
+  /* 実装追加: ケアの目安リスト */
+  .px-tips { list-style: none; margin: 0 0 8px; padding: 0; display: grid; gap: 8px; }
+  .px-tips li { position: relative; padding: 12px 14px 12px 34px; border-radius: 14px; background: #FEFEFD; box-shadow: 0 6px 14px var(--neo-dark); font-size: 13.5px; line-height: 1.7; color: var(--sr-ink); }
+  .px-tips li::before { content: ""; position: absolute; left: 14px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: var(--sr-grad); }
+  .px-h2 { font-size: 15px; font-weight: 900; margin: 24px 0 14px; color: var(--sr-ink); }
+  /* 実装追加: 合言葉コード */
+  .px-code-box { margin: 22px 0 6px; padding: 18px 16px; border-radius: 18px; background: var(--neo-bg); box-shadow: inset 4px 4px 8px var(--neo-dark), inset -4px -4px 8px var(--neo-light); text-align: center; }
+  .px-code-lead { font-size: 12.5px; font-weight: 700; color: var(--sr-accent-ink); margin: 0 0 10px; }
+  .px-code { font-family: 'Caveat', cursive; font-weight: 700; font-size: 38px; letter-spacing: 6px; color: var(--sr-ink); background: #FEFEFD; border-radius: 12px; padding: 6px 4px; box-shadow: 0 6px 14px var(--neo-dark); }
+  .px-code-copy { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--sr-accent-ink); background: none; border: none; cursor: pointer; text-decoration: underline; }
+  .px-code-help { font-size: 11px; color: var(--sr-muted); margin: 10px 4px 0; line-height: 1.6; }
+  /* 実装追加: エラー表示 */
+  #pxError { display: none; margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #FBEDEA; color: #93482F; font-size: 13px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="sr sr-page" id="app" data-screen-label="写真AI診断">
+
+  <p class="liff-note">無料・登録なしでお試しいただけます</p>
+
+  <header class="sr-header" style="justify-content: center;">
+    <img class="sr-logo" src="assets/logo.png" alt="SalonRink Concierge">
+  </header>
+
+  <!-- イントロ -->
+  <section class="dx-screen dx-intro on" id="scrIntro" data-screen-label="写真診断 イントロ">
+    <div><span class="dx-badge">写真AI診断</span></div>
+    <h1>写真でわかる、<br>髪の「今」の傾向。</h1>
+    <p>1枚撮るだけで、髪の見た目の傾向と、合うケアの目安をお届けします。</p>
+    <div class="dx-meta">
+      <span>撮影して約30秒</span>
+      <span>無料</span>
+    </div>
+    <button class="sr-btn sr-btn-line sr-btn-lg" id="startBtn">無料で診断する</button>
+    <p class="sr-note" style="text-align:center;">※AIによる髪の「見た目の傾向」とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
+  </section>
+
+  <!-- 撮り方ガイド + カメラ -->
+  <section class="dx-screen" id="scrGuide" data-screen-label="写真診断 撮り方ガイド">
+    <span class="dx-qno">撮り方</span>
+    <h2 class="dx-qtitle">きれいに撮れると、<br>結果の目安も正確に。</h2>
+    <div id="pxError"></div>
+    <div class="px-guide">
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></span>
+        <div><strong>明るい場所で</strong><p>自然光がいちばんきれいに写ります。逆光は避けて。</p></div>
+      </div>
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+        <div><strong>髪全体が入るように</strong><p>頭頂部から毛先まで。肩より少し引いた距離が目安。</p></div>
+      </div>
+      <div class="px-guide-row">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg></span>
+        <div><strong>後ろ向きもOK</strong><p>うしろ姿の1枚でも傾向をチェックできます。</p></div>
+      </div>
+    </div>
+    <label class="sr-btn sr-btn-line sr-btn-lg px-camera">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg>
+      カメラで撮影する
+      <input type="file" accept="image/*" capture="user" id="cameraInput">
+    </label>
+    <label class="sr-btn sr-btn-ghost sr-btn-lg px-camera" style="margin-top: 12px;">
+      アルバムから選ぶ
+      <input type="file" accept="image/*" id="albumInput">
+    </label>
+    <button class="dx-back" id="guideBack">‹ はじめにもどる</button>
+    <p class="sr-note">撮影・送信はご本人の同意のもとで行われます。顔が写った写真はトリミングを推奨します。画像は結果表示のためにのみ使用し、保持は最小限にとどめます。</p>
+  </section>
+
+  <!-- プレビュー -->
+  <section class="dx-screen dx-intro" id="scrPreview" data-screen-label="写真診断 プレビュー">
+    <div><span class="dx-badge">プレビュー</span></div>
+    <h1 style="font-size: 21px;">この写真で進めますか?</h1>
+    <div class="px-preview"><img id="previewImg" alt="撮影した写真のプレビュー"></div>
+    <button class="sr-btn sr-btn-line sr-btn-lg" id="analyzeBtn">この写真で診断する</button>
+    <label class="sr-btn sr-btn-ghost sr-btn-lg px-camera" style="margin-top: 12px;">
+      撮り直す
+      <input type="file" accept="image/*" capture="user" id="retakeInput">
+    </label>
+  </section>
+
+  <!-- ローディング -->
+  <section class="dx-screen" id="scrLoading" data-screen-label="写真診断 解析中">
+    <div class="px-loading">
+      <div class="px-spin"></div>
+      <p>髪の傾向を解析しています…</p>
+    </div>
+  </section>
+
+  <!-- 結果 -->
+  <section class="dx-screen" id="scrResult" data-screen-label="写真診断 結果"></section>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ============ 本番API（差し替え完了） ============
+  var ENDPOINT = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose';
+  var LINE_ADD = 'https://lin.ee/6hraAKM';
+
+  function byId(id) { return document.getElementById(id); }
+
+  // 匿名セッションID（同一画像の再診断防止・レート管理用。サーバ側で使用）
+  function sessionId() {
+    try {
+      var k = 'sr-session-id', s = localStorage.getItem(k);
+      if (!s) { s = 'web-' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem(k, s); }
+      return s;
+    } catch (e) { return 'web-' + Date.now(); }
+  }
+
+  // 流入ref（?ref= を sessionStorage に保持しLINE導線へ連結）
+  var SR_REF = '';
+  try {
+    var q = new URLSearchParams(location.search);
+    var r = q.get('ref');
+    if (r) { sessionStorage.setItem('sr-ref', r); }
+    SR_REF = r || sessionStorage.getItem('sr-ref') || '';
+  } catch (e) {}
+
+  // scores: サーバ(英語キー) → 表示(日本語ラベル)
+  var SCORE_KEYS = ['tsuya', 'matomari', 'uruoi', 'volume', 'hari_koshi'];
+  var SCORE_LABELS = { tsuya: 'ツヤ', matomari: 'まとまり', uruoi: 'うるおい', volume: 'ボリューム', hari_koshi: 'ハリ・コシ' };
+  function toRadar(scores) {
+    var o = {};
+    SCORE_KEYS.forEach(function (k) {
+      var v = Number(scores && scores[k]);
+      o[SCORE_LABELS[k]] = isFinite(v) ? Math.max(0, Math.min(100, v)) : 50;
+    });
+    return o;
+  }
+
+  // 最低スコア軸 → 合いそうなケア（商品はイメージ。後日 products に差し替え）
+  var PX_TYPES = {
+    'ツヤ': { items: ['oil', 'mist'] }, 'まとまり': { items: ['treat', 'oil'] }, 'うるおい': { items: ['shampoo', 'treat'] },
+    'ボリューム': { items: ['scalp', 'shampoo'] }, 'ハリ・コシ': { items: ['scalp', 'treat'] }
+  };
+  var PX_STORE = {
+    oil: { name: 'コンシェルジュ ヘアオイル', price: 3520, initial: 'オ' },
+    shampoo: { name: 'モイスト シャンプー', price: 2860, initial: 'シ' },
+    treat: { name: 'リペア トリートメント', price: 3080, initial: 'ト' },
+    scalp: { name: 'スカルプセラム', price: 4180, initial: 'セ' },
+    mist: { name: 'モーニング ヘアミスト', price: 2420, initial: 'ミ' }
+  };
+  var yen = function (n) { return '¥' + Number(n).toLocaleString('ja-JP'); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  // ============ 画面制御 ============
+  var screens = {
+    intro: byId('scrIntro'), guide: byId('scrGuide'), preview: byId('scrPreview'),
+    loading: byId('scrLoading'), result: byId('scrResult')
+  };
+  function show(key) {
+    Object.keys(screens).forEach(function (k) { screens[k].classList.remove('on'); });
+    screens[key].classList.add('on');
+    window.scrollTo(0, 0);
+  }
+
+  var pickedFile = null, photoURL = null;
+  byId('startBtn').addEventListener('click', function () { hideError(); show('guide'); });
+  byId('guideBack').addEventListener('click', function () { show('intro'); });
+
+  function onPick(input) {
+    input.addEventListener('change', function () {
+      var f = input.files && input.files[0];
+      if (!f) { return; }
+      pickedFile = f;
+      if (photoURL) { URL.revokeObjectURL(photoURL); }
+      photoURL = URL.createObjectURL(f);
+      byId('previewImg').src = photoURL;
+      show('preview');
+    });
+  }
+  onPick(byId('cameraInput'));
+  onPick(byId('albumInput'));
+  onPick(byId('retakeInput'));
+
+  function hideError() { var b = byId('pxError'); if (b) { b.style.display = 'none'; b.textContent = ''; } }
+  function showError(msg) { var b = byId('pxError'); if (b) { b.textContent = msg; b.style.display = 'block'; } }
+
+  // File → base64（dataURIの接頭辞を除去）
+  function fileToB64(file) {
+    return new Promise(function (res, rej) {
+      var r = new FileReader();
+      r.onload = function () { var s = String(r.result); var i = s.indexOf(','); res({ data: i >= 0 ? s.slice(i + 1) : s, media_type: file.type || 'image/jpeg' }); };
+      r.onerror = function () { rej(new Error('画像の読み込みに失敗しました')); };
+      r.readAsDataURL(file);
+    });
+  }
+
+  // 実API呼び出し（hair-diagnose）
+  function analyze(file) {
+    return fileToB64(file).then(function (b) {
+      return fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ image: b.data, media_type: b.media_type, session_id: sessionId(), consent_stats: true, consent_photo: true })
+      });
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (j) {
+        if (!res.ok) {
+          var fallback = { forbidden_origin: 'このページからは診断できません', parse_failed: '解析に失敗しました。もう一度お試しください。' };
+          var msg = j.message || fallback[j.error] || (res.status === 413 ? '画像が大きすぎます（5MB以下にしてください）' : '診断に失敗しました。時間をおいてお試しください。');
+          var err = new Error(msg); err.status = res.status; throw err;
+        }
+        return j; // { ok, result:{scores,type,comment,care_tips}, share_code }
+      });
+    });
+  }
+
+  byId('analyzeBtn').addEventListener('click', function () {
+    if (!pickedFile) { show('guide'); return; }
+    hideError();
+    show('loading');
+    analyze(pickedFile).then(function (resp) {
+      renderResult(resp);
+    }).catch(function (e) {
+      show('guide');
+      showError(e.message || '診断に失敗しました。時間をおいてお試しください。');
+    });
+  });
+
+  // ============ レーダーチャート(SVG) ============
+  function radarSVG(scores) {
+    var keys = Object.keys(scores);
+    var cx = 130, cy = 120, R = 78;
+    function pt(i, r) { var a = -Math.PI / 2 + (i * 2 * Math.PI) / keys.length; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
+    function ring(ratio) { return keys.map(function (_, i) { return pt(i, R * ratio).map(function (v) { return v.toFixed(1); }).join(','); }).join(' '); }
+    var valuePoly = keys.map(function (k, i) { return pt(i, R * (scores[k] / 100)).map(function (v) { return v.toFixed(1); }).join(','); }).join(' ');
+    var labels = keys.map(function (k, i) { var p = pt(i, R + 22); return '<text x="' + p[0].toFixed(1) + '" y="' + (p[1] + 4).toFixed(1) + '" text-anchor="middle">' + k + '</text>'; }).join('');
+    var axes = keys.map(function (_, i) { var p = pt(i, R); return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0].toFixed(1) + '" y2="' + p[1].toFixed(1) + '" stroke="rgba(186,166,150,0.45)" stroke-width="1"/>'; }).join('');
+    return '<svg width="260" height="244" viewBox="0 0 260 244" role="img" aria-label="髪の傾向チャート">' +
+      [1, 0.66, 0.33].map(function (r) { return '<polygon points="' + ring(r) + '" fill="none" stroke="rgba(186,166,150,0.5)" stroke-width="1"/>'; }).join('') +
+      axes +
+      '<polygon points="' + valuePoly + '" fill="rgba(192,107,79,0.30)" stroke="#C06B4F" stroke-width="2" stroke-linejoin="round"/>' +
+      keys.map(function (k, i) { var p = pt(i, R * (scores[k] / 100)); return '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="3.5" fill="#C06B4F"/>'; }).join('') +
+      labels + '</svg>';
+  }
+
+  // ============ 結果（実データ） ============
+  function renderResult(resp) {
+    var result = (resp && resp.result) || {};
+    var share = (resp && resp.share_code) || '';
+    var scores = toRadar(result.scores || {});
+    var type = result.type || 'あなたの髪タイプ';
+    var comment = result.comment || '';
+    var tips = Array.isArray(result.care_tips) ? result.care_tips : [];
+    var lowest = Object.keys(scores).reduce(function (a, b) { return scores[a] <= scores[b] ? a : b; });
+    var items = (PX_TYPES[lowest] && PX_TYPES[lowest].items) || ['oil', 'treat'];
+
+    var tipsHTML = tips.length ? ('<h2 class="px-h2">おすすめのケアの目安</h2><ul class="px-tips">' + tips.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ul>') : '';
+
+    var productsHTML = '<h2 class="px-h2">合いそうなケア</h2><div class="ec-reco" style="margin:0;padding-top:12px;"><div class="rail">' +
+      items.map(function (id) {
+        var s = PX_STORE[id];
+        return '<a class="ec-card" style="flex:0 0 126px;text-decoration:none;" href="ec.html?ref=photo-reco">' +
+          '<div class="ec-thumb">' + s.initial + '<small>PHOTO</small></div>' +
+          '<span class="ec-name">' + esc(s.name) + '</span>' +
+          '<span class="ec-price">' + yen(s.price) + '<small>（税込）</small></span></a>';
+      }).join('') +
+      '</div></div>';
+
+    var codeHTML = share ? (
+      '<div class="px-code-box">' +
+        '<p class="px-code-lead">この結果をLINEで受け取る・カルテに保存</p>' +
+        '<div class="px-code" id="shareCode">' + esc(share) + '</div>' +
+        '<button class="px-code-copy" id="copyCode">コードをコピー</button>' +
+        '<p class="px-code-help">LINEで「SalonRink」を友だち追加し、この6桁を送ると、結果カードが届いてマイカルテに残せます。</p>' +
+      '</div>'
+    ) : '';
+
+    var lineHref = LINE_ADD + (SR_REF ? ('?ref=photo-result__' + encodeURIComponent(SR_REF)) : '?ref=photo-result');
+
+    screens.result.innerHTML =
+      '<div class="dx-rhead">' +
+        '<span class="dx-badge">結果（目安）</span>' +
+        '<h1 class="dx-type">' + esc(type) + '</h1>' +
+        (comment ? '<p class="dx-copy">' + esc(comment) + '</p>' : '') +
+      '</div>' +
+      '<div class="neo-panel" style="padding:14px 10px 6px;">' +
+        '<div class="neo-panel-title" style="padding-left:8px;">HAIR BALANCE</div>' +
+        '<div class="px-radar">' + radarSVG(scores) + '</div>' +
+      '</div>' +
+      tipsHTML +
+      productsHTML +
+      codeHTML +
+      '<div class="dx-cta">' +
+        '<a class="sr-btn sr-btn-line sr-btn-lg" href="' + lineHref + '" target="_blank" rel="noreferrer">LINEで結果を受け取る</a>' +
+        '<a class="sr-btn sr-btn-ghost sr-btn-lg" href="ec.html?ref=photo-store">合いそうなケアをストアで見る</a>' +
+      '</div>' +
+      '<button class="dx-back" id="retryBtn">もう一度撮影する</button>' +
+      '<p class="sr-note">※AIによる髪の「見た目の傾向」とケアの目安です。結果はイメージであり、状態・効果を保証するものではありません。商品はイメージを含みます。提供：AOKAE合同会社。</p>';
+
+    var copyBtn = byId('copyCode');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var t = share;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(t).then(function () { copyBtn.textContent = 'コピーしました'; });
+          } else { throw new Error('no clipboard'); }
+        } catch (e) {
+          var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); copyBtn.textContent = 'コピーしました'; } catch (e2) {}
+          document.body.removeChild(ta);
+        }
+      });
+    }
+    byId('retryBtn').addEventListener('click', function () { show('guide'); });
+    show('result');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+/* mycarte.css — SalonRink マイカルテ(LIFF)
+   ニューモーフィズム(テラコッタ)版 — 他ページと同じソフトUIの世界観に統一 */
+
+:root {
+  --mk-bg: #EFE8E2;
+  --mk-dark: rgba(186, 166, 150, 0.8);
+  --mk-light: rgba(255, 255, 255, 1);
+  --mk-card: #EFE8E2;
+  --mk-rose: #C06B4F;
+  --mk-rose-deep: #93482F;
+  --mk-grad: linear-gradient(145deg, #CD7758, #AE5C40);
+  --mk-gold: #C2A479;
+  --mk-ink: #2F3833;
+  --mk-sub: #66716A;
+  --mk-hint: #98948A;
+  --mk-green: #5E9270;
+  --mk-sans: 'Zen Kaku Gothic New', sans-serif;
+  --mk-hand: 'Caveat', cursive;
+  --mk-raise: 7px 7px 14px var(--mk-dark), -7px -7px 14px var(--mk-light);
+  --mk-raise-sm: 4px 4px 8px var(--mk-dark), -4px -4px 8px var(--mk-light);
+  --mk-inset: inset 4px 4px 8px var(--mk-dark), inset -4px -4px 8px var(--mk-light);
+  --mk-inset-sm: inset 3px 3px 6px var(--mk-dark), inset -3px -3px 6px var(--mk-light);
+}
+
+html, body { margin: 0; padding: 0; }
+body { background: #E3D9CF; font-family: var(--mk-sans); color: var(--mk-ink); }
+
+.mk {
+  max-width: 430px; margin: 0 auto; min-height: 100vh; position: relative;
+  background: var(--mk-bg); box-sizing: border-box;
+  font-size: 14.5px; line-height: 1.8;
+  padding-bottom: 110px;
+  box-shadow: 0 0 40px rgba(120, 95, 75, 0.18);
+}
+.mk :where(p, h1, h2, h3) { margin: 0; text-wrap: pretty; }
+
+/* ============ デモバー(他ページと同じソフトUIセグメント) ============ */
+.demo-bar {
+  display: flex; padding: 4px; border-radius: 999px;
+  margin: 12px 14px 4px; overflow-x: auto; scrollbar-width: none;
+  box-shadow: var(--mk-inset-sm);
+}
+.demo-bar::-webkit-scrollbar { display: none; }
+.demo-bar a {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  min-height: 30px; padding: 0 10px; border-radius: 999px; text-decoration: none;
+  font-size: 11px; font-weight: 700; color: var(--mk-sub); white-space: nowrap;
+}
+.demo-bar a.on {
+  color: #fff; background: var(--mk-grad);
+  box-shadow: 3px 3px 8px var(--mk-dark);
+}
+
+/* ============ ヘッダー ============ */
+.mk-header { text-align: center; padding: 22px 20px 6px; }
+.mk-header .en {
+  font-family: var(--mk-hand); font-size: 21px; letter-spacing: 0.08em;
+  color: var(--mk-rose); display: block; margin-bottom: 0; transform: rotate(-2deg);
+}
+.mk-header h1 { font-size: 19px; font-weight: 900; letter-spacing: 0.05em; }
+.mk-hairline {
+  width: 44px; height: 3px; border-radius: 999px; margin: 12px auto 0;
+  box-shadow: var(--mk-inset-sm);
+}
+
+/* ============ 画面切替 ============ */
+.mk-screen { display: none; }
+.mk-screen.on { display: block; }
+.mk-section { padding: 22px 22px 0; }
+
+/* ============ 見出し ============ */
+.mk-h {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.mk-h h2 { font-size: 16px; font-weight: 900; letter-spacing: 0.03em; }
+.mk-h .en {
+  font-family: var(--mk-hand); font-size: 16px; letter-spacing: 0.06em;
+  color: var(--mk-gold); transform: rotate(-2deg);
+}
+.mk-note { font-size: 10.5px; color: var(--mk-hint); line-height: 1.7; }
+
+/* ============ カード(浮き出し) ============ */
+.mk-card {
+  background: var(--mk-card); border-radius: 22px; padding: 20px;
+  box-shadow: var(--mk-raise);
+}
+
+/* ============ ボタン ============ */
+.mk-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 52px; padding: 0 22px; border-radius: 999px; width: 100%;
+  font-family: var(--mk-sans); font-weight: 700; font-size: 14.5px;
+  text-decoration: none; cursor: pointer; border: none; box-sizing: border-box;
+  letter-spacing: 0.03em;
+}
+.mk-btn-rose {
+  background: var(--mk-grad); color: #fff;
+  box-shadow: 6px 6px 14px var(--mk-dark), -4px -4px 10px var(--mk-light);
+}
+.mk-btn-rose:active { box-shadow: var(--mk-inset-sm); }
+.mk-btn-line2 {
+  background: var(--mk-bg); color: var(--mk-rose-deep);
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-btn-line2:active { box-shadow: var(--mk-inset-sm); }
+.mk-btn .sub { font-size: 10.5px; font-weight: 500; opacity: 0.85; }
+
+/* ============ 画面A: 最新の状態カード ============ */
+.mk-state { text-align: center; padding: 24px 20px 20px; position: relative; cursor: pointer; }
+.mk-state::before {
+  content: ''; position: absolute; inset: 12px; border-radius: 14px;
+  box-shadow: var(--mk-inset-sm);
+  opacity: 0.55; pointer-events: none;
+}
+.mk-state .date {
+  font-family: var(--mk-hand); font-size: 16px; letter-spacing: 0.1em;
+  color: var(--mk-rose); display: inline-block; transform: rotate(-2deg);
+}
+.mk-state .type {
+  font-size: 21px; font-weight: 900;
+  letter-spacing: 0.03em; margin: 4px 0 2px; color: var(--mk-ink);
+}
+.mk-state .copy { font-size: 12px; color: var(--mk-sub); }
+.mk-radar { display: flex; justify-content: center; margin: 8px 0 2px; }
+.mk-radar text { font-family: var(--mk-sans); font-size: 10px; font-weight: 700; fill: var(--mk-sub); }
+
+/* ============ 画面A: 履歴 ============ */
+.mk-history { display: flex; flex-direction: column; gap: 14px; }
+.mk-hist-row {
+  display: flex; align-items: center; gap: 14px; text-align: left;
+  background: var(--mk-bg); border-radius: 18px; padding: 14px 18px;
+  border: none; cursor: pointer; font-family: var(--mk-sans); width: 100%;
+  box-shadow: var(--mk-raise-sm); color: var(--mk-ink); box-sizing: border-box;
+}
+.mk-hist-row:active { box-shadow: var(--mk-inset-sm); }
+.mk-hist-row .d {
+  font-family: var(--mk-hand); font-size: 17px; letter-spacing: 0.04em;
+  color: var(--mk-rose); flex-shrink: 0; width: 44px; transform: rotate(-4deg);
+}
+.mk-hist-row strong { font-size: 13.5px; font-weight: 700; display: block; }
+.mk-hist-row .sub { font-size: 11px; color: var(--mk-hint); }
+.mk-hist-row .chev { margin-left: auto; color: var(--mk-hint); font-size: 16px; }
+
+/* ============ 画面A: 利用状況 ============ */
+.mk-usage {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 13px 18px; border-radius: 16px; margin-top: 16px;
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-usage span { font-size: 11.5px; color: var(--mk-sub); }
+.mk-usage b { font-family: var(--mk-hand); font-size: 18px; letter-spacing: 0.06em; color: var(--mk-rose-deep); font-weight: 700; }
+.mk-usage a { font-size: 11px; color: var(--mk-rose); font-weight: 700; text-decoration: none; white-space: nowrap; }
+
+/* ============ 画面B: 写真オーバーレイ(主役) ============ */
+.mk-back {
+  display: inline-flex; align-items: center; gap: 6px; margin: 14px 0 0 16px;
+  border: none; background: none; color: var(--mk-sub); font-family: var(--mk-sans);
+  font-size: 12.5px; font-weight: 700; cursor: pointer; padding: 8px 6px; white-space: nowrap;
+}
+.mk-aspects { display: flex; justify-content: center; gap: 10px; padding: 10px 0 16px; }
+.mk-aspect {
+  border: none; background: var(--mk-bg); color: var(--mk-sub); font-family: var(--mk-sans);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  padding: 7px 16px; border-radius: 999px; cursor: pointer;
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-aspect.on { color: #fff; background: var(--mk-grad); box-shadow: 3px 3px 8px var(--mk-dark); }
+
+.mk-overlay-wrap {
+  padding: 10px; margin: 0 26px; border-radius: 24px;
+  box-shadow: var(--mk-inset);
+}
+.mk-overlay {
+  position: relative; border-radius: 16px; overflow: hidden;
+  aspect-ratio: 1; box-shadow: 0 10px 26px rgba(120, 95, 75, 0.25);
+  transition: aspect-ratio 0.3s ease;
+  display: flex; flex-direction: column; background: var(--mk-bg);
+}
+.mk-overlay[data-aspect="45"] { aspect-ratio: 4 / 5; }
+.mk-overlay[data-aspect="916"] { aspect-ratio: 9 / 16; }
+.mk-ov-photo { height: 55%; flex: none; position: relative; }
+.mk-overlay[data-aspect="916"] .mk-ov-photo { height: 62%; }
+.mk-ov-photo img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.92) contrast(1.02);
+}
+.mk-ov-photo .date {
+  position: absolute; right: 12px; bottom: 10px;
+  font-family: var(--mk-hand); font-size: 15px; color: #FFF;
+  text-shadow: 0 1px 6px rgba(47,56,51,0.5);
+}
+.mk-ov-karte {
+  flex: 1; min-height: 0; position: relative;
+  display: flex; flex-direction: column;
+  padding: 12px 18px 12px;
+}
+.mk-ov-karte::before {
+  content: ''; position: absolute; top: 0; left: 14px; right: 14px; height: 0;
+  border-top: 2px dashed rgba(186, 166, 150, 0.6);
+}
+.mk-ov-rep { font-family: var(--mk-hand); font-size: 15px; color: var(--mk-rose); }
+.mk-ov-type {
+  font-size: 16px; font-weight: 900;
+  letter-spacing: 0.02em; color: var(--mk-ink); line-height: 1.4; margin: 1px 0 2px;
+}
+.mk-ov-copy { font-size: 10.5px; color: var(--mk-sub); margin: 0 0 9px; }
+.mk-ov-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.mk-ov-cell {
+  text-align: center; background: var(--mk-bg); border-radius: 10px; padding: 6px 0 5px;
+  box-shadow: 3px 3px 6px var(--mk-dark), -3px -3px 6px var(--mk-light);
+}
+.mk-ov-cell b { font-family: var(--mk-hand); font-size: 18px; color: var(--mk-rose-deep); display: block; line-height: 1; }
+.mk-ov-cell span { font-size: 7px; font-weight: 700; color: var(--mk-sub); }
+.mk-ov-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: auto; padding-top: 8px;
+}
+.mk-ov-foot .brand { font-family: var(--mk-hand); font-size: 15px; letter-spacing: 0.1em; color: var(--mk-rose-deep); }
+.mk-ov-foot .d { font-family: var(--mk-hand); font-size: 13px; letter-spacing: 0.06em; color: var(--mk-hint); }
+
+.mk-share-row { display: flex; gap: 12px; padding: 18px 26px 0; }
+.mk-share-row .mk-btn { min-height: 46px; font-size: 13px; }
+
+/* ============ 画面B: スコア内訳・ケア ============ */
+.mk-scores { display: flex; flex-direction: column; gap: 13px; }
+.mk-score { display: flex; align-items: center; gap: 12px; }
+.mk-score .lbl { width: 64px; font-size: 12px; font-weight: 700; color: var(--mk-sub); flex-shrink: 0; }
+.mk-score .track { flex: 1; height: 10px; border-radius: 999px; overflow: hidden; box-shadow: var(--mk-inset-sm); }
+.mk-score .fill { display: block; height: 100%; border-radius: 999px; background: var(--mk-grad); }
+.mk-score .val { width: 30px; font-family: var(--mk-hand); font-size: 16px; text-align: right; color: var(--mk-rose-deep); }
+.mk-care { display: flex; flex-direction: column; gap: 8px; }
+.mk-care-row { display: flex; align-items: center; gap: 13px; padding: 10px 0; }
+.mk-care-row + .mk-care-row { border-top: 1px solid rgba(186,166,150,0.3); }
+.mk-care-row .n {
+  font-family: var(--mk-hand); font-size: 16px; color: var(--mk-rose);
+  width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-care-row strong { font-size: 13px; font-weight: 700; display: block; }
+.mk-care-row p { font-size: 11px; color: var(--mk-hint); }
+.mk-ai-note {
+  display: flex; align-items: center; gap: 8px; justify-content: center;
+  font-size: 10.5px; color: var(--mk-hint); margin-top: 12px;
+}
+.mk-ai-note .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mk-green); flex-shrink: 0; }
+.mk-credit { text-align: center; font-size: 11px; color: var(--mk-sub); margin-top: 10px; }
+.mk-credit a { color: var(--mk-rose); font-weight: 700; text-decoration: none; }
+
+/* ============ 画面C: 相談メモ ============ */
+.mk-checks { display: flex; flex-direction: column; gap: 14px; }
+.mk-check {
+  display: flex; align-items: center; gap: 13px; cursor: pointer;
+  background: var(--mk-bg); border-radius: 16px; padding: 13px 16px;
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-check input { display: none; }
+.mk-check .box {
+  width: 24px; height: 24px; border-radius: 8px; flex-shrink: 0;
+  box-shadow: var(--mk-inset-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: transparent; font-size: 13px; transition: all 0.15s;
+}
+.mk-check input:checked + .box { background: var(--mk-grad); color: #fff; box-shadow: 2px 2px 5px var(--mk-dark); }
+.mk-check span:last-child { font-size: 13.5px; font-weight: 500; }
+.mk-textarea {
+  width: 100%; min-height: 110px; border: none; border-radius: 18px;
+  background: var(--mk-bg); box-shadow: var(--mk-inset-sm);
+  font-family: var(--mk-sans); font-size: 13.5px; line-height: 1.8; color: var(--mk-ink);
+  padding: 16px 18px; box-sizing: border-box; resize: vertical; outline: none;
+}
+.mk-textarea::placeholder { color: var(--mk-hint); }
+.mk-attach { display: flex; flex-wrap: wrap; gap: 10px; }
+.mk-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 700; color: var(--mk-rose-deep);
+  background: var(--mk-bg); box-shadow: var(--mk-raise-sm);
+  padding: 7px 14px; border-radius: 999px;
+}
+.mk-chip .x { color: var(--mk-hint); cursor: pointer; }
+
+/* ============ 画面D: 送り先 ============ */
+.mk-salon {
+  display: flex; align-items: center; gap: 14px; cursor: pointer;
+  background: var(--mk-bg); border-radius: 20px; padding: 16px 18px;
+  box-shadow: var(--mk-raise);
+}
+.mk-salon.sel { box-shadow: var(--mk-raise), inset 0 0 0 1.5px color-mix(in srgb, var(--mk-rose) 65%, transparent); }
+.mk-salon .ava {
+  width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mk-hand); font-size: 19px; color: var(--mk-rose);
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-salon strong { font-size: 14px; font-weight: 700; display: block; }
+.mk-salon p { font-size: 11px; color: var(--mk-hint); }
+.mk-salon .r {
+  margin-left: auto; width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  box-shadow: var(--mk-inset-sm);
+  display: flex; align-items: center; justify-content: center;
+}
+.mk-salon.sel .r::after { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--mk-grad); }
+
+.mk-sharecard { margin-top: 12px; }
+.mk-sharecard .lead { font-size: 12px; color: var(--mk-sub); margin-bottom: 12px; }
+.mk-linkbox {
+  display: flex; align-items: center; gap: 10px;
+  border-radius: 14px; padding: 11px 14px; margin-top: 12px;
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-linkbox code { flex: 1; font-size: 11px; color: var(--mk-sub); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mk-linkbox button {
+  border: none; background: var(--mk-grad); color: #fff; font-family: var(--mk-sans);
+  font-size: 11px; font-weight: 700; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  flex-shrink: 0; box-shadow: 2px 2px 6px var(--mk-dark);
+}
+
+.mk-preview { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.mk-sent {
+  display: none; align-items: center; gap: 10px; justify-content: center;
+  color: var(--mk-green); font-size: 13px; font-weight: 700;
+  border-radius: 16px; padding: 14px; margin-top: 14px;
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-sent.show { display: flex; }
+
+.mk-coming {
+  position: relative; border-radius: 20px; padding: 18px 20px;
+  color: var(--mk-hint); opacity: 0.75;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-coming strong { font-size: 13.5px; font-weight: 700; display: block; color: #8B948D; }
+.mk-coming p { font-size: 11px; }
+.mk-coming .badge {
+  margin-left: auto; flex-shrink: 0; font-size: 10px; font-weight: 700;
+  color: #8B948D; padding: 4px 11px; border-radius: 999px;
+  box-shadow: var(--mk-raise-sm); white-space: nowrap;
+}
+
+/* ============ 画面E: 画像管理 ============ */
+.mk-photos { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.mk-photo {
+  position: relative; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden;
+  padding: 6px; box-sizing: border-box;
+  box-shadow: var(--mk-inset-sm);
+  background: color-mix(in srgb, #FFFFFF 40%, var(--mk-bg));
+}
+.mk-photo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 11px; }
+.mk-photo .tag {
+  position: absolute; top: 11px; left: 11px; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.06em; padding: 3px 8px; border-radius: 999px;
+  background: rgba(239,232,226,0.94); color: var(--mk-ink);
+}
+.mk-photo .tag.after { background: var(--mk-grad); color: #fff; }
+.mk-photo .del {
+  position: absolute; top: 9px; right: 9px; width: 22px; height: 22px;
+  border: none; border-radius: 50%; cursor: pointer; font-size: 11px;
+  background: rgba(47,56,51,0.55); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+}
+.mk-photo-add {
+  aspect-ratio: 3 / 4; border-radius: 16px; cursor: pointer; border: none;
+  background: var(--mk-bg); color: var(--mk-rose); font-family: var(--mk-sans);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  font-size: 11px; font-weight: 700;
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-photo-add:active { box-shadow: var(--mk-inset-sm); }
+.mk-photo-add .plus { font-family: var(--mk-hand); font-size: 28px; line-height: 1; }
+.mk-limit {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-top: 16px; padding: 12px 16px; border-radius: 16px;
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-limit span { font-size: 11.5px; color: var(--mk-sub); }
+.mk-limit b { font-family: var(--mk-hand); font-size: 18px; font-weight: 700; letter-spacing: 0.05em; color: var(--mk-rose-deep); }
+.mk-tip { display: flex; gap: 9px; align-items: flex-start; margin-top: 16px; font-size: 11.5px; color: var(--mk-sub); }
+.mk-tip svg { flex-shrink: 0; width: 15px; height: 15px; color: var(--mk-rose); margin-top: 3px; }
+
+/* ============ 画面D: お気に入り登録 ============ */
+.mk-fav-add {
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 56px; border-radius: 20px; cursor: pointer; border: none;
+  background: var(--mk-bg); color: var(--mk-rose); font-family: var(--mk-sans);
+  font-size: 13px; font-weight: 700;
+  box-shadow: var(--mk-raise-sm);
+}
+.mk-fav-add:active { box-shadow: var(--mk-inset-sm); }
+.mk-fav-add .plus { font-family: var(--mk-hand); font-size: 22px; line-height: 1; }
+.mk-unreg {
+  flex-shrink: 0; border: none; cursor: pointer; font-family: var(--mk-sans);
+  font-size: 11px; font-weight: 700; color: var(--mk-hint);
+  padding: 7px 13px; border-radius: 999px; background: var(--mk-bg);
+  box-shadow: var(--mk-raise-sm); white-space: nowrap;
+}
+.mk-unreg:active { box-shadow: var(--mk-inset-sm); }
+.mk-fav + .mk-fav { margin-top: 14px; }
+
+/* ============ 画面A: 写真の記録(ストリップ) ============ */
+.mk-photostrip { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.mk-photostrip::-webkit-scrollbar { display: none; }
+.mk-photostrip .ph {
+  flex: 0 0 86px; aspect-ratio: 3 / 4; border-radius: 14px; overflow: hidden;
+  padding: 5px; box-sizing: border-box; position: relative;
+  background: color-mix(in srgb, #FFFFFF 40%, var(--mk-bg));
+  box-shadow: var(--mk-inset-sm);
+}
+.mk-photostrip .ph img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; display: block; }
+.mk-photostrip .ph .tag {
+  position: absolute; bottom: 9px; left: 9px; font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.04em; padding: 2px 7px; border-radius: 999px;
+  background: rgba(239,232,226,0.94); color: var(--mk-ink);
+}
+.mk-photostrip .ph .tag.after { background: var(--mk-grad); color: #fff; }
+
+/* ============ 画面E: 月ごとのグループ ============ */
+.mk-month {
+  display: flex; align-items: center; gap: 10px;
+  margin: 20px 0 12px; font-size: 12px; font-weight: 700; color: var(--mk-sub);
+}
+.mk-month .m { font-family: var(--mk-hand); font-size: 18px; color: var(--mk-rose); transform: rotate(-2deg); }
+.mk-month::after { content: ''; flex: 1; height: 1px; background: rgba(186,166,150,0.4); }
+.mk-month:first-of-type { margin-top: 0; }
+
+/* ============ 下部タブ(ミニアプリと同じソフトUI) ============ */
+.mk-nav {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
+  bottom: calc(10px + env(safe-area-inset-bottom));
+  width: calc(100% - 28px); max-width: 402px;
+  display: flex; gap: 6px; padding: 8px;
+  background: color-mix(in srgb, var(--mk-bg) 96%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-radius: 999px;
+  box-shadow: 8px 8px 18px var(--mk-dark), -6px -6px 14px var(--mk-light);
+}
+.mk-nav button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  min-height: 50px; justify-content: center; border: none; cursor: pointer;
+  background: none; border-radius: 999px; font-family: var(--mk-sans);
+  font-size: 10px; font-weight: 700; color: var(--mk-sub); white-space: nowrap;
+}
+.mk-nav button svg { width: 18px; height: 18px; }
+.mk-nav button.on {
+  color: #fff; background: var(--mk-grad);
+  box-shadow: 3px 3px 8px var(--mk-dark);
+}
+
+/* ============ トースト ============ */
+.mk-toast {
+  position: fixed; bottom: 118px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: #4A3F37; color: #F5EFE8; font-size: 12px; font-weight: 700;
+  padding: 10px 20px; border-radius: 999px; opacity: 0; transition: all 0.25s;
+  pointer-events: none; z-index: 90; white-space: nowrap;
+}
+.mk-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
