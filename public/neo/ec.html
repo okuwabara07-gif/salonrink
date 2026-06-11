@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>SalonRink Store — EC（ニューモーフィズム）</title>
+<title>SalonRink ストア</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="salonrink-neo.css">
 <link rel="stylesheet" href="salonrink-neo-page.css">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
-<div class="sr sr-page" id="app" data-screen-label="EC（ニューモーフィズム）">
+<div class="sr sr-page" id="app" data-screen-label="ストア">
 
   <header class="sr-header">
     <img class="sr-logo" src="assets/logo.png" alt="SalonRink Concierge">
@@ -27,7 +28,7 @@
     <div class="ec-concern-label">悩み・目的から選ぶ</div>
     <nav class="ec-concerns" id="concerns"></nav>
     <div class="ec-grid" id="grid"></div>
-    <p class="sr-note" style="padding: 0 18px;">※価格は税込です。送料は決済画面でご確認ください。</p>
+    <p class="sr-note" style="padding: 0 18px;">※価格は税込です。小計5,000円未満は送料¥700（5,000円以上で送料無料）。</p>
   </div>
 
   <div id="viewDetail" class="ec-detail hidden" data-screen-label="商品詳細"></div>
@@ -251,22 +252,34 @@ document.getElementById('cartBtn').addEventListener('click', openCart);
 document.getElementById('cartClose').addEventListener('click', closeCart);
 document.getElementById('cartScrim').addEventListener('click', closeCart);
 document.getElementById('barCheckout').addEventListener('click', openCart);
-// ============ 実決済: カート → Stripe Checkout ============
-var CART_ENDPOINT = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/create-cart-checkout";
-function getLineUid(){ try { return sessionStorage.getItem('sr-line-uid') || null; } catch(e){ return null; } }
+// ============ 実決済: LIFFログイン → /api/miniapp/checkout → Stripe ============
+var LIFF_ID = "2010370912-20UY6V2N";
+var liffReady = false;
+(function(){ try { if (window.liff) { liff.init({ liffId: LIFF_ID }).then(function(){ liffReady = true; }).catch(function(){ liffReady = false; }); } } catch(e){ liffReady = false; } })();
 document.getElementById('checkoutBtn').addEventListener('click', function(){
   if (!state.cart.length) { toast('カートが空です'); return; }
   var btn = this, prev = btn.textContent;
-  btn.disabled = true; btn.textContent = '決済ページへ移動中…';
-  var items = state.cart.map(function(c){ return { product_id: c.id, qty: c.qty }; });
-  fetch(CART_ENDPOINT, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ items: items, line_user_id: getLineUid(), session_id: (window.SR_REF || null) })
-  }).then(function(r){ return r.json(); }).then(function(d){
-    if (d && d.ok && d.url) { window.location.href = d.url; }
-    else { toast((d && d.message) || '決済を開始できませんでした'); btn.disabled = false; btn.textContent = prev; }
-  }).catch(function(){ toast('通信エラーが発生しました'); btn.disabled = false; btn.textContent = prev; });
+  btn.disabled = true; btn.textContent = '処理中…';
+  function fail(msg){ toast(msg || 'エラーが発生しました'); btn.disabled = false; btn.textContent = prev; }
+  function proceed(){
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+    var token = liff.getIDToken();
+    if (!token) { fail('ログイン情報を取得できませんでした'); return; }
+    var items = state.cart.map(function(c){ return { product_id: c.id, qty: c.qty }; });
+    fetch('/api/miniapp/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id_token: token, items: items })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if (d && d.url) { window.location.href = d.url; }
+      else { fail(d && d.error ? d.error : '決済を開始できませんでした'); }
+    }).catch(function(){ fail('通信エラーが発生しました'); });
+  }
+  try {
+    if (!window.liff) { fail('LINEアプリ内のストアから開いてください'); return; }
+    if (liffReady) { proceed(); }
+    else { liff.init({ liffId: LIFF_ID }).then(function(){ liffReady = true; proceed(); }).catch(function(){ fail('初期化に失敗しました。LINEから開き直してください'); }); }
+  } catch(e){ fail('エラーが発生しました'); }
 });
 
 let toastTimer;
