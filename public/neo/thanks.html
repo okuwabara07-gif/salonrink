@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ご注文ありがとうございました｜SalonRink ストア</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<style>
+  :root{
+    --bg:#FBF7F3; --card:#FFFFFF; --rose:#C24E40; --gold:#B08D5E;
+    --ink:#2b2622; --muted:#6f655d; --line:#ece6df;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Zen Kaku Gothic New",system-ui,-apple-system,sans-serif;
+    min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:24px 18px 48px}
+  .wrap{width:100%;max-width:520px}
+  .brand{font-size:12px;letter-spacing:.22em;color:var(--gold);font-weight:700;text-align:center;margin:8px 0 2px}
+  h1{font-size:20px;font-weight:900;text-align:center;margin:0 0 20px;letter-spacing:.02em}
+  .card{background:var(--card);border-radius:22px;padding:26px 22px;
+    box-shadow:9px 9px 22px rgba(176,141,94,.13), -9px -9px 22px rgba(255,255,255,.92)}
+  .check{width:64px;height:64px;border-radius:50%;margin:2px auto 14px;display:flex;align-items:center;justify-content:center;
+    background:var(--card);box-shadow:inset 4px 4px 10px rgba(176,141,94,.18), inset -4px -4px 10px rgba(255,255,255,.95)}
+  .check svg{width:32px;height:32px}
+  .status{text-align:center;font-size:15px;font-weight:700;color:var(--rose);margin:0 0 4px}
+  .status.pending{color:var(--gold)}
+  .sub{text-align:center;font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.7}
+  .divider{border-top:1px solid var(--line);margin:18px 0}
+  .lbl{font-size:12px;font-weight:700;color:var(--ink);letter-spacing:.04em;margin-bottom:10px}
+  .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:7px 0;font-size:14px}
+  .row .nm{color:var(--ink)}
+  .row .vl{color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .row.sm{font-size:12.5px;color:var(--muted)}
+  .row.sm .vl{color:var(--muted)}
+  .total{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;padding-top:12px;border-top:1px solid var(--line)}
+  .total .nm{font-size:13px;font-weight:700}
+  .total .vl{font-size:20px;font-weight:900;color:var(--rose);font-variant-numeric:tabular-nums}
+  .note{font-size:12px;color:var(--muted);line-height:1.8;margin:16px 2px 0}
+  .btns{margin-top:22px;display:flex;flex-direction:column;gap:12px}
+  .btn{display:block;width:100%;text-align:center;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:700;
+    font-family:inherit;cursor:pointer;text-decoration:none}
+  .btn-primary{background:var(--rose);color:#fff;
+    box-shadow:5px 5px 14px rgba(194,78,64,.28), -3px -3px 10px rgba(255,255,255,.8)}
+  .btn-ghost{background:var(--card);color:var(--ink);
+    box-shadow:5px 5px 14px rgba(176,141,94,.14), -5px -5px 14px rgba(255,255,255,.92)}
+  .skel{color:var(--muted);text-align:center;font-size:13px;padding:10px 0}
+  .spin{display:inline-block;width:15px;height:15px;border:2px solid var(--line);border-top-color:var(--gold);
+    border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">SALONRINK</div>
+    <h1>ご注文ありがとうございました</h1>
+    <div class="card">
+      <div class="check" id="checkWrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C24E40" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="checkIcon">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <p class="status" id="status">お支払いを確認しました</p>
+      <p class="sub" id="sub">ご登録の住所へお届けします。発送までしばらくお待ちください。</p>
+
+      <div id="detail">
+        <div class="skel"><span class="spin"></span>注文内容を読み込み中…</div>
+      </div>
+
+      <p class="note">
+        ・発送準備が整い次第、順次お届けします。<br>
+        ・ご不明点はLINEのトークからお問い合わせください。
+      </p>
+
+      <div class="btns">
+        <a class="btn btn-primary" href="https://liff.line.me/2010370912-20UY6V2N">買い物を続ける</a>
+        <button class="btn btn-ghost" id="closeBtn">LINEに戻る</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  var LIFF_ID = "2010370912-20UY6V2N";
+  try { if (window.liff) { liff.init({ liffId: LIFF_ID }).catch(function(){}); } } catch(e){}
+
+  document.getElementById('closeBtn').addEventListener('click', function(){
+    try { if (window.liff && liff.closeWindow) { liff.closeWindow(); return; } } catch(e){}
+    window.location.href = "https://liff.line.me/2010370912-20UY6V2N";
+  });
+
+  function yen(n){ return '¥' + (Number(n)||0).toLocaleString('ja-JP'); }
+  function qs(k){ try { return new URLSearchParams(location.search).get(k) || ''; } catch(e){ return ''; } }
+  var sessionId = qs('session_id');
+
+  function renderOrder(o){
+    var items = Array.isArray(o.items) ? o.items : [];
+    var rows = items.map(function(it){
+      var q = it.qty || 1;
+      return '<div class="row"><span class="nm">' + (it.name || '商品') + (q>1?(' ×'+q):'') +
+             '</span><span class="vl">' + yen((it.price||0)*q) + '</span></div>';
+    }).join('');
+    var ship = (o.shipping_fee>0) ? '<div class="row sm"><span class="nm">送料</span><span class="vl">' + yen(o.shipping_fee) + '</span></div>' :
+                                    '<div class="row sm"><span class="nm">送料</span><span class="vl">無料</span></div>';
+    document.getElementById('detail').innerHTML =
+      '<div class="divider"></div><div class="lbl">ご注文内容</div>' + rows + ship +
+      '<div class="total"><span class="nm">合計（税込）</span><span class="vl">' + yen(o.total) + '</span></div>';
+
+    var paid = (o.payment_status === 'paid');
+    var st = document.getElementById('status');
+    if (paid){ st.textContent = 'お支払いを確認しました'; st.className = 'status';
+      document.getElementById('sub').textContent = 'ご登録の住所へお届けします。発送までしばらくお待ちください。'; }
+    else { st.textContent = '決済を確認中です…'; st.className = 'status pending';
+      document.getElementById('sub').textContent = '反映まで数秒かかることがあります。この画面のままお待ちください。'; }
+    return paid;
+  }
+
+  function fail(){
+    document.getElementById('detail').innerHTML = '';
+    document.getElementById('status').textContent = 'ご注文を受け付けました';
+    document.getElementById('sub').textContent = '内容はLINEのトークからご確認いただけます。';
+  }
+
+  var tries = 0;
+  function poll(){
+    if (!sessionId){ fail(); return; }
+    fetch('/api/miniapp/order-status?session_id=' + encodeURIComponent(sessionId))
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(); })
+      .then(function(d){
+        if (!d || !d.order){ throw new Error('no order'); }
+        var paid = renderOrder(d.order);
+        if (!paid && tries < 6){ tries++; setTimeout(poll, 2000); }
+      })
+      .catch(function(){
+        if (tries < 4){ tries++; setTimeout(poll, 2000); } else { fail(); }
+      });
+  }
+  poll();
+</script>
+</body>
+</html>

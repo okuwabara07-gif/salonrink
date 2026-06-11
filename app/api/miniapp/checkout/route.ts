@@ -115,8 +115,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       phone_number_collection: { enabled: true },
       client_reference_id: order.id,
       metadata: { order_id: order.id, salon_id: salonId, line_user_id: lineUserId },
-      success_url: `${origin}/miniapp/history?purchased=1`,
-      cancel_url: `${origin}/miniapp/products`,
+      success_url: `${origin}/neo/thanks.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/neo/ec.html?canceled=1`,
     })
 
     // session id を注文に紐付け
