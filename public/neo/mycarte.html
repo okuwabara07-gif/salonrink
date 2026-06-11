@@ -12,6 +12,7 @@
 // ===== 実データ配線（get-mycarte / LIFF） =====
 var MK_LIFF_ID = '2010171194-hAIlg1lG';
 var GET_MYCARTE = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte';
+var SAVE_MEMO = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-memo';
 var MK_ORDER = ['ツヤ','まとまり','うるおい','ボリューム','ハリ・コシ'];
 window.__mkById = {};
 function mkEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -63,6 +64,7 @@ function mkInit(){
   liff.init({liffId:MK_LIFF_ID}).then(function(){
     if(!liff.isLoggedIn()){ return; }
     return liff.getProfile().then(function(pr){
+      window.__mkLineUserId = pr.userId;
       return fetch(GET_MYCARTE,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:pr.userId})})
         .then(function(r){return r.json();}).then(function(data){ if(data&&data.ok){ mkHydrateHome(data); } });
     });
@@ -436,7 +438,23 @@ document.getElementById('newDiagBtn').addEventListener('click', function () {
 document.getElementById('saveImgBtn').addEventListener('click', function () { mkToast('画像を保存しました（モック）'); });
 document.getElementById('shareBtn').addEventListener('click', function () { mkToast('LINEのシェアシートを開きます（モック）'); });
 document.getElementById('aiBtn').addEventListener('click', function () { mkToast('クレジットが不足しています。5回 ¥500 で追加できます'); });
-document.getElementById('saveMemoBtn').addEventListener('click', function () { mkToast('相談メモを保存しました'); });
+document.getElementById('saveMemoBtn').addEventListener('click', function () {
+  if (!window.__mkLineUserId) { mkToast('LINEから開くと保存できます'); return; }
+  var concerns = [];
+  document.querySelectorAll('#scrMemo .mk-check input:checked').forEach(function (c) {
+    var lab = c.closest('.mk-check'); var sp = lab ? lab.querySelector('span:last-child') : null;
+    if (sp) { concerns.push(sp.textContent.trim()); }
+  });
+  var ta = document.querySelector('#scrMemo .mk-textarea');
+  var memo = ta ? ta.value : '';
+  var ids = Object.keys(window.__mkById || {}).slice(0, 3);
+  var btn = this; btn.disabled = true;
+  fetch(SAVE_MEMO, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ line_user_id: window.__mkLineUserId, concerns: concerns, memo_text: memo, diagnosis_ids: ids }) })
+    .then(function (r) { return r.json(); })
+    .then(function (d) { mkToast(d && d.ok ? '相談メモを保存しました' : ((d && d.message) ? d.message : '保存に失敗しました')); })
+    .catch(function () { mkToast('保存に失敗しました'); })
+    .then(function () { btn.disabled = false; });
+});
 document.getElementById('issueLinkBtn').addEventListener('click', function () {
   document.getElementById('linkBox').hidden = false;
   this.style.display = 'none';
