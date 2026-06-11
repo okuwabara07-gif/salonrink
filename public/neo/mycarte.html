@@ -13,6 +13,7 @@
 var MK_LIFF_ID = '2010171194-hAIlg1lG';
 var GET_MYCARTE = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte';
 var SAVE_MEMO = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-memo';
+var SAVE_PHOTO = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/save-photo';
 var MK_ORDER = ['ツヤ','まとまり','うるおい','ボリューム','ハリ・コシ'];
 window.__mkById = {};
 function mkEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
@@ -45,7 +46,7 @@ function mkRenderDetail(p){
 }
 function mkHydrateHome(data){
   var ds=(data.diagnoses)||[];
-  var pc=document.getElementById('homePhotoCount'); if(pc){ pc.textContent=((data.photos||[]).length)+'枚 保存済み'; }
+  mkRenderPhotos(data);
   window.__mkById={};
   ds.forEach(function(d){ var p=mkParse(d); window.__mkById[p.id]=p; });
   if(!ds.length){ return; }
@@ -58,6 +59,31 @@ function mkHydrateHome(data){
     hist.querySelectorAll('.mk-hist-row').forEach(function(el){ el.addEventListener('click', function(){ var p=window.__mkById[el.dataset.diag]; if(p){ mkRenderDetail(p); } mkShow('scrDetail'); }); });
   }
   mkRenderDetail(latest);
+}
+function mkRenderPhotos(data){
+  var photos=(data.photos)||[];
+  var grids=document.querySelectorAll('#scrPhotos .mk-photos');
+  var months=document.querySelectorAll('#scrPhotos .mk-month');
+  for(var i=1;i<grids.length;i++){ grids[i].style.display='none'; }
+  for(var j=0;j<months.length;j++){ months[j].style.display='none'; }
+  var grid=grids[0]; if(!grid){ return; }
+  var addBtn=document.getElementById('addPhotoBtn');
+  grid.querySelectorAll('.mk-photo').forEach(function(el){ el.remove(); });
+  photos.forEach(function(p){
+    if(!p.signed_url){ return; }
+    var d=document.createElement('div'); d.className='mk-photo';
+    d.innerHTML='<img src="'+p.signed_url+'" alt=""><span class="tag'+(p.kind==='after'?' after':'')+'">'+(p.kind==='after'?'アフター':'ビフォア')+'</span>';
+    if(addBtn){ grid.insertBefore(d, addBtn); } else { grid.appendChild(d); }
+  });
+  var lc=document.getElementById('limitCount'); if(lc){ var lim=(data.plan&&data.plan.photo_limit)||3; lc.textContent=photos.length+' / '+lim+' 枚'; }
+  var hp=document.getElementById('homePhotoCount'); if(hp){ hp.textContent=photos.length+'枚 保存済み'; }
+  var strip=document.querySelector('.mk-photostrip');
+  if(strip && photos.length){ strip.innerHTML=photos.slice(0,4).map(function(p){ return p.signed_url?('<span class="ph"><img src="'+p.signed_url+'" alt=""><span class="tag'+(p.kind==='after'?' after':'')+'">'+(p.kind==='after'?'アフター':'ビフォア')+'</span></span>'):''; }).join(''); }
+}
+function mkReload(){
+  if(!window.__mkLineUserId){ return; }
+  fetch(GET_MYCARTE,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:window.__mkLineUserId})})
+    .then(function(r){return r.json();}).then(function(data){ if(data&&data.ok){ mkHydrateHome(data); } });
 }
 function mkInit(){
   if(!window.liff){ return; }
@@ -491,9 +517,44 @@ function mkFav(wrapId, kind, icon) {
 }
 mkFav('favSalon', '店舗', 'S');
 mkFav('favStylist', '美容師', 'B');
-document.getElementById('addPhotoBtn').addEventListener('click', function () {
-  mkToast('写真を追加します（モック）・無料は3枚まで');
-});
+(function () {
+  var fi = document.createElement('input'); fi.type = 'file'; fi.accept = 'image/*'; fi.style.display = 'none'; document.body.appendChild(fi);
+  function compress(file, cb) {
+    var rd = new FileReader();
+    rd.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var maxW = 1280; var sc = Math.min(1, maxW / (img.width || maxW));
+        var w = Math.round(img.width * sc), hh = Math.round(img.height * sc);
+        var cv = document.createElement('canvas'); cv.width = w; cv.height = hh;
+        cv.getContext('2d').drawImage(img, 0, 0, w, hh);
+        try { cb(cv.toDataURL('image/jpeg', 0.85)); } catch (e) { cb(rd.result); }
+      };
+      img.onerror = function () { cb(rd.result); };
+      img.src = rd.result;
+    };
+    rd.readAsDataURL(file);
+  }
+  document.getElementById('addPhotoBtn').addEventListener('click', function () {
+    if (!window.__mkLineUserId) { mkToast('LINEから開くと写真を保存できます'); return; }
+    fi.click();
+  });
+  fi.addEventListener('change', function () {
+    var f = fi.files && fi.files[0]; if (!f) { return; }
+    var isAfter = window.confirm('「アフター（施術後）」の写真ですか？\n[OK]=アフター / [キャンセル]=ビフォア');
+    mkToast('アップロード中…');
+    compress(f, function (dataUri) {
+      fetch(SAVE_PHOTO, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ line_user_id: window.__mkLineUserId, image: dataUri, kind: isAfter ? 'after' : 'before' }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d && d.ok) { mkToast('写真を保存しました'); if (typeof mkReload === 'function') { mkReload(); } }
+          else { mkToast((d && d.message) ? d.message : '保存に失敗しました'); }
+        })
+        .catch(function () { mkToast('保存に失敗しました'); });
+      fi.value = '';
+    });
+  });
+})();
 function mkPhotoCount() {
   var n = document.querySelectorAll('#scrPhotos .mk-photo').length;
   document.getElementById('limitCount').textContent = n + ' / 20 枚';
