@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<base href="/neo/">
 <title>SalonRink Concierge — LP（ニューモーフィズム）</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -395,6 +396,18 @@
       url.searchParams.set('ref', cur ? cur + '__' + window.SR_REF : window.SR_REF);
       a.href = url.toString();
     } catch (e) {}
+  });
+})();
+
+// base hrefでページ内アンカー(#price等)が/neo/へ遷移するのを防ぎ、同一ページ内スクロールに統一
+(function () {
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var id = this.getAttribute('href').slice(1);
+      if (!id) { return; }
+      var el = document.getElementById(id);
+      if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
   });
 })();
 </script>
