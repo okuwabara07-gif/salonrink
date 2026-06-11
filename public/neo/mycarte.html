@@ -12,35 +12,51 @@
 // ===== 実データ配線（get-mycarte / LIFF） =====
 var MK_LIFF_ID = '2010171194-hAIlg1lG';
 var GET_MYCARTE = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte';
-function mkEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+var MK_ORDER = ['ツヤ','まとまり','うるおい','ボリューム','ハリ・コシ'];
+window.__mkById = {};
+function mkEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
 function mkNum(v){ v=Number(v); return isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50; }
 function mkParse(d){
   var r=(d&&d.result)||{}; var s=r.scores||{};
   return {
-    id:d.id, type:r.type||'診断', comment:r.comment||'', care_tips:r.care_tips||[],
+    id:d.id, type:r.type||'診断', comment:r.comment||'', care_tips:Array.isArray(r.care_tips)?r.care_tips:[],
     radar:{'ツヤ':mkNum(s.tsuya),'まとまり':mkNum(s.matomari),'うるおい':mkNum(s.uruoi),'ボリューム':mkNum(s.volume),'ハリ・コシ':mkNum(s.hari_koshi)},
     date:(d.created_at||'').slice(5,10).replace('-','/'),
+    dateFull:(d.created_at||'').slice(0,10).replace(/-/g,'.'),
     kind:(d.diagnosis_type==='photo')?'写真AI診断':'診断'
   };
 }
-function mkBindGo(scope){ scope.querySelectorAll('[data-go]').forEach(function(el){ el.addEventListener('click',function(){ mkShow(el.dataset.go); }); }); }
+function mkRenderDetail(p){
+  if(!p){ return; }
+  var setT=function(sel,txt){ var ele=document.querySelector('#scrDetail '+sel); if(ele){ ele.textContent=txt; } };
+  setT('.mk-ov-type', p.type);
+  if(p.comment){ setT('.mk-ov-copy', p.comment); }
+  setT('.mk-ov-photo .date', p.dateFull||p.date);
+  setT('.mk-back', '‹ '+p.date+'の診断');
+  var cells=document.querySelectorAll('#scrDetail .mk-ov-grid .mk-ov-cell');
+  MK_ORDER.forEach(function(k,i){ if(cells[i]){ var b=cells[i].querySelector('b'); if(b){ b.textContent=Math.round((p.radar[k]||0)/10); } } });
+  var scs=document.querySelectorAll('#scrDetail .mk-scores .mk-score');
+  MK_ORDER.forEach(function(k,i){ if(scs[i]){ var v=p.radar[k]||0; var f=scs[i].querySelector('.fill'); if(f){ f.style.width=v+'%'; } var val=scs[i].querySelector('.val'); if(val){ val.textContent=Math.round(v/10); } } });
+  var care=document.querySelector('#scrDetail .mk-care');
+  if(care && p.care_tips && p.care_tips.length){
+    care.innerHTML=p.care_tips.slice(0,4).map(function(t,i){ return '<div class="mk-care-row"><span class="n">'+(i+1)+'</span><span><strong>'+mkEsc(t)+'</strong></span></div>'; }).join('');
+  }
+}
 function mkHydrateHome(data){
   var ds=(data.diagnoses)||[];
-  // 今月数
-  try{ var lim=(data.plan&&data.plan.diag_limit)||2; var statB=document.querySelector('#scrHome .mk-stat b, #scrHome .mk-state + .mk-stat b'); }catch(e){}
-  // 画像枚数
-  var pc=document.getElementById('homePhotoCount'); if(pc) pc.textContent=((data.photos||[]).length)+'枚 保存済み';
+  var pc=document.getElementById('homePhotoCount'); if(pc){ pc.textContent=((data.photos||[]).length)+'枚 保存済み'; }
+  window.__mkById={};
+  ds.forEach(function(d){ var p=mkParse(d); window.__mkById[p.id]=p; });
   if(!ds.length){ return; }
-  var latest=mkParse(ds[0]);
-  var hr=document.getElementById('homeRadar'); if(hr) hr.innerHTML=mkRadar(latest.radar);
-  // latestCard 内のタイプ見出し（先頭の strong を更新）
-  var lc=document.getElementById('latestCard'); if(lc){ var st=lc.querySelector('strong'); if(st) st.textContent=latest.type; }
-  // 履歴を実データで再生成
+  var latest=window.__mkById[ds[0].id];
+  var hr=document.getElementById('homeRadar'); if(hr){ hr.innerHTML=mkRadar(latest.radar); }
+  var lc=document.getElementById('latestCard'); if(lc){ var st=lc.querySelector('strong'); if(st){ st.textContent=latest.type; } }
   var hist=document.querySelector('.mk-history');
   if(hist){
-    hist.innerHTML=ds.map(function(d){ var p=mkParse(d); return '<button class="mk-hist-row" data-go="scrDetail" data-diag="'+mkEsc(p.id)+'"><span class="d">'+mkEsc(p.date)+'</span><span><strong>'+mkEsc(p.type)+'</strong><span class="sub">'+mkEsc(p.kind)+'</span></span><span class="chev">›</span></button>'; }).join('');
-    mkBindGo(hist);
+    hist.innerHTML=ds.map(function(d){ var p=window.__mkById[d.id]; return '<button class="mk-hist-row" data-diag="'+mkEsc(p.id)+'"><span class="d">'+mkEsc(p.date)+'</span><span><strong>'+mkEsc(p.type)+'</strong><span class="sub">'+mkEsc(p.kind)+'</span></span><span class="chev">›</span></button>'; }).join('');
+    hist.querySelectorAll('.mk-hist-row').forEach(function(el){ el.addEventListener('click', function(){ var p=window.__mkById[el.dataset.diag]; if(p){ mkRenderDetail(p); } mkShow('scrDetail'); }); });
   }
+  mkRenderDetail(latest);
 }
 function mkInit(){
   if(!window.liff){ return; }

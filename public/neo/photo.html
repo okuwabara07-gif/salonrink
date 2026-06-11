@@ -329,6 +329,16 @@
     var displayType = R.type || t.name;
     var comment = R.comment || t.copy;
     var tips = (R.care_tips && R.care_tips.length) ? R.care_tips : null;
+    // EC連携棚へ実商品を記録（lowest軸にマッチする製品を優先）
+    try {
+      fetch('/api/miniapp/products').then(function (r) { return r.json(); }).then(function (d) {
+        var ps = (d && d.products) || []; if (!ps.length) { return; }
+        var hit = ps.filter(function (p) { var s = ((p.target_hair_types || []).join(' ') + ' ' + (p.effect_text || '') + ' ' + (p.category || '')); return s.indexOf(lowest) >= 0; });
+        var pick = hit.slice(0, 3);
+        for (var i = 0; i < ps.length && pick.length < 3; i++) { if (pick.indexOf(ps[i]) < 0) { pick.push(ps[i]); } }
+        localStorage.setItem('sr-diag-reco', JSON.stringify({ type: (R.type || displayType || ''), items: pick.map(function (p) { return p.id; }) }));
+      }).catch(function () {});
+    } catch (e) {}
     var inLine = !!window.__lineUserId;
     var el = screens.result;
 
