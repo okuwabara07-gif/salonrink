@@ -162,12 +162,13 @@ export default function DashboardPage() {
   const [accTheme, setAccTheme] = useState<string>('terracotta');
   const [salon, setSalon] = useState<Salon | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [hpbReservations, setHpbReservations] = useState<HPBReservation[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
+  const [bookingHpb, setBookingHpb] = useState<HPBReservation[]>([]);
+  const [bookingManual, setBookingManual] = useState<Reservation[]>([]);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -211,7 +212,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, hpbRes, custRes, alertRes] = await Promise.all([
+      const [resRes, custRes, alertRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -219,13 +220,6 @@ export default function DashboardPage() {
           .gte('datetime', startDate.toISOString())
           .lte('datetime', endDate.toISOString())
           .order('datetime', { ascending: true }),
-        supabase
-          .from('hpb_reservations')
-          .select('id, salon_id, start_time, end_time, staff_name, menu_name, customer_name, status, source')
-          .eq('salon_id', salonRow.id)
-          .gte('start_time', startDate.toISOString())
-          .lte('start_time', endDate.toISOString())
-          .order('start_time', { ascending: true }),
         supabase
           .from('customers')
           .select('id, salon_id, name, last_visit, visit_count, line_display_name, line_user_id, created_at')
@@ -238,7 +232,6 @@ export default function DashboardPage() {
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
-      setHpbReservations((hpbRes.data as HPBReservation[]) ?? []);
       setCustomers((custRes.data as Customer[]) ?? []);
       setAlerts((alertRes.data as Alert[]) ?? []);
     } catch (e) {
@@ -251,6 +244,36 @@ export default function DashboardPage() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  // booking ビュー: selectedBookingDate ごとにfetch
+  useEffect(() => {
+    if (!salon) return;
+    const ds = new Date(selectedBookingDate);
+    ds.setHours(0, 0, 0, 0);
+    const de = new Date(selectedBookingDate);
+    de.setHours(23, 59, 59, 999);
+    const supabase = createClient();
+    (async () => {
+      const [h, m] = await Promise.all([
+        supabase
+          .from('hpb_reservations')
+          .select('id, salon_id, start_time, end_time, staff_name, menu_name, customer_name, status, source')
+          .eq('salon_id', salon.id)
+          .gte('start_time', ds.toISOString())
+          .lte('start_time', de.toISOString())
+          .order('start_time', { ascending: true }),
+        supabase
+          .from('reservations')
+          .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
+          .eq('salon_id', salon.id)
+          .gte('datetime', ds.toISOString())
+          .lte('datetime', de.toISOString())
+          .order('datetime', { ascending: true }),
+      ]);
+      setBookingHpb((h.data as HPBReservation[]) ?? []);
+      setBookingManual((m.data as Reservation[]) ?? []);
+    })();
+  }, [salon, selectedBookingDate]);
 
   const now = currentTime;
   const startOfToday = useMemo(() => {
@@ -273,29 +296,10 @@ export default function DashboardPage() {
     [reservations, startOfToday, endOfToday],
   );
 
-  // booking ビュー用: 選択日の予約をスタッフ別にグループ化
-  const bookingDayStart = useMemo(() => {
-    const d = new Date(selectedBookingDate);
-    d.setHours(0, 0, 0, 0);
-    return d;
-  }, [selectedBookingDate]);
-  const bookingDayEnd = useMemo(() => {
-    const d = new Date(selectedBookingDate);
-    d.setHours(23, 59, 59, 999);
-    return d;
-  }, [selectedBookingDate]);
-
+  // booking ビュー用: bookingHpb + bookingManual をスタッフ別にグループ化
   const selectedDayReservations = useMemo(() => {
-    const hpb = hpbReservations.filter(r => {
-      const d = new Date(r.start_time);
-      return d >= bookingDayStart && d <= bookingDayEnd;
-    });
-    const manual = reservations.filter(r => {
-      const d = new Date(r.datetime);
-      return d >= bookingDayStart && d <= bookingDayEnd;
-    });
-    return [...hpb, ...manual];
-  }, [hpbReservations, reservations, bookingDayStart, bookingDayEnd]);
+    return [...bookingHpb, ...bookingManual];
+  }, [bookingHpb, bookingManual]);
 
   const staffLanes = useMemo(() => {
     const staffMap = new Map<string | null, any[]>();
