@@ -132,6 +132,24 @@ interface ConsDailyAnalysis {
   kpi_snapshot: any;
 }
 
+interface Subscription {
+  id: string;
+  user_id: string | null;
+  plan: string | null;
+  status: string | null;
+  trial_ends_at: string | null;
+  current_period_end: string | null;
+  cancel_at_period_end: boolean | null;
+}
+
+interface SalonAddon {
+  id: string;
+  salon_id: string | null;
+  addon_key: string | null;
+  enabled: boolean | null;
+  price: number | null;
+}
+
 function formatJpDate(d: Date): string {
   const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
   return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日（${day}）`;
@@ -252,6 +270,9 @@ export default function DashboardPage() {
   const [salonLeads, setSalonLeads] = useState<SalonLead[]>([]);
   const [diagnosisResults, setDiagnosisResults] = useState<DiagnosisResult[]>([]);
   const [consDailyAnalysis, setConsDailyAnalysis] = useState<ConsDailyAnalysis | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [salonAddons, setSalonAddons] = useState<SalonAddon[]>([]);
+  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
@@ -278,16 +299,17 @@ export default function DashboardPage() {
     setLoading(true);
     try {
       const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
         setLoading(false);
         return;
       }
+      setUser(authUser);
 
       const { data: salonRow } = await supabase
         .from('salons')
         .select('id, name, owner_name, email, plan')
-        .eq('owner_user_id', user.id)
+        .eq('owner_user_id', authUser.id)
         .maybeSingle();
 
       if (!salonRow) {
@@ -301,7 +323,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes] = await Promise.all([
+      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes, subRes, addonsRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -360,6 +382,15 @@ export default function DashboardPage() {
           .eq('salon_id', salonRow.id)
           .order('analysis_date', { ascending: false })
           .limit(1),
+        supabase
+          .from('subscriptions')
+          .select('id, user_id, plan, status, trial_ends_at, current_period_end, cancel_at_period_end')
+          .eq('user_id', authUser.id)
+          .maybeSingle(),
+        supabase
+          .from('salon_addons')
+          .select('id, salon_id, addon_key, enabled, price')
+          .eq('salon_id', salonRow.id),
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
@@ -373,6 +404,8 @@ export default function DashboardPage() {
       setSalonLeads((leadsRes.data as SalonLead[]) ?? []);
       setDiagnosisResults((diagRes.data as DiagnosisResult[]) ?? []);
       setConsDailyAnalysis((consRes.data as ConsDailyAnalysis[])?.[0] || null);
+      setSubscription((subRes.data as Subscription) || null);
+      setSalonAddons((addonsRes.data as SalonAddon[]) ?? []);
     } catch (e) {
       console.error('Data load error:', e);
     } finally {
@@ -1108,8 +1141,108 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (plan, news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && currentView !== 'con' && (
+        {/* プランビュー */}
+        {currentView === 'plan' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>プラン管理</h2>
+              <span className="en hand">Plan</span>
+              <span className="right">
+                現在: {subscription?.plan || salon?.plan || '—'} / {subscription?.status || '—'}
+                {subscription?.current_period_end && ` / ${new Date(subscription.current_period_end).toLocaleDateString('ja-JP')}まで`}
+              </span>
+            </div>
+            <div className="card">
+              <div className="plan-grid">
+                {/* Light プラン */}
+                <div className={`plan-opt ${subscription?.plan === 'light' ? 'cur' : ''}`}>
+                  {subscription?.plan === 'light' && <span className="b">現在</span>}
+                  <strong>Light</strong>
+                  <div className="pr">
+                    ¥1,980
+                    <small>/月</small>
+                  </div>
+                  <p>ソロオーナー向け</p>
+                </div>
+
+                {/* Standard プラン */}
+                <div className={`plan-opt ${subscription?.plan === 'standard' ? 'cur' : ''}`}>
+                  {subscription?.plan === 'standard' && <span className="b">現在</span>}
+                  <strong>Standard</strong>
+                  <div className="pr">
+                    ¥2,980
+                    <small>/月</small>
+                  </div>
+                  <p>2〜5名のサロン向け</p>
+                </div>
+
+                {/* Professional プラン */}
+                <div className={`plan-opt ${subscription?.plan === 'professional' ? 'cur' : ''}`}>
+                  {subscription?.plan === 'professional' && <span className="b">現在</span>}
+                  <strong>Professional</strong>
+                  <div className="pr">
+                    ¥4,980
+                    <small>/月</small>
+                  </div>
+                  <p>6名以上のサロン向け</p>
+                </div>
+              </div>
+              <p className="note">税込・初期費用0円。プラン変更は次回請求から適用されます。</p>
+            </div>
+
+            {/* サブスクリプション状態 */}
+            {subscription && (
+              <div className="card" style={{ marginTop: '18px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '12px' }}>契約状態</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>プラン:</span>
+                    <strong>{subscription.plan || '—'}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span>ステータス:</span>
+                    <strong>{subscription.status === 'active' ? 'アクティブ' : subscription.status === 'canceled' ? '解約済み' : subscription.status || '—'}</strong>
+                  </div>
+                  {subscription.current_period_end && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>利用可能期間:</span>
+                      <strong>{new Date(subscription.current_period_end).toLocaleDateString('ja-JP')}まで</strong>
+                    </div>
+                  )}
+                  {subscription.trial_ends_at && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span>トライアル終了:</span>
+                      <strong>{new Date(subscription.trial_ends_at).toLocaleDateString('ja-JP')}</strong>
+                    </div>
+                  )}
+                  {subscription.cancel_at_period_end && (
+                    <div style={{ color: 'var(--hint)' }}>
+                      ⚠️ 現在の期間終了後、解約予定
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* アドオン */}
+            {salonAddons.length > 0 && (
+              <div className="card" style={{ marginTop: '18px' }}>
+                <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '12px' }}>アドオン</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {salonAddons.map(addon => (
+                    <div key={addon.id} style={{ padding: '10px 12px', borderRadius: '12px', boxShadow: 'var(--raise-sm)', fontSize: '12px', display: 'flex', justifyContent: 'space-between' }}>
+                      <span>{addon.addon_key} {addon.enabled ? '✓' : '—'}</span>
+                      <strong>¥{addon.price?.toLocaleString()}/月</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* TODO: その他のビュー (news, ec, rev) は段階2以降 */}
+        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && currentView !== 'con' && currentView !== 'plan' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
