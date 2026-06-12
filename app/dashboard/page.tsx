@@ -40,6 +40,18 @@ interface Alert {
   created_at: string | null;
 }
 
+interface HPBReservation {
+  id: string;
+  salon_id: string | null;
+  start_time: string;
+  end_time: string | null;
+  staff_name: string | null;
+  menu_name: string | null;
+  customer_name: string | null;
+  status: string | null;
+  source: string | null;
+}
+
 function formatJpDate(d: Date): string {
   const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
   return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日（${day}）`;
@@ -150,10 +162,12 @@ export default function DashboardPage() {
   const [accTheme, setAccTheme] = useState<string>('terracotta');
   const [salon, setSalon] = useState<Salon | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [hpbReservations, setHpbReservations] = useState<HPBReservation[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
 
   // Load theme from localStorage
   useEffect(() => {
@@ -197,7 +211,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes] = await Promise.all([
+      const [resRes, hpbRes, custRes, alertRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -205,6 +219,13 @@ export default function DashboardPage() {
           .gte('datetime', startDate.toISOString())
           .lte('datetime', endDate.toISOString())
           .order('datetime', { ascending: true }),
+        supabase
+          .from('hpb_reservations')
+          .select('id, salon_id, start_time, end_time, staff_name, menu_name, customer_name, status, source')
+          .eq('salon_id', salonRow.id)
+          .gte('start_time', startDate.toISOString())
+          .lte('start_time', endDate.toISOString())
+          .order('start_time', { ascending: true }),
         supabase
           .from('customers')
           .select('id, salon_id, name, last_visit, visit_count, line_display_name, line_user_id, created_at')
@@ -217,6 +238,7 @@ export default function DashboardPage() {
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
+      setHpbReservations((hpbRes.data as HPBReservation[]) ?? []);
       setCustomers((custRes.data as Customer[]) ?? []);
       setAlerts((alertRes.data as Alert[]) ?? []);
     } catch (e) {
@@ -250,6 +272,47 @@ export default function DashboardPage() {
       }),
     [reservations, startOfToday, endOfToday],
   );
+
+  // booking ビュー用: 選択日の予約をスタッフ別にグループ化
+  const bookingDayStart = useMemo(() => {
+    const d = new Date(selectedBookingDate);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [selectedBookingDate]);
+  const bookingDayEnd = useMemo(() => {
+    const d = new Date(selectedBookingDate);
+    d.setHours(23, 59, 59, 999);
+    return d;
+  }, [selectedBookingDate]);
+
+  const selectedDayReservations = useMemo(() => {
+    const hpb = hpbReservations.filter(r => {
+      const d = new Date(r.start_time);
+      return d >= bookingDayStart && d <= bookingDayEnd;
+    });
+    const manual = reservations.filter(r => {
+      const d = new Date(r.datetime);
+      return d >= bookingDayStart && d <= bookingDayEnd;
+    });
+    return [...hpb, ...manual];
+  }, [hpbReservations, reservations, bookingDayStart, bookingDayEnd]);
+
+  const staffLanes = useMemo(() => {
+    const staffMap = new Map<string | null, any[]>();
+    selectedDayReservations.forEach(r => {
+      const staff = 'staff_name' in r ? r.staff_name : null;
+      if (!staffMap.has(staff)) {
+        staffMap.set(staff, []);
+      }
+      staffMap.get(staff)!.push(r);
+    });
+    // フリー枠を最後に
+    const result = Array.from(staffMap.entries())
+      .filter(([staff]) => staff !== null)
+      .map(([staff, reservs]) => ({ staff, reservs }))
+      .concat(staffMap.has(null) ? [{ staff: null, reservs: staffMap.get(null)! }] : []);
+    return result;
+  }, [selectedDayReservations]);
 
   const handleThemeChange = (base: string) => {
     setBaseTheme(base);
@@ -526,8 +589,94 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (booking, cust, dm, int, con, plan, news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && (
+        {/* HPB予約ビュー */}
+        {currentView === 'booking' && (
+          <section className="view on">
+            <div className="card">
+              <div className="day-nav">
+                <div className="arrows">
+                  <button onClick={() => setSelectedBookingDate(new Date(selectedBookingDate.getTime() - 86400000))}>‹</button>
+                  <button onClick={() => setSelectedBookingDate(new Date(selectedBookingDate.getTime() + 86400000))}>›</button>
+                </div>
+                <span className="big hand">{String(selectedBookingDate.getDate()).padStart(2, ' ')} {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][selectedBookingDate.getMonth()]}</span>
+                <span className="d">{formatJpDate(selectedBookingDate)}</span>
+                <div className="chip-row" style={{ marginLeft: 'auto' }}>
+                  <button className="chip on">日</button>
+                  <button className="chip">週</button>
+                  <button className="chip">月</button>
+                </div>
+              </div>
+              {selectedDayReservations.length === 0 ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
+                  この日の予約はありません
+                </div>
+              ) : (
+                <div className="tt">
+                  <div className="tt-grid">
+                    <div className="tt-hours">
+                      <span></span>
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const h = 10 + i;
+                        return <span key={`${h}:00`}>{String(h).padStart(2, '0')}:00</span>;
+                      })}
+                      {Array.from({ length: 10 }, (_, i) => {
+                        const h = 10 + i;
+                        return <span key={`${h}:30`}>:30</span>;
+                      })}
+                    </div>
+                    {/* スタッフレーンを動的生成 */}
+                    {staffLanes.length === 0 ? (
+                      <div style={{ padding: '30px', color: 'var(--hint)', fontSize: '12px' }}>
+                        データなし
+                      </div>
+                    ) : (
+                      staffLanes.map((lane, idx) => (
+                        <div key={idx} className="tt-lane">
+                          <div className="tt-staff">
+                            <span className="ava" style={lane.staff === null ? { boxShadow: 'var(--inset-sm)', background: 'var(--bg)', color: 'var(--acc-ink)' } : {}}>
+                              {lane.staff ? lane.staff.charAt(0) : '空'}
+                            </span>
+                            <div>
+                              <strong>{lane.staff || 'フリー枠'}</strong>
+                              <span>—</span>
+                            </div>
+                          </div>
+                          {/* ブロック表示 */}
+                          {lane.reservs.map((r, blockIdx) => {
+                            const startTime = new Date('start_time' in r ? r.start_time : r.datetime);
+                            const endTime = 'end_time' in r && r.end_time ? new Date(r.end_time) : new Date(startTime.getTime() + 60 * 60000);
+                            const startMinutes = startTime.getHours() * 60 + startTime.getMinutes() - 10 * 60;
+                            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60000;
+                            const leftPercent = Math.max(0, (startMinutes / (10 * 60)) * 100);
+                            const widthPercent = Math.max(2, (durationMinutes / (10 * 60)) * 100);
+                            const isGradient = 'staff_name' in r;
+                            return (
+                              <span
+                                key={blockIdx}
+                                className={`tt-block ${!isGradient ? 'lite' : ''}`}
+                                style={{
+                                  left: `calc(150px + (100% - 150px) * ${leftPercent / 100})`,
+                                  width: `calc((100% - 150px) * ${widthPercent / 100})`,
+                                }}
+                              >
+                                {r.customer_name || '名前未設定'}
+                                <small>{'menu' in r ? r.menu : r.menu_name || 'メニュー未設定'}</small>
+                              </span>
+                            );
+                          })}
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+              <p className="note">＋ スタッフ枠を追加（¥3,300/月・1名）</p>
+            </div>
+          </section>
+        )}
+
+        {/* TODO: その他のビュー (cust, dm, int, con, plan, news, ec, rev) は段階2以降 */}
+        {currentView !== 'home' && currentView !== 'booking' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
