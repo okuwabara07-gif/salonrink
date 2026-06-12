@@ -49,6 +49,19 @@ function formatHHMM(d: Date): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
+const VIEW_TITLES: Record<string, string> = {
+  home: 'ホーム',
+  booking: 'HPB予約',
+  cust: '顧客',
+  dm: 'DM配信',
+  int: '連携',
+  con: 'コンシェルジュ',
+  plan: 'プラン',
+  news: 'お知らせ',
+  ec: '店販EC',
+  rev: '口コミ承認',
+};
+
 // SVGアイコンコンポーネント
 const HomeIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -354,7 +367,7 @@ export default function DashboardPage() {
         {/* トップバー */}
         <div className="topbar">
           <div>
-            <h1>ホーム</h1>
+            <h1>{VIEW_TITLES[currentView]}</h1>
             <span className="date">{formatJpDate(now)}</span>
           </div>
           <div className="search">
@@ -517,8 +530,8 @@ export default function DashboardPage() {
         {currentView !== 'home' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
-              <p style={{ fontSize: '16px', fontWeight: '700' }}>このビューはまだ実装されていません</p>
-              <p style={{ fontSize: '13px', marginTop: '8px' }}>段階2以降で実装予定です</p>
+              <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
+              <p style={{ fontSize: '13px', marginTop: '8px' }}>お楽しみにお待ちください</p>
             </div>
           </section>
         )}
