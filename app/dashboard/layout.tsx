@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { Sidebar, TopHeader } from '@/components/srk';
 import NewReservationModal from '@/components/dashboard/NewReservationModal';
 import { createClient } from '@/lib/supabase/client';
+import './admin-neo.css';
 
 const LiffAutoLogin = dynamic(() => import('./_components/LiffAutoLogin').then(m => ({ default: m.LiffAutoLogin })), {
   ssr: false,
