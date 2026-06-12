@@ -754,7 +754,7 @@ export default function DashboardPage() {
                 <div className="delta">うち指名 —</div>
               </div>
               <div className="kpi">
-                <div className="lbl">今月の来客</div>
+                <div className="lbl">総顧客数</div>
                 <div className="val">
                   {custList.length}
                   <small> 人</small>
@@ -856,7 +856,27 @@ export default function DashboardPage() {
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
                   この日の予約はありません
                 </div>
+              ) : staffLanes.length === 1 ? (
+                /* 1レーン（フリー枠のみ）→ リスト表示 */
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '14px' }}>
+                  {selectedDayReservations
+                    .sort((a, b) => new Date('start_time' in a ? a.start_time : a.datetime).getTime() - new Date('start_time' in b ? b.start_time : b.datetime).getTime())
+                    .map(r => {
+                      const startTime = new Date('start_time' in r ? r.start_time : r.datetime);
+                      return (
+                        <div key={r.id} className="tl-row">
+                          <span className="t hand">{formatHHMM(startTime)}</span>
+                          <div>
+                            <strong>{r.customer_name || '名前未設定'}</strong>
+                            <span className="m">{'menu' in r ? r.menu : r.menu_name || 'メニュー未設定'}</span>
+                          </div>
+                          <span className="st">{r.status === 'confirmed' ? '確定' : 'リクエスト'}</span>
+                        </div>
+                      );
+                    })}
+                </div>
               ) : (
+                /* 複数レーン → タイムテーブル表示 */
                 <div className="tt">
                   <div className="tt-grid">
                     <div className="tt-hours">
@@ -870,49 +890,42 @@ export default function DashboardPage() {
                         return <span key={`${h}:30`}>:30</span>;
                       })}
                     </div>
-                    {/* スタッフレーンを動的生成 */}
-                    {staffLanes.length === 0 ? (
-                      <div style={{ padding: '30px', color: 'var(--hint)', fontSize: '12px' }}>
-                        データなし
-                      </div>
-                    ) : (
-                      staffLanes.map((lane, idx) => (
-                        <div key={idx} className="tt-lane">
-                          <div className="tt-staff">
-                            <span className="ava" style={lane.staff === null ? { boxShadow: 'var(--inset-sm)', background: 'var(--bg)', color: 'var(--acc-ink)' } : {}}>
-                              {lane.staff ? lane.staff.charAt(0) : '空'}
-                            </span>
-                            <div>
-                              <strong>{lane.staff || 'フリー枠'}</strong>
-                              <span>—</span>
-                            </div>
+                    {staffLanes.map((lane, idx) => (
+                      <div key={idx} className="tt-lane">
+                        <div className="tt-staff">
+                          <span className="ava" style={lane.staff === null ? { boxShadow: 'var(--inset-sm)', background: 'var(--bg)', color: 'var(--acc-ink)' } : {}}>
+                            {lane.staff ? lane.staff.charAt(0) : '空'}
+                          </span>
+                          <div>
+                            <strong>{lane.staff || 'フリー枠'}</strong>
+                            <span>—</span>
                           </div>
-                          {/* ブロック表示 */}
-                          {lane.reservs.map((r, blockIdx) => {
-                            const startTime = new Date('start_time' in r ? r.start_time : r.datetime);
-                            const endTime = 'end_time' in r && r.end_time ? new Date(r.end_time) : new Date(startTime.getTime() + 60 * 60000);
-                            const startMinutes = startTime.getHours() * 60 + startTime.getMinutes() - 10 * 60;
-                            const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60000;
-                            const leftPercent = Math.max(0, (startMinutes / (10 * 60)) * 100);
-                            const widthPercent = Math.max(2, (durationMinutes / (10 * 60)) * 100);
-                            const isGradient = 'staff_name' in r;
-                            return (
-                              <span
-                                key={blockIdx}
-                                className={`tt-block ${!isGradient ? 'lite' : ''}`}
-                                style={{
-                                  left: `calc(150px + (100% - 150px) * ${leftPercent / 100})`,
-                                  width: `calc((100% - 150px) * ${widthPercent / 100})`,
-                                }}
-                              >
-                                {r.customer_name || '名前未設定'}
-                                <small>{'menu' in r ? r.menu : r.menu_name || 'メニュー未設定'}</small>
-                              </span>
-                            );
-                          })}
                         </div>
-                      ))
-                    )}
+                        {/* ブロック表示 */}
+                        {lane.reservs.map((r, blockIdx) => {
+                          const startTime = new Date('start_time' in r ? r.start_time : r.datetime);
+                          const endTime = 'end_time' in r && r.end_time ? new Date(r.end_time) : new Date(startTime.getTime() + 60 * 60000);
+                          const startMinutes = startTime.getHours() * 60 + startTime.getMinutes() - 10 * 60;
+                          const durationMinutes = (endTime.getTime() - startTime.getTime()) / 60000;
+                          const leftPercent = Math.max(0, (startMinutes / (10 * 60)) * 100);
+                          const widthPercent = Math.max(2, (durationMinutes / (10 * 60)) * 100);
+                          const isGradient = 'staff_name' in r;
+                          return (
+                            <span
+                              key={blockIdx}
+                              className={`tt-block ${!isGradient ? 'lite' : ''}`}
+                              style={{
+                                left: `calc(150px + (100% - 150px) * ${leftPercent / 100})`,
+                                width: `calc((100% - 150px) * ${widthPercent / 100})`,
+                              }}
+                            >
+                              {r.customer_name || '名前未設定'}
+                              <small>{'menu' in r ? r.menu : r.menu_name || 'メニュー未設定'}</small>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}
