@@ -7,7 +7,7 @@ export default function ResetPasswordContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   // メール認証後、Supabase がリダイレクトしてくる際に付与するパラメータ
-  const hasRecoveryToken = searchParams.has('type') && searchParams.get('type') === 'recovery'
+  const hasRecoveryToken = (searchParams.has('type') && searchParams.get('type') === 'recovery') || searchParams.get('mode') === 'set'
 
   const [step, setStep] = useState<'email' | 'password'>(hasRecoveryToken ? 'password' : 'email')
   const [email, setEmail] = useState('')
@@ -39,7 +39,7 @@ export default function ResetPasswordContent() {
     setMessage(null)
 
     const supabase = await createClient()
-    const redirectUrl = `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/auth/reset-password`
+    const redirectUrl = `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000'}/auth/callback?next=%2Fauth%2Freset-password%3Fmode%3Dset`
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: redirectUrl,
