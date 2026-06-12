@@ -759,7 +759,7 @@ export default function DashboardPage() {
                   {custList.length}
                   <small> 人</small>
                 </div>
-                <div className="delta">＋— 前月比</div>
+                <div className="delta">—</div>
               </div>
               <div className="kpi">
                 <div className="lbl">リピート率</div>
