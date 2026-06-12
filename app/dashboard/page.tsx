@@ -150,6 +150,45 @@ interface SalonAddon {
   price: number | null;
 }
 
+interface Order {
+  id: string;
+  salon_id: string | null;
+  items: any[] | null;
+  total: number | null;
+  shipping_name: string | null;
+  shipping_address: string | null;
+  payment_status: string | null;
+  fulfillment_status: string | null;
+  shipped_at: string | null;
+  created_at: string | null;
+}
+
+interface Product {
+  id: string;
+  salon_id: string | null;
+  name: string | null;
+  brand: string | null;
+  category: string | null;
+  price: number | null;
+  volume: string | null;
+  image_url: string | null;
+  stock: number | null;
+  is_active: boolean | null;
+  sort_order: number | null;
+}
+
+interface ProductReview {
+  id: string;
+  salon_id: string | null;
+  product_id: string | null;
+  customer_id: string | null;
+  rating: number | null;
+  body: string | null;
+  status: string | null;
+  created_at: string | null;
+  approved_at: string | null;
+}
+
 function formatJpDate(d: Date): string {
   const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
   return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日（${day}）`;
@@ -273,6 +312,19 @@ export default function DashboardPage() {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [salonAddons, setSalonAddons] = useState<SalonAddon[]>([]);
   const [user, setUser] = useState<any>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [productReviews, setProductReviews] = useState<ProductReview[]>([]);
+  const [ecTab, setEcTab] = useState('orders');
+  const [newProductForm, setNewProductForm] = useState({
+    name: '',
+    brand: '',
+    category: '',
+    price: '',
+    volume: '',
+    stock: '',
+    is_active: true,
+  });
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
@@ -323,7 +375,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes, subRes, addonsRes] = await Promise.all([
+      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes, subRes, addonsRes, ordersRes, productsRes, reviewsRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -391,6 +443,21 @@ export default function DashboardPage() {
           .from('salon_addons')
           .select('id, salon_id, addon_key, enabled, price')
           .eq('salon_id', salonRow.id),
+        supabase
+          .from('orders')
+          .select('id, salon_id, items, total, shipping_name, shipping_address, payment_status, fulfillment_status, shipped_at, created_at')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('products')
+          .select('id, salon_id, name, brand, category, price, volume, image_url, stock, is_active, sort_order')
+          .eq('salon_id', salonRow.id)
+          .order('sort_order', { ascending: true }),
+        supabase
+          .from('product_reviews')
+          .select('id, salon_id, product_id, customer_id, rating, body, status, created_at, approved_at')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false }),
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
@@ -406,6 +473,9 @@ export default function DashboardPage() {
       setConsDailyAnalysis((consRes.data as ConsDailyAnalysis[])?.[0] || null);
       setSubscription((subRes.data as Subscription) || null);
       setSalonAddons((addonsRes.data as SalonAddon[]) ?? []);
+      setOrders((ordersRes.data as Order[]) ?? []);
+      setProducts((productsRes.data as Product[]) ?? []);
+      setProductReviews((reviewsRes.data as ProductReview[]) ?? []);
     } catch (e) {
       console.error('Data load error:', e);
     } finally {
@@ -1241,8 +1311,316 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && currentView !== 'con' && currentView !== 'plan' && (
+        {/* お知らせビュー */}
+        {currentView === 'news' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>お知らせ</h2>
+              <span className="en hand">News</span>
+            </div>
+            <div className="chip-row" style={{ marginBottom: '18px' }}>
+              <button className="chip on">すべて</button>
+              <button className="chip">新機能</button>
+              <button className="chip">ヒント</button>
+              <button className="chip">メンテ</button>
+            </div>
+            <div className="news-big">
+              {alerts.length === 0 ? (
+                <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
+                  お知らせはありません
+                </div>
+              ) : (
+                alerts.map(a => (
+                  <div key={a.id} className="card">
+                    <div className="news-row" style={{ boxShadow: 'none', padding: '0' }}>
+                      <div className="meta">
+                        <span className="b">{a.type || '情報'}</span>
+                        {a.created_at && new Date(a.created_at).toLocaleDateString('ja-JP')}
+                      </div>
+                      <strong style={{ fontSize: '14.5px' }}>{a.message}</strong>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* 店販ECビュー */}
+        {currentView === 'ec' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>店販EC</h2>
+              <span className="en hand">Store</span>
+            </div>
+            <div className="chip-row" style={{ marginBottom: '18px' }}>
+              <button className={`chip ${ecTab === 'orders' ? 'on' : ''}`} onClick={() => setEcTab('orders')}>
+                注文管理<span className="c">{orders.length}</span>
+              </button>
+              <button className={`chip ${ecTab === 'products' ? 'on' : ''}`} onClick={() => setEcTab('products')}>
+                商品一覧<span className="c">{products.length}</span>
+              </button>
+              <button className={`chip ${ecTab === 'register' ? 'on' : ''}`} onClick={() => setEcTab('register')}>
+                ＋ 商品を登録
+              </button>
+            </div>
+
+            {/* 注文管理 */}
+            {ecTab === 'orders' && (
+              <div>
+                {orders.length === 0 ? (
+                  <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
+                    注文はありません
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {orders.map(o => (
+                      <div key={o.id} className="order-row">
+                        <span className="th">📦</span>
+                        <div>
+                          <strong>{(o.items as any[])?.[0]?.name || '商品未設定'}</strong>
+                          <span className="m">
+                            {o.shipping_name || '名前未設定'} · {o.created_at && new Date(o.created_at).toLocaleDateString('ja-JP')}
+                          </span>
+                        </div>
+                        <span className="pr">¥{o.total?.toLocaleString() || '—'}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="note">※決済・発送処理は Stripe 連携で実装。</p>
+              </div>
+            )}
+
+            {/* 商品一覧 */}
+            {ecTab === 'products' && (
+              <div>
+                {products.length === 0 ? (
+                  <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
+                    商品がありません
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {products.map(p => (
+                      <div key={p.id} className="prod-row">
+                        <span className="th">🛍</span>
+                        <div>
+                          <strong>{p.name}</strong>
+                          <span className="m">{p.category} · 在庫{p.stock || 0}</span>
+                        </div>
+                        <span className="pr">¥{p.price?.toLocaleString()}</span>
+                        <span className="st" style={p.is_active ? { color: 'var(--green)' } : {}}>
+                          {p.is_active ? '公開中' : '非公開'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="note">※行をタップで編集へ(実装予定)。</p>
+              </div>
+            )}
+
+            {/* 商品登録 */}
+            {ecTab === 'register' && (
+              <div className="f-grid">
+                <div className="card">
+                  <label className="f-label">商品名</label>
+                  <input
+                    className="f-input"
+                    type="text"
+                    placeholder="例：コンシェルジュ ヘアオイル 100mL"
+                    value={newProductForm.name}
+                    onChange={e => setNewProductForm({ ...newProductForm, name: e.target.value })}
+                  />
+                  <div className="f-row">
+                    <div>
+                      <label className="f-label">ブランド</label>
+                      <input
+                        className="f-input"
+                        type="text"
+                        value={newProductForm.brand}
+                        onChange={e => setNewProductForm({ ...newProductForm, brand: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="f-label">カテゴリ</label>
+                      <select
+                        className="f-select"
+                        value={newProductForm.category}
+                        onChange={e => setNewProductForm({ ...newProductForm, category: e.target.value })}
+                      >
+                        <option>ヘアケア</option>
+                        <option>スカルプ</option>
+                        <option>スタイリング</option>
+                        <option>雑貨</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="f-row">
+                    <div>
+                      <label className="f-label">販売価格（税込）</label>
+                      <span className="f-unit">
+                        <input
+                          className="f-input"
+                          type="number"
+                          value={newProductForm.price}
+                          onChange={e => setNewProductForm({ ...newProductForm, price: e.target.value })}
+                          placeholder="3520"
+                        />
+                        <span className="u">円</span>
+                      </span>
+                    </div>
+                    <div>
+                      <label className="f-label">在庫数</label>
+                      <span className="f-unit">
+                        <input
+                          className="f-input"
+                          type="number"
+                          value={newProductForm.stock}
+                          onChange={e => setNewProductForm({ ...newProductForm, stock: e.target.value })}
+                          placeholder="24"
+                        />
+                        <span className="u">個</span>
+                      </span>
+                    </div>
+                  </div>
+                  <label className="f-label">容量（任意）</label>
+                  <input
+                    className="f-input"
+                    type="text"
+                    placeholder="100mL"
+                    value={newProductForm.volume}
+                    onChange={e => setNewProductForm({ ...newProductForm, volume: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <div className="card" style={{ marginTop: '0' }}>
+                    <label className="f-label">商品画像（最大5枚）</label>
+                    <div className="f-photos">
+                      <button className="f-photo-add">
+                        <span className="plus">＋</span>メイン
+                      </button>
+                      <button className="f-photo-add">
+                        <span className="plus">＋</span>追加
+                      </button>
+                      <button className="f-photo-add">
+                        <span className="plus">＋</span>追加
+                      </button>
+                    </div>
+                    <p className="f-photo-hint">正方形・1200px以上推奨。</p>
+                  </div>
+                  <div className="card" style={{ marginTop: '16px' }}>
+                    <div className="f-toggle-row">
+                      <div>
+                        <strong>ストアに公開</strong>
+                        <span>LINEミニアプリの商品一覧に表示</span>
+                      </div>
+                      <button
+                        className={`f-sw ${newProductForm.is_active ? 'on' : ''}`}
+                        onClick={() => setNewProductForm({ ...newProductForm, is_active: !newProductForm.is_active })}
+                      />
+                    </div>
+                    <button
+                      className="dm-send"
+                      onClick={async () => {
+                        if (!newProductForm.name || !newProductForm.price) {
+                          alert('商品名と価格は必須です');
+                          return;
+                        }
+                        const supabase = createClient();
+                        const { error } = await supabase.from('products').insert({
+                          salon_id: salon!.id,
+                          name: newProductForm.name,
+                          brand: newProductForm.brand || null,
+                          category: newProductForm.category || null,
+                          price: parseInt(newProductForm.price),
+                          volume: newProductForm.volume || null,
+                          stock: parseInt(newProductForm.stock) || 0,
+                          is_active: newProductForm.is_active,
+                        });
+                        if (error) {
+                          alert('登録に失敗しました: ' + error.message);
+                        } else {
+                          alert('商品を登録しました');
+                          setNewProductForm({ name: '', brand: '', category: '', price: '', volume: '', stock: '', is_active: true });
+                          loadAll();
+                        }
+                      }}
+                    >
+                      この内容で登録する
+                    </button>
+                    <p className="note">※画像アップロードは実装予定。</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* 口コミ承認ビュー */}
+        {currentView === 'rev' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>口コミ承認</h2>
+              <span className="en hand">Reviews</span>
+            </div>
+            {productReviews.length === 0 ? (
+              <div className="empty">承認待ちの口コミはありません。<br />新しい口コミが届くとここに表示されます。</div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {productReviews.map(r => (
+                  <div key={r.id} className="card">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '8px' }}>
+                      <div>
+                        <strong>⭐ {r.rating} / 5</strong>
+                        <p style={{ fontSize: '12px', color: 'var(--hint)', margin: '4px 0 0' }}>
+                          {r.created_at && new Date(r.created_at).toLocaleDateString('ja-JP')}
+                        </p>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: '700',
+                          padding: '4px 11px',
+                          borderRadius: '999px',
+                          boxShadow: 'var(--raise-sm)',
+                          color: r.status === 'approved' ? 'var(--green)' : 'var(--hint)',
+                        }}
+                      >
+                        {r.status === 'approved' ? '✓ 承認済み' : '待機中'}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '13px', lineHeight: '1.6', margin: '0 0 8px' }}>{r.body}</p>
+                    {r.status !== 'approved' && (
+                      <button
+                        className="cta-btn"
+                        style={{ width: 'auto' }}
+                        onClick={async () => {
+                          const supabase = createClient();
+                          const { error } = await supabase
+                            .from('product_reviews')
+                            .update({ status: 'approved', approved_at: new Date().toISOString() })
+                            .eq('id', r.id);
+                          if (error) {
+                            alert('承認に失敗しました: ' + error.message);
+                          } else {
+                            alert('口コミを承認しました');
+                            loadAll();
+                          }
+                        }}
+                      >
+                        承認する
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* TODO: すべてのビュー実装完了 */}
+        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && currentView !== 'con' && currentView !== 'plan' && currentView !== 'news' && currentView !== 'ec' && currentView !== 'rev' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
