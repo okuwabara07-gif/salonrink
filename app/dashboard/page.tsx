@@ -57,6 +57,51 @@ interface CustomerRecord {
   stylist: string | null;
 }
 
+interface DMCampaign {
+  id: string;
+  salon_id: string | null;
+  template_name: string | null;
+  target_label: string | null;
+  target_count: number | null;
+  status: string | null;
+  sent_at: string | null;
+  created_at: string | null;
+}
+
+interface LineAccount {
+  id: string;
+  salon_id: string | null;
+  line_status: string | null;
+  line_bot_basic_id: string | null;
+  line_connected_at: string | null;
+  active: boolean | null;
+}
+
+interface HPBIntegration {
+  id: string;
+  salon_id: string | null;
+  ical_url: string | null;
+  last_synced_at: string | null;
+  last_sync_status: string | null;
+  active: boolean | null;
+}
+
+interface SyncStatus {
+  id: string;
+  salon_id: string | null;
+  status: string | null;
+  last_sync_at: string | null;
+  last_success_at: string | null;
+  consecutive_failures: number | null;
+}
+
+interface RichMenuConfig {
+  id: string;
+  salon_id: string | null;
+  published_at: string | null;
+  line_rich_menu_id: string | null;
+}
+
 function formatJpDate(d: Date): string {
   const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
   return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日（${day}）`;
@@ -169,6 +214,11 @@ export default function DashboardPage() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [custList, setCustList] = useState<CustomerRecord[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
+  const [dmCampaigns, setDmCampaigns] = useState<DMCampaign[]>([]);
+  const [lineAccount, setLineAccount] = useState<LineAccount | null>(null);
+  const [hpbIntegration, setHpbIntegration] = useState<HPBIntegration | null>(null);
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
+  const [richMenuConfig, setRichMenuConfig] = useState<RichMenuConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
@@ -218,7 +268,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes] = await Promise.all([
+      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -235,11 +285,41 @@ export default function DashboardPage() {
           .select('id, message, type, created_at')
           .order('created_at', { ascending: false })
           .limit(3),
+        supabase
+          .from('dm_campaigns')
+          .select('id, salon_id, template_name, target_label, target_count, status, sent_at, created_at')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('line_accounts')
+          .select('id, salon_id, line_status, line_bot_basic_id, line_connected_at, active')
+          .eq('salon_id', salonRow.id)
+          .maybeSingle(),
+        supabase
+          .from('hpb_integrations')
+          .select('id, salon_id, ical_url, last_synced_at, last_sync_status, active')
+          .eq('salon_id', salonRow.id)
+          .maybeSingle(),
+        supabase
+          .from('sync_status')
+          .select('id, salon_id, status, last_sync_at, last_success_at, consecutive_failures')
+          .eq('salon_id', salonRow.id)
+          .maybeSingle(),
+        supabase
+          .from('rich_menu_configs')
+          .select('id, salon_id, published_at, line_rich_menu_id')
+          .eq('salon_id', salonRow.id)
+          .maybeSingle(),
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
       setCustList((custRes.data as CustomerRecord[]) ?? []);
       setAlerts((alertRes.data as Alert[]) ?? []);
+      setDmCampaigns((dmRes.data as DMCampaign[]) ?? []);
+      setLineAccount((lineRes.data as LineAccount) || null);
+      setHpbIntegration((hpbRes.data as HPBIntegration) || null);
+      setSyncStatus((syncRes.data as SyncStatus) || null);
+      setRichMenuConfig((richRes.data as RichMenuConfig) || null);
     } catch (e) {
       console.error('Data load error:', e);
     } finally {
@@ -746,8 +826,155 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (dm, int, con, plan, news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && (
+        {/* DM配信ビュー */}
+        {currentView === 'dm' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>DM配信</h2>
+              <span className="en hand">Campaigns</span>
+            </div>
+            <div className="dm-grid">
+              <div className="card">
+                <div className="v-head" style={{ margin: '0' }}>
+                  <h2>テンプレート選択</h2>
+                  <span className="en hand">Template</span>
+                </div>
+                <div className="dm-tpls">
+                  {['来店リマインド', '空き枠埋め（平日特典）', '来店御礼', 'お誕生月特典', 'キャンペーン告知', 'カスタム'].map((tpl, i) => (
+                    <button key={i} className={`dm-tpl ${i === 0 ? 'on' : ''}`}>
+                      <strong>{tpl}</strong>
+                    </button>
+                  ))}
+                </div>
+                <div className="dm-seg">
+                  <div className="v-head" style={{ margin: '0 0 12px' }}>
+                    <h2>配信対象を絞り込み</h2>
+                    <span className="en hand">Segment</span>
+                  </div>
+                  <div className="chip-row">
+                    <button className="chip">全顧客<span className="c">{custList.length}</span></button>
+                    <button className="chip">直近30日来店<span className="c">—</span></button>
+                    <button className="chip on">60日休眠<span className="c">—</span></button>
+                    <button className="chip">90日以上休眠<span className="c">—</span></button>
+                    <button className="chip">今月誕生月<span className="c">—</span></button>
+                  </div>
+                </div>
+              </div>
+              <div className="card">
+                <div className="v-head" style={{ margin: '0' }}>
+                  <h2>プレビューと配信</h2>
+                  <span className="en hand">Preview</span>
+                </div>
+                <div className="dm-preview">
+                  <div className="bub">来店ありがとうございます。前回のご来店から63日が経過しました。メンテナンスのタイミングです。</div>
+                </div>
+                <div className="dm-sum">
+                  <div className="r">
+                    <span>配信対象</span>
+                    <b>60日休眠</b>
+                  </div>
+                  <div className="r">
+                    <span>対象人数</span>
+                    <b>—</b>
+                  </div>
+                  <div className="r">
+                    <span>配信媒体</span>
+                    <b>LINE公式</b>
+                  </div>
+                </div>
+                <button className="dm-send" disabled style={{ opacity: 0.6 }}>
+                  配信する → （準備中）
+                </button>
+                <p className="note">送信処理は実装予定です。</p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* 連携ビュー */}
+        {currentView === 'int' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>連携設定</h2>
+              <span className="en hand">Integrations</span>
+              <span className="right">
+                {[lineAccount?.active, hpbIntegration?.active, richMenuConfig?.published_at].filter(Boolean).length} 接続中
+              </span>
+            </div>
+            <div className="int-grid">
+              {/* LINE連携 */}
+              <div className="int-card">
+                <div className="int-head">
+                  <span className="int-ic">L</span>
+                  <div>
+                    <strong>LINE連携</strong>
+                    <span>予約・リマインド・フォローアップ</span>
+                  </div>
+                </div>
+                <div className="int-foot">
+                  <span className="int-st" style={lineAccount?.active ? { color: 'var(--green)' } : {}}>
+                    ● {lineAccount?.active ? '接続中' : '未接続'}
+                  </span>
+                  <button className="int-go">設定を開く →</button>
+                </div>
+              </div>
+
+              {/* HPB連携 */}
+              <div className="int-card">
+                <div className="int-head">
+                  <span className="int-ic">H</span>
+                  <div>
+                    <strong>ホットペッパー連携</strong>
+                    <span>外部予約サイトの自動同期</span>
+                  </div>
+                </div>
+                <div className="int-foot">
+                  <span className="int-st" style={hpbIntegration?.active ? { color: 'var(--green)' } : {}}>
+                    ● {hpbIntegration?.active ? '接続中' : '未接続'}
+                  </span>
+                  <button className="int-go">接続する →</button>
+                </div>
+              </div>
+
+              {/* リッチメニュー */}
+              <div className="int-card">
+                <div className="int-head">
+                  <span className="int-ic">R</span>
+                  <div>
+                    <strong>リッチメニュー設定</strong>
+                    <span>LINEメニューをカスタマイズ</span>
+                  </div>
+                </div>
+                <div className="int-foot">
+                  <span className="int-st" style={richMenuConfig?.published_at ? { color: 'var(--green)' } : {}}>
+                    ● {richMenuConfig?.published_at ? '公開中' : '未接続'}
+                  </span>
+                  <button className="int-go">設定する →</button>
+                </div>
+              </div>
+
+              {/* Googleカレンダー（未対応） */}
+              <div className="int-card">
+                <div className="int-head">
+                  <span className="int-ic">G</span>
+                  <div>
+                    <strong>Googleカレンダー</strong>
+                    <span>スタッフ予定の双方向同期</span>
+                  </div>
+                </div>
+                <div className="int-foot">
+                  <span className="int-st">● 未対応</span>
+                  <button className="int-go" disabled style={{ opacity: 0.5 }}>
+                    準備中
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* TODO: その他のビュー (con, plan, news, ec, rev) は段階2以降 */}
+        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
