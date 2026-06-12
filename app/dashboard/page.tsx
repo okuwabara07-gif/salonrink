@@ -39,6 +39,7 @@ interface HPBReservation {
   customer_name: string | null;
   status: string | null;
   source: string | null;
+  updated_at?: string | null;
 }
 
 interface CustomerRecord {
@@ -331,6 +332,7 @@ export default function DashboardPage() {
   const [bookingHpb, setBookingHpb] = useState<HPBReservation[]>([]);
   const [bookingManual, setBookingManual] = useState<Reservation[]>([]);
   const [custSearchQuery, setCustSearchQuery] = useState('');
+  const [hpbLastUpdated, setHpbLastUpdated] = useState<string | null>(null);
 
   // Load theme from localStorage
   useEffect(() => {
@@ -375,7 +377,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes, subRes, addonsRes, ordersRes, productsRes, reviewsRes] = await Promise.all([
+      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes, subRes, addonsRes, ordersRes, productsRes, reviewsRes, hpbFreshRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -458,6 +460,13 @@ export default function DashboardPage() {
           .select('id, salon_id, product_id, customer_id, rating, body, status, created_at, approved_at')
           .eq('salon_id', salonRow.id)
           .order('created_at', { ascending: false }),
+        supabase
+          .from('hpb_reservations')
+          .select('updated_at')
+          .eq('salon_id', salonRow.id)
+          .order('updated_at', { ascending: false })
+          .limit(1)
+          .maybeSingle(),
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
@@ -476,6 +485,7 @@ export default function DashboardPage() {
       setOrders((ordersRes.data as Order[]) ?? []);
       setProducts((productsRes.data as Product[]) ?? []);
       setProductReviews((reviewsRes.data as ProductReview[]) ?? []);
+      setHpbLastUpdated((hpbFreshRes.data as any)?.updated_at ?? null);
     } catch (e) {
       console.error('Data load error:', e);
     } finally {
@@ -499,7 +509,7 @@ export default function DashboardPage() {
       const [h, m] = await Promise.all([
         supabase
           .from('hpb_reservations')
-          .select('id, salon_id, start_time, end_time, staff_name, menu_name, customer_name, status, source')
+          .select('id, salon_id, start_time, end_time, staff_name, menu_name, customer_name, status, source, updated_at')
           .eq('salon_id', salon.id)
           .gte('start_time', ds.toISOString())
           .lte('start_time', de.toISOString())
@@ -514,6 +524,25 @@ export default function DashboardPage() {
       ]);
       setBookingHpb((h.data as HPBReservation[]) ?? []);
       setBookingManual((m.data as Reservation[]) ?? []);
+      const hpbData = h.data as HPBReservation[];
+      if (hpbData && hpbData.length > 0) {
+        const maxUpdated = hpbData.reduce((max, r) => {
+          const rUpdated = r.updated_at ? new Date(r.updated_at).getTime() : 0;
+          const maxTime = max ? new Date(max).getTime() : 0;
+          return rUpdated > maxTime ? r.updated_at! : max;
+        }, null as string | null);
+        setHpbLastUpdated(maxUpdated);
+      } else {
+        const { data: allHpbData } = await supabase
+          .from('hpb_reservations')
+          .select('updated_at')
+          .eq('salon_id', salon.id)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+        if (allHpbData && allHpbData.length > 0) {
+          setHpbLastUpdated((allHpbData[0] as any).updated_at);
+        }
+      }
     })();
   }, [salon, selectedBookingDate]);
 
@@ -568,6 +597,19 @@ export default function DashboardPage() {
   const handleAccThemeChange = (acc: string) => {
     setAccTheme(acc);
     localStorage.setItem('sr-admin-acc', acc);
+  };
+
+  const getHpbFreshness = (lastUpdated: string | null) => {
+    if (!lastUpdated) return { daysAgo: null, isStale: false, isWarning: false };
+    const updated = new Date(lastUpdated);
+    const now = new Date();
+    const diffMs = now.getTime() - updated.getTime();
+    const daysAgo = Math.floor(diffMs / (24 * 60 * 60 * 1000));
+    return {
+      daysAgo,
+      isStale: daysAgo >= 2,
+      isWarning: daysAgo >= 2,
+    };
   };
 
   const handleLogout = async () => {
@@ -854,7 +896,18 @@ export default function DashboardPage() {
               </div>
               {selectedDayReservations.length === 0 ? (
                 <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
-                  この日の予約はありません
+                  <div>この日の予約はありません</div>
+                  {(() => {
+                    const freshness = getHpbFreshness(hpbLastUpdated);
+                    if (freshness.isWarning && freshness.daysAgo !== null) {
+                      return (
+                        <div style={{ marginTop: '12px', fontSize: '11px', color: '#d97706' }}>
+                          ※HPB同期が{freshness.daysAgo}日前から停止している可能性があります。設定→連携をご確認ください
+                        </div>
+                      );
+                    }
+                    return null;
+                  })()}
                 </div>
               ) : staffLanes.length === 1 ? (
                 /* 1レーン（フリー枠のみ）→ リスト表示 */
@@ -1097,10 +1150,31 @@ export default function DashboardPage() {
                     <span>外部予約サイトの自動同期</span>
                   </div>
                 </div>
+                <div style={{ padding: '12px 0', fontSize: '12px', color: 'var(--hint)' }}>
+                  {hpbLastUpdated ? (
+                    (() => {
+                      const freshness = getHpbFreshness(hpbLastUpdated);
+                      const lastDate = new Date(hpbLastUpdated);
+                      const dateStr = `${lastDate.getFullYear()}/${lastDate.getMonth() + 1}/${lastDate.getDate()}`;
+                      return (
+                        <div>
+                          最終取込: {dateStr} （{freshness.daysAgo}日前）
+                        </div>
+                      );
+                    })()
+                  ) : (
+                    <div>未取込</div>
+                  )}
+                </div>
                 <div className="int-foot">
-                  <span className="int-st" style={hpbIntegration?.active ? { color: 'var(--green)' } : {}}>
-                    ● {hpbIntegration?.active ? '接続中' : '未接続'}
-                  </span>
+                  {(() => {
+                    const freshness = getHpbFreshness(hpbLastUpdated);
+                    return (
+                      <span className="int-st" style={freshness.isWarning ? { color: '#d97706' } : { color: 'var(--green)' }}>
+                        ● {freshness.isWarning ? '⚠ 要確認（同期停止の可能性）' : '接続中'}
+                      </span>
+                    );
+                  })()}
                   <button className="int-go">接続する →</button>
                 </div>
               </div>
