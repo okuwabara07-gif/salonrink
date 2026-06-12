@@ -22,17 +22,6 @@ interface Reservation {
   line_user_id: string | null;
 }
 
-interface Customer {
-  id: string;
-  salon_id: string | null;
-  name: string | null;
-  last_visit: string | null;
-  visit_count: number | null;
-  line_display_name: string | null;
-  line_user_id: string | null;
-  created_at: string | null;
-}
-
 interface Alert {
   id: string;
   message: string | null;
@@ -50,6 +39,22 @@ interface HPBReservation {
   customer_name: string | null;
   status: string | null;
   source: string | null;
+}
+
+interface CustomerRecord {
+  id: string;
+  salon_id: string | null;
+  name: string | null;
+  kana: string | null;
+  phone: string | null;
+  last_visit: string | null;
+  visit_count: number | null;
+  line_display_name: string | null;
+  is_vip: boolean | null;
+  needs_attention: boolean | null;
+  tags: string[] | null;
+  memo: string | null;
+  stylist: string | null;
 }
 
 function formatJpDate(d: Date): string {
@@ -162,13 +167,14 @@ export default function DashboardPage() {
   const [accTheme, setAccTheme] = useState<string>('terracotta');
   const [salon, setSalon] = useState<Salon | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [custList, setCustList] = useState<CustomerRecord[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
   const [bookingHpb, setBookingHpb] = useState<HPBReservation[]>([]);
   const [bookingManual, setBookingManual] = useState<Reservation[]>([]);
+  const [custSearchQuery, setCustSearchQuery] = useState('');
 
   // Load theme from localStorage
   useEffect(() => {
@@ -222,7 +228,7 @@ export default function DashboardPage() {
           .order('datetime', { ascending: true }),
         supabase
           .from('customers')
-          .select('id, salon_id, name, last_visit, visit_count, line_display_name, line_user_id, created_at')
+          .select('id, salon_id, name, kana, phone, last_visit, visit_count, line_display_name, is_vip, needs_attention, tags, memo, stylist')
           .eq('salon_id', salonRow.id),
         supabase
           .from('alerts')
@@ -232,7 +238,7 @@ export default function DashboardPage() {
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
-      setCustomers((custRes.data as Customer[]) ?? []);
+      setCustList((custRes.data as CustomerRecord[]) ?? []);
       setAlerts((alertRes.data as Alert[]) ?? []);
     } catch (e) {
       console.error('Data load error:', e);
@@ -514,7 +520,7 @@ export default function DashboardPage() {
               <div className="kpi">
                 <div className="lbl">今月の来客</div>
                 <div className="val">
-                  {customers.length}
+                  {custList.length}
                   <small> 人</small>
                 </div>
                 <div className="delta">＋— 前月比</div>
@@ -679,8 +685,69 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (cust, dm, int, con, plan, news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && currentView !== 'booking' && (
+        {/* 顧客ビュー */}
+        {currentView === 'cust' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>顧客一覧</h2>
+              <span className="en hand">Customers</span>
+              <span className="right">{custList.length}名</span>
+            </div>
+            <div className="chip-row" style={{ marginBottom: '18px' }}>
+              <button className="chip on">すべて<span className="c">{custList.length}</span></button>
+              <button className="chip">直近30日<span className="c">—</span></button>
+              <button className="chip">60日休眠<span className="c">—</span></button>
+              <button className="chip">今月誕生月<span className="c">—</span></button>
+            </div>
+            <div className="th-row">
+              <span>お客様</span>
+              <span>タグ</span>
+              <span>来店回数</span>
+              <span>前回来店</span>
+              <span>単価</span>
+            </div>
+            {custList.length === 0 ? (
+              <div style={{ padding: '40px 20px', textAlign: 'center', color: 'var(--hint)', fontSize: '13px' }}>
+                顧客データはまだありません
+              </div>
+            ) : (
+              <div className="cust-table">
+                {custList
+                  .filter(c => !custSearchQuery || (c.name && c.name.includes(custSearchQuery)) || (c.kana && c.kana.includes(custSearchQuery)))
+                  .map(c => {
+                    const lastVisitDaysAgo = c.last_visit
+                      ? Math.floor((new Date().getTime() - new Date(c.last_visit).getTime()) / (1000 * 60 * 60 * 24))
+                      : null;
+                    return (
+                      <div key={c.id} className="cust-row">
+                        <div className="cust-id">
+                          <span className="ava">{c.name?.charAt(0) || '—'}</span>
+                          <div>
+                            <strong>{c.name || '名前未設定'}</strong>
+                            <span>{c.line_display_name ? 'LINE連携済み' : '—'}</span>
+                          </div>
+                        </div>
+                        <div className="cust-tags">
+                          {c.is_vip && <em>VIP</em>}
+                          {c.needs_attention && <em>要対応</em>}
+                          {c.tags && c.tags.length > 0 && c.tags.slice(0, 2).map((t, i) => <em key={i}>{t}</em>)}
+                        </div>
+                        <span className="cust-num">
+                          <b>{c.visit_count ?? '—'}</b> 回
+                        </span>
+                        <span className="cust-num">{lastVisitDaysAgo !== null ? `${lastVisitDaysAgo}日前` : '—'}</span>
+                        <span className="cust-num">—</span>
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
+            <p className="note">※行をタップで詳細(カルテ)へ(実装予定)。単価は集計未実装。</p>
+          </section>
+        )}
+
+        {/* TODO: その他のビュー (dm, int, con, plan, news, ec, rev) は段階2以降 */}
+        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
