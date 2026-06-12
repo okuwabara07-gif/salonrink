@@ -102,6 +102,36 @@ interface RichMenuConfig {
   line_rich_menu_id: string | null;
 }
 
+interface SalonLead {
+  id: string;
+  line_user_id: string | null;
+  type_name: string | null;
+  recommend: string | null;
+  display_name: string | null;
+  source: string | null;
+  status: string | null;
+  created_at: string | null;
+}
+
+interface DiagnosisResult {
+  id: string;
+  salon_id: string | null;
+  diagnosis_type: string | null;
+  result: any;
+  created_at: string | null;
+  share_code: string | null;
+  converted_to_karte: boolean | null;
+}
+
+interface ConsDailyAnalysis {
+  id: string;
+  salon_id: string | null;
+  analysis_date: string | null;
+  narrative: string | null;
+  suggestions: any;
+  kpi_snapshot: any;
+}
+
 function formatJpDate(d: Date): string {
   const day = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
   return `${d.getFullYear()}年 ${d.getMonth() + 1}月 ${d.getDate()}日（${day}）`;
@@ -219,6 +249,9 @@ export default function DashboardPage() {
   const [hpbIntegration, setHpbIntegration] = useState<HPBIntegration | null>(null);
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [richMenuConfig, setRichMenuConfig] = useState<RichMenuConfig | null>(null);
+  const [salonLeads, setSalonLeads] = useState<SalonLead[]>([]);
+  const [diagnosisResults, setDiagnosisResults] = useState<DiagnosisResult[]>([]);
+  const [consDailyAnalysis, setConsDailyAnalysis] = useState<ConsDailyAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [selectedBookingDate, setSelectedBookingDate] = useState(new Date());
@@ -268,7 +301,7 @@ export default function DashboardPage() {
       const endDate = new Date();
       endDate.setDate(endDate.getDate() + 7);
 
-      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes] = await Promise.all([
+      const [resRes, custRes, alertRes, dmRes, lineRes, hpbRes, syncRes, richRes, leadsRes, diagRes, consRes] = await Promise.all([
         supabase
           .from('reservations')
           .select('id, salon_id, customer_name, customer_line_id, datetime, menu, status, line_user_id')
@@ -310,6 +343,23 @@ export default function DashboardPage() {
           .select('id, salon_id, published_at, line_rich_menu_id')
           .eq('salon_id', salonRow.id)
           .maybeSingle(),
+        supabase
+          .from('salon_leads')
+          .select('id, line_user_id, type_name, recommend, display_name, source, status, created_at')
+          .order('created_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('diagnosis_results')
+          .select('id, salon_id, diagnosis_type, result, created_at, share_code, converted_to_karte')
+          .eq('salon_id', salonRow.id)
+          .order('created_at', { ascending: false })
+          .limit(20),
+        supabase
+          .from('cons_daily_analysis')
+          .select('id, salon_id, analysis_date, narrative, suggestions, kpi_snapshot')
+          .eq('salon_id', salonRow.id)
+          .order('analysis_date', { ascending: false })
+          .limit(1),
       ]);
 
       setReservations((resRes.data as Reservation[]) ?? []);
@@ -320,6 +370,9 @@ export default function DashboardPage() {
       setHpbIntegration((hpbRes.data as HPBIntegration) || null);
       setSyncStatus((syncRes.data as SyncStatus) || null);
       setRichMenuConfig((richRes.data as RichMenuConfig) || null);
+      setSalonLeads((leadsRes.data as SalonLead[]) ?? []);
+      setDiagnosisResults((diagRes.data as DiagnosisResult[]) ?? []);
+      setConsDailyAnalysis((consRes.data as ConsDailyAnalysis[])?.[0] || null);
     } catch (e) {
       console.error('Data load error:', e);
     } finally {
@@ -973,8 +1026,90 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* TODO: その他のビュー (con, plan, news, ec, rev) は段階2以降 */}
-        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && (
+        {/* コンシェルジュビュー */}
+        {currentView === 'con' && (
+          <section className="view on">
+            <div className="v-head">
+              <h2>コンシェルジュ</h2>
+              <span className="en hand">Concierge</span>
+            </div>
+
+            {/* KPI 3枚 */}
+            <div className="kpis" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+              <div className="kpi">
+                <div className="lbl">AIカルテ作成数</div>
+                <div className="val">
+                  {diagnosisResults.length}
+                  <small> 件</small>
+                </div>
+                <div className="delta">今月 —件</div>
+              </div>
+              <div className="kpi">
+                <div className="lbl">診断 完了数</div>
+                <div className="val">
+                  {diagnosisResults.filter(d => d.converted_to_karte).length}
+                  <small> 件</small>
+                </div>
+                <div className="delta">完了率 —%</div>
+              </div>
+              <div className="kpi">
+                <div className="lbl">Warm Lead</div>
+                <div className="val">
+                  {salonLeads.length}
+                  <small> 件</small>
+                </div>
+                <div className="delta">最新 —</div>
+              </div>
+            </div>
+
+            {/* 本日の分析 */}
+            <div className="card" style={{ marginTop: '18px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '12px' }}>本日の分析</h3>
+              {!consDailyAnalysis ? (
+                <div style={{ padding: '20px', color: 'var(--hint)', fontSize: '13px' }}>
+                  本日の分析はまだ生成されていません
+                </div>
+              ) : (
+                <div>
+                  <p style={{ fontSize: '12.5px', lineHeight: '1.6', marginBottom: '12px', color: 'var(--ink)' }}>
+                    {consDailyAnalysis.narrative || '—'}
+                  </p>
+                  {consDailyAnalysis.suggestions && (
+                    <div style={{ fontSize: '12px', color: 'var(--sub)', marginTop: '8px' }}>
+                      <strong>提案:</strong> {Array.isArray(consDailyAnalysis.suggestions) ? consDailyAnalysis.suggestions.slice(0, 2).join(' / ') : '—'}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Warm Lead 一覧 */}
+            <div className="card" style={{ marginTop: '18px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '700', marginBottom: '12px' }}>Warm Lead</h3>
+              {salonLeads.length === 0 ? (
+                <div style={{ padding: '20px', color: 'var(--hint)', fontSize: '13px' }}>
+                  まだ warm lead はありません
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {salonLeads.slice(0, 5).map(lead => (
+                    <div key={lead.id} style={{ padding: '10px 12px', borderRadius: '12px', boxShadow: 'var(--raise-sm)', fontSize: '12px' }}>
+                      <strong>{lead.display_name || lead.line_user_id?.slice(0, 8) || '—'}</strong>
+                      <div style={{ fontSize: '10px', color: 'var(--hint)', marginTop: '2px' }}>
+                        {lead.type_name} · {lead.source} · {lead.status}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <p className="note">※経営ダッシュボードのサマリー。詳細は各ビューを参照ください。</p>
+          </section>
+        )}
+
+        {/* TODO: その他のビュー (plan, news, ec, rev) は段階2以降 */}
+        {currentView !== 'home' && currentView !== 'booking' && currentView !== 'cust' && currentView !== 'dm' && currentView !== 'int' && currentView !== 'con' && (
           <section className="view on">
             <div className="card" style={{ textAlign: 'center', padding: '60px 40px', color: 'var(--hint)' }}>
               <p style={{ fontSize: '16px', fontWeight: '700' }}>{VIEW_TITLES[currentView]} は段階2で実装予定です</p>
