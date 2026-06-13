@@ -129,6 +129,7 @@ function mkInit(){
 mkInit();
 (function(){ try{ var q=new URLSearchParams(location.search); if(q.get('paid')){ setTimeout(function(){ mkToast('お支払いありがとうございます。反映しました'); if(typeof mkReload==='function'){ mkReload(); } }, 900); } }catch(e){} })();
 </script>
+<script src="/neo/sr-funnel.js"></script>
 </head>
 <body>
 <div class="mk" id="app" data-screen-label="マイカルテ（LIFF）">
