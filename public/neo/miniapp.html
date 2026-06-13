@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CTL6RQ2X5"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-0CTL6RQ2X5");</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>SalonRink ミニアプリ — マイカルテ（LIFF）</title>
@@ -14,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="salonrink-neo.css">
 <link rel="stylesheet" href="salonrink-neo-page.css">
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
   /* ============ LIFFクローム(LINEアプリ内ヘッダーの再現・モック) ============ */
   .liff-chrome {
@@ -138,7 +132,6 @@
     box-shadow: 3px 3px 8px var(--neo-dark);
   }
 </style>
-<script src="/neo/sr-funnel.js"></script>
 </head>
 <body>
 <div class="sr sr-page" id="app" data-screen-label="LINEミニアプリ（LIFF）">
@@ -155,16 +148,53 @@
 
   <!-- ════════ タブ1: マイカルテ ════════ -->
   <section class="mini-screen on" id="tabKarte" data-screen-label="マイカルテ">
-    <div class="mini-hello" id="karteHello">
+    <div class="mini-hello">
+      <img src="assets/voice-owner-c.jpg" alt="">
       <div>
-        <strong id="karteName">ようこそ</strong>
-        <span class="sub" id="kartePlan">読み込み中…</span>
+        <strong>佐藤 美咲 さん</strong>
+        <span class="sub">来店 12回 · SalonRink会員</span>
       </div>
     </div>
 
-    <div class="mini-h"><h2>診断履歴</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
-    <div style="padding: 0 20px;" id="karteDiagList">
-      <div class="neo-panel"><p class="sr-note" style="text-align:center;">読み込み中…</p></div>
+    <div class="mini-resv">
+      <div class="date"><b>7/2</b><span>木 14:00</span></div>
+      <div class="info">
+        <strong>カット + カラー</strong>
+        <p>担当: 高橋（指名）</p>
+      </div>
+      <button class="chg">変更</button>
+    </div>
+
+    <div class="mini-h"><h2>マイカルテ</h2></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-panel">
+        <div class="neo-tagchips"><em>カラー履歴</em><em>敏感肌</em><em>くせ毛</em></div>
+        <div class="neo-entry"><b>5/20</b>カット+カラー。アッシュ系8トーン、頭皮弱め。</div>
+        <div class="neo-entry"><b>4/12</b>トリートメント。毛先の乾燥が改善傾向。</div>
+        <div class="neo-entry"><b>3/8</b>カット。前髪は眉ラインでキープ希望。</div>
+      </div>
+    </div>
+
+    <div class="mini-h"><h2>Beauty DNA</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-panel">
+        <div class="neo-meters">
+          <div class="neo-meter"><span class="lbl">うるおい</span><span class="track"><span class="fill" style="width:82%"></span></span><span class="val">82%</span></div>
+          <div class="neo-meter"><span class="lbl">ハリ・コシ</span><span class="track"><span class="fill" style="width:64%"></span></span><span class="val">64%</span></div>
+          <div class="neo-meter"><span class="lbl">頭皮ケア</span><span class="track"><span class="fill" style="width:71%"></span></span><span class="val">71%</span></div>
+        </div>
+        <p class="sr-note" style="margin-top: 10px;">※診断結果は見た目の傾向の目安です。最終更新 5/20</p>
+      </div>
+    </div>
+
+    <div class="mini-h"><h2>担当からのひとこと</h2></div>
+    <div style="padding: 0 20px;">
+      <div class="neo-screen" style="padding: 14px;">
+        <div class="neo-chat-row">
+          <span class="neo-chat-ava"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19C4 9 10 4 20 4c0 10-5 16-15 15z"/><path d="M5 19c2-5 5-8 9-10"/></svg></span>
+          <div class="neo-bubble">カラーの色持ちが良くなってきましたね。次回は毛先の保湿ケアを足すのがおすすめです</div>
+        </div>
+      </div>
     </div>
 
     <div class="mini-h"><h2>あなたへのおすすめ</h2><a href="ec.html?ref=mini-reco">ストアへ ›</a></div>
@@ -173,12 +203,12 @@
         <div class="rail" id="recoRail"></div>
       </div>
     </div>
-    <p class="sr-note" style="padding: 0 22px; text-align: center;">提供：AOKAE合同会社</p>
+    <p class="sr-note" style="padding: 0 22px; text-align: center;">※画面はイメージです。提供：AOKAE合同会社</p>
   </section>
 
   <!-- ════════ タブ2: 診断 ════════ -->
   <section class="mini-screen" id="tabDiag" data-screen-label="診断">
-    <div class="mini-h" style="padding-top: 20px;"><h2>4つのAIビューティ診断</h2></div>
+    <div class="mini-h" style="padding-top: 20px;"><h2>5つのAIビューティ診断</h2></div>
     <p style="padding: 0 22px 14px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">あなたを深く理解して、ぴったりの提案につなげます。<br>すべて無料・約30秒。</p>
     <div class="diag-list">
       <a class="diag-row" href="photo.html?ref=mini-photo">
@@ -186,18 +216,22 @@
         <div><strong>写真AI診断</strong><p>1枚撮るだけで髪の傾向をチェック</p></div>
         <span class="st diag-go">はじめる</span>
       </a>
-      <a class="diag-row" href="quiz.html?kind=beauty_dna&ref=mini-bdna">
+      <a class="diag-row" href="#" onclick="return false;">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg></span>
         <div><strong>Beauty DNA 診断</strong><p>あなたの美容タイプを総合分析</p></div>
-        <span class="st diag-go">はじめる</span>
+        <span class="st diag-done">済 5/20</span>
       </a>
-      
-      <a class="diag-row" href="quiz.html?kind=hair_quality&ref=mini-hairq">
+      <a class="diag-row" href="#" onclick="return false;">
+        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 14c1 1.2 2.4 2 4 2s3-.8 4-2"/><circle cx="9" cy="10" r="0.5"/><circle cx="15" cy="10" r="0.5"/></svg></span>
+        <div><strong>肌診断</strong><p>肌の見た目の傾向とケアの目安</p></div>
+        <span class="st diag-done">済 4/12</span>
+      </a>
+      <a class="diag-row" href="#" onclick="return false;">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/></svg></span>
         <div><strong>髪質診断</strong><p>クセ・太さ・ダメージの傾向</p></div>
         <span class="st diag-go">はじめる</span>
       </a>
-      <a class="diag-row" href="quiz.html?kind=scalp&ref=mini-scalp">
+      <a class="diag-row" href="#" onclick="return false;">
         <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="6"/><path d="M9 20c.8-1.5 1.8-2 3-2s2.2.5 3 2"/></svg></span>
         <div><strong>頭皮・スカルプ診断</strong><p>頭皮環境の傾向をチェック</p></div>
         <span class="st diag-go">はじめる</span>
@@ -313,71 +347,6 @@ function miniCard(p, compact) {
       a.href = url.toString();
     } catch (e) {}
   });
-})();
-</script>
-<script>
-(function () {
-  'use strict';
-  var LIFF_ID = "2010370912-XQQG0g0j";
-  var MYCARTE = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte";
-  function byId(id){ return document.getElementById(id); }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function fmtDate(s){ try{ var d=new Date(s); return (d.getMonth()+1)+'/'+d.getDate(); }catch(e){ return ''; } }
-  var KM={tsuya:'ツヤ',matomari:'まとまり',uruoi:'うるおい',volume:'ボリューム',hari_koshi:'ハリ・コシ'};
-  function bars(scores){
-    return Object.keys(scores).slice(0,4).map(function(k){
-      var v=Math.max(0,Math.min(100,Math.round(Number(scores[k])||0)));
-      return '<div class="neo-meter"><span class="lbl">'+esc(k)+'</span><span class="track"><span class="fill" style="width:'+v+'%"></span></span><span class="val">'+v+'%</span></div>';
-    }).join('');
-  }
-  function diagCard(d){
-    var r=d.result||{};
-    var label=r.label||(d.diagnosis_type==='photo'?'写真AI診断':'診断');
-    var typeName=r.type_name||r.type||'';
-    var scores=r.scores||{}; var disp={};
-    Object.keys(scores).forEach(function(k){ disp[KM[k]||k]=scores[k]; });
-    return '<div class="neo-panel" style="margin-bottom:12px;">'+
-      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">'+
-        '<strong style="color:var(--sr-ink);">'+esc(label)+(typeName?'：'+esc(typeName):'')+'</strong>'+
-        '<span class="sub" style="font-size:11px;color:var(--sr-muted);">'+fmtDate(d.saved_at||d.created_at)+'</span>'+
-      '</div><div class="neo-meters">'+bars(disp)+'</div></div>';
-  }
-  function setReco(recNames){
-    var rail=byId('recoRail');
-    if(!rail||typeof MINI_PRODUCTS==='undefined'||typeof miniCard!=='function') return;
-    var N2I={'コンシェルジュ ヘアオイル':'oil','リペア トリートメント':'treat','モイスト シャンプー':'shampoo','スカルプセラム':'scalp','モーニング ヘアミスト':'oil'};
-    var ids=(recNames||[]).map(function(n){return N2I[n];}).filter(function(x){return !!x;});
-    if(!ids.length) return;
-    rail.innerHTML='';
-    ids.forEach(function(id){ var p=MINI_PRODUCTS.find(function(x){return x.id===id;}); if(p) rail.appendChild(miniCard(p,true)); });
-  }
-  function loadKarte(userId){
-    fetch(MYCARTE,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:userId})})
-      .then(function(r){return r.json();}).then(function(data){
-        if(!data||!data.ok) throw new Error('failed');
-        var planTxt=(data.plan&&data.plan.is_premium)?'プレミアム会員':'無料会員';
-        var mc=((data.month_count!=null)?data.month_count:0)+'/'+((data.plan&&data.plan.diag_limit)||2);
-        var pl=byId('kartePlan'); if(pl) pl.textContent=planTxt+' · 今月の診断 '+mc;
-        var list=byId('karteDiagList');
-        if(data.diagnoses&&data.diagnoses.length){
-          list.innerHTML=data.diagnoses.map(diagCard).join('');
-          var latest=data.diagnoses[0]||{}; setReco((latest.result&&latest.result.recommend)||[]);
-        } else {
-          list.innerHTML='<div class="neo-panel"><p class="sr-note" style="text-align:center;">まだ診断がありません。<br><a href="#" id="emptyToDiag">診断タブ</a>からはじめましょう。</p></div>';
-          var e=byId('emptyToDiag'); if(e) e.addEventListener('click',function(ev){ev.preventDefault(); var n=document.querySelector('.mini-nav [data-tab="tabDiag"]'); if(n)n.click();});
-        }
-      }).catch(function(){ var pl=byId('kartePlan'); if(pl) pl.textContent='カルテを読み込めませんでした'; });
-  }
-  if(typeof liff==='undefined'){ var pl0=byId('kartePlan'); if(pl0) pl0.textContent='LINEから開くとカルテが表示されます'; return; }
-  liff.init({liffId:LIFF_ID}).then(function(){
-    if(!liff.isLoggedIn()){ liff.login({redirectUri:location.href}); return; }
-    return liff.getProfile().then(function(p){
-      var name=(p&&p.displayName)?p.displayName:'ゲスト';
-      var v=document.querySelector('.liff-verified'); if(v) v.textContent=name;
-      var nm=byId('karteName'); if(nm) nm.textContent=name+' さん';
-      loadKarte(p.userId);
-    });
-  }).catch(function(){ var pl1=byId('kartePlan'); if(pl1) pl1.textContent='LINEから開くとカルテが表示されます'; });
 })();
 </script>
 </body>
