@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SalonRink Concierge — 3ページLP（ニューモーフィズム・タブ切替）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&family=Zen+Old+Mincho:wght@500;600;700&family=Klee+One:wght@400;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="flat.css" />
+<style>
+  html,body{margin:0;background:#ded5c6;}
+  .board{min-height:100vh;padding:30px 24px 60px;font-family:"Zen Kaku Gothic New",sans-serif;display:flex;flex-direction:column;align-items:center;}
+  .board-head{text-align:center;max-width:760px;margin:0 auto 26px;}
+  .board-head .k{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#9a7b4a;font-weight:800;}
+  .board-head h1{font-family:"Shippori Mincho B1",serif;font-size:23px;color:#2a211a;margin:9px 0 0;font-weight:600;}
+  .board-head p{font-size:12.5px;color:#6f6a62;margin:9px 0 0;line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="board">
+  <div class="board-head">
+    <div class="k">Neumorphism · 3 Pages · Tabbed</div>
+    <h1>SalonRink Concierge — 3ページLP（ニューモル）</h1>
+    <p>上のタブ（お客様／美容師・サロン／代理店）を押すと切り替わります。指示書v2のフラット・トークンに準拠。</p>
+  </div>
+
+  <div class="fl"><div class="fl-phone"><div class="fl-screen">
+    <div class="fl-status"><span>9:41</span><span class="dots">●●● ⌃ ▮</span></div>
+    <div class="fl-prog"><i></i></div>
+
+    <header class="fl-header">
+      <div class="fl-bar">
+        <div class="fl-logo"><span class="mk"><img src="logo-emblem.png" alt="" /></span><span>SalonRink<small>Concierge</small></span></div>
+        <span class="fl-login">ログイン</span>
+        <span class="fl-burger"><i></i><i></i><i></i></span>
+      </div>
+      <div class="fl-tabs">
+        <button class="fl-tab on" data-tab="customer">お客様</button>
+        <button class="fl-tab" data-tab="salon">美容師・サロン</button>
+        <button class="fl-tab" data-tab="partner">代理店</button>
+      </div>
+    </header>
+
+    <div class="fl-scroll">
+
+      <!-- =================================================== -->
+      <!-- ===============  お客様ページ  ==================== -->
+      <!-- =================================================== -->
+      <div class="fl-page on lp2" data-page="customer" data-screen-label="お客様ページ">
+        <!-- 1 hero -->
+        <section class="lp2-hero" data-screen-label="C-Hero">
+          <div class="kick">For You</div>
+          <h1>あなたを、<br /><span class="ac">覚えてくれるサロンへ。</span></h1>
+          <p class="sub">来店前のカウンセリングから、施術後のケアまで。<br />あなたの「好き」と「変化」を、ずっと覚えています。</p>
+          <div class="lp2-cta">
+            <a class="fl-btn fl-btn--gold">30秒のAI診断を試す</a>
+            <a class="fl-btn fl-btn--line">LINEで体験する</a>
+          </div>
+          <div class="state-legend"><span>🟢 診断・プロファイル＝無料</span><span>🔒 保存・処方箋・購入＝LINE登録</span></div>
+          <img class="hero-photo" src="ph-hero-c.png" alt="イメージ" />
+        </section>
+
+        <section class="sec alt" data-screen-label="C-共感">
+          <div class="shead"><span class="fl-eye">Your Feelings</span><h2 class="fl-h2">こんな経験、ありませんか？</h2></div>
+          <div class="lp2-prob">
+            <div class="it"><span class="ic">💭</span><div><div class="tt">毎回ゼロから説明がつらい</div><div class="ds">好みや履歴を、行くたびに最初から伝えるのは大変。</div></div></div>
+            <div class="it"><span class="ic">🤍</span><div><div class="tt">施術後に相談できない</div><div class="ds">家に帰ってからの「これで合ってる？」を聞きづらい。</div></div></div>
+            <div class="it"><span class="ic">🔍</span><div><div class="tt">自分に合うケアが分からない</div><div class="ds">たくさんの商品から、何を選べばいいか迷う。</div></div></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="C-体験">
+          <div class="shead"><span class="fl-eye">Try it · 体験</span><h2 class="fl-h2">その場で、試してみる</h2><p class="fl-lead">読むだけでなく、触れて分かる入口です。</p></div>
+          <div class="demo">
+            <div class="demo-h"><span class="demo-ic">📷</span><div><div class="demo-tt">カメラで髪診断</div><div class="demo-ds">写真を撮る／選ぶだけ。30秒・無料・LINE登録前でもOK。</div></div></div>
+            <label class="cam-drop"><input type="file" accept="image/*" hidden /><span class="cam-ph">📷 写真を撮る・選ぶ<small>（サンプルでも試せます）</small></span><img class="cam-img" hidden alt="" /></label>
+            <button class="demo-btn cam-go">髪を診断する</button>
+            <div class="cam-load" hidden><i></i><i></i><i></i> 診断中…</div>
+            <div class="cam-res" hidden>
+              <div class="cam-res-h">診断結果<span class="fl-badge-soft">AIによる簡易診断です</span></div>
+              <div class="cam-level"><span class="lv-dot"></span><b class="lv-name">—</b></div>
+              <div class="cam-tags"></div>
+              <div class="cam-cta"><a class="fl-btn fl-btn--line">LINEで続ける</a><a class="fl-btn fl-btn--ghost">カルテを保存する</a></div>
+            </div>
+          </div>
+          <div class="demo">
+            <div class="demo-h"><span class="demo-ic">💬</span><div><div class="demo-tt">LINEで話すだけ。</div><div class="demo-ds">「うまく言えない髪の悩み」が伝わる。下から選ぶだけ・複数OK。</div></div></div>
+            <div class="lcheck">
+              <div class="it"><span class="ck">✓</span>まず選ぶだけ</div>
+              <div class="it"><span class="ck">✓</span>もっと相談は自由入力・音声でも</div>
+              <div class="it"><span class="ck">✓</span>くわしいケアと予約はともだち登録で</div>
+            </div>
+            <div class="lpanel">
+              <div class="lp-head"><span class="av"></span><span class="nm">SalonRink Concierge</span><span class="onl">オンライン</span></div>
+              <div class="lp-body">
+                <div class="chat-r">ようこそ🌿 今日のご希望を、下から選んで送ってくださいね。</div>
+                <div class="qgroup"><div class="qglabel">① 今日はどうしたい？<span class="ok-badge">複数OK</span></div><div class="qchips"><button class="chat-q" data-q="カット">カット</button><button class="chat-q" data-q="カラー">カラー</button><button class="chat-q" data-q="パーマ">パーマ</button><button class="chat-q" data-q="トリートメント">トリートメント</button><button class="chat-q" data-q="スタイリング">スタイリング</button><button class="chat-q" data-q="製品（ホームケア）">製品</button></div></div>
+                <div class="qgroup"><div class="qglabel">② いちばん気になるのは？<span class="ok-badge">複数OK</span></div><div class="qchips"><button class="chat-q" data-q="パサつき">パサつき</button><button class="chat-q" data-q="色落ち">色落ち</button><button class="chat-q" data-q="うねり・くせ">うねり・くせ</button><button class="chat-q" data-q="頭皮">頭皮</button><button class="chat-q" data-q="ボリューム">ボリューム</button></div></div>
+                <div class="qgroup"><div class="qglabel">③ なりたい仕上がりは？<span class="ok-badge">複数OK</span></div><div class="qchips"><button class="chat-q" data-q="ツヤ・まとまり">ツヤ・まとまり</button><button class="chat-q" data-q="ふんわりボリューム">ふんわりボリューム</button><button class="chat-q" data-q="透明感のある明るさ">透明感</button><button class="chat-q" data-q="しっとりうるおい">しっとりうるおい</button></div></div>
+                <div class="lp-more">もっと相談（自由入力）<span class="mic">🎤</span></div>
+                <button class="demo-btn lsend">この内容を送る</button>
+                <div class="lchat-out"></div>
+              </div>
+            </div>
+            <div class="lp-cap">お客さまの画面には、美容師さん側の操作や下準備の仕組みは出ません。届くのは「あなたへの提案」だけ。</div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="C-マイカルテ">
+          <div class="shead"><span class="fl-eye">My Carte · 育つカルテ</span><h2 class="fl-h2">マイカルテとは</h2><p class="fl-lead">あなただけの「髪の取扱説明書」。来店のたびに厚くなり、次回は“続きから”始められます。</p></div>
+
+          <div class="carte">
+            <div class="carte-top"><span class="carte-av"></span><div><div class="carte-nm">佐藤 美咲 さん</div><div class="carte-sub">マイカルテ</div></div><span class="carte-badge">育つカルテ</span></div>
+            <div class="carte-sec"><div class="carte-lab">髪プロファイル</div>
+              <div class="carte-tags"><span>乾燥</span><span>くせ毛</span><span>敏感肌</span><span>カラー履歴</span></div>
+              <div class="carte-meters"><div class="carte-meter"><div class="mv">82</div><div class="ml">うるおい</div></div><div class="carte-meter"><div class="mv">64</div><div class="ml">ダメージ</div></div><div class="carte-meter"><div class="mv">71</div><div class="ml">頭皮</div></div></div>
+            </div>
+            <div class="carte-sec"><div class="carte-lab">これまでの履歴</div>
+              <div class="carte-tl">
+                <div class="tl-item"><div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div><div class="tl-body"><div class="tl-date">5/20</div><div class="tl-txt">カット＋カラー（アッシュ8トーン）</div></div></div>
+                <div class="tl-item"><div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div><div class="tl-body"><div class="tl-date">5/20</div><div class="tl-txt">処方箋：モイストリペア セラム</div></div></div>
+                <div class="tl-item"><div class="tl-rail"><span class="tl-dot"></span><span class="tl-line"></span></div><div class="tl-body"><div class="tl-date">4/12</div><div class="tl-txt">トリートメント（毛先の乾燥ケア）</div></div></div>
+              </div>
+            </div>
+            <div class="carte-next"><span class="nx-ic">📅</span><div><div class="nx-t">次回の目安：約6週間後</div><div class="nx-s">担当 ミドリ：「毛先、だいぶ落ち着きましたね」</div></div></div>
+            <div class="carte-grow">↑ 来店・診断・処方箋のたびに、カルテが厚くなります</div>
+          </div>
+
+          <div class="carte-h">カルテに入るもの</div>
+          <div class="mycarte" style="margin-top:12px">
+            <div class="it"><span class="ic">🧬</span><div><div class="tt">髪プロファイル</div><div class="ds">乾燥・ダメージ・くせ・頭皮などの簡易診断／カメラ写真の診断結果。</div></div></div>
+            <div class="it"><span class="ic">🗒️</span><div><div class="tt">来店履歴</div><div class="ds">施術・カラーレシピ・経過の記録。</div></div></div>
+            <div class="it"><span class="ic">💌</span><div><div class="tt">ホームケア処方箋の履歴</div><div class="ds">担当者からの提案と、使ったアイテム。</div></div></div>
+            <div class="it"><span class="ic">💭</span><div><div class="tt">好み・なりたい・要望</div><div class="ds">事前カウンセリングの蓄積（アレルギーや要望も）。</div></div></div>
+            <div class="it"><span class="ic">📅</span><div><div class="tt">次回の目安・ひとこと</div><div class="ds">担当者からの次回提案とメッセージ。</div></div></div>
+          </div>
+
+          <div class="carte-h">お客様にとっての価値</div>
+          <div class="value-grid">
+            <div class="value-it"><span class="vk">1</span><div class="vn">毎回ゼロから説明しなくていい</div></div>
+            <div class="value-it"><span class="vk">2</span><div class="vn">自分に合うケアが分かる</div></div>
+            <div class="value-it"><span class="vk">3</span><div class="vn">担当者と“同じカルテ”で相談</div></div>
+            <div class="value-it"><span class="vk">4</span><div class="vn">効果が見えて、続けられる</div></div>
+          </div>
+
+          <div class="state-legend" style="margin-top:18px"><span>🟢 プロファイル閲覧＝無料</span><span>🔒 保存・履歴・処方箋＝LINE登録</span><span>🔑 担当者との共有＝予約ごとに同意</span></div>
+          <div class="fl-consent" style="margin-top:12px">写真・カルテはあなたのものです。共有は“同意のうえ”で、いつでも停止・確認できます。</div>
+        </section>
+
+        <section class="sec" data-screen-label="C-ループ">
+          <div class="shead"><span class="fl-eye">Your Story</span><h2 class="fl-h2">1人のお客様の物語</h2><p class="fl-lead">全体像は「THE CONCIERGE LOOP」、各場面は横スワイプで。</p></div>
+          <div class="cl-mount"></div>
+          <div class="cust-loop">
+            <div class="cust-card"><div class="vis">📝</div><div class="pad"><div class="n">01</div><div class="tt">事前カウンセリング</div><div class="ds">来店前にLINEで希望を共有。不安を解消してから。</div></div></div>
+            <div class="cust-card"><div class="vis">🚪</div><div class="pad"><div class="n">02</div><div class="tt">来店</div><div class="ds">担当者はあなたを把握した状態でお出迎え。</div></div></div>
+            <div class="cust-card"><div class="vis">✂️</div><div class="pad"><div class="n">03</div><div class="tt">施術</div><div class="ds">カルテをもとに、あなたに合った施術を。</div></div></div>
+            <div class="cust-card"><div class="vis">💌</div><div class="pad"><div class="n">04</div><div class="tt">処方箋（担当者から）</div><div class="ds">自宅ケアの手紙が、担当者から届きます。</div></div></div>
+            <div class="cust-card"><div class="vis">🧴</div><div class="pad"><div class="n">05</div><div class="tt">ケア・EC</div><div class="ds">必要なものを1タップで。再注文もかんたん。</div></div></div>
+            <div class="cust-card"><div class="vis">🔁</div><div class="pad"><div class="n">06</div><div class="tt">次回へ</div><div class="ds">続きからはじめられる。回るほど、ぴったりに。</div></div></div>
+          </div>
+          <div class="fl-dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        </section>
+
+        <section class="sec alt" data-screen-label="C-処方箋">
+          <div class="shead"><span class="fl-eye">Home Care</span><h2 class="fl-h2">ホームケア処方箋</h2><p class="fl-lead">担当者“から”届く、あなたへの手紙です。</p></div>
+          <div class="letter">
+            <div class="from"><span class="av">💇‍♀️</span><div><div class="nm">担当 ミドリ</div><div class="role">あなたの担当スタイリスト</div></div></div>
+            <p class="body">本日はありがとうございました。毛先の乾燥が気になっていたので、夜のトリートメントを少し変えてみましょう。下のケアを、担当のわたしが選びました。</p>
+            <div class="recos">
+              <div class="reco"><span class="thumb">🧴</span><div><div class="pn">モイストリペア セラム</div><div class="pm">担当 ミドリが選定</div></div><span class="buy">1タップ購入</span></div>
+              <div class="reco"><span class="thumb">🫧</span><div><div class="pn">スカルプ シャンプー</div><div class="pm">担当 ミドリが選定</div></div><span class="buy">1タップ購入</span></div>
+            </div>
+            <p class="sign">次回の目安は約6週間後です。— ミドリ</p>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="C-FAQ">
+          <div class="shead"><span class="fl-eye">FAQ</span><h2 class="fl-h2">よくあるご質問</h2></div>
+          <div class="lp2-faq">
+            <details open><summary>本当に無料ですか？<span class="pm">+</span></summary><div class="ans">AI診断とプロファイルは無料でお試しいただけます。保存・処方箋・購入はLINE登録のうえでご利用ください。</div></details>
+            <details><summary>個人情報は安全ですか？<span class="pm">+</span></summary><div class="ans">情報は暗号化して保護します。担当者との共有は、ご来店ごとのあなたの同意のうえで行います。</div></details>
+            <details><summary>写真は必須ですか？<span class="pm">+</span></summary><div class="ans">いいえ、任意です。髪の状態をより正確に見たいときの参考として、ご希望の方のみお使いいただけます。</div></details>
+            <details><summary>配信は止められますか？<span class="pm">+</span></summary><div class="ans">いつでも配信の頻度変更・停止ができます。各メッセージにリンクを常設しています。</div></details>
+          </div>
+        </section>
+
+        <section class="lp2-final" data-screen-label="C-CTA">
+          <h2>あなたを覚えてくれる、<br /><span class="ac">サロン体験をはじめる。</span></h2>
+          <p>まずは30秒のAI診断から。</p>
+          <div class="lp2-cta" style="margin-top:18px">
+            <a class="fl-btn fl-btn--line">LINEで体験をはじめる</a>
+            <a class="fl-btn fl-btn--ghost">このサロンに導入してほしい <span class="ar">›</span></a>
+          </div>
+        </section>
+
+        <footer class="lp2-foot" data-screen-label="C-Footer">
+          <div class="lg">SalonRink Concierge</div>
+          <div class="tg">美容を、もっとあたたかく。</div>
+          <div class="dc">※画面・数値はイメージです。効果・実績を保証するものではありません。</div>
+        </footer>
+
+        <div class="lp2-sticky">
+          <div class="meta">無料・30秒<b>AI診断を試す</b></div>
+          <a class="fl-btn fl-btn--gold">診断する</a>
+        </div>
+      </div>
+
+      <!-- =================================================== -->
+      <!-- ===========  美容師・サロンページ  =============== -->
+      <!-- =================================================== -->
+      <div class="fl-page lp2" data-page="salon" data-screen-label="美容師ページ">
+        <section class="lp2-hero" data-screen-label="S-Hero">
+          <div class="kick">For Salon Owners &amp; Stylists</div>
+          <h1>再来店率と業務時間を、<br /><span class="ac">LINEひとつで変える。</span></h1>
+          <p class="sub">AIカルテとLINE連携で、カルテ管理も予約フォローもひとつに。<br />日々の業務を軽くしながら、「また来たい」をつくります。</p>
+          <div class="lp2-cta">
+            <a class="fl-btn fl-btn--gold">14日間無料で始める</a>
+            <a class="fl-btn fl-btn--ghost">資料をLINEで受け取る <span class="ar">›</span></a>
+          </div>
+          <div class="lp2-trust"><span>初期費用 0円</span><span>14日間無料</span><span>最低契約期間なし</span></div>
+          <img class="hero-photo" src="ph-hero-s.png" alt="イメージ" />
+        </section>
+
+        <section class="sec" data-screen-label="S-課題">
+          <div class="shead"><span class="fl-eye">Challenges</span><h2 class="fl-h2">現場の「あるある」、<br />当てはまりますか？</h2></div>
+          <div class="lp2-prob">
+            <div class="it"><span class="ic">🗂️</span><div><div class="tt">カルテ管理に追われる</div><div class="ds">紙やExcelがバラバラ。探す・書く・引き継ぐのに時間がかかる。</div></div></div>
+            <div class="it"><span class="ic">💬</span><div><div class="tt">予約確認とLINE返信が大変</div><div class="ds">日々の連絡対応に手が取られ、施術に集中しづらい。</div></div></div>
+            <div class="it"><span class="ic">📉</span><div><div class="tt">売上・再来の管理が手作業</div><div class="ds">数字が見えず、何を改善すればいいか分かりにくい。</div></div></div>
+          </div>
+        </section>
+
+        <section class="sec alt" data-screen-label="S-機能">
+          <div class="shead"><span class="fl-eye">Solution</span><h2 class="fl-h2">4つの機能で、サロン業務を整える</h2><p class="fl-lead">横にスワイプしてご覧ください</p></div>
+          <div class="lp2-rail">
+            <div class="lp2-feat"><div class="vis">🗂️</div><div class="pad"><div class="n">01</div><div class="tt">AIカルテ（マイカルテ）</div><div class="ds">施術履歴・体質・好みを一元管理。「今」と「未来」がすぐわかる。</div></div></div>
+            <div class="lp2-feat"><div class="vis">💬</div><div class="pad"><div class="n">02</div><div class="tt">LINEでつながる</div><div class="ds">来店通知・アフターフォロー・予約リマインドをLINEで自然に。</div></div></div>
+            <div class="lp2-feat"><div class="vis">✨</div><div class="pad"><div class="n">03</div><div class="tt">5つのAI診断</div><div class="ds">肌・髪質・Beauty DNAなど。一人ひとりに合う提案を後押し。</div></div></div>
+            <div class="lp2-feat"><div class="vis">📊</div><div class="pad"><div class="n">04</div><div class="tt">ダッシュボード</div><div class="ds">売上・来客・再来傾向を見える化し、次の一手を支援。</div></div></div>
+          </div>
+          <div class="fl-dots"><i class="on"></i><i></i><i></i><i></i></div>
+        </section>
+
+        <section class="sec" data-screen-label="S-ループ">
+          <div class="shead"><span class="fl-eye">The Loop · Stylist View</span><h2 class="fl-h2">読む1・タップ3・1行承認</h2><p class="fl-lead">効率化は裏側で。お客様には“手仕事”として届きます。</p></div>
+          <div class="cl-mount"></div>
+          <div class="lp2-mantra"><span>読む 1</span><span>タップ 3</span><span>1行 承認</span></div>
+          <div class="lp2-loop" style="margin-top:18px">
+            <div class="lp2-step"><div class="rail"><span class="num">1</span><span class="line"></span></div><div class="body"><div class="tt">来店前ブリーフィング</div><div class="ds">注意点・なりたい・前回レシピ・写真をひと目で。読むのは1画面。</div></div></div>
+            <div class="lp2-step"><div class="rail"><span class="num">2</span><span class="line"></span></div><div class="body"><div class="tt">施術後ログは3タップ</div><div class="ds">施術・レシピ・所要をチップでタップするだけ。書く手間を最小に。</div></div></div>
+            <div class="lp2-step"><div class="rail"><span class="num">3</span><span class="line"></span></div><div class="body"><div class="tt">処方箋は下書き→1行→承認</div><div class="ds">下書きに一言だけ手で添えて承認・送信。即時送信はしません。</div>
+              <div class="lp2-handwork">お客様に届くのは、担当者からの手紙。効率化の痕跡は見せません。</div></div></div>
+            <div class="lp2-step"><div class="rail"><span class="num">4</span></div><div class="body"><div class="tt">次回へつながる</div><div class="ds">一周ごとにカルテが厚くなり、提案の精度と再来につながります。</div></div></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="S-体験">
+          <div class="shead"><span class="fl-eye">Try it · 体験</span><h2 class="fl-h2">お客様の相談に、AIサポートで返信</h2><p class="fl-lead">AIが書く・人が承認する。返信と処方箋がラクになる体験です。</p></div>
+          <div class="demo">
+            <div class="reply-in"><span class="reply-av">🙋‍♀️</span><div class="reply-bubble">カラーの色落ちが早くて…どうケアすればいいですか？</div></div>
+            <button class="demo-btn reply-draft">AIで下書きする</button>
+            <div class="reply-edit" hidden>
+              <div class="reply-lab">下書き（1行だけ手で添えてください）</div>
+              <textarea class="reply-text"></textarea>
+              <input class="reply-line" placeholder="＋ ひとこと手書き（例：次回また色味みましょうね）" />
+              <button class="demo-btn reply-send">承認して送信</button>
+            </div>
+            <div class="reply-sent" hidden>✓ 送信しました<div class="reply-note">お客様にはAIの痕跡を見せません。担当者からの手紙として届きます。</div></div>
+          </div>
+        </section>
+
+        <section class="sec alt" data-screen-label="S-効果">
+          <div class="shead"><span class="fl-eye">Impact</span><h2 class="fl-h2">導入で、ここが変わる</h2></div>
+          <div class="lp2-stats">
+            <div class="lp2-stat"><div class="v">再来<small>↑</small></div><div class="l">再来店の<br />きっかけづくり</div></div>
+            <div class="lp2-stat"><div class="v">単価<small>↑</small></div><div class="l">合った提案で<br />客単価を後押し</div></div>
+            <div class="lp2-stat"><div class="v">時間<small>↓</small></div><div class="l">カルテ・連絡の<br />業務時間を削減</div></div>
+          </div>
+          <p class="disc">※効果はイメージ／シミュレーションであり、成果を保証するものではありません。</p>
+        </section>
+
+        <section class="sec" data-screen-label="S-声">
+          <div class="shead"><span class="fl-eye">Voices</span><h2 class="fl-h2">導入サロンの声</h2></div>
+          <div class="lp2-voices">
+            <div class="lp2-voice"><div class="top"><span class="av">✂️</span><span class="nm">A社 美容室</span></div><p class="q">「カルテ共有がラクになり、スタッフ全員で同じ目線でお客様を見られるように。」</p><div class="tags"><span class="fl-badge-soft">情報共有</span><span class="fl-badge-soft">再来</span></div></div>
+            <div class="lp2-voice"><div class="top"><span class="av">💇</span><span class="nm">B社 美容室</span></div><p class="q">「LINEのフォローが自然にでき、次回来店のお声がけがしやすくなりました。」</p><div class="tags"><span class="fl-badge-soft">LINE</span><span class="fl-badge-soft">客単価</span></div></div>
+            <div class="lp2-voice"><div class="top"><span class="av">💆</span><span class="nm">C社 美容室</span></div><p class="q">「数字が見えるので、何を改善するか話し合いやすくなりました。」</p><div class="tags"><span class="fl-badge-soft">見える化</span><span class="fl-badge-soft">運営</span></div></div>
+          </div>
+          <p class="disc">※コメントはイメージです。効果には個人差があります。</p>
+        </section>
+
+        <section class="sec alt" data-screen-label="S-比較">
+          <div class="shead"><span class="fl-eye">Comparison</span><h2 class="fl-h2">選ばれる理由</h2></div>
+          <div class="lp2-cmp">
+            <div class="row head"><span class="c lab">&nbsp;</span><span class="c us">当社</span><span class="c">A社</span><span class="c">B社</span><span class="c">C社</span></div>
+            <div class="row"><span class="c lab">AIカルテ</span><span class="c us o">○</span><span class="c t">△</span><span class="c x">✕</span><span class="c t">△</span></div>
+            <div class="row"><span class="c lab">LINE連携</span><span class="c us o">○</span><span class="c t">△</span><span class="c t">△</span><span class="c x">✕</span></div>
+            <div class="row"><span class="c lab">AI診断</span><span class="c us o">○</span><span class="c x">✕</span><span class="c x">✕</span><span class="c t">△</span></div>
+            <div class="row"><span class="c lab">来店傾向</span><span class="c us o">○</span><span class="c t">△</span><span class="c x">✕</span><span class="c x">✕</span></div>
+            <div class="row"><span class="c lab">ダッシュボード</span><span class="c us o">○</span><span class="c t">△</span><span class="c t">△</span><span class="c t">△</span></div>
+            <div class="row"><span class="c lab">代理店制度</span><span class="c us o">○</span><span class="c x">✕</span><span class="c x">✕</span><span class="c x">✕</span></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="S-安心">
+          <div class="shead"><span class="fl-eye">Security</span><h2 class="fl-h2">安心して使える仕組み</h2></div>
+          <div class="lp2-sec">
+            <div class="it"><span class="ic">🔒</span><span>お客様情報は暗号化して保護</span></div>
+            <div class="it"><span class="ic">👥</span><span>スタッフごとの権限管理</span></div>
+            <div class="it"><span class="ic">📤</span><span>データはいつでもエクスポート可能</span></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="S-料金">
+          <div class="shead"><span class="fl-eye">Pricing</span><h2 class="fl-h2">料金プラン</h2><p class="fl-lead">税込・初期費用0円・14日間無料</p></div>
+          <div class="lp2-plans">
+            <div class="lp2-plan"><div class="nm">Light</div><div class="amt">¥1,980<small>/月</small></div><div class="feat"><span class="f">AIカルテ 基本</span><span class="f">LINE連携</span><span class="f">AI診断 3種</span></div></div>
+            <div class="lp2-plan pop"><span class="poptag">人気</span><div class="nm">Standard</div><div class="amt">¥2,980<small>/月</small></div><div class="feat"><span class="f">AIカルテ 全機能</span><span class="f">LINE自動フォロー</span><span class="f">AI診断 5種</span><span class="f">ダッシュボード</span></div></div>
+            <div class="lp2-plan"><div class="nm">Professional</div><div class="amt">¥4,580<small>/月</small></div><div class="feat"><span class="f">Standard 全機能</span><span class="f">EC・物販連携</span><span class="f">代理店制度</span><span class="f">優先サポート</span></div></div>
+          </div>
+          <div class="lp2-addon">アドオン（補足）：<b>HPB連携 +¥1,000</b> ／ <b>Minimo連携 +¥800</b> ／ <b>Advanced AI +¥800</b>（各月額・税込）</div>
+        </section>
+
+        <section class="sec alt" data-screen-label="S-流れ">
+          <div class="shead"><span class="fl-eye">How to start</span><h2 class="fl-h2">導入までの流れ</h2></div>
+          <div class="lp2-flow">
+            <div class="it"><span class="n">01</span><div><div class="tt">無料トライアル</div><div class="ds">14日間すべて体験</div></div></div>
+            <div class="it"><span class="n">02</span><div><div class="tt">初期設定・データ移行</div><div class="ds">専任サポートが案内</div></div></div>
+            <div class="it"><span class="n">03</span><div><div class="tt">運用開始・サポート</div><div class="ds">活用方法を継続支援</div></div></div>
+            <div class="it"><span class="n">04</span><div><div class="tt">継続的な改善提案</div><div class="ds">データで成長を後押し</div></div></div>
+          </div>
+        </section>
+
+        <section class="sec alt" data-screen-label="S-FAQ">
+          <div class="shead"><span class="fl-eye">FAQ</span><h2 class="fl-h2">よくあるご質問</h2></div>
+          <div class="lp2-faq">
+            <details open><summary>本当に14日間無料ですか？<span class="pm">+</span></summary><div class="ans">はい。14日間すべての機能を無料でお試しいただけます。初期費用もかかりません。</div></details>
+            <details><summary>データ移行はできますか？<span class="pm">+</span></summary><div class="ans">専任サポートが既存の顧客データ・カルテの移行をお手伝いします。CSV等からの取り込みに対応しています。</div></details>
+            <details><summary>LINE公式アカウントは必要ですか？<span class="pm">+</span></summary><div class="ans">LINE連携機能のご利用には公式アカウントが必要です。お持ちでない場合も設定をご案内します。</div></details>
+            <details><summary>契約期間の縛りはありますか？<span class="pm">+</span></summary><div class="ans">最低契約期間の縛りはありません。月単位でご利用いただけ、いつでも変更・解約が可能です。</div></details>
+            <details><summary>スタッフが使いこなせるか不安です。<span class="pm">+</span></summary><div class="ans">直感的なUIに加え、導入時のレクチャーと継続サポートをご用意しています。</div></details>
+            <details><summary>解約は簡単にできますか？<span class="pm">+</span></summary><div class="ans">管理画面からいつでも手続きできます。解約後もデータのエクスポートが可能です。</div></details>
+          </div>
+        </section>
+
+        <section class="lp2-final" data-screen-label="S-CTA">
+          <h2>まずは14日間、<br /><span class="ac">無料で試してみませんか？</span></h2>
+          <p>初期費用0円・最低契約期間なし。</p>
+          <div class="lp2-cta" style="margin-top:18px">
+            <a class="fl-btn fl-btn--gold">14日間無料で始める</a>
+            <a class="fl-btn fl-btn--ghost">資料をLINEで受け取る <span class="ar">›</span></a>
+          </div>
+        </section>
+
+        <footer class="lp2-foot" data-screen-label="S-Footer">
+          <div class="lg">SalonRink Concierge</div>
+          <div class="tg">美容を、もっとあたたかく。</div>
+          <div class="dc">※本ページの数値・グラフ・お客様の声はイメージまたはシミュレーションであり、効果・実績を保証するものではありません。表示価格は税込です。</div>
+        </footer>
+
+        <div class="lp2-sticky">
+          <div class="meta">初期費用0円<b>14日間無料</b></div>
+          <a class="fl-btn fl-btn--gold">無料で始める</a>
+        </div>
+      </div>
+
+      <!-- =================================================== -->
+      <!-- ===============  代理店ページ  =================== -->
+      <!-- =================================================== -->
+      <div class="fl-page lp2" data-page="partner" data-screen-label="代理店ページ">
+        <section class="lp2-hero" data-screen-label="P-Hero">
+          <div class="kick">For Partners</div>
+          <h1>ストック型の継続収益を、<br /><span class="ac">一緒に。</span></h1>
+          <p class="sub">SalonRink Conciergeを一緒に広めてくれる、代理店・パートナーを募集しています。</p>
+          <div class="lp2-cta">
+            <a class="fl-btn fl-btn--gold">代理店として話を聞く（LINE/フォーム）</a>
+          </div>
+          <div class="lp2-trust"><span>ストック型収益</span><span>初期費用0・14日無料で勧めやすい</span></div>
+          <img class="hero-photo" src="ph-hero-p.png" alt="イメージ" />
+        </section>
+
+        <!-- P-ループ図 -->
+        <section class="sec" data-screen-label="P-ループ">
+          <div class="cl-mount"></div>
+        </section>
+        <!-- P-体験リンク -->
+        <section class="sec alt" data-screen-label="P-体験">
+          <div class="shead"><span class="fl-eye">See it first</span><h2 class="fl-h2">売る前に、まず体験</h2><p class="fl-lead">百聞は一見。お客様と美容師、両方の体験をその場で。</p></div>
+          <div class="plink">
+            <button class="demo-btn" data-goto="customer">お客様の体験を見る（髪診断・LINE相談）</button>
+            <button class="demo-btn ghost" data-goto="salon">美容師の体験を見る（AIサポート返信）</button>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="P-制度">
+          <div class="shead"><span class="fl-eye">Program</span><h2 class="fl-h2">代理店制度とは</h2></div>
+          <p class="fl-lead" style="text-align:left">紹介から販売までを担っていただき、継続課金に応じた報酬を得られるモデルです（ストック型）。</p>
+          <div class="req-card"><div class="rt">報酬形態の文言 <span class="req">要記入：Osamu決定</span></div><div class="rd">継続課金に対する報酬の考え方・呼称をここに記載します。</div></div>
+        </section>
+
+        <section class="sec alt" data-screen-label="P-売りやすさ">
+          <div class="shead"><span class="fl-eye">Why easy to sell</span><h2 class="fl-h2">なぜ売りやすいのか</h2></div>
+          <div class="why-list">
+            <div class="it"><span class="ck">✓</span><span>今のLINE公式に“足すだけ”で導入できる</span></div>
+            <div class="it"><span class="ck">✓</span><span>初期費用0・14日無料で勧めやすい</span></div>
+            <div class="it"><span class="ck">✓</span><span>AIカルテ・診断で他社と差別化できる</span></div>
+            <div class="it"><span class="ck">✓</span><span>月¥1,980からの低い導入ハードル</span></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="P-報酬">
+          <div class="shead"><span class="fl-eye">Commission</span><h2 class="fl-h2">報酬モデル</h2></div>
+          <div class="req-card"><div class="rt">紹介料 <span class="req">要記入：Osamu決定</span></div><div class="rd">紹介1件あたりの報酬・条件を記載します。</div></div>
+          <div class="req-card"><div class="rt">継続マージン <span class="req">要記入：Osamu決定</span></div><div class="rd">％・対象期間・支払いサイクルを記載します。</div></div>
+        </section>
+
+        <section class="sec alt" data-screen-label="P-サポート">
+          <div class="shead"><span class="fl-eye">Support</span><h2 class="fl-h2">提供サポート</h2></div>
+          <div class="support-list">
+            <div class="it"><span class="ic">📑</span><span>営業資料</span></div>
+            <div class="it"><span class="ic">🖥️</span><span>デモ環境</span></div>
+            <div class="it"><span class="ic">🗣️</span><span>トーク台本</span></div>
+            <div class="it"><span class="ic">🤝</span><span>共同提案</span></div>
+            <div class="it"><span class="ic">🛟</span><span>導入後サポート連携</span></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="P-パートナー像">
+          <div class="shead"><span class="fl-eye">Partners</span><h2 class="fl-h2">想定パートナー像</h2></div>
+          <div class="persona-grid">
+            <div class="persona"><div class="ic">💼</div><div class="pt">美容ディーラー</div></div>
+            <div class="persona"><div class="ic">📈</div><div class="pt">サロン系コンサル</div></div>
+            <div class="persona"><div class="ic">✂️</div><div class="pt">フリーランス美容師ネットワーク</div></div>
+            <div class="persona"><div class="ic">🏙️</div><div class="pt">士業・地域ビジネス</div></div>
+          </div>
+        </section>
+
+        <section class="sec alt" data-screen-label="P-流れ">
+          <div class="shead"><span class="fl-eye">Flow</span><h2 class="fl-h2">導入・販売の流れ</h2></div>
+          <div class="lp2-flow">
+            <div class="it"><span class="n">01</span><div><div class="tt">お問い合わせ</div><div class="ds">LINE/フォームから</div></div></div>
+            <div class="it"><span class="n">02</span><div><div class="tt">面談・条件すり合わせ</div><div class="ds">役割と条件を確認</div></div></div>
+            <div class="it"><span class="n">03</span><div><div class="tt">契約</div><div class="ds">条件合意のうえ締結</div></div></div>
+            <div class="it"><span class="n">04</span><div><div class="tt">販売開始・サポート</div><div class="ds">資料・サポートを提供</div></div></div>
+          </div>
+        </section>
+
+        <section class="sec" data-screen-label="P-実績">
+          <div class="shead"><span class="fl-eye">Results</span><h2 class="fl-h2">実績・事例</h2></div>
+          <div class="prep-note">準備中です。<br />（事例が整い次第、掲載します）</div>
+        </section>
+
+        <section class="sec alt" data-screen-label="P-FAQ">
+          <div class="shead"><span class="fl-eye">FAQ</span><h2 class="fl-h2">よくあるご質問</h2></div>
+          <div class="lp2-faq">
+            <details open><summary>報酬の支払い条件は？<span class="pm">+</span></summary><div class="ans"><span class="req">要記入：Osamu決定</span></div></details>
+            <details><summary>契約期間・解約は？<span class="pm">+</span></summary><div class="ans"><span class="req">要記入：Osamu決定</span></div></details>
+            <details><summary>ノルマはありますか？<span class="pm">+</span></summary><div class="ans"><span class="req">要記入：Osamu決定</span></div></details>
+            <details><summary>テリトリー（地域）はありますか？<span class="pm">+</span></summary><div class="ans"><span class="req">要記入：Osamu決定</span></div></details>
+            <details><summary>既存顧客の扱いは？<span class="pm">+</span></summary><div class="ans"><span class="req">要記入：Osamu決定</span></div></details>
+          </div>
+        </section>
+
+        <section class="lp2-final" data-screen-label="P-CTA">
+          <h2>SalonRinkを、<br /><span class="ac">一緒に広げませんか？</span></h2>
+          <p>まずはお気軽にご相談ください。</p>
+          <div class="lp2-cta" style="margin-top:18px">
+            <a class="fl-btn fl-btn--gold">代理店として話を聞く（LINE/フォーム）</a>
+          </div>
+        </section>
+
+        <footer class="lp2-foot" data-screen-label="P-Footer">
+          <div class="lg">SalonRink Concierge</div>
+          <div class="tg">パートナーと、ともに。</div>
+          <div class="dc">※制度内容は変更となる可能性があります。報酬・契約条件は確定後に掲載します。</div>
+        </footer>
+
+        <div class="lp2-sticky">
+          <div class="meta">パートナー募集<b>代理店のご相談</b></div>
+          <a class="fl-btn fl-btn--gold">話を聞く</a>
+        </div>
+      </div>
+
+    </div>
+  </div></div></div>
+</div>
+
+<style>
+/* ===== CONCIERGE LOOP figure ===== */
+.cl{margin-top:22px;}
+.cl-head{text-align:center;}
+.cl-head .cl-eye{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:800;}
+.cl-h{font-family:var(--serif);font-size:18px;color:var(--ink);margin-top:6px;}
+.cl-sub{font-size:11px;color:var(--sub);line-height:1.65;margin-top:7px;}
+.cl-ring{position:relative;width:224px;height:224px;margin:14px auto 4px;}
+.cl-ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
+.cl-track{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:2 9;stroke-linecap:round;opacity:.5;}
+.cl-prog{fill:none;stroke:var(--coral);stroke-width:3.5;stroke-linecap:round;stroke-dasharray:754;stroke-dashoffset:754;transform:rotate(-90deg);transform-box:fill-box;transform-origin:center;transition:stroke-dashoffset .6s cubic-bezier(.4,0,.2,1);}
+.cl-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:90px;height:90px;border-radius:50%;background:var(--cream);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;}
+.cl-core img{width:84px;height:auto;mix-blend-mode:multiply;}
+.cl-word{font-family:var(--serif);font-size:12px;letter-spacing:.1em;color:var(--coral);font-weight:600;text-align:center;line-height:1.3;}
+.cl-word small{display:block;font-size:7px;letter-spacing:.18em;color:var(--gold);margin-top:2px;}
+.cl-node{position:absolute;width:46px;height:46px;border-radius:50%;background:var(--cream);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;font-size:16px;transform:scale(.86);transition:box-shadow .35s,transform .35s;}
+.cl-node .b{position:absolute;top:-5px;left:-3px;width:18px;height:18px;border-radius:50%;background:var(--cream);box-shadow:var(--ins-sm);font-size:9px;font-weight:800;color:var(--sub);display:flex;align-items:center;justify-content:center;}
+.cl-node.on{box-shadow:var(--sh), inset 0 0 0 2px color-mix(in srgb,var(--coral) 42%,transparent);transform:scale(1.38);z-index:3;}
+.cl-node.on .b{background:var(--coral);color:#fff;}
+.cl-legend{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.cl-legend li{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:var(--r-sm);background:var(--cream);box-shadow:var(--sh);transition:box-shadow .3s;}
+.cl-legend li.on{box-shadow:var(--ins-sm);}
+.cl-legend .ln{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--cream);box-shadow:var(--sh);font-family:var(--serif);font-size:13px;color:var(--coral);display:flex;align-items:center;justify-content:center;}
+.cl-legend li.on .ln{background:var(--coral);color:#fff;}
+.cl-legend .lx b{font-size:12.5px;color:var(--ink);display:flex;align-items:center;gap:6px;}
+.cl-legend .lx i{font-style:normal;font-size:10.5px;color:var(--sub);display:block;margin-top:1px;}
+.cl-tag{font-size:8.5px;font-weight:800;color:#fff;background:var(--coral);padding:1px 7px;border-radius:999px;}
+.cl-fig{margin:18px 0 4px;}
+.cl-fig img{display:block;width:100%;height:auto;mix-blend-mode:multiply;}
+
+/* ===== マイカルテ（育つカルテ） ===== */
+.carte{background:var(--white);border-radius:var(--r);box-shadow:var(--sh-card), 0 0 0 1px color-mix(in srgb,var(--ndk) 16%, transparent);padding:16px;margin-top:18px;}
+.carte-top{display:flex;align-items:center;gap:11px;}
+.carte-av{width:42px;height:42px;border-radius:50%;background:var(--cream);box-shadow:var(--ins-sm);background-image:url(ph-person.png);background-size:cover;background-position:center;flex:0 0 auto;}
+.carte-nm{font-size:13px;font-weight:700;color:var(--ink);}
+.carte-sub{font-size:10px;color:var(--sub);margin-top:1px;}
+.carte-badge{margin-left:auto;font-size:9px;font-weight:800;color:#fff;background:var(--coral);padding:3px 9px;border-radius:999px;}
+.carte-sec{margin-top:15px;}
+.carte-lab{font-size:10px;letter-spacing:.04em;color:var(--gold);font-weight:800;text-transform:uppercase;}
+.carte-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.carte-tags span{font-size:10.5px;font-weight:700;color:var(--coral);background:var(--cream);box-shadow:var(--sh);padding:5px 10px;border-radius:999px;}
+.carte-meters{display:flex;gap:9px;margin-top:10px;}
+.carte-meter{flex:1;background:var(--cream);box-shadow:var(--ins-sm);border-radius:10px;padding:9px;text-align:center;}
+.carte-meter .mv{font-family:var(--serif);font-size:16px;color:var(--ink);}
+.carte-meter .ml{font-size:9px;color:var(--sub);margin-top:2px;}
+.carte-tl{margin-top:10px;display:flex;flex-direction:column;}
+.tl-item{display:flex;gap:11px;}
+.tl-rail{display:flex;flex-direction:column;align-items:center;flex:0 0 auto;}
+.tl-dot{width:11px;height:11px;border-radius:50%;background:var(--coral);box-shadow:var(--sh);margin-top:3px;}
+.tl-line{width:2px;flex:1;background:var(--ndk);opacity:.4;min-height:14px;}
+.tl-item:last-child .tl-line{display:none;}
+.tl-body{padding-bottom:12px;}
+.tl-date{font-size:9.5px;color:var(--gold);font-weight:700;}
+.tl-txt{font-size:11.5px;color:var(--ink);font-weight:600;margin-top:1px;}
+.carte-next{display:flex;align-items:center;gap:10px;margin-top:6px;background:var(--cream);box-shadow:var(--ins-sm);border-radius:10px;padding:11px;}
+.carte-next .nx-ic{font-size:16px;flex:0 0 auto;}
+.carte-next .nx-t{font-size:11px;color:var(--ink);font-weight:700;}
+.carte-next .nx-s{font-size:10px;color:var(--sub);margin-top:1px;}
+.carte-grow{display:flex;align-items:center;justify-content:center;gap:7px;font-size:10.5px;color:var(--coral);font-weight:700;margin-top:12px;background:var(--cream);box-shadow:var(--ins-sm);border-radius:999px;padding:9px;}
+.carte-h{font-size:10px;letter-spacing:.04em;color:var(--gold);font-weight:800;text-transform:uppercase;text-align:center;margin-top:22px;}
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.value-it{background:var(--cream);box-shadow:var(--sh);border-radius:var(--r-sm);padding:13px;display:flex;align-items:center;gap:9px;}
+.value-it .vk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--cream);box-shadow:var(--ins-sm);color:var(--coral);font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.value-it .vn{font-size:11.5px;font-weight:700;color:var(--ink);line-height:1.4;}
+
+/* ===== demos ===== */
+.demo{background:var(--white);border-radius:var(--r);box-shadow:var(--sh-card), 0 0 0 1px color-mix(in srgb,var(--ndk) 16%, transparent);padding:16px;margin-top:16px;}
+.demo-h{display:flex;gap:11px;align-items:flex-start;}
+.demo-ic{width:40px;height:40px;border-radius:11px;background:var(--cream);box-shadow:var(--ins-sm);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto;}
+.demo-tt{font-size:14px;font-weight:700;color:var(--ink);}
+.demo-ds{font-size:11px;color:var(--sub);line-height:1.55;margin-top:3px;}
+.demo-btn{width:100%;margin-top:13px;border:none;cursor:pointer;font-family:var(--sans);font-weight:700;font-size:13px;padding:13px;border-radius:var(--r-sm);background:var(--coral);color:#fff;box-shadow:var(--sh);}
+.demo-btn:disabled{opacity:.45;cursor:default;}
+.demo-btn.ghost{color:var(--sub);box-shadow:var(--ins-sm);}
+.cam-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin-top:13px;height:150px;border-radius:var(--r-sm);background:var(--cream);box-shadow:var(--ins);cursor:pointer;overflow:hidden;color:var(--sub);font-size:12.5px;font-weight:700;text-align:center;}
+.cam-ph small{display:block;font-size:9.5px;color:var(--sub);font-weight:500;margin-top:4px;}
+.cam-img{width:100%;height:100%;object-fit:cover;}
+.cam-load{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px;font-size:12px;color:var(--sub);font-weight:600;}
+.cam-load i{width:7px;height:7px;border-radius:50%;background:var(--coral);animation:cl-b 1s infinite;}
+.cam-load i:nth-child(2){animation-delay:.15s}.cam-load i:nth-child(3){animation-delay:.3s}
+@keyframes cl-b{0%,100%{opacity:.3}50%{opacity:1}}
+.cam-res-h{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;font-weight:700;color:var(--ink);margin-top:14px;}
+.cam-level{display:flex;align-items:center;gap:9px;margin-top:11px;background:var(--cream);box-shadow:var(--ins-sm);border-radius:var(--r-sm);padding:13px;}
+.lv-dot{width:13px;height:13px;border-radius:50%;background:var(--coral);flex:0 0 auto;}
+.lv-name{font-family:var(--serif);font-size:17px;color:var(--ink);}
+.cam-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.cam-tags span{font-size:11px;font-weight:700;color:var(--coral);background:var(--cream);box-shadow:var(--sh);padding:6px 11px;border-radius:999px;}
+.cam-cta{display:flex;flex-direction:column;gap:9px;margin-top:14px;}
+.chat-log{display:flex;flex-direction:column;gap:8px;margin-top:13px;}
+.chat-log:empty{display:none;}
+.chat-r,.chat-s{font-size:12px;line-height:1.55;padding:9px 12px;border-radius:13px;max-width:84%;}
+.chat-r{align-self:flex-start;background:var(--cream);box-shadow:var(--sh);border-top-left-radius:4px;color:var(--ink);}
+.chat-s{align-self:flex-end;background:var(--cream);box-shadow:var(--sh),inset 0 0 0 1.5px color-mix(in srgb,var(--green) 22%,transparent);color:var(--green);font-weight:600;border-top-right-radius:4px;}
+.chat-quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.chat-q{font-size:11.5px;font-weight:700;color:var(--coral);background:var(--cream);box-shadow:var(--sh);border:none;border-radius:999px;padding:8px 13px;cursor:pointer;}
+.chat-q.cta{color:var(--green);box-shadow:var(--sh),inset 0 0 0 1.5px color-mix(in srgb,var(--green) 22%,transparent);}
+.reply-in{display:flex;gap:10px;align-items:flex-start;}
+.reply-av{width:34px;height:34px;border-radius:50%;background:var(--cream);box-shadow:var(--ins-sm);display:flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto;}
+.reply-bubble{font-size:12px;line-height:1.55;padding:10px 12px;border-radius:13px;border-top-left-radius:4px;background:var(--cream);box-shadow:var(--sh);color:var(--ink);}
+.reply-lab{font-size:10.5px;color:var(--gold);font-weight:700;margin:14px 0 6px;}
+.reply-text{width:100%;min-height:92px;resize:none;border:none;border-radius:var(--r-sm);background:var(--cream);box-shadow:var(--ins-sm);padding:11px;font-family:var(--sans);font-size:12px;color:var(--ink);line-height:1.65;}
+.reply-line{width:100%;margin-top:8px;border:none;border-radius:var(--r-sm);background:var(--cream);box-shadow:var(--ins-sm);padding:11px;font-family:var(--sans);font-size:12px;color:var(--ink);}
+.reply-sent{margin-top:13px;text-align:center;font-size:13px;font-weight:700;color:var(--green);}
+.reply-note{font-size:10.5px;color:var(--sub);font-weight:500;margin-top:7px;line-height:1.6;}
+.plink{display:flex;flex-direction:column;gap:11px;margin-top:18px;}
+
+/* ===== LINE相談パネル（チップ複数選択） ===== */
+.lcheck{display:flex;flex-direction:column;gap:7px;margin-top:12px;}
+.lcheck .it{display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--ink);font-weight:600;line-height:1.5;}
+.lcheck .it .ck{flex:0 0 auto;color:var(--green);font-weight:800;}
+.lpanel{margin-top:14px;border-radius:var(--r-sm);background:var(--white);box-shadow:var(--sh-card);overflow:hidden;}
+.lp-head{display:flex;align-items:center;gap:8px;padding:10px 12px;box-shadow:inset 0 -1px 0 var(--ndk),inset 0 -2px 0 var(--nlt);}
+.lp-head .av{width:26px;height:26px;border-radius:50%;background:var(--cream);box-shadow:var(--sh);background-image:url(ph-person.png);background-size:cover;flex:0 0 auto;}
+.lp-head .nm{font-size:11.5px;font-weight:700;color:var(--ink);}
+.lp-head .onl{margin-left:auto;font-size:9px;color:var(--green);font-weight:700;display:flex;align-items:center;gap:4px;}
+.lp-head .onl::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);}
+.lp-body{padding:13px;display:flex;flex-direction:column;gap:11px;}
+.qgroup{display:flex;flex-direction:column;gap:7px;}
+.qglabel{font-size:11px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;}
+.ok-badge{font-size:8.5px;font-weight:800;color:var(--coral);background:var(--cream);box-shadow:var(--sh);padding:2px 7px;border-radius:999px;white-space:nowrap;}
+.qchips{display:flex;flex-wrap:wrap;gap:7px;}
+.chat-q.sel{color:#fff;background:var(--coral);box-shadow:var(--sh);}
+.lp-more{display:flex;align-items:center;gap:8px;font-size:10.5px;color:var(--sub);background:var(--cream);box-shadow:var(--ins-sm);border-radius:999px;padding:9px 13px;}
+.lp-more .mic{margin-left:auto;font-size:14px;}
+.lchat-out{display:flex;flex-direction:column;gap:8px;}
+.lchat-out:empty{display:none;}
+.lp-cta{display:flex;flex-direction:column;gap:9px;margin-top:2px;}
+.lp-cap{font-size:10px;color:var(--sub);line-height:1.6;margin-top:11px;background:var(--cream);box-shadow:var(--ins-sm);border-radius:var(--r-sm);padding:10px 12px;}
+</style>
+
+<template id="clTpl">
+  <div class="cl">
+    <div class="cl-head"><span class="cl-eye">The Concierge Loop</span><div class="cl-h">ひと続きの輪</div><p class="cl-sub">担当者とECが主役。6つの場面をLINEひとつで“ひと続きの輪”にします。</p></div>
+    <div class="cl-ring">
+      <svg viewBox="0 0 300 300" aria-hidden="true"><circle class="cl-track" cx="150" cy="150" r="120"></circle><circle class="cl-prog" cx="150" cy="150" r="120"></circle></svg>
+      <div class="cl-core"><span class="cl-word">SALONRINK<small>CONCIERGE</small></span></div>
+      <div class="cl-node" style="left:89px;top:0"><span class="b">1</span>💬</div>
+      <div class="cl-node" style="left:167px;top:44px"><span class="b">2</span>📅</div>
+      <div class="cl-node" style="left:167px;top:134px"><span class="b">3</span>✂️</div>
+      <div class="cl-node" style="left:89px;top:178px"><span class="b">4</span>🌿</div>
+      <div class="cl-node" style="left:11px;top:134px"><span class="b">5</span>🛍️</div>
+      <div class="cl-node" style="left:11px;top:44px"><span class="b">6</span>🔔</div>
+    </div>
+    <ol class="cl-legend">
+      <li><span class="ln">1</span><div class="lx"><b>プレカウンセリング</b><i>来店前にLINEで希望を共有</i></div></li>
+      <li><span class="ln">2</span><div class="lx"><b>ご予約・来店</b><i>予約もLINEから</i></div></li>
+      <li><span class="ln">3</span><div class="lx"><b>担当者の施術</b><i>カルテで把握してお出迎え</i></div></li>
+      <li><span class="ln">4</span><div class="lx"><b>アフターカウンセリング</b><i>担当者からホームケア提案</i></div></li>
+      <li><span class="ln">5</span><div class="lx"><b>EC<span class="cl-tag">ECが主役</span></b><i>そのまま購入・再注文</i></div></li>
+      <li><span class="ln">6</span><div class="lx"><b>LINEで次回へ</b><i>頃合いを見てそっとご案内</i></div></li>
+    </ol>
+  </div>
+</template>
+
+<script>
+  (function () {
+    // ---- clone concierge loop into every mount + animate 1→6 ----
+    const tpl = document.getElementById('clTpl');
+    document.querySelectorAll('.cl-mount').forEach((m) => m.appendChild(tpl.content.cloneNode(true)));
+    document.querySelectorAll('.cl').forEach((cl) => {
+      const nodes = [...cl.querySelectorAll('.cl-node')];
+      const legend = [...cl.querySelectorAll('.cl-legend li')];
+      const prog = cl.querySelector('.cl-prog');
+      const C = 754; let cur = -1, timer = null;
+      function set(i){ nodes.forEach((n,k)=>n.classList.toggle('on',k===i)); legend.forEach((n,k)=>n.classList.toggle('on',k===i)); if(prog) prog.style.strokeDashoffset = String(C - C*((i+1)/6)); }
+      function tick(){ cur=(cur+1)%6; set(cur); }
+      const io = new IntersectionObserver((es)=>es.forEach((e)=>{ if(e.isIntersecting){ if(!timer){ tick(); timer=setInterval(tick,1100);} } else { clearInterval(timer); timer=null; } }),{threshold:.3});
+      io.observe(cl.querySelector('.cl-ring'));
+    });
+
+    // ---- camera hair diagnosis ----
+    const LEVELS = [
+      {n:'健康毛', c:'#2EB872'}, {n:'軽度乾燥', c:'#A98552'},
+      {n:'中度ダメージ', c:'#D08A4E'}, {n:'高度ダメージ', c:'#B85647'}
+    ];
+    const TAGS = ['乾燥','広がり','ダメージ','白髪'];
+    document.querySelectorAll('.demo .cam-go').forEach((go) => {
+      const demo = go.closest('.demo');
+      const input = demo.querySelector('input[type=file]');
+      const ph = demo.querySelector('.cam-ph');
+      const img = demo.querySelector('.cam-img');
+      const load = demo.querySelector('.cam-load');
+      const res = demo.querySelector('.cam-res');
+      input.addEventListener('change', () => {
+        const f = input.files && input.files[0]; if (!f) return;
+        const url = URL.createObjectURL(f);
+        img.src = url; img.hidden = false; ph.style.display = 'none';
+      });
+      go.addEventListener('click', () => {
+        res.hidden = true; load.hidden = false; go.disabled = true;
+        setTimeout(() => {
+          load.hidden = true; go.disabled = false;
+          const lv = LEVELS[Math.floor(Math.random()*LEVELS.length)];
+          const shuffled = [...TAGS].sort(()=>Math.random()-0.5).slice(0, 2 + Math.floor(Math.random()*2));
+          res.querySelector('.lv-dot').style.background = lv.c;
+          res.querySelector('.lv-name').textContent = lv.n;
+          res.querySelector('.cam-tags').innerHTML = shuffled.map((t)=>'<span>'+t+'</span>').join('');
+          res.hidden = false;
+        }, 1300);
+      });
+    });
+
+    // ---- LINE chat ----
+    const REPLY = 'ご相談ありがとうございます。お悩みに合わせたケアをご提案できます。よければ、事前カウンセリングで詳しく教えてください。';
+    document.querySelectorAll('.demo .chat-quick').forEach((quick) => {
+      const log = quick.closest('.demo').querySelector('.chat-log');
+      quick.addEventListener('click', (e) => {
+        const b = e.target.closest('.chat-q'); if (!b) return;
+        if (b.dataset.go) { return; }
+        const q = b.getAttribute('data-q');
+        const u = document.createElement('div'); u.className='chat-s'; u.textContent=q; log.appendChild(u);
+        setTimeout(() => {
+          const r = document.createElement('div'); r.className='chat-r'; r.textContent=REPLY; log.appendChild(r);
+          if (!quick.querySelector('.cta')) {
+            const cta = document.createElement('button'); cta.className='chat-q cta'; cta.textContent='事前カウンセリングへ進む ›'; cta.dataset.go='1';
+            quick.appendChild(cta);
+          }
+        }, 600);
+      });
+    });
+
+    // ---- stylist AI reply ----
+    const DRAFT = 'ご相談ありがとうございます。色落ちが気になるとのこと、カラー後はアミノ酸系のシャンプーと、週2回の集中トリートメントで退色をゆるやかにできます。ご来店時にも色味を見ながら調整しますね。';
+    document.querySelectorAll('.demo .reply-draft').forEach((btn) => {
+      const demo = btn.closest('.demo');
+      const edit = demo.querySelector('.reply-edit');
+      const text = demo.querySelector('.reply-text');
+      const sent = demo.querySelector('.reply-sent');
+      const send = demo.querySelector('.reply-send');
+      btn.addEventListener('click', () => {
+        btn.disabled = true; btn.textContent = 'AIが下書き中…';
+        setTimeout(() => { text.value = DRAFT; edit.hidden = false; btn.style.display='none'; }, 700);
+      });
+      send.addEventListener('click', () => { edit.hidden = true; sent.hidden = false; });
+    });
+
+    // ---- partner demo links → switch tab + scroll to demo ----
+    document.querySelectorAll('[data-goto]').forEach((b) => {
+      b.addEventListener('click', () => {
+        const key = b.getAttribute('data-goto');
+        document.querySelector('.fl-tab[data-tab="'+key+'"]').click();
+        const label = key === 'customer' ? 'C-体験' : 'S-体験';
+        const target = document.querySelector('.fl-page[data-page="'+key+'"] [data-screen-label="'+label+'"]');
+        const scroll = document.querySelector('.fl-scroll');
+        if (target && scroll) setTimeout(()=>{ scroll.scrollTop = target.offsetTop - 8; }, 60);
+      });
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    const tabs = [...document.querySelectorAll('.fl-tab')];
+    const pages = [...document.querySelectorAll('.fl-page')];
+    const scroll = document.querySelector('.fl-scroll');
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const key = tab.getAttribute('data-tab');
+        tabs.forEach((t) => t.classList.toggle('on', t === tab));
+        pages.forEach((p) => p.classList.toggle('on', p.getAttribute('data-page') === key));
+        if (scroll) scroll.scrollTop = 0;
+      });
+    });
+    // feature/story rail → dot sync
+    document.querySelectorAll('.lp2-rail, .cust-loop').forEach((rail) => {
+      const wrap = rail.parentElement;
+      const dots = [...wrap.querySelectorAll('.fl-dots i')];
+      const cards = [...rail.children];
+      if (!dots.length) return;
+      rail.addEventListener('scroll', () => {
+        const mid = rail.scrollLeft + rail.clientWidth / 2;
+        let best = 0, bd = Infinity;
+        cards.forEach((c, i) => { const m = c.offsetLeft + c.offsetWidth / 2; const d = Math.abs(m - mid); if (d < bd) { bd = d; best = i; } });
+        dots.forEach((d, i) => d.classList.toggle('on', i === best));
+      }, { passive: true });
+    });
+  })();
+</script>
+<style id="tweakScale">
+  .fl{--ts:1;--is:1;}
+  .fl .lp2-hero h1{font-size:calc(28px*var(--ts));}
+  .fl .fl-h2{font-size:calc(23px*var(--ts));}
+  .fl .lp2 .shead .fl-h2{font-size:calc(21px*var(--ts));}
+  .fl .lp2-hero .sub{font-size:calc(13.5px*var(--ts));}
+  .fl .fl-lead{font-size:calc(13.5px*var(--ts));}
+  .fl .lp2 .shead .fl-lead{font-size:calc(12.5px*var(--ts));}
+  .fl .fl-btn,.fl .demo-btn{font-size:calc(13px*var(--ts));}
+  .fl .lp2-prob .tt,.fl .demo-tt,.fl .lp2-flow .tt,.fl .mycarte .tt{font-size:calc(13.5px*var(--ts));}
+  .fl .lp2-prob .ds,.fl .demo-ds,.fl .cust-card .ds,.fl .lp2-feat .ds,.fl .lp2-voice .q,.fl .reply-bubble,.fl .chat-r,.fl .chat-s,.fl .mycarte .ds{font-size:calc(12px*var(--ts));}
+  .fl .lp2-plan .amt{font-size:calc(28px*var(--ts));}
+  .fl .demo-ic{font-size:calc(19px*var(--is));}
+  .fl .lp2-prob .ic{font-size:calc(18px*var(--is));}
+  .fl .mycarte .ic,.fl .reply-av{font-size:calc(16px*var(--is));}
+  .fl .lp2-sec .it .ic,.fl .support-list .it .ic{font-size:calc(15px*var(--is));}
+  .fl .persona .ic{font-size:calc(22px*var(--is));}
+</style>
+
+<script>
+(function () {
+  document.querySelectorAll('.lpanel').forEach(function (panel) {
+    panel.querySelectorAll('.chat-q').forEach(function (c) {
+      c.addEventListener('click', function () { c.classList.toggle('sel'); });
+    });
+    var send = panel.querySelector('.lsend');
+    var out = panel.querySelector('.lchat-out');
+    if (!send) return;
+    send.addEventListener('click', function () {
+      var sel = [].slice.call(panel.querySelectorAll('.chat-q.sel')).map(function (c) { return c.getAttribute('data-q'); });
+      if (!sel.length) { return; }
+      out.innerHTML = '';
+      var s = document.createElement('div'); s.className = 'chat-s'; s.textContent = sel.join('、'); out.appendChild(s);
+      setTimeout(function () {
+        var r = document.createElement('div'); r.className = 'chat-r'; r.textContent = 'ありがとうございます。担当者にそっとおつなぎしますね🌿'; out.appendChild(r);
+        var cta = document.createElement('div'); cta.className = 'lp-cta';
+        cta.innerHTML = '<a class="fl-btn fl-btn--line">LINEで続ける</a><a class="fl-btn fl-btn--ghost">カルテを保存する</a>';
+        out.appendChild(cta);
+      }, 600);
+    });
+  });
+})();
+</script>
+
+<style>
+  .lp2-hero h1 .ht-caret{display:inline-block;width:3px;height:0.82em;margin-left:2px;border-radius:2px;background:var(--coral);vertical-align:-0.04em;animation:htblink 1s steps(1) infinite;}
+  .lp2-hero h1 .ht-caret.done{animation:none;opacity:0;}
+  @keyframes htblink{50%{opacity:0;}}
+  .fl-prog{position:absolute;top:44px;left:0;right:0;height:3px;z-index:40;pointer-events:none;}
+  .fl-prog i{display:block;height:100%;width:0;background:var(--coral);border-radius:0 2px 2px 0;transition:width .12s ease-out;}
+</style>
+<script>
+(function () {
+  function getL1(h){ var s=''; for (var i=0;i<h.childNodes.length;i++){ var n=h.childNodes[i]; if(n.nodeName==='BR') break; if(n.nodeType===3) s+=n.textContent; } return s.replace(/\s+$/,''); }
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var heroes = {};
+  document.querySelectorAll('.fl-page').forEach(function(p){
+    var h = p.querySelector('.lp2-hero h1'); if(!h) return;
+    var span = h.querySelector('.ac');
+    h.dataset.l1 = getL1(h);
+    h.dataset.l2 = span ? span.textContent : '';
+    h.innerHTML = '<span class="ht1"></span><br><span class="ac ht2"></span><span class="ht-caret"></span>';
+    heroes[p.getAttribute('data-page')] = h;
+  });
+  function type(h){
+    if(!h) return;
+    var l1 = h.dataset.l1 || '', l2 = h.dataset.l2 || '';
+    var e1 = h.querySelector('.ht1'), e2 = h.querySelector('.ht2'), caret = h.querySelector('.ht-caret');
+    clearTimeout(h._t);
+    if(reduce){ e1.textContent=l1; e2.textContent=l2; caret.classList.add('done'); return; }
+    e1.textContent=''; e2.textContent=''; caret.classList.remove('done');
+    var i=0,j=0;
+    (function step(){
+      if(i<l1.length){ e1.textContent=l1.slice(0,++i); h._t=setTimeout(step,90); }
+      else if(j<l2.length){ e2.textContent=l2.slice(0,++j); h._t=setTimeout(step,100); }
+      else { h._t=setTimeout(function(){caret.classList.add('done');},1200); }
+    })();
+  }
+  var active = document.querySelector('.fl-page.on');
+  if(active) type(heroes[active.getAttribute('data-page')]);
+  document.querySelectorAll('.fl-tab').forEach(function(tab){
+    tab.addEventListener('click', function(){ var k=tab.getAttribute('data-tab'); setTimeout(function(){ type(heroes[k]); }, 40); });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // ---- scroll progress bar ----
+  var sc = document.querySelector('.fl-scroll'), bar = document.querySelector('.fl-prog i');
+  if (sc && bar) {
+    var upd = function () { var m = sc.scrollHeight - sc.clientHeight; bar.style.width = (m > 0 ? (sc.scrollTop / m * 100) : 0) + '%'; };
+    sc.addEventListener('scroll', upd, { passive: true });
+    document.querySelectorAll('.fl-tab').forEach(function (t) { t.addEventListener('click', function () { setTimeout(upd, 30); }); });
+  }
+  // ---- type section headings on scroll-in ----
+  function segs(el) {
+    var out = [], ok = true;
+    el.childNodes.forEach(function (n) {
+      if (n.nodeType === 3) out.push(n.textContent);
+      else if (n.nodeName === 'BR') out.push('\n');
+      else ok = false;
+    });
+    return ok ? out.join('') : null;
+  }
+  function typeEl(el, flat, speed) {
+    var idx = 0;
+    (function step() {
+      if (idx <= flat.length) { el.innerHTML = flat.slice(0, idx).replace(/\n/g, '<br>'); idx++; setTimeout(step, speed); }
+    })();
+  }
+  var targets = [];
+  document.querySelectorAll('.fl-h2, .fl-eye').forEach(function (el) {
+    if (el.closest('.lp2-hero')) return;
+    var flat = segs(el); if (flat === null) return;
+    el._flat = flat; el.dataset.pend = '1'; targets.push(el);
+  });
+  if (reduce) return;
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting && e.target.dataset.pend) {
+        delete e.target.dataset.pend;
+        typeEl(e.target, e.target._flat, e.target.classList.contains('fl-eye') ? 38 : 65);
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.7, root: sc });
+  targets.forEach(function (el) { el.dataset.pend && io.observe(el); });
+})();
+</script>
+
+<div id="tweak-root"></div>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const { useEffect } = React;
+const lerp = (a, b, t) => a + (b - a) * t;
+
+const SERIFS = ['Shippori Mincho B1', 'Noto Serif JP', 'Zen Old Mincho', 'Klee One', 'Zen Kaku Gothic New'];
+const ACCENTS = ['#B85647', '#D85A30', '#A9577A', '#6E8B6B', '#A98552'];
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "tone": 67,
+  "base": 90,
+  "accent": "#B85647",
+  "serif": "Noto Serif JP",
+  "textScale": 0.95,
+  "iconScale": 1.5,
+  "depth": 1.3,
+  "radius": 1.8
+}/*EDITMODE-END*/;
+
+function applyTweaks(t) {
+  const el = document.querySelector('.fl');
+  if (!el) return;
+  const tone = t.tone, L = t.base;
+  const hue = tone <= 50 ? lerp(210, 33, tone / 50) : lerp(33, 8, (tone - 50) / 50);
+  const sat = tone <= 50 ? lerp(8, 22, tone / 50) : lerp(22, 30, (tone - 50) / 50);
+  const H = Math.round(hue), S = Math.round(sat);
+  const bgL = Math.max(82, L - 2);
+  el.style.setProperty('--cream', `hsl(${H} ${S}% ${L}%)`);
+  el.style.setProperty('--cream2', `hsl(${H} ${S}% ${L}%)`);
+  el.style.setProperty('--card', `hsl(${H} ${S}% ${L}%)`);
+  el.style.setProperty('--surface', `hsl(${H} ${S}% ${bgL}%)`);
+  el.style.setProperty('--ndk', `hsl(${H} ${Math.round(S * 0.95)}% ${Math.max(38, bgL - 11)}%)`);
+  el.style.setProperty('--nlt', `hsl(${H} ${Math.round(S * 0.5)}% ${Math.min(99, L + 7)}%)`);
+  el.style.background = `hsl(${H} ${S}% ${bgL}%)`;
+  el.style.setProperty('--coral', t.accent);
+  el.style.setProperty('--serif', `"${t.serif}", serif`);
+  el.style.setProperty('--ts', String(t.textScale));
+  el.style.setProperty('--is', String(t.iconScale));
+  const d = t.depth, f = (n) => (n * d).toFixed(1) + 'px';
+  el.style.setProperty('--sh', `${f(5)} ${f(5)} ${f(11)} var(--ndk), -${f(5)} -${f(5)} ${f(11)} var(--nlt)`);
+  el.style.setProperty('--sh-card', `${f(6)} ${f(6)} ${f(14)} var(--ndk), -${f(6)} -${f(6)} ${f(14)} var(--nlt)`);
+  el.style.setProperty('--ins', `inset ${f(4)} ${f(4)} ${f(9)} var(--ndk), inset -${f(4)} -${f(4)} ${f(9)} var(--nlt)`);
+  el.style.setProperty('--ins-sm', `inset ${f(3)} ${f(3)} ${f(6)} var(--ndk), inset -${f(3)} -${f(3)} ${f(6)} var(--nlt)`);
+  const r = t.radius;
+  el.style.setProperty('--r', (18 * r) + 'px');
+  el.style.setProperty('--r-sm', (13 * r) + 'px');
+  el.style.setProperty('--r-lg', (22 * r) + 'px');
+}
+
+function TweakApp() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  useEffect(() => { applyTweaks(t); }, [t]);
+  return (
+    <TweaksPanel title="デザイン調整">
+      <TweakSection label="カラー" />
+      <TweakSlider label="全体トーン（寒色〜暖色）" value={t.tone} min={0} max={100} unit=""
+        onChange={(v) => setTweak('tone', v)} />
+      <TweakSlider label="ベース明度" value={t.base} min={80} max={93} unit=""
+        onChange={(v) => setTweak('base', v)} />
+      <TweakColor label="アクセント" value={t.accent} options={ACCENTS}
+        onChange={(v) => setTweak('accent', v)} />
+      <TweakSection label="文字・アイコン" />
+      <TweakSelect label="見出し書体" value={t.serif} options={SERIFS}
+        onChange={(v) => setTweak('serif', v)} />
+      <TweakSlider label="文字サイズ" value={t.textScale} min={0.85} max={1.3} step={0.05} unit="×"
+        onChange={(v) => setTweak('textScale', v)} />
+      <TweakSlider label="アイコンサイズ" value={t.iconScale} min={0.8} max={1.5} step={0.05} unit="×"
+        onChange={(v) => setTweak('iconScale', v)} />
+      <TweakSection label="質感" />
+      <TweakSlider label="影の深さ（ニューモル度）" value={t.depth} min={0.4} max={1.7} step={0.1} unit="×"
+        onChange={(v) => setTweak('depth', v)} />
+      <TweakSlider label="角丸" value={t.radius} min={0.4} max={1.8} step={0.1} unit="×"
+        onChange={(v) => setTweak('radius', v)} />
+    </TweaksPanel>
+  );
+}
+
+applyTweaks(TWEAK_DEFAULTS);
+ReactDOM.createRoot(document.getElementById('tweak-root')).render(<TweakApp />);
+</script>
+</body>
+</html>
