@@ -1417,5 +1417,60 @@ html,body{margin:0;background:#E9E2DA;}
 })();
 </script>
 
+
+<style id="lpmini">
+.chat-r.typing{display:inline-flex;gap:4px;align-items:center;}
+.chat-r.typing i{width:6px;height:6px;border-radius:50%;background:var(--sub);opacity:.4;animation:cl-b 1s infinite;}
+.chat-r.typing i:nth-child(2){animation-delay:.15s}.chat-r.typing i:nth-child(3){animation-delay:.3s}
+.lp-mini{background:var(--white);box-shadow:var(--sh-card), 0 0 0 1px color-mix(in srgb,var(--ndk) 14%, transparent);border-radius:var(--r-sm);padding:12px;display:flex;flex-direction:column;gap:8px;}
+.lp-mini-h{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:800;color:var(--ink);}
+.lp-mini-badge{margin-left:auto;font-size:8.5px;font-weight:800;color:var(--gold);background:var(--cream);box-shadow:var(--ins-sm);padding:2px 8px;border-radius:999px;white-space:nowrap;}
+.lp-mini-it{display:flex;gap:8px;align-items:flex-start;font-size:11.5px;line-height:1.65;color:var(--ink);font-weight:600;}
+.lp-mini-dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-top:5px;box-shadow:var(--sh);}
+.lp-mini-foot{font-size:9.5px;color:var(--sub);line-height:1.55;background:var(--cream);box-shadow:var(--ins-sm);border-radius:9px;padding:8px 10px;}
+</style>
+<script id="lprich">
+(function(){
+  var HINTS={
+    'パサつき':'毛先には保湿系トリートメントで、うるおいを補うケアがおすすめです。',
+    '色落ち':'カラー後はアミノ酸系シャンプー＋週2回の集中ケアで、色もちをサポートします。',
+    'うねり・くせ':'広がりやすい毛先は軽めのオイルで、まとまりを出しやすくします。',
+    '頭皮':'スカルプケアで、根元から健やかに整えていきましょう。',
+    'ボリューム':'軽さを残したケアで、ふんわり感を出しやすくします。',
+    'カラー':'なりたい色味に合わせて、退色しにくい配合をご提案します。',
+    'トリートメント':'髪の状態に合わせた集中ケアで、土台から整えます。'
+  };
+  document.querySelectorAll('.lpanel').forEach(function(panel){
+    var oldSend=panel.querySelector('.lsend');
+    var out=panel.querySelector('.lchat-out');
+    if(!oldSend||!out) return;
+    var send=oldSend.cloneNode(true);
+    oldSend.parentNode.replaceChild(send,oldSend);
+    send.addEventListener('click',function(){
+      var sel=[].slice.call(panel.querySelectorAll('.chat-q.sel')).map(function(c){return c.getAttribute('data-q');});
+      if(!sel.length){ return; }
+      out.innerHTML='';
+      var s=document.createElement('div'); s.className='chat-s'; s.textContent=sel.join('、'); out.appendChild(s);
+      var hints=sel.filter(function(x){return HINTS[x];}).slice(0,2).map(function(x){return HINTS[x];});
+      if(!hints.length){ hints=['今日のご希望に合わせて、ケアの方向性を一緒に考えます。']; }
+      var typing=document.createElement('div'); typing.className='chat-r typing'; typing.innerHTML='<i></i><i></i><i></i>'; out.appendChild(typing);
+      setTimeout(function(){
+        typing.remove();
+        var r1=document.createElement('div'); r1.className='chat-r'; r1.textContent='ありがとうございます🌿 ご希望、しっかり受け取りました。'; out.appendChild(r1);
+        var card=document.createElement('div'); card.className='lp-mini';
+        var items=hints.map(function(t){return '<div class="lp-mini-it"><span class="lp-mini-dot"></span>'+t+'</div>';}).join('');
+        card.innerHTML='<div class="lp-mini-h">あなたへのケアの方向性<span class="lp-mini-badge">AI提案・簡易</span></div>'+items+'<div class="lp-mini-foot">※イメージです。来店時に担当が一緒に最終調整します。</div>';
+        out.appendChild(card);
+        setTimeout(function(){
+          var r2=document.createElement('div'); r2.className='chat-r'; r2.textContent='この内容は担当スタイリストにも共有しておきますね。来店時は“続きから”ご相談いただけます。'; out.appendChild(r2);
+          var cta=document.createElement('div'); cta.className='lp-cta';
+          cta.innerHTML='<a class="fl-btn fl-btn--line">LINEで続ける（カルテ保存）</a><a class="fl-btn fl-btn--ghost">この提案を保存する</a>';
+          out.appendChild(cta);
+        },750);
+      },850);
+    });
+  });
+})();
+</script>
 </body>
 </html>
