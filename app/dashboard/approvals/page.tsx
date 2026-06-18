@@ -1,12 +1,17 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
 import type { ApprovalQueue } from '@/lib/types/approval'
 
-export default function ApprovalsPage() {
-  const supabase = createClient()
+async function fetchApprovalsFromServer(filter: string): Promise<ApprovalQueue[]> {
+  const response = await fetch(`/api/approvals?status=${filter !== 'all' ? filter : ''}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch approvals')
+  }
+  return response.json()
+}
 
+export default function ApprovalsPage() {
   const [approvals, setApprovals] = useState<ApprovalQueue[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -15,20 +20,10 @@ export default function ApprovalsPage() {
   const fetchApprovals = async () => {
     setLoading(true)
     try {
-      let query = supabase.from('approval_queue').select('*')
-
-      if (filter !== 'all') {
-        query = query.eq('status', filter)
-      }
-
-      const { data, error } = await query.order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Error fetching approvals:', error)
-        return
-      }
-
-      setApprovals(data || [])
+      const data = await fetchApprovalsFromServer(filter)
+      setApprovals(data)
+    } catch (error) {
+      console.error('Error fetching approvals:', error)
     } finally {
       setLoading(false)
     }

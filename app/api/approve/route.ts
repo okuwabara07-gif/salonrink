@@ -16,16 +16,11 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { successResponse, errorResponse } from '@/lib/api/response'
 import type {
   ApprovalQueue,
   ApproveResponse,
 } from '@/lib/types/approval'
-import { executeNurture } from '@/lib/approval/execute-nurture'
-import { executeSns } from '@/lib/approval/execute-sns'
-import { executeOutbound } from '@/lib/approval/execute-outbound'
 
 const approveSchema = z.object({
   id: z.string().uuid(),
@@ -35,6 +30,13 @@ const approveSchema = z.object({
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Lazy init: 関数内で遅延生成
+    const { createClient } = await import('@/lib/supabase/server')
+    const { createAdminClient } = await import('@/lib/supabase/admin')
+    const { executeNurture } = await import('@/lib/approval/execute-nurture')
+    const { executeSns } = await import('@/lib/approval/execute-sns')
+    const { executeOutbound } = await import('@/lib/approval/execute-outbound')
+
     // Step 1: 認証チェック（オーナーのみ）
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()

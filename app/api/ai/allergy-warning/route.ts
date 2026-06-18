@@ -10,13 +10,13 @@ import { callClaude, parseJsonResponse } from '@/lib/ai/claude-client';
 import { checkAIUsageLimit, recordAIUsage } from '@/lib/ai/usage-tracker';
 import type { Karte } from '@/lib/ai/prompts';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
-
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+      process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+    );
+
     const { customer_id, salon_id, karte_id } = await request.json();
 
     // 入力検証

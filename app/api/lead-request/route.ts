@@ -16,7 +16,14 @@ import { Resend } from 'resend'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let resendClient: Resend | null = null
+
+function getResend(): Resend {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY)
+  }
+  return resendClient
+}
 
 // Zod スキーマ定義
 const leadRequestSchema = z.object({
@@ -214,7 +221,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const pdfMissing = !pdfBase64
 
     // Step 6: Resend で 2 通並列送信
-    const userEmailPromise = resend.emails.send({
+    const userEmailPromise = getResend().emails.send({
       from: 'noreply@salonrink.com',
       to: data.email,
       subject: '【SalonRink】AI体験ありがとうございました(資料を添付しました)',
@@ -231,7 +238,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     const notificationEmail = process.env.LEAD_NOTIFICATION_EMAIL
     const notificationPromise = notificationEmail
-      ? resend.emails.send({
+      ? getResend().emails.send({
           from: 'noreply@salonrink.com',
           to: notificationEmail,
           subject: `【SalonRink 新規リード(${data.cta_type})】${data.contact_name}様`,
