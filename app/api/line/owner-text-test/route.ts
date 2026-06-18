@@ -22,23 +22,14 @@ export async function GET(): Promise<NextResponse> {
       return errorResponse('Unauthorized', 401)
     }
 
-    // Step 2: owner_line_links から line_user_id を取得（朝サマリーと同じ）
-    const { createAdminClient } = await import('@/lib/supabase/admin')
-    const admin = createAdminClient()
+    // Step 2: 朝cronの正解パターンで宛先を取得
+    const { getActiveOwnerLineUserId } = await import('@/lib/line/owner-push')
+    const ownerLineUserId = await getActiveOwnerLineUserId()
 
-    const { data: ownerLink, error: fetchError } = await admin
-      .from('owner_line_links')
-      .select('line_user_id')
-      .eq('status', 'active')
-      .limit(1)
-      .maybeSingle()
-
-    if (fetchError || !ownerLink) {
-      console.error('[owner-text-test] Fetch error:', fetchError?.message)
+    if (!ownerLineUserId) {
+      console.error('[owner-text-test] No active owner found')
       return errorResponse('No active owner_line_links found', 404)
     }
-
-    const ownerLineUserId = ownerLink.line_user_id
 
     // デバッグ: トークン・宛先の確認
     const token = process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN

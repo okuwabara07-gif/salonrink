@@ -1,6 +1,27 @@
 import https from 'https'
 import type { FlexMessage } from '@/lib/line-messages/owner-morning-flex'
 
+// 朝cronで実証済みの宛先取得: owner_line_links から active owner の line_user_id を取得（単一）
+// 承認タップ・テスト等の「単一宛先」用。朝cronはこれを使わない（morning_enabled等で絞るため）
+export async function getActiveOwnerLineUserId(): Promise<string | null> {
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const admin = createAdminClient()
+
+  const { data: owner, error } = await admin
+    .from('owner_line_links')
+    .select('line_user_id')
+    .eq('status', 'active')
+    .limit(1)
+    .maybeSingle()
+
+  if (error) {
+    console.error('[getActiveOwnerLineUserId] Fetch error:', error.message)
+    return null
+  }
+
+  return owner?.line_user_id || null
+}
+
 // テスト用: シンプルテキストメッセージを owner に push（宛先・トークン検証用）
 export async function pushOwnerTextTest(ownerLineUserId: string): Promise<void> {
   const channelToken = process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN
