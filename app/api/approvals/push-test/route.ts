@@ -67,11 +67,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Step 5: Flex メッセージを push
     const { pushFlexApproval } = await import('@/lib/approval/push-flex-approval')
-    const pushSuccess = await pushFlexApproval(approvalRow)
-
-    if (!pushSuccess) {
-      return errorResponse('Failed to push Flex message to owner', 500)
-    }
+    await pushFlexApproval(approvalRow)
 
     console.log(`[POST /api/approvals/push-test] Success: pushed approval ${id} to owner`)
 
@@ -80,10 +76,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: `Flex message sent to owner for approval ${id}`,
     })
   } catch (error) {
+    const errMsg = error instanceof Error ? error.message : String(error)
     console.error(
       '[POST /api/approvals/push-test] Unexpected error:',
-      error instanceof Error ? error.stack : error
+      errMsg
     )
-    return errorResponse('Internal server error', 500)
+    return errorResponse(`Failed to push: ${errMsg}`, 500)
   }
 }
