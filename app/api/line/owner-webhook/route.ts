@@ -104,6 +104,17 @@ interface LineEvent {
 async function handleOwnerEvent(event: LineEvent, channelToken: string) {
   console.log(`[Owner OA] Event type: ${event.type}, source.userId: ${event.source.userId}`)
 
+  // デバッグ用: 最新の userId を保存
+  try {
+    const supabase = createAdminClient()
+    await supabase.from('owner_webhook_debug').insert({
+      source_user_id: event.source.userId,
+      event_type: event.type,
+    })
+  } catch (err) {
+    console.warn('[Owner OA] Failed to save debug userId:', err)
+  }
+
   if (event.type === 'follow') {
     await handleOwnerFollow(event, channelToken)
   } else if (event.type === 'unfollow') {
