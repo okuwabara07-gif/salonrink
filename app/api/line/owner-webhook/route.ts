@@ -9,7 +9,7 @@ function verifyOwnerLineSignature(body: string, signature: string, channelSecret
 }
 
 // LINE Reply Message (owner OA token)
-async function replyMessage(replyToken: string, messages: any[], channelToken: string) {
+async function replyMessage(replyToken: string, messages: Record<string, unknown>[], channelToken: string) {
   const payload = JSON.stringify({ replyToken, messages })
   return new Promise((resolve, reject) => {
     const options = {
@@ -33,7 +33,7 @@ async function replyMessage(replyToken: string, messages: any[], channelToken: s
   })
 }
 
-export async function GET(_request: Request) {
+export async function GET() {
   return new Response(JSON.stringify({ status: 'ok', service: 'owner-webhook' }), { status: 200 })
 }
 
@@ -82,19 +82,27 @@ export async function POST(request: Request) {
   }
 }
 
-async function handleOwnerEvent(event: any, channelToken: string) {
+interface LineEvent {
+  type: string
+  source: { userId: string; channelToken?: string }
+  replyToken: string
+  message?: { type: string; text?: string }
+  postback?: { data: string }
+}
+
+async function handleOwnerEvent(event: LineEvent, channelToken: string) {
   if (event.type === 'follow') {
     await handleOwnerFollow(event, channelToken)
   } else if (event.type === 'unfollow') {
     await handleOwnerUnfollow(event)
-  } else if (event.type === 'message' && event.message.type === 'text') {
-    await handleOwnerMessage(event, channelToken)
+  } else if (event.type === 'message' && event.message?.type === 'text') {
+    await handleOwnerMessage(event as LineEvent & { message: { type: 'text'; text: string } }, channelToken)
   } else if (event.type === 'postback') {
-    await handleOwnerPostback(event)
+    await handleOwnerPostback(event as LineEvent & { postback: { data: string } })
   }
 }
 
-async function handleOwnerFollow(event: any, channelToken: string) {
+async function handleOwnerFollow(event: LineEvent, channelToken: string) {
   const userId = event.source.userId
   const replyToken = event.replyToken
 
@@ -115,7 +123,7 @@ async function handleOwnerFollow(event: any, channelToken: string) {
   }
 }
 
-async function handleOwnerUnfollow(event: any) {
+async function handleOwnerUnfollow(event: LineEvent) {
   const userId = event.source.userId
   const supabase = createAdminClient()
 
@@ -132,15 +140,28 @@ async function handleOwnerUnfollow(event: any) {
   }
 }
 
-async function handleOwnerMessage(event: any, channelToken: string) {
+async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; text: string } }, channelToken: string) {
   const userId = event.source.userId
   const text = event.message.text
   const replyToken = event.replyToken
 
   console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
 
-  // ヘルプメッセージ
-  if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
+  // whoami: 本人確認用（本user IDを出す）
+  if (text === 'whoami') {
+    try {
+      await replyMessage(
+        replyToken,
+        [{
+          type: 'text',
+          text: `your userId: ${userId}`,
+        }],
+        channelToken
+      )
+    } catch (err) {
+      console.error('[Owner OA] Failed to send whoami:', err)
+    }
+  } else if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
     try {
       await replyMessage(
         replyToken,
@@ -159,10 +180,98 @@ async function handleOwnerMessage(event: any, channelToken: string) {
   }
 }
 
-async function handleOwnerPostback(event: any) {
+async function handleOwnerPostback(event: LineEvent & { postback: { data: string } }) {
   const userId = event.source.userId
   const data = event.postback.data
+  const replyToken = event.replyToken
 
   console.log(`[Owner OA] Postback from userId=${userId}: data="${data}"`)
-  // Phase 5/6 で拡張予定
+
+  // 承認フロー: postback data = "action=approve&id=<uuid>" または "action=reject&id=<uuid>"
+  const match = data.match(/action=(approve|reject)&id=([a-f0-9-]+)/)
+  if (!match) {
+    console.log('[Owner OA] Postback does not match approval pattern')
+    return
+  }
+
+  const action = match[1] // 'approve' or 'reject'
+  const approvalId = match[2]
+
+  // 認証: 送信者の userId が OWNER_OA_LINE_USER_ID と一致するか
+  const ownerUserId = process.env.OWNER_OA_LINE_USER_ID
+  if (!ownerUserId) {
+    console.error('[Owner OA Approval] OWNER_OA_LINE_USER_ID not configured')
+    try {
+      await replyMessage(
+        replyToken,
+        [{ type: 'text', text: '⚠️ システム設定エラー: オーナーIDが未設定です' }],
+        event.source.channelToken || process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
+      )
+    } catch (err) {
+      console.error('[Owner OA] Failed to send error reply:', err)
+    }
+    return
+  }
+
+  if (userId !== ownerUserId) {
+    console.warn(`[Owner OA Approval] Unauthorized user ${userId} attempted approval`)
+    try {
+      await replyMessage(
+        replyToken,
+        [{ type: 'text', text: '❌ 権限がありません。このアカウントでは承認操作ができません。' }],
+        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
+      )
+    } catch (err) {
+      console.error('[Owner OA] Failed to send unauthorized reply:', err)
+    }
+    return
+  }
+
+  // 承認処理実行
+  try {
+    const { processApproval } = await import('@/lib/approval/process-approval')
+    const decision = action === 'approve' ? 'approved' : 'rejected'
+    const result = await processApproval(approvalId, decision, null)
+
+    if (!result.ok) {
+      console.error('[Owner OA Approval] Processing failed:', result.error)
+      try {
+        await replyMessage(
+          replyToken,
+          [{ type: 'text', text: `⚠️ ${decision === 'approved' ? '承認' : '却下'}に失敗しました: ${result.error}` }],
+          process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
+        )
+      } catch (err) {
+        console.error('[Owner OA] Failed to send failure reply:', err)
+      }
+      return
+    }
+
+    const kindLabel = result.kind || 'unknown'
+    const actionLabel = decision === 'approved' ? '✅ 承認しました' : '❌ 却下しました'
+    const executedLabel = result.executedCount > 0 ? `(実行: ${kindLabel})` : ''
+
+    console.log(`[Owner OA Approval] Success: ${decision} ${approvalId}, executed=${result.executedCount}`)
+
+    try {
+      await replyMessage(
+        replyToken,
+        [{ type: 'text', text: `${actionLabel} ${executedLabel}` }],
+        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
+      )
+    } catch (err) {
+      console.error('[Owner OA] Failed to send success reply:', err)
+    }
+  } catch (error) {
+    console.error('[Owner OA Approval] Unexpected error:', error)
+    try {
+      await replyMessage(
+        replyToken,
+        [{ type: 'text', text: '⚠️ エラーが発生しました。サポートに連絡してください。' }],
+        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
+      )
+    } catch (err) {
+      console.error('[Owner OA] Failed to send error reply:', err)
+    }
+  }
 }

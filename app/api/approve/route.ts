@@ -33,9 +33,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Lazy init: 関数内で遅延生成
     const { createClient } = await import('@/lib/supabase/server')
     const { createAdminClient } = await import('@/lib/supabase/admin')
-    const { executeNurture } = await import('@/lib/approval/execute-nurture')
-    const { executeSns } = await import('@/lib/approval/execute-sns')
-    const { executeOutbound } = await import('@/lib/approval/execute-outbound')
 
     // Step 1: 認証チェック（オーナーのみ）
     const supabase = await createClient()
@@ -80,86 +77,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return errorResponse('Approval queue not found', 404)
     }
 
-    const now = new Date().toISOString()
+    // Step 5-7: processApproval で核処理を実行
+    const { processApproval } = await import('@/lib/approval/process-approval')
+    const result = await processApproval(id, decision, user.id)
 
-    // Step 5: approval_queue を更新
-    const { data: updated, error: updateError } = await admin
-      .from('approval_queue')
-      .update({
-        status: decision,
-        decision_by: user.id,
-        decision_at: now,
-      })
-      .eq('id', id)
-      .select('*')
-      .maybeSingle() as { data: ApprovalQueue | null; error: Record<string, unknown> | null }
-
-    if (updateError) {
-      console.error('[POST /api/approve] Update error:', updateError.message)
-      return errorResponse('Failed to update approval queue', 500)
-    }
-
-    if (!updated) {
-      return errorResponse('Failed to update approval queue', 500)
-    }
-
-    // Step 6: decision='approved' の場合のみ実行関数呼び出し
-    let executedCount = 0
-
-    if (decision === 'approved') {
-      try {
-        switch (approvalRow.kind) {
-          case 'sns_post':
-            await executeSns(id, approvalRow)
-            executedCount = 1
-            break
-          case 'nurture_msg':
-            if (approvalRow.lead_id) {
-              await executeNurture(id, approvalRow)
-              executedCount = 1
-            }
-            break
-          case 'outbound':
-            await executeOutbound(id, approvalRow)
-            executedCount = 1
-            break
-          case 'product_push':
-            await executeOutbound(id, approvalRow)
-            executedCount = 1
-            break
-          default:
-            console.warn(`[POST /api/approve] Unknown kind: ${approvalRow.kind}`)
-        }
-      } catch (execErr) {
-        console.error('[POST /api/approve] Execution error:', execErr)
-        // 実行関数失敗でも approval_queue は updated 状態を保つ
-      }
-    }
-
-    // Step 7: funnel_lead_events にイベント記録（lead_id がある場合のみ）
-    if (approvalRow.lead_id) {
-      const { error: eventError } = await admin
-        .from('funnel_lead_events')
-        .insert({
-          lead_id: approvalRow.lead_id,
-          event_type: `approval_${decision}`,
-          metadata: {
-            approval_queue_id: id,
-            kind: approvalRow.kind,
-            executed_count: executedCount,
-          },
-        })
-
-      if (eventError) {
-        console.warn('[POST /api/approve] Event insert error:', eventError.message)
-      }
+    if (!result.ok) {
+      console.error('[POST /api/approve] Processing failed:', result.error)
+      return errorResponse(result.error || 'Failed to process approval', 500)
     }
 
     // Step 8: レスポンス返却
     const response: ApproveResponse = {
       success: true,
-      decision_at: now,
-      executed_count: executedCount,
+      decision_at: new Date().toISOString(),
+      executed_count: result.executedCount,
     }
 
     return successResponse(response)
