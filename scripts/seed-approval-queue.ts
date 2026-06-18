@@ -6,7 +6,7 @@
  *   npx ts-node scripts/seed-approval-queue.ts
  *
  * Creates:
- *   1. leads 1件 (source='test')
+ *   1. funnel_leads 1件 (source='test')
  *   2. approval_queue 3件 (pending)
  *      - sns_post (lint_status='pass')
  *      - nurture_msg (lint_status='flag')
@@ -31,9 +31,9 @@ async function main() {
   try {
     console.log('🌱 Seeding approval funnel test data...')
 
-    // 1. leads 1件作成
+    // 1. funnel_leads 1件作成
     const { data: leadData, error: leadError } = await admin
-      .from('leads')
+      .from('funnel_leads')
       .insert({
         source: 'test',
         contact_name: 'テストユーザー',

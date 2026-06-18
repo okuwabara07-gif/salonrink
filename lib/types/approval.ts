@@ -1,4 +1,6 @@
 // Approval Funnel Types
+// Note: funnel_leads / funnel_lead_events テーブルから読み書き
+//       既存CRM leads / lead_events / lp_leads とは別物
 
 export interface Lead {
   id: string

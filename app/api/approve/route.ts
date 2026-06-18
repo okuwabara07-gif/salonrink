@@ -136,10 +136,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       }
     }
 
-    // Step 7: lead_events にイベント記録（lead_id がある場合のみ）
+    // Step 7: funnel_lead_events にイベント記録（lead_id がある場合のみ）
     if (approvalRow.lead_id) {
       const { error: eventError } = await admin
-        .from('lead_events')
+        .from('funnel_lead_events')
         .insert({
           lead_id: approvalRow.lead_id,
           event_type: `approval_${decision}`,
