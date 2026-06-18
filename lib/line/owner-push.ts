@@ -12,15 +12,21 @@ export async function pushFlexToOwner(
     throw new Error('LINE_OWNER_CHANNEL_ACCESS_TOKEN not configured')
   }
 
+  const messageObj = {
+    type: 'flex',
+    altText,
+    contents: flex,
+  }
   const payload = JSON.stringify({
     to: lineUserId,
-    messages: [
-      {
-        type: 'flex',
-        altText,
-        contents: flex,
-      },
-    ],
+    messages: [messageObj],
+  })
+
+  console.log('[pushFlexToOwner] Sending to LINE API', {
+    to: lineUserId,
+    messageType: messageObj.type,
+    altText: messageObj.altText,
+    contentsType: ((messageObj.contents as unknown) as Record<string, unknown>)?.type || 'unknown',
   })
 
   return new Promise((resolve, reject) => {
