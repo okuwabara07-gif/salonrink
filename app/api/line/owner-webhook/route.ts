@@ -25,7 +25,13 @@ async function replyMessage(replyToken: string, messages: Record<string, unknown
     const req = https.request(options, (res) => {
       let data = ''
       res.on('data', (chunk) => { data += chunk })
-      res.on('end', () => resolve({ status: res.statusCode, data }))
+      res.on('end', () => {
+        if (res.statusCode && res.statusCode >= 400) {
+          reject(new Error(`HTTP ${res.statusCode}: ${data}`))
+        } else {
+          resolve({ status: res.statusCode, data })
+        }
+      })
     })
     req.on('error', reject)
     req.write(payload)
@@ -166,8 +172,10 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
         }],
         channelToken
       )
+      console.log(`[Owner OA] Whoami sent successfully for ${userId}`)
     } catch (err) {
-      console.error('[Owner OA] Failed to send whoami:', err)
+      const errMsg = err instanceof Error ? err.message : String(err)
+      console.error('[Owner OA] Failed to send whoami:', errMsg)
     }
   } else if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
     try {
