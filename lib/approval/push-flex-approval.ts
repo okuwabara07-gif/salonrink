@@ -27,7 +27,8 @@ export async function pushFlexApproval(approval: ApprovalQueue): Promise<boolean
     console.log(`[pushFlexApproval] Flex pushed successfully: ${approval.id}`)
     return true
   } catch (error) {
-    console.error('[pushFlexApproval] Unexpected error:', error)
-    return false
+    const errMsg = error instanceof Error ? error.message : String(error)
+    console.error('[pushFlexApproval] ERROR:', errMsg)
+    throw error
   }
 }

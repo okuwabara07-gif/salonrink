@@ -42,9 +42,12 @@ export async function pushFlexToOwner(
       })
       res.on('end', () => {
         if (res.statusCode !== 200) {
-          reject(
-            new Error(`pushFlex failed: ${res.statusCode} ${data}`)
-          )
+          const errMsg = `pushFlex failed: HTTP ${res.statusCode}`
+          console.error(`[pushFlexToOwner] ${errMsg}`, {
+            status: res.statusCode,
+            responseBody: data,
+          })
+          reject(new Error(`${errMsg}: ${data}`))
         } else {
           resolve()
         }
