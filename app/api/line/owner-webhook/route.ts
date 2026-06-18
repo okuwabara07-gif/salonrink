@@ -96,6 +96,8 @@ interface LineEvent {
 }
 
 async function handleOwnerEvent(event: LineEvent, channelToken: string) {
+  console.log(`[Owner OA] Event type: ${event.type}, source.userId: ${event.source.userId}`)
+
   if (event.type === 'follow') {
     await handleOwnerFollow(event, channelToken)
   } else if (event.type === 'unfollow') {
