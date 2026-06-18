@@ -1,6 +1,25 @@
 import https from 'https'
 import type { FlexMessage } from '@/lib/line-messages/owner-morning-flex'
 
+// テスト用: 最小bubble を owner に push
+export async function pushMinimalBubbleToOwner(ownerLineUserId: string): Promise<void> {
+  const minimalBubble: FlexMessage = {
+    type: 'bubble',
+    body: {
+      type: 'box',
+      layout: 'vertical',
+      contents: [
+        {
+          type: 'text',
+          text: 'test',
+        },
+      ],
+    },
+  }
+
+  await pushFlexToOwner(ownerLineUserId, 'minimal test', minimalBubble)
+}
+
 export async function pushFlexToOwner(
   lineUserId: string,
   altText: string,
