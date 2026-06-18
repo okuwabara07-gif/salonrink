@@ -57,7 +57,10 @@ export async function POST(request: Request) {
       bodyPreview: body.substring(0, 100),
     })
 
-    if (!verifyOwnerLineSignature(body, signature, channelSecret)) {
+    const signatureValid = verifyOwnerLineSignature(body, signature, channelSecret)
+    console.log('[Owner OA] Signature verification result:', { valid: signatureValid })
+
+    if (!signatureValid) {
       console.error('[Owner OA] Signature verification failed', {
         signature,
         bodyLength: body.length,
