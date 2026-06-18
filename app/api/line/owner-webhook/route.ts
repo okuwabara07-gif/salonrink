@@ -57,6 +57,8 @@ export async function POST(request: Request) {
       bodyPreview: body.substring(0, 100),
     })
 
+    console.log('[Owner OA] secret length:', (channelSecret || '').length, 'sigHeader present:', !!signature)
+
     const signatureValid = verifyOwnerLineSignature(body, signature, channelSecret)
     console.log('[Owner OA] Signature verification result:', { valid: signatureValid })
 
@@ -151,7 +153,7 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
   console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
 
   // whoami: 本人確認用（本user IDを出す）
-  if (text === 'whoami') {
+  if (text.toLowerCase() === 'whoami') {
     try {
       await replyMessage(
         replyToken,
