@@ -19,64 +19,55 @@ export function buildFlexApprovalTemplate(approval: ApprovalQueue): {
   switch (approval.kind) {
     case 'sns_post': {
       const sns = approval.payload as Record<string, unknown>
-      const site = String(sns.site || 'unknown')
-      const platform = String(sns.platform || 'unknown')
-      const caption = String(sns.caption || '')
+      const site = String(sns.site || '-')
+      const platform = String(sns.platform || '-')
+      const caption = String(sns.caption || '(未指定)')
       title = `📱 SNS投稿 - ${site}/${platform}`
-      subtitle = `キャプション: "${caption.substring(0, 30)}..."`
-      payloadDisplay = `
-📌 サイト: ${site}
-📌 プラットフォーム: ${platform}
-📌 トピック: ${String(sns.topic || '-')}
-📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`.trim()
+      subtitle = caption.length > 0 ? `キャプション: "${caption.substring(0, 30)}"` : 'キャプション: (未指定)'
+      payloadDisplay = `📌 サイト: ${site}\n📌 プラットフォーム: ${platform}\n📌 トピック: ${String(sns.topic || '-')}\n📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`
       break
     }
 
     case 'nurture_msg': {
       const nurture = approval.payload as Record<string, unknown>
-      const channel = String(nurture.channel || 'unknown')
+      const channel = String(nurture.channel || '-')
       const step = String(nurture.sequence_step || '-')
       const scheduled = String(nurture.scheduled_at || '-')
       title = '📧 フォロー送信'
       subtitle = `チャネル: ${channel}`
-      payloadDisplay = `
-📌 チャネル: ${channel}
-📌 Step: ${step}
-📌 スケジュール: ${scheduled}
-📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`.trim()
+      payloadDisplay = `📌 チャネル: ${channel}\n📌 Step: ${step}\n📌 スケジュール: ${scheduled}\n📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`
       break
     }
 
     case 'outbound': {
       const outbound = approval.payload as Record<string, unknown>
-      const type = String(outbound.outbound_type || 'unknown')
+      const type = String(outbound.outbound_type || '-')
       const target = String(outbound.webhook_url || outbound.target || '-')
       title = '🔗 外部連携'
       subtitle = `タイプ: ${type}`
-      payloadDisplay = `
-📌 タイプ: ${type}
-📌 ターゲット: ${target}
-📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`.trim()
+      payloadDisplay = `📌 タイプ: ${type}\n📌 ターゲット: ${target}\n📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`
       break
     }
 
     case 'product_push': {
       const product = approval.payload as Record<string, unknown>
-      const productId = String(product.product_id || 'unknown')
+      const productId = String(product.product_id || '-')
       const segment = String(product.target_segment || '-')
       title = '🛍️ 商品プッシュ'
       subtitle = `商品: ${productId}`
-      payloadDisplay = `
-📌 商品ID: ${productId}
-📌 ターゲット: ${segment}
-📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`.trim()
+      payloadDisplay = `📌 商品ID: ${productId}\n📌 ターゲット: ${segment}\n📌 コンプラ: ${approval.lint_status === 'pass' ? '✅ Pass' : '⚠️ Flag'}`
       break
     }
 
     default:
       title = '⚙️ 承認待機'
-      subtitle = `種別: ${approval.kind}`
-      payloadDisplay = `📌 ID: ${approval.id}`
+      subtitle = `種別: ${approval.kind || '未定義'}`
+      payloadDisplay = `📌 ID: ${approval.id}\n📌 種別: ${approval.kind || '未定義'}`
+  }
+
+  // payloadDisplay が空の場合はデフォルト
+  if (!payloadDisplay || payloadDisplay.trim() === '') {
+    payloadDisplay = '📌 詳細情報は利用できません'
   }
 
   // Lint notes があれば追加
