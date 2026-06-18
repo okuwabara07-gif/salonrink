@@ -1,42 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import crypto from 'crypto'
-import https from 'https'
+import { pushFlexToOwner } from '@/lib/line/owner-push'
+import type { FlexMessage } from '@/lib/line-messages/owner-morning-flex'
 
 // LINE signature verification (owner OA global secret)
 function verifyOwnerLineSignature(body: string, signature: string, channelSecret: string): boolean {
   const hash = crypto.createHmac('sha256', channelSecret).update(body).digest('base64')
   return hash === signature
-}
-
-// LINE Reply Message (owner OA token)
-async function replyMessage(replyToken: string, messages: Record<string, unknown>[], channelToken: string) {
-  const payload = JSON.stringify({ replyToken, messages })
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.line.biz',
-      path: '/v2/bot/message/reply',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload),
-        'Authorization': `Bearer ${channelToken}`,
-      },
-    }
-    const req = https.request(options, (res) => {
-      let data = ''
-      res.on('data', (chunk) => { data += chunk })
-      res.on('end', () => {
-        if (res.statusCode && res.statusCode >= 400) {
-          reject(new Error(`HTTP ${res.statusCode}: ${data}`))
-        } else {
-          resolve({ status: res.statusCode, data })
-        }
-      })
-    })
-    req.on('error', reject)
-    req.write(payload)
-    req.end()
-  })
 }
 
 export async function GET() {
@@ -83,7 +53,7 @@ export async function POST(request: Request) {
     console.log('[Owner OA] Events received:', events.length)
 
     for (const event of events) {
-      await handleOwnerEvent(event, channelToken)
+      await handleOwnerEvent(event)
     }
 
     return new Response(JSON.stringify({ status: 'ok' }), { status: 200 })
@@ -101,7 +71,7 @@ interface LineEvent {
   postback?: { data: string }
 }
 
-async function handleOwnerEvent(event: LineEvent, channelToken: string) {
+async function handleOwnerEvent(event: LineEvent) {
   console.log(`[Owner OA] Event type: ${event.type}, source.userId: ${event.source.userId}`)
 
   // デバッグ用: 最新の userId を保存
@@ -116,32 +86,55 @@ async function handleOwnerEvent(event: LineEvent, channelToken: string) {
   }
 
   if (event.type === 'follow') {
-    await handleOwnerFollow(event, channelToken)
+    await handleOwnerFollow(event)
   } else if (event.type === 'unfollow') {
     await handleOwnerUnfollow(event)
   } else if (event.type === 'message' && event.message?.type === 'text') {
-    await handleOwnerMessage(event as LineEvent & { message: { type: 'text'; text: string } }, channelToken)
+    await handleOwnerMessage(event as LineEvent & { message: { type: 'text'; text: string } })
   } else if (event.type === 'postback') {
     await handleOwnerPostback(event as LineEvent & { postback: { data: string } })
   }
 }
 
-async function handleOwnerFollow(event: LineEvent, channelToken: string) {
+async function handleOwnerFollow(event: LineEvent) {
   const userId = event.source.userId
-  const replyToken = event.replyToken
 
   console.log(`[Owner OA] New follow: userId=${userId}`)
 
-  // 挨拶メッセージ送信
+  // 挨拶メッセージを push で送信（reply 廃止）
   try {
-    await replyMessage(
-      replyToken,
-      [{
-        type: 'text',
-        text: 'SalonRink Concierge へようこそ！\n\nこのアカウントは、サロンオーナー向けの朝7時・夜21時の営業サマリーをお届けしています。\n\nご不明な点は「ヘルプ」とお送りください。',
-      }],
-      channelToken
-    )
+    const flex: FlexMessage = {
+      type: 'bubble',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        contents: [
+          {
+            type: 'text',
+            text: 'SalonRink Concierge へようこそ！',
+            weight: 'bold',
+            size: 'lg',
+          },
+          {
+            type: 'text',
+            text: 'このアカウントは、サロンオーナー向けの朝7時・夜21時の営業サマリーをお届けしています。',
+            size: 'sm',
+            color: '#999999',
+            margin: 'md',
+            wrap: true,
+          },
+          {
+            type: 'text',
+            text: 'ご不明な点は「ヘルプ」とお送りください。',
+            size: 'sm',
+            color: '#999999',
+            margin: 'md',
+            wrap: true,
+          },
+        ],
+      },
+    }
+    await pushFlexToOwner(userId, 'ようこそ', flex)
   } catch (err) {
     console.error('[Owner OA] Failed to send greeting:', err)
   }
@@ -164,10 +157,9 @@ async function handleOwnerUnfollow(event: LineEvent) {
   }
 }
 
-async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; text: string } }, channelToken: string) {
+async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; text: string } }) {
   const userId = event.source.userId
   const text = event.message.text
-  const replyToken = event.replyToken
 
   console.log(`[Owner OA] userId: ${userId}`)
   console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
@@ -175,14 +167,30 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
   // whoami: 本人確認用（本user IDを出す）
   if (text.toLowerCase() === 'whoami') {
     try {
-      await replyMessage(
-        replyToken,
-        [{
-          type: 'text',
-          text: `your userId: ${userId}`,
-        }],
-        channelToken
-      )
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'Your LINE User ID',
+              weight: 'bold',
+              size: 'lg',
+            },
+            {
+              type: 'text',
+              text: userId,
+              size: 'sm',
+              color: '#0084ff',
+              margin: 'md',
+              wrap: true,
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, `userId: ${userId}`, flex)
       console.log(`[Owner OA] Whoami sent successfully for ${userId}`)
     } catch (err) {
       const errMsg = err instanceof Error ? err.message : String(err)
@@ -190,19 +198,54 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
     }
   } else if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
     try {
-      await replyMessage(
-        replyToken,
-        [{
-          type: 'text',
-          text: '【SalonRink Concierge サポート】\n\n朝7時: 本日の予約サマリーをお送りします。\n夜21時: 本日のカルテ自動生成サマリーをお送りします。\n\n配信を一時停止したい場合は、ダッシュボードの設定からお変更ください。',
-        }],
-        channelToken
-      )
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: 'SalonRink Concierge サポート',
+              weight: 'bold',
+              size: 'lg',
+            },
+            {
+              type: 'box',
+              layout: 'vertical',
+              margin: 'md',
+              spacing: 'sm',
+              contents: [
+                {
+                  type: 'text',
+                  text: '朝7時: 本日の予約サマリーをお送りします。',
+                  size: 'sm',
+                  wrap: true,
+                },
+                {
+                  type: 'text',
+                  text: '夜21時: 本日のカルテ自動生成サマリーをお送りします。',
+                  size: 'sm',
+                  wrap: true,
+                },
+              ],
+            },
+            {
+              type: 'text',
+              text: '配信を一時停止したい場合は、ダッシュボードの設定からお変更ください。',
+              size: 'xs',
+              color: '#999999',
+              margin: 'md',
+              wrap: true,
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, 'ヘルプ', flex)
     } catch (err) {
       console.error('[Owner OA] Failed to send help:', err)
     }
   } else {
-    // その他のメッセージはログのみ
     console.log(`[Owner OA] No action taken for message: "${text}"`)
   }
 }
@@ -228,29 +271,11 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
   const ownerUserId = process.env.OWNER_OA_LINE_USER_ID
   if (!ownerUserId) {
     console.error('[Owner OA Approval] OWNER_OA_LINE_USER_ID not configured')
-    try {
-      await replyMessage(
-        replyToken,
-        [{ type: 'text', text: '⚠️ システム設定エラー: オーナーIDが未設定です' }],
-        event.source.channelToken || process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
-      )
-    } catch (err) {
-      console.error('[Owner OA] Failed to send error reply:', err)
-    }
     return
   }
 
   if (userId !== ownerUserId) {
     console.warn(`[Owner OA Approval] Unauthorized user ${userId} attempted approval`)
-    try {
-      await replyMessage(
-        replyToken,
-        [{ type: 'text', text: '❌ 権限がありません。このアカウントでは承認操作ができません。' }],
-        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
-      )
-    } catch (err) {
-      console.error('[Owner OA] Failed to send unauthorized reply:', err)
-    }
     return
   }
 
@@ -263,13 +288,31 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
     if (!result.ok) {
       console.error('[Owner OA Approval] Processing failed:', result.error)
       try {
-        await replyMessage(
-          replyToken,
-          [{ type: 'text', text: `⚠️ ${decision === 'approved' ? '承認' : '却下'}に失敗しました: ${result.error}` }],
-          process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
-        )
+        const flex: FlexMessage = {
+          type: 'bubble',
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+              {
+                type: 'text',
+                text: '⚠️ エラー',
+                weight: 'bold',
+                color: '#ff0000',
+              },
+              {
+                type: 'text',
+                text: `${decision === 'approved' ? '承認' : '却下'}に失敗しました: ${result.error}`,
+                size: 'sm',
+                wrap: true,
+                margin: 'md',
+              },
+            ],
+          },
+        }
+        await pushFlexToOwner(userId, '承認失敗', flex)
       } catch (err) {
-        console.error('[Owner OA] Failed to send failure reply:', err)
+        console.error('[Owner OA] Failed to send failure notification:', err)
       }
       return
     }
@@ -281,24 +324,61 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
     console.log(`[Owner OA Approval] Success: ${decision} ${approvalId}, executed=${result.executedCount}`)
 
     try {
-      await replyMessage(
-        replyToken,
-        [{ type: 'text', text: `${actionLabel} ${executedLabel}` }],
-        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
-      )
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: actionLabel,
+              weight: 'bold',
+              size: 'lg',
+              color: decision === 'approved' ? '#17c950' : '#ff0000',
+            },
+            {
+              type: 'text',
+              text: executedLabel,
+              size: 'sm',
+              color: '#999999',
+              margin: 'md',
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, actionLabel, flex)
     } catch (err) {
-      console.error('[Owner OA] Failed to send success reply:', err)
+      console.error('[Owner OA] Failed to send success notification:', err)
     }
   } catch (error) {
     console.error('[Owner OA Approval] Unexpected error:', error)
     try {
-      await replyMessage(
-        replyToken,
-        [{ type: 'text', text: '⚠️ エラーが発生しました。サポートに連絡してください。' }],
-        process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN || ''
-      )
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: '⚠️ エラー',
+              weight: 'bold',
+              color: '#ff0000',
+            },
+            {
+              type: 'text',
+              text: 'エラーが発生しました。サポートに連絡してください。',
+              size: 'sm',
+              wrap: true,
+              margin: 'md',
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, 'エラー', flex)
     } catch (err) {
-      console.error('[Owner OA] Failed to send error reply:', err)
+      console.error('[Owner OA] Failed to send error notification:', err)
     }
   }
 }
