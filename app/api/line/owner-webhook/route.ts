@@ -152,6 +152,7 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
   const text = event.message.text
   const replyToken = event.replyToken
 
+  console.log(`[Owner OA] userId: ${userId}`)
   console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
 
   // whoami: 本人確認用（本user IDを出す）
