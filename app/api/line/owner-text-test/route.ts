@@ -42,14 +42,19 @@ export async function GET(): Promise<NextResponse> {
 
     // デバッグ: トークン・宛先の確認
     const token = process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN
-    console.log('[owner-text-test] Debug:', {
-      tokenExists: (token && token.length > 0) ? true : false,
-      toExists: (ownerLineUserId && ownerLineUserId.length > 0) ? true : false,
-    })
+    const tokenExists = token && token.length > 0
+    const toExists = ownerLineUserId && ownerLineUserId.length > 0
+    console.log('[owner-text-test] Debug:', { tokenExists, toExists })
 
     // Step 3: シンプルテキストメッセージを push
     const { pushOwnerTextTest } = await import('@/lib/line/owner-push')
-    await pushOwnerTextTest(ownerLineUserId)
+    try {
+      await pushOwnerTextTest(ownerLineUserId)
+    } catch (pushErr) {
+      const errMsg = pushErr instanceof Error ? pushErr.message : String(pushErr)
+      console.error('[owner-text-test] pushOwnerTextTest error:', errMsg)
+      return errorResponse(`Push failed: ${errMsg} (tokenExists=${tokenExists}, toExists=${toExists})`, 500)
+    }
 
     console.log(`[owner-text-test] Success: sent to ${ownerLineUserId}`)
 
