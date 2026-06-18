@@ -40,6 +40,13 @@ export async function GET(): Promise<NextResponse> {
 
     const ownerLineUserId = ownerLink.line_user_id
 
+    // デバッグ: トークン・宛先の確認
+    const token = process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN
+    console.log('[owner-text-test] Debug:', {
+      tokenExists: (token && token.length > 0) ? true : false,
+      toExists: (ownerLineUserId && ownerLineUserId.length > 0) ? true : false,
+    })
+
     // Step 3: シンプルテキストメッセージを push
     const { pushOwnerTextTest } = await import('@/lib/line/owner-push')
     await pushOwnerTextTest(ownerLineUserId)
