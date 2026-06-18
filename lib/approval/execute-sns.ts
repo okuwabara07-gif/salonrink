@@ -15,13 +15,14 @@
  * 6. ログ出力
  */
 
-import { createAdminClient } from '@/lib/supabase/admin'
 import type { ApprovalQueue } from '@/lib/types/approval'
 
 export async function executeSns(
   approvalQueueId: string,
   approvalRow: ApprovalQueue
 ): Promise<void> {
+  // Lazy init: 関数内で遅延生成
+  const { createAdminClient } = await import('@/lib/supabase/admin')
   const admin = createAdminClient()
 
   try {
