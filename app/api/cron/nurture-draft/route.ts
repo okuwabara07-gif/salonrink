@@ -63,9 +63,9 @@ export async function POST(request: Request) {
 
     const supabase = createAdminClient()
 
-    // Step 1: leads から新規＆メールアドレス保有を抽出
+    // Step 1: funnel_leads から新規＆メールアドレス保有を抽出
     const { data: leads, error: fetchErr } = await supabase
-      .from('leads')
+      .from('funnel_leads')
       .select('id, contact_name, email')
       .eq('status', 'new')
       .not('email', 'is', null)
