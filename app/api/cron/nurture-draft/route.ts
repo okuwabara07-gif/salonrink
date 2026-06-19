@@ -357,7 +357,7 @@ async function generateDraft(contactName: string): Promise<string | null> {
 【本文】<html><body><p>お疲れ様です。</p><p>先日はご来店いただきありがとうございました。</p></body></html>`
 
     const message = await client.messages.create({
-      model: 'claude-3-5-haiku-20241022',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
       messages: [
         {
