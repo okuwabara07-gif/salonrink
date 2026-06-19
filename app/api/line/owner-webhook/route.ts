@@ -164,6 +164,24 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
   console.log(`[Owner OA] userId: ${userId}`)
   console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
 
+  // Step 1: userId を owner_line_links に保存（@901bsvrb 名前空間で統一）
+  try {
+    const supabase = createAdminClient()
+    const { error: updateError } = await supabase
+      .from('owner_line_links')
+      .update({ line_user_id: userId })
+      .eq('status', 'active')
+      .limit(1)
+
+    if (updateError) {
+      console.warn('[Owner OA] Failed to update owner_line_links:', updateError.message)
+    } else {
+      console.log(`[Owner OA] Updated owner_line_links with userId=${userId}`)
+    }
+  } catch (err) {
+    console.warn('[Owner OA] Error updating owner_line_links:', err)
+  }
+
   // whoami: 本人確認用（本user IDを出す）
   if (text.toLowerCase() === 'whoami') {
     try {
@@ -267,15 +285,28 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
   const action = match[1] // 'approve' or 'reject'
   const approvalId = match[2]
 
-  // 認証: 送信者の userId が OWNER_OA_LINE_USER_ID と一致するか
-  const ownerUserId = process.env.OWNER_OA_LINE_USER_ID
-  if (!ownerUserId) {
-    console.error('[Owner OA Approval] OWNER_OA_LINE_USER_ID not configured')
-    return
-  }
+  // 認証: 送信者の userId が owner_line_links の active 行と一致するか
+  try {
+    const supabase = createAdminClient()
+    const { data: ownerLink, error: fetchError } = await supabase
+      .from('owner_line_links')
+      .select('line_user_id')
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle()
 
-  if (userId !== ownerUserId) {
-    console.warn(`[Owner OA Approval] Unauthorized user ${userId} attempted approval`)
+    if (fetchError || !ownerLink) {
+      console.error('[Owner OA Approval] Failed to fetch owner_line_links:', fetchError?.message)
+      return
+    }
+
+    const ownerUserId = ownerLink.line_user_id
+    if (userId !== ownerUserId) {
+      console.warn(`[Owner OA Approval] Unauthorized user ${userId} attempted approval (expected ${ownerUserId})`)
+      return
+    }
+  } catch (err) {
+    console.error('[Owner OA Approval] Error verifying userId:', err)
     return
   }
 
