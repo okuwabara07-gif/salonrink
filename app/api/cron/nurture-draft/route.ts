@@ -103,15 +103,34 @@ export async function POST(request: Request) {
           continue
         }
 
-        // Step 2c: lintゲート（禁止語フィルタ）
+        console.log(`[Nurture Draft Cron] Raw draft for lead ${lead.id}:`, draftText)
+
+        // Step 2c: parseDraft で subject/html を抽出
         const { subject, html, isValid } = parseDraft(draftText)
-        if (!isValid || containsProhibited(subject) || containsProhibited(html)) {
+        console.log(`[Nurture Draft Cron] Parsed for lead ${lead.id}:`, { isValid, subject, html })
+
+        // Step 2d: 空チェック＆lintゲート（禁止語フィルタ）
+        if (!isValid || !subject || !html) {
+          console.warn(
+            `[Nurture Draft Cron] Lead ${lead.id}: Invalid draft (isValid=${isValid}, subject=${!!subject}, html=${!!html}), skipping`
+          )
+          response.errors?.push(`Lead ${lead.id}: Invalid draft format or empty subject/html`)
+          continue
+        }
+
+        if (containsProhibited(subject) || containsProhibited(html)) {
           console.warn(`[Nurture Draft Cron] Lead ${lead.id}: Prohibited word detected, discarding`)
           response.errors?.push(`Lead ${lead.id}: Prohibited word detected`)
           continue
         }
 
-        // Step 3: approval_queue に INSERT
+        // Step 3: payload 構築（email必須チェック）
+        if (!lead.email) {
+          console.warn(`[Nurture Draft Cron] Lead ${lead.id}: No email, skipping`)
+          response.errors?.push(`Lead ${lead.id}: No email address`)
+          continue
+        }
+
         const payload: Record<string, unknown> = {
           channel: 'email',
           lead_id: lead.id,
@@ -121,6 +140,8 @@ export async function POST(request: Request) {
             html,
           },
         }
+
+        console.log(`[Nurture Draft Cron] Final payload for lead ${lead.id}:`, JSON.stringify(payload))
 
         const { data: inserted, error: insertErr } = await supabase
           .from('approval_queue')
