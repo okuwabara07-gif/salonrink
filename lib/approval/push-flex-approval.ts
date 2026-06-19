@@ -28,7 +28,6 @@ export async function pushFlexApproval(approval: ApprovalQueue): Promise<boolean
     const flexMessage = flexTemplate.contents as unknown as Parameters<typeof pushFlexToOwner>[2]
     await pushFlexToOwner(ownerLineUserId, altText, flexMessage)
 
-    console.log(`[pushFlexApproval] Flex pushed successfully: ${approval.id}`)
     return true
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error)

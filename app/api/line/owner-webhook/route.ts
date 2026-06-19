@@ -27,16 +27,7 @@ export async function POST(request: Request) {
     const signature = request.headers.get('x-line-signature') || ''
     const body = await request.text()
 
-    console.log('[Owner OA] Webhook received', {
-      signature: signature ? 'present' : 'missing',
-      bodyLength: body.length,
-      bodyPreview: body.substring(0, 100),
-    })
-
-    console.log('[Owner OA] secret length:', (channelSecret || '').length, 'sigHeader present:', !!signature)
-
     const signatureValid = verifyOwnerLineSignature(body, signature, channelSecret)
-    console.log('[Owner OA] Signature verification result:', { valid: signatureValid })
 
     if (!signatureValid) {
       console.error('[Owner OA] Signature verification failed', {
@@ -49,8 +40,6 @@ export async function POST(request: Request) {
 
     // Signature verification passed - process events even if empty
     const events = body ? (JSON.parse(body).events || []) : []
-
-    console.log('[Owner OA] Events received:', events.length)
 
     for (const event of events) {
       await handleOwnerEvent(event)
@@ -72,18 +61,6 @@ interface LineEvent {
 }
 
 async function handleOwnerEvent(event: LineEvent) {
-  console.log(`[Owner OA] Event type: ${event.type}, source.userId: ${event.source.userId}`)
-
-  // デバッグ用: 最新の userId を保存
-  try {
-    const supabase = createAdminClient()
-    await supabase.from('owner_webhook_debug').insert({
-      source_user_id: event.source.userId,
-      event_type: event.type,
-    })
-  } catch (err) {
-    console.warn('[Owner OA] Failed to save debug userId:', err)
-  }
 
   if (event.type === 'follow') {
     await handleOwnerFollow(event)
@@ -161,9 +138,6 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
   const userId = event.source.userId
   const text = event.message.text
 
-  console.log(`[Owner OA] userId: ${userId}`)
-  console.log(`[Owner OA] Message from userId=${userId}: "${text}"`)
-
   // Step 1: userId を owner_line_links に保存（@901bsvrb 名前空間で統一）
   try {
     const supabase = createAdminClient()
@@ -175,46 +149,12 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
 
     if (updateError) {
       console.warn('[Owner OA] Failed to update owner_line_links:', updateError.message)
-    } else {
-      console.log(`[Owner OA] Updated owner_line_links with userId=${userId}`)
     }
   } catch (err) {
     console.warn('[Owner OA] Error updating owner_line_links:', err)
   }
 
-  // whoami: 本人確認用（本user IDを出す）
-  if (text.toLowerCase() === 'whoami') {
-    try {
-      const flex: FlexMessage = {
-        type: 'bubble',
-        body: {
-          type: 'box',
-          layout: 'vertical',
-          contents: [
-            {
-              type: 'text',
-              text: 'Your LINE User ID',
-              weight: 'bold',
-              size: 'lg',
-            },
-            {
-              type: 'text',
-              text: userId,
-              size: 'sm',
-              color: '#0084ff',
-              margin: 'md',
-              wrap: true,
-            },
-          ],
-        },
-      }
-      await pushFlexToOwner(userId, `userId: ${userId}`, flex)
-      console.log(`[Owner OA] Whoami sent successfully for ${userId}`)
-    } catch (err) {
-      const errMsg = err instanceof Error ? err.message : String(err)
-      console.error('[Owner OA] Failed to send whoami:', errMsg)
-    }
-  } else if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
+  if (text.includes('ヘルプ') || text.toLowerCase().includes('help') || text.includes('使い方')) {
     try {
       const flex: FlexMessage = {
         type: 'bubble',
@@ -263,8 +203,6 @@ async function handleOwnerMessage(event: LineEvent & { message: { type: 'text'; 
     } catch (err) {
       console.error('[Owner OA] Failed to send help:', err)
     }
-  } else {
-    console.log(`[Owner OA] No action taken for message: "${text}"`)
   }
 }
 
@@ -273,12 +211,9 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
   const data = event.postback.data
   const replyToken = event.replyToken
 
-  console.log(`[Owner OA] Postback from userId=${userId}: data="${data}"`)
-
   // 承認フロー: postback data = "action=approve&id=<uuid>" または "action=reject&id=<uuid>"
   const match = data.match(/action=(approve|reject)&id=([a-f0-9-]+)/)
   if (!match) {
-    console.log('[Owner OA] Postback does not match approval pattern')
     return
   }
 

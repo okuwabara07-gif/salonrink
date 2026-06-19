@@ -22,67 +22,6 @@ export async function getActiveOwnerLineUserId(): Promise<string | null> {
   return owner?.line_user_id || null
 }
 
-// テスト用: シンプルテキストメッセージを owner に push（宛先・トークン検証用）
-export async function pushOwnerTextTest(ownerLineUserId: string): Promise<void> {
-  const channelToken = process.env.LINE_OWNER_CHANNEL_ACCESS_TOKEN
-
-  if (!channelToken) {
-    throw new Error('LINE_OWNER_CHANNEL_ACCESS_TOKEN not configured')
-  }
-
-  const payload = JSON.stringify({
-    to: ownerLineUserId,
-    messages: [
-      {
-        type: 'text',
-        text: '最小テスト',
-      },
-    ],
-  })
-
-  console.log('[pushOwnerTextTest] Sending text message', {
-    to: ownerLineUserId,
-    messageType: 'text',
-  })
-
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'api.line.me',
-      path: '/v2/bot/message/push',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload),
-        'Authorization': `Bearer ${channelToken}`,
-      },
-    }
-
-    const req = https.request(options, (res) => {
-      let data = ''
-      res.on('data', (chunk) => {
-        data += chunk
-      })
-      res.on('end', () => {
-        if (res.statusCode !== 200) {
-          const errMsg = `pushOwnerTextTest failed: HTTP ${res.statusCode}`
-          console.error(`[pushOwnerTextTest] ${errMsg}`, {
-            status: res.statusCode,
-            responseBody: data,
-          })
-          reject(new Error(`${errMsg}: ${data}`))
-        } else {
-          console.log('[pushOwnerTextTest] Success')
-          resolve()
-        }
-      })
-    })
-
-    req.on('error', reject)
-    req.write(payload)
-    req.end()
-  })
-}
-
 export async function pushFlexToOwner(
   lineUserId: string,
   altText: string,
@@ -102,13 +41,6 @@ export async function pushFlexToOwner(
   const payload = JSON.stringify({
     to: lineUserId,
     messages: [messageObj],
-  })
-
-  console.log('[pushFlexToOwner] Sending to LINE API', {
-    to: lineUserId,
-    messageType: messageObj.type,
-    altText: messageObj.altText,
-    contentsType: ((messageObj.contents as unknown) as Record<string, unknown>)?.type || 'unknown',
   })
 
   return new Promise((resolve, reject) => {
