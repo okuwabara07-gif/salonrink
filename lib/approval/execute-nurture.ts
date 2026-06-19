@@ -30,90 +30,106 @@ export async function executeNurture(
   approvalQueueId: string,
   approvalRow: ApprovalQueue
 ): Promise<void> {
-  // Lazy init: 関数内で遅延生成
   const { createAdminClient } = await import('@/lib/supabase/admin')
   const admin = createAdminClient()
 
   try {
     const payload = approvalRow.payload as Record<string, unknown>
-    const { channel, nurture_queue_id, lead_id, message_data } = payload
+    const channel = payload.channel as string | undefined
+    const leadId = payload.lead_id as string | undefined
+    const messageData = payload.message_data as Record<string, unknown> | undefined
 
-    if (!nurture_queue_id || !lead_id) {
-      console.warn('[executeNurture] Missing nurture_queue_id or lead_id in payload')
-      return
-    }
-
-    // nurture_queue レコード取得
-    const { data: nurtureRow, error: fetchError } = await admin
-      .from('nurture_queue')
-      .select('*')
-      .eq('id', nurture_queue_id)
-      .maybeSingle()
-
-    if (fetchError || !nurtureRow) {
-      console.error('[executeNurture] Fetch nurture_queue error:', fetchError?.message)
+    if (!leadId || !channel) {
+      console.error('[executeNurture] Missing lead_id or channel in payload')
       return
     }
 
     const now = new Date().toISOString()
+    let eventType = 'nurture_sent'
+    let success = false
 
     // チャネル別送信
     switch (channel) {
       case 'email': {
-        const msgData = message_data as Record<string, unknown>
-        const email = msgData.email as string | undefined
+        if (!messageData) {
+          console.warn('[executeNurture] No message_data for email')
+          eventType = 'nurture_failed'
+          break
+        }
+
+        const email = messageData.email as string | undefined
+        const subject = messageData.subject as string | undefined
+        const html = messageData.html as string | undefined
+
         if (!email) {
           console.warn('[executeNurture] No email in message_data')
-          return
+          eventType = 'nurture_failed'
+          break
         }
 
-        const result = await getResend().emails.send({
-          from: 'noreply@salonrink.com',
-          to: email,
-          subject: (msgData.subject as string) || 'Follow-up Message',
-          html: (msgData.html as string) || '',
-        })
+        try {
+          const result = await getResend().emails.send({
+            from: 'noreply@salonrink.com',
+            to: email,
+            subject: subject || 'Follow-up Message',
+            html: html || '<p>(本文がありません)</p>',
+          })
 
-        if ('error' in result && result.error) {
-          console.error('[executeNurture] Email send failed:', result.error)
-          // Update to failed
-          await admin
-            .from('nurture_queue')
-            .update({ status: 'failed' })
-            .eq('id', nurture_queue_id)
-        } else {
-          console.log('[executeNurture] Email sent successfully')
-          // Update to sent
-          await admin
-            .from('nurture_queue')
-            .update({ status: 'sent', sent_at: now })
-            .eq('id', nurture_queue_id)
+          if ('error' in result && result.error) {
+            console.error('[executeNurture] Email send error:', result.error)
+            eventType = 'nurture_failed'
+          } else {
+            eventType = 'nurture_sent'
+            success = true
+          }
+        } catch (sendErr) {
+          console.error('[executeNurture] Email send exception:', sendErr)
+          eventType = 'nurture_failed'
         }
         break
       }
 
-      case 'sms': {
-        // TODO: Twilio SMS integration
-        console.log('[executeNurture] SMS sending not yet implemented')
-        await admin
-          .from('nurture_queue')
-          .update({ status: 'pending' })
-          .eq('id', nurture_queue_id)
-        break
-      }
-
+      case 'sms':
       case 'line': {
-        // TODO: LINE push via pushMessage()
-        console.log('[executeNurture] LINE push not yet implemented')
-        await admin
-          .from('nurture_queue')
-          .update({ status: 'pending' })
-          .eq('id', nurture_queue_id)
+        console.log(`[executeNurture] Channel '${channel}' not yet implemented, skipping`)
+        eventType = 'nurture_skipped'
         break
       }
 
-      default:
+      default: {
         console.warn(`[executeNurture] Unknown channel: ${channel}`)
+        eventType = 'nurture_failed'
+      }
+    }
+
+    // funnel_lead_events に記録
+    const { error: eventErr } = await admin.from('funnel_lead_events').insert({
+      lead_id: leadId,
+      event_type: eventType,
+      metadata: {
+        approval_queue_id: approvalQueueId,
+        channel,
+        timestamp: now,
+      },
+    })
+
+    if (eventErr) {
+      console.warn('[executeNurture] Failed to record event:', eventErr.message)
+    }
+
+    // 失敗時は approval_queue.status を failed に更新
+    if (!success && eventType === 'nurture_failed') {
+      const { error: updateErr } = await admin
+        .from('approval_queue')
+        .update({
+          status: 'failed',
+          lint_notes: `Email send failed for lead ${leadId}`,
+        })
+        .eq('id', approvalQueueId)
+
+      if (updateErr) {
+        console.error('[executeNurture] Failed to update approval_queue:', updateErr.message)
+      }
     }
   } catch (error) {
     console.error('[executeNurture] Unexpected error:', error)
