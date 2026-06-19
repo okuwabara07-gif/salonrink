@@ -1,15 +1,16 @@
 /**
- * POST /api/cron/nurture-draft
+ * GET/POST /api/cron/nurture-draft
  * 日次ドラフト自動生成 → approval_queue 投入（メール前提）
  *
  * Flow:
- * 1. leads から email IS NOT NULL, status='new' を抽出（LIMIT 20）
+ * 1. funnel_leads から email IS NOT NULL, status='new' を抽出（LIMIT 20）
  * 2. Claude Haiku で文面生成（subject, html）
  * 3. lintゲート（禁止語フィルタ）
  * 4. approval_queue に kind='nurture_msg' で INSERT
  * 5. owner へ承認Flex push（pushFlexApproval）
  *
  * Cron: 平日朝（月-金 7時）
+ * 認証: X-Vercel-Cron ヘッダ or Authorization Bearer
  */
 
 import { createAdminClient } from '@/lib/supabase/admin'
@@ -21,6 +22,7 @@ interface CronResponse {
   generated: number
   inserted: number
   errors?: string[]
+  error?: string
 }
 
 const PROHIBITED_WORDS = ['絶対', 'No.1', '日本一', '治る']
@@ -45,7 +47,7 @@ function containsProhibited(text: string): boolean {
   return PROHIBITED_WORDS.some((word) => text.includes(word))
 }
 
-export async function POST(request: Request) {
+async function handleNurtureDraft(): Promise<CronResponse> {
   const response: CronResponse = {
     success: false,
     generated: 0,
@@ -54,11 +56,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    if (!validateCronSecret(request)) {
-      console.error('[Nurture Draft Cron] Invalid CRON_SECRET')
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
-    }
-
     console.log('[Nurture Draft Cron] Starting...')
 
     const supabase = createAdminClient()
@@ -73,7 +70,10 @@ export async function POST(request: Request) {
 
     if (fetchErr || !leads) {
       console.error('[Nurture Draft Cron] Fetch leads error:', fetchErr)
-      return new Response(JSON.stringify({ error: 'Failed to fetch leads' }), { status: 500 })
+      return {
+        ...response,
+        error: 'Failed to fetch leads',
+      }
     }
 
     console.log(`[Nurture Draft Cron] Found ${leads.length} new leads with email`)
@@ -195,18 +195,39 @@ export async function POST(request: Request) {
       `[Nurture Draft Cron] Complete: generated=${response.generated}, inserted=${response.inserted}`
     )
 
-    return new Response(JSON.stringify(response), { status: 200 })
+    return response
   } catch (error) {
     const errMsg = error instanceof Error ? error.message : String(error)
     console.error('[Nurture Draft Cron] Fatal error:', errMsg)
-    return new Response(
-      JSON.stringify({
-        ...response,
-        error: errMsg,
-      }),
-      { status: 500 }
-    )
+    return {
+      ...response,
+      error: errMsg,
+    }
   }
+}
+
+export async function GET(request: Request) {
+  if (!validateCronSecret(request)) {
+    console.error('[Nurture Draft Cron] Invalid CRON_SECRET')
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+  }
+
+  const response = await handleNurtureDraft()
+  return new Response(JSON.stringify(response), {
+    status: response.success ? 200 : 500,
+  })
+}
+
+export async function POST(request: Request) {
+  if (!validateCronSecret(request)) {
+    console.error('[Nurture Draft Cron] Invalid CRON_SECRET')
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+  }
+
+  const response = await handleNurtureDraft()
+  return new Response(JSON.stringify(response), {
+    status: response.success ? 200 : 500,
+  })
 }
 
 async function generateDraft(contactName: string): Promise<string | null> {
