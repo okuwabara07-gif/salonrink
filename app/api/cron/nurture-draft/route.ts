@@ -273,12 +273,10 @@ async function generateDraft(contactName: string): Promise<string | null> {
 
 function parseDraft(draftText: string): { subject: string; html: string; isValid: boolean } {
   const subjectMatch = draftText.match(/【件名】(.+?)(?:\n|【本文】)/)
-  const htmlMatch = draftText.match(/【本文】(.+)$/)
+  const htmlMatch = draftText.match(/【本文】([\s\S]+)$/)
 
   const subject = subjectMatch ? subjectMatch[1].trim() : ''
-  const html = htmlMatch
-    ? htmlMatch[1].trim()
-    : ''
+  const html = htmlMatch ? htmlMatch[1].trim() : ''
 
   const isValid = subject.length > 0 && html.length > 0
 
