@@ -79,6 +79,8 @@ async function handleNurtureDraft(): Promise<CronResponse> {
     console.log(`[Nurture Draft Cron] Found ${leads.length} new leads with email`)
     response.generated = leads.length
 
+    let debugLogged = false
+
     // Step 2-5: 各lead ごとに処理
     for (const lead of leads) {
       try {
@@ -110,17 +112,61 @@ async function handleNurtureDraft(): Promise<CronResponse> {
         console.log(`[Nurture Draft Cron] Parsed for lead ${lead.id}:`, { isValid, subject, html })
 
         // Step 2d: 空チェック＆lintゲート（禁止語フィルタ）
+        let lintPassed = true
+        let lintReason = ''
+        let skippedReason = ''
+
         if (!isValid || !subject || !html) {
           console.warn(
             `[Nurture Draft Cron] Lead ${lead.id}: Invalid draft (isValid=${isValid}, subject=${!!subject}, html=${!!html}), skipping`
           )
           response.errors?.push(`Lead ${lead.id}: Invalid draft format or empty subject/html`)
+          if (!subject) skippedReason = 'subject empty'
+          else if (!html) skippedReason = 'html empty'
+          else skippedReason = 'invalid format'
+
+          if (!debugLogged) {
+            await supabase.from('nurture_draft_debug').insert({
+              extracted_count: leads.length,
+              haiku_raw: draftText,
+              parsed_subject: subject,
+              parsed_html_len: html.length,
+              is_valid: isValid,
+              lint_passed: false,
+              lint_reason: 'empty subject or html',
+              inserted_count: 0,
+              skipped_reason: skippedReason,
+            })
+            debugLogged = true
+          }
           continue
         }
 
-        if (containsProhibited(subject) || containsProhibited(html)) {
-          console.warn(`[Nurture Draft Cron] Lead ${lead.id}: Prohibited word detected, discarding`)
+        const prohibitedInSubject = PROHIBITED_WORDS.find((word) => subject.includes(word))
+        const prohibitedInHtml = PROHIBITED_WORDS.find((word) => html.includes(word))
+
+        if (prohibitedInSubject || prohibitedInHtml) {
+          const prohibitedWord = prohibitedInSubject || prohibitedInHtml
+          console.warn(
+            `[Nurture Draft Cron] Lead ${lead.id}: Prohibited word '${prohibitedWord}' detected, discarding`
+          )
           response.errors?.push(`Lead ${lead.id}: Prohibited word detected`)
+          skippedReason = `lint blocked: ${prohibitedWord}`
+
+          if (!debugLogged) {
+            await supabase.from('nurture_draft_debug').insert({
+              extracted_count: leads.length,
+              haiku_raw: draftText,
+              parsed_subject: subject,
+              parsed_html_len: html.length,
+              is_valid: isValid,
+              lint_passed: false,
+              lint_reason: `prohibited: ${prohibitedWord}`,
+              inserted_count: 0,
+              skipped_reason: skippedReason,
+            })
+            debugLogged = true
+          }
           continue
         }
 
@@ -158,10 +204,41 @@ async function handleNurtureDraft(): Promise<CronResponse> {
         if (insertErr || !inserted) {
           console.error(`[Nurture Draft Cron] Insert error for lead ${lead.id}:`, insertErr)
           response.errors?.push(`Lead ${lead.id}: Failed to insert approval_queue`)
+
+          if (!debugLogged) {
+            await supabase.from('nurture_draft_debug').insert({
+              extracted_count: leads.length,
+              haiku_raw: draftText,
+              parsed_subject: subject,
+              parsed_html_len: html.length,
+              is_valid: true,
+              lint_passed: true,
+              lint_reason: '',
+              inserted_count: 0,
+              skipped_reason: 'insert error',
+            })
+            debugLogged = true
+          }
           continue
         }
 
         console.log(`[Nurture Draft Cron] Inserted approval ${inserted.id} for lead ${lead.id}`)
+
+        // Debug ログ（成功時）
+        if (!debugLogged) {
+          await supabase.from('nurture_draft_debug').insert({
+            extracted_count: leads.length,
+            haiku_raw: draftText,
+            parsed_subject: subject,
+            parsed_html_len: html.length,
+            is_valid: true,
+            lint_passed: true,
+            lint_reason: '',
+            inserted_count: 1,
+            skipped_reason: '',
+          })
+          debugLogged = true
+        }
 
         // Step 4: owner へ承認Flex push
         try {
