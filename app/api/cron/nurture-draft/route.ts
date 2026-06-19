@@ -79,6 +79,17 @@ async function handleNurtureDraft(): Promise<CronResponse> {
     console.log(`[Nurture Draft Cron] Found ${leads.length} new leads with email`)
     response.generated = leads.length
 
+    // 抽出直後に必ず1行 debug をINSERT（切り分け用）
+    try {
+      await supabase.from('nurture_draft_debug').insert({
+        extracted_count: leads.length,
+        skipped_reason: 'before-loop',
+      })
+      console.log('[Nurture Draft Cron] Debug marker inserted: before-loop')
+    } catch (debugErr) {
+      console.warn('[Nurture Draft Cron] Failed to insert before-loop debug:', debugErr)
+    }
+
     let debugLogged = false
 
     // Step 2-5: 各lead ごとに処理
@@ -98,10 +109,30 @@ async function handleNurtureDraft(): Promise<CronResponse> {
           continue
         }
 
-        // Step 2b: Claude Haiku で文面生成
-        const draftText = await generateDraft(lead.contact_name || 'お客様')
+        // Step 2b: Claude Haiku で文面生成（例外キャッチ）
+        let draftText: string | null = null
+        try {
+          draftText = await generateDraft(lead.contact_name || 'お客様')
+        } catch (genErr) {
+          const errMsg = genErr instanceof Error ? genErr.message : String(genErr)
+          console.error('[Nurture Draft Cron] generateDraft threw:', errMsg)
+          response.errors?.push(`Lead ${lead.id}: generateDraft threw: ${errMsg}`)
+
+          if (!debugLogged) {
+            await supabase.from('nurture_draft_debug').insert({
+              extracted_count: leads.length,
+              haiku_raw: String(genErr),
+              lint_reason: errMsg,
+              inserted_count: 0,
+              skipped_reason: 'generate threw',
+            })
+            debugLogged = true
+          }
+          continue
+        }
+
         if (!draftText) {
-          response.errors?.push(`Lead ${lead.id}: Draft generation failed`)
+          response.errors?.push(`Lead ${lead.id}: Draft generation returned null`)
           continue
         }
 
