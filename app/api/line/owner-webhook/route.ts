@@ -211,14 +211,29 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
   const data = event.postback.data
   const replyToken = event.replyToken
 
-  // 承認フロー: postback data = "action=approve&id=<uuid>" または "action=reject&id=<uuid>"
-  const match = data.match(/action=(approve|reject)&id=([a-f0-9-]+)/)
-  if (!match) {
+  // 承認フロー1: postback data = "action=approve&id=<uuid>" または "action=reject&id=<uuid>"
+  const legacyMatch = data.match(/action=(approve|reject)&id=([a-f0-9-]+)/)
+  if (legacyMatch) {
+    const action = legacyMatch[1] // 'approve' or 'reject'
+    const approvalId = legacyMatch[2]
+    await handleLegacyApproval(userId, action, approvalId)
     return
   }
 
-  const action = match[1] // 'approve' or 'reject'
-  const approvalId = match[2]
+  // 承認フロー2: postback data = "agentact:approve:<id>" または "agentact:reject:<id>"
+  const agentMatch = data.match(/agentact:(approve|reject):([a-f0-9-]+)/)
+  if (agentMatch) {
+    const action = agentMatch[1] // 'approve' or 'reject'
+    const agentActionId = agentMatch[2]
+    await handleAgentActionApproval(userId, action, agentActionId)
+    return
+  }
+}
+
+/**
+ * 従来の approval_queue 承認（funnel_leads 向け）
+ */
+async function handleLegacyApproval(userId: string, action: string, approvalId: string) {
 
   // 認証: 送信者の userId が owner_line_links の active 行と一致するか
   try {
@@ -345,6 +360,202 @@ async function handleOwnerPostback(event: LineEvent & { postback: { data: string
       await pushFlexToOwner(userId, 'エラー', flex)
     } catch (err) {
       console.error('[Owner OA] Failed to send error notification:', err)
+    }
+  }
+}
+
+/**
+ * SDR agent_actions 承認（営業アウトバウンド向け）
+ */
+async function handleAgentActionApproval(userId: string, action: string, agentActionId: string) {
+  // 認証: 送信者の userId が owner_line_links の active 行と一致するか
+  try {
+    const supabase = createAdminClient()
+    const { data: ownerLink, error: fetchError } = await supabase
+      .from('owner_line_links')
+      .select('line_user_id')
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle()
+
+    if (fetchError || !ownerLink) {
+      console.error('[Agent Action Approval] Failed to fetch owner_line_links:', fetchError?.message)
+      return
+    }
+
+    const ownerUserId = ownerLink.line_user_id
+    if (userId !== ownerUserId) {
+      console.warn(`[Agent Action Approval] Unauthorized user ${userId} attempted approval (expected ${ownerUserId})`)
+      return
+    }
+  } catch (err) {
+    console.error('[Agent Action Approval] Error verifying userId:', err)
+    return
+  }
+
+  // agent_actions から該当行を取得
+  try {
+    const supabase = createAdminClient()
+    const { data: agentAction, error: fetchErr } = await supabase
+      .from('agent_actions')
+      .select('*')
+      .eq('id', agentActionId)
+      .maybeSingle()
+
+    if (fetchErr || !agentAction) {
+      console.error('[Agent Action Approval] Failed to fetch agent_action:', fetchErr?.message)
+      try {
+        const flex: FlexMessage = {
+          type: 'bubble',
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+              {
+                type: 'text',
+                text: '⚠️ エラー',
+                weight: 'bold',
+                color: '#ff0000',
+              },
+              {
+                type: 'text',
+                text: 'エージェントアクションが見つかりません。',
+                size: 'sm',
+                wrap: true,
+                margin: 'md',
+              },
+            ],
+          },
+        }
+        await pushFlexToOwner(userId, 'エラー', flex)
+      } catch (err) {
+        console.error('[Agent Action Approval] Failed to send error notification:', err)
+      }
+      return
+    }
+
+    const now = new Date().toISOString()
+    const decision = action === 'approve' ? 'approved' : 'rejected'
+
+    // agent_actions を更新（status, decided_at, result）
+    const { error: updateErr } = await supabase
+      .from('agent_actions')
+      .update({
+        status: decision,
+        decided_at: now,
+        result: {
+          decided_by: userId,
+          decided_at: now,
+          decision_message: `${decision} by owner via LINE`,
+        },
+      })
+      .eq('id', agentActionId)
+
+    if (updateErr) {
+      console.error('[Agent Action Approval] Update error:', updateErr)
+      try {
+        const flex: FlexMessage = {
+          type: 'bubble',
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            contents: [
+              {
+                type: 'text',
+                text: '⚠️ エラー',
+                weight: 'bold',
+                color: '#ff0000',
+              },
+              {
+                type: 'text',
+                text: `${decision === 'approved' ? '承認' : '却下'}に失敗しました。`,
+                size: 'sm',
+                wrap: true,
+                margin: 'md',
+              },
+            ],
+          },
+        }
+        await pushFlexToOwner(userId, '承認失敗', flex)
+      } catch (err) {
+        console.error('[Agent Action Approval] Failed to send failure notification:', err)
+      }
+      return
+    }
+
+    // decision='approved' の場合のみ実行関数呼び出し
+    let executedCount = 0
+    if (decision === 'approved') {
+      try {
+        const { executeAgentOutbound } = await import('@/lib/approval/execute-agent-outbound')
+        await executeAgentOutbound(agentActionId, agentAction)
+        executedCount = 1
+        console.log(`[Agent Action Approval] Executed agent_action ${agentActionId}`)
+      } catch (execErr) {
+        console.error('[Agent Action Approval] Execution error:', execErr)
+      }
+    }
+
+    const actionLabel = decision === 'approved' ? '✅ 承認しました' : '❌ 却下しました'
+
+    console.log(`[Agent Action Approval] Success: ${decision} ${agentActionId}, executed=${executedCount}`)
+
+    try {
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: actionLabel,
+              weight: 'bold',
+              size: 'lg',
+              color: decision === 'approved' ? '#06C755' : '#ff0000',
+            },
+            {
+              type: 'text',
+              text: executedCount > 0 ? '(メール送信済み)' : '',
+              size: 'sm',
+              color: '#999999',
+              margin: 'md',
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, actionLabel, flex)
+    } catch (err) {
+      console.error('[Agent Action Approval] Failed to send success notification:', err)
+    }
+  } catch (error) {
+    console.error('[Agent Action Approval] Unexpected error:', error)
+    try {
+      const flex: FlexMessage = {
+        type: 'bubble',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          contents: [
+            {
+              type: 'text',
+              text: '⚠️ エラー',
+              weight: 'bold',
+              color: '#ff0000',
+            },
+            {
+              type: 'text',
+              text: 'エラーが発生しました。サポートに連絡してください。',
+              size: 'sm',
+              wrap: true,
+              margin: 'md',
+            },
+          ],
+        },
+      }
+      await pushFlexToOwner(userId, 'エラー', flex)
+    } catch (err) {
+      console.error('[Agent Action Approval] Failed to send error notification:', err)
     }
   }
 }
