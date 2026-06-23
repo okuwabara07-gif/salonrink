@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base href="/story/">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Shippori+Mincho+B1:wght@400;500;600&family=Zen+Kaku+Gothic+New:wght@300;400;500;700&family=Caveat:wght@400;600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#E4DCCF;-webkit-font-smoothing:antialiased;}
+  ::selection{background:#3A332B;color:#F3EFE7;}
+  @keyframes srBlink{0%,60%,100%{opacity:.3;transform:translateY(0);}30%{opacity:1;transform:translateY(-2px);}}
+  @keyframes srRise{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes srPulse{0%,100%{box-shadow:0 0 0 0 rgba(156,126,92,0);}50%{box-shadow:0 0 0 5px rgba(156,126,92,0.13);}}
+  @keyframes srMarquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  @keyframes srCount{from{opacity:0;}to{opacity:1;}}
+  @keyframes srFlash{0%,100%{opacity:1;}50%{opacity:0.25;}}
+  @keyframes srPop{0%{opacity:0;transform:scale(0.7);}60%{opacity:1;transform:scale(1.08);}100%{transform:scale(1);}}
+  @keyframes srGrow{from{transform:scale(0);}to{transform:scale(1);}}
+  @keyframes srGlassUp{0%{opacity:0;transform:translateY(24px) scale(.96);}100%{opacity:1;transform:translateY(0) scale(1);}}
+  @keyframes srSendOut{0%{opacity:0;transform:translateX(-14px);}100%{opacity:1;transform:translateX(0);}}
+  @keyframes srCheck{0%{stroke-dashoffset:20;}100%{stroke-dashoffset:0;}}
+  @keyframes srHero{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes srKen{0%{transform:scale(1.02) translate(0,0);}100%{transform:scale(1.13) translate(-1.5%,-2%);}}
+  @keyframes srEntry{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  .entry-card{transition:transform .3s ease;}
+  .entry-card:hover{transform:translateY(-7px);}
+  .entry-card:hover .entry-bar{filter:brightness(1.1);}
+  .entry-back{transition:color .2s ease;}
+  .entry-back:hover{color:#3A332B;}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div ref="{{ rootRef }}" style="background:#E4DCCF;min-height:100%;padding:56px 40px 80px;font-family:'Zen Kaku Gothic New',sans-serif;">
+  <!-- ===== color tone control ===== -->
+  <div style="position:fixed;left:20px;bottom:20px;z-index:200;font-family:'Zen Kaku Gothic New',sans-serif;display:flex;flex-direction:column;align-items:flex-start;">
+    <sc-if value="{{ panelOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-bottom:10px;background:#FCFAF6;border:1px solid #E5DBC9;border-radius:14px;padding:16px 18px;box-shadow:0 18px 44px -18px rgba(58,51,43,0.5);width:228px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;">
+          <span style="font-size:11px;letter-spacing:0.12em;color:#7A6E60;">COLOR TONE</span>
+          <span onClick="{{ resetTone }}" style="font-size:10.5px;color:#9C7E5C;cursor:pointer;text-decoration:underline;">リセット</span>
+        </div>
+        <div style="margin-bottom:13px;">
+          <div style="font-size:10.5px;color:#5C5247;margin-bottom:5px;">色相</div>
+          <input type="range" min="-30" max="30" step="1" value="{{ hue }}" onInput="{{ onHue }}" style="width:100%;accent-color:#9C7E5C;">
+        </div>
+        <div style="margin-bottom:13px;">
+          <div style="font-size:10.5px;color:#5C5247;margin-bottom:5px;">鮮やかさ</div>
+          <input type="range" min="0.5" max="1.5" step="0.02" value="{{ sat }}" onInput="{{ onSat }}" style="width:100%;accent-color:#9C7E5C;">
+        </div>
+        <div>
+          <div style="font-size:10.5px;color:#5C5247;margin-bottom:5px;">明るさ</div>
+          <input type="range" min="0.8" max="1.2" step="0.01" value="{{ bright }}" onInput="{{ onBright }}" style="width:100%;accent-color:#9C7E5C;">
+        </div>
+      </div>
+    </sc-if>
+    <div onClick="{{ togglePanel }}" style="display:flex;align-items:center;gap:8px;background:#3A332B;color:#FBF8F2;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 12px 30px -12px rgba(58,51,43,0.6);font-size:12px;letter-spacing:0.04em;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 2a10 10 0 1 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.2 0-1.1.9-2 2-2h2.3A4.7 4.7 0 0 0 22 10.7C22 5.9 17.5 2 12 2z"/></svg>
+      色味を調整
+    </div>
+  </div>
+  <!-- ===== ENTRY: choose audience ===== -->
+  <div id="entry-screen" style="position:relative;min-height:calc(100vh - 120px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 0 52px;background:radial-gradient(120% 80% at 50% 28%, #F5EDDF 0%, #ECE1CE 56%, #E2D5BE 100%);">
+    <div style="position:absolute;top:2px;left:6px;right:6px;display:flex;align-items:flex-start;justify-content:flex-end;">
+      <div style="display:flex;flex-direction:column;gap:6px;width:30px;margin-top:6px;"><span style="height:1.5px;background:#3A332B;border-radius:2px;"></span><span style="height:1.5px;background:#3A332B;border-radius:2px;"></span><span style="height:1.5px;width:68%;background:#3A332B;border-radius:2px;"></span></div>
+    </div>
+    <div style="width:100%;max-width:412px;margin:0 auto 10px;border-radius:7px;overflow:hidden;box-shadow:0 30px 64px -30px rgba(58,51,43,0.55);opacity:0;animation:srEntry .7s ease both .05s;">
+      <div style="position:relative;height:600px;overflow:hidden;">
+        <img src="assets/final-hero.png" alt="SALONRINK" style="position:absolute;top:50%;left:50%;width:116%;height:116%;object-fit:cover;object-position:50% 30%;transform:translate(-50%,-50%);">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,24,18,0.5) 0%,rgba(30,24,18,0.06) 26%,rgba(24,18,13,0.16) 52%,rgba(18,13,9,0.9) 100%);"></div>
+        <div style="position:absolute;inset:13px;border:1px solid rgba(251,248,242,0.3);pointer-events:none;"></div>
+        <div style="position:absolute;top:24px;left:0;right:0;text-align:center;color:#FBF8F2;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.34em;font-weight:600;">SALON<span style="color:#E3C58B;">RINK</span></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;letter-spacing:0.18em;opacity:0.82;margin-top:2px;">salon concierge</div>
+        </div>
+        <div style="position:absolute;left:26px;right:26px;bottom:120px;text-align:center;color:#FBF8F2;">
+          <div style="display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:18px;">
+            <span style="width:24px;height:1px;background:#E3C58B;"></span>
+            <span style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.4em;">THE PROMISE</span>
+            <span style="width:24px;height:1px;background:#E3C58B;"></span>
+          </div>
+          <h1 style="font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:42px;line-height:1.32;letter-spacing:0.04em;margin:0;text-shadow:0 2px 18px rgba(18,13,9,0.55);">髪を、<br>ひとりにしない。</h1>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:12.5px;line-height:1.95;letter-spacing:0.05em;margin:18px 0 0;text-shadow:0 1px 10px rgba(18,13,9,0.6);">来店前・当日・おかえり後。<br>サロンを出たあとも、LINEで共有するマイカルテが、<br>お客様と美容師をつなぎます。</p>
+        </div>
+        <div style="position:absolute;left:0;right:0;bottom:40px;text-align:center;color:#FBF8F2;">
+          <div style="font-family:'Pinyon Script',cursive;font-size:32px;line-height:1;text-shadow:0 2px 12px rgba(18,13,9,0.5);">Which story will you start?</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:8px;margin:8px auto 0;flex-wrap:wrap;">
+      <button id="tab-guest" onClick="{{ tabGuest }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid #D8CDBA;border-radius:12px;padding:11px 22px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;background:#3A332B;color:#FBF8F2;transition:all .2s ease;"><span style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.2em;">GUEST</span><span style="font-size:9px;letter-spacing:0.1em;opacity:0.8;">ゲスト・お客様</span></button>
+      <button id="tab-stylist" onClick="{{ tabStylist }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid #D8CDBA;border-radius:12px;padding:11px 22px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;background:transparent;color:#8A7A68;transition:all .2s ease;"><span style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.2em;">STYLIST</span><span style="font-size:9px;letter-spacing:0.1em;opacity:0.8;">美容師・サロン</span></button>
+      <button id="tab-agent" onClick="{{ tabAgent }}" style="display:flex;flex-direction:column;align-items:center;gap:2px;border:1px solid #D8CDBA;border-radius:12px;padding:11px 22px;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;background:transparent;color:#8A7A68;transition:all .2s ease;"><span style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.2em;">PARTNER</span><span style="font-size:9px;letter-spacing:0.1em;opacity:0.8;">パートナー</span></button>
+    </div>
+    <div id="car-wrap" style="position:relative;width:100%;max-width:980px;height:620px;perspective:1700px;opacity:0;animation:srEntry .8s ease both .2s;">
+
+      <!-- card 0: Emi -->
+      <div class="car-card" data-car="0" onClick="{{ carClick0 }}" style="position:absolute;top:50%;left:50%;width:336px;height:584px;margin:-292px 0 0 -168px;border-radius:7px;overflow:hidden;cursor:pointer;box-shadow:0 34px 64px -28px rgba(58,51,43,0.62);transition:transform .6s cubic-bezier(.22,.61,.36,1),filter .6s ease,opacity .6s ease;">
+        <img src="assets/guest-hero.png" alt="Emi" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,22,16,0.5) 0%,rgba(28,22,16,0.12) 24%,rgba(24,18,13,0.55) 52%,rgba(18,14,10,0.92) 100%);"></div>
+        <div style="position:absolute;left:24px;top:212px;color:#FBF8F2;"><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:25px;line-height:1;">A day with</div><div style="font-family:'Pinyon Script',cursive;font-size:74px;line-height:0.82;text-shadow:0 3px 18px rgba(40,34,28,0.55);">Emi</div><div style="width:42px;height:1px;background:rgba(251,248,242,0.85);margin-top:12px;"></div></div>
+        <div style="position:absolute;left:24px;right:24px;bottom:60px;color:#FBF8F2;"><div style="font-family:'Shippori Mincho B1',serif;font-size:15px;font-weight:600;line-height:1.6;text-shadow:0 1px 8px rgba(40,34,28,0.6);">わたしの髪を、<br>わかってくれる人がいる。</div><div style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;line-height:1.7;opacity:0.92;margin-top:8px;">マイカルテを通じて、あなたの髪の変化を一緒に見守ります。</div></div>
+        <div style="position:absolute;left:24px;bottom:26px;font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.3em;color:#FBF8F2;">GUEST STORY VOL.01</div>
+        <div style="position:absolute;top:22px;left:22px;display:inline-flex;align-items:center;gap:7px;background:rgba(28,22,16,0.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(251,248,242,0.34);border-radius:999px;padding:6px 13px;"><span style="width:5px;height:5px;border-radius:50%;background:#E3C58B;"></span><span style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;letter-spacing:0.08em;color:#FBF8F2;">サロンに行く、あなたへ。</span></div>
+      </div>
+
+      <!-- card 1: Kei -->
+      <div class="car-card" data-car="1" onClick="{{ carClick1 }}" style="position:absolute;top:50%;left:50%;width:336px;height:584px;margin:-292px 0 0 -168px;border-radius:7px;overflow:hidden;cursor:pointer;box-shadow:0 34px 64px -28px rgba(58,51,43,0.62);transition:transform .6s cubic-bezier(.22,.61,.36,1),filter .6s ease,opacity .6s ease;">
+        <img src="assets/stylist-hero.png" alt="Kei" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,22,16,0.5) 0%,rgba(28,22,16,0.12) 24%,rgba(24,18,13,0.55) 52%,rgba(18,14,10,0.92) 100%);"></div>
+        <div style="position:absolute;left:24px;top:212px;color:#FBF8F2;"><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:25px;line-height:1;">A day with</div><div style="font-family:'Pinyon Script',cursive;font-size:74px;line-height:0.82;text-shadow:0 3px 18px rgba(40,34,28,0.55);">Kei</div><div style="width:42px;height:1px;background:rgba(251,248,242,0.85);margin-top:12px;"></div></div>
+        <div style="position:absolute;left:24px;right:24px;bottom:60px;color:#FBF8F2;"><div style="font-family:'Shippori Mincho B1',serif;font-size:15px;font-weight:600;line-height:1.6;text-shadow:0 1px 8px rgba(40,34,28,0.6);">ゲストの髪を、<br>AIとともにデザインする。</div><div style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;line-height:1.7;opacity:0.92;margin-top:8px;">もっと深く、もっと自由に。AIが、あなたのデザインを支えます。</div></div>
+        <div style="position:absolute;left:24px;bottom:26px;font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.3em;color:#FBF8F2;">STYLIST STORY VOL.01</div>
+        <div style="position:absolute;top:22px;left:22px;display:inline-flex;align-items:center;gap:7px;background:rgba(28,22,16,0.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(251,248,242,0.34);border-radius:999px;padding:6px 13px;"><span style="width:5px;height:5px;border-radius:50%;background:#E3C58B;"></span><span style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;letter-spacing:0.08em;color:#FBF8F2;">髪をつくる、あなたへ。</span></div>
+      </div>
+
+      <!-- card 2: Yuka -->
+      <div class="car-card" data-car="2" onClick="{{ carClick2 }}" style="position:absolute;top:50%;left:50%;width:336px;height:584px;margin:-292px 0 0 -168px;border-radius:7px;overflow:hidden;cursor:pointer;box-shadow:0 34px 64px -28px rgba(58,51,43,0.62);transition:transform .6s cubic-bezier(.22,.61,.36,1),filter .6s ease,opacity .6s ease;">
+        <img src="assets/agent-hero.png" alt="Yuka" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,22,16,0.5) 0%,rgba(28,22,16,0.12) 24%,rgba(24,18,13,0.55) 52%,rgba(18,14,10,0.92) 100%);"></div>
+        <div style="position:absolute;left:24px;top:212px;color:#FBF8F2;"><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:25px;line-height:1;">A day with</div><div style="font-family:'Pinyon Script',cursive;font-size:68px;line-height:0.82;text-shadow:0 3px 18px rgba(40,34,28,0.55);">Yuka</div><div style="width:42px;height:1px;background:rgba(251,248,242,0.85);margin-top:12px;"></div></div>
+        <div style="position:absolute;left:24px;right:24px;bottom:60px;color:#FBF8F2;"><div style="font-family:'Shippori Mincho B1',serif;font-size:15px;font-weight:600;line-height:1.6;text-shadow:0 1px 8px rgba(40,34,28,0.6);">想いが届く、<br>仕組みをつくる。</div><div style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;line-height:1.7;opacity:0.92;margin-top:8px;">サロンと一緒に、未来を育てる。</div></div>
+        <div style="position:absolute;left:24px;bottom:26px;font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.3em;color:#FBF8F2;">PARTNER STORY VOL.01</div>
+        <div style="position:absolute;top:22px;left:22px;display:inline-flex;align-items:center;gap:7px;background:rgba(28,22,16,0.42);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(251,248,242,0.34);border-radius:999px;padding:6px 13px;"><span style="width:5px;height:5px;border-radius:50%;background:#E3C58B;"></span><span style="font-family:'Shippori Mincho B1',serif;font-size:10.5px;letter-spacing:0.08em;color:#FBF8F2;">サロンを支える、あなたへ。</span></div>
+      </div>
+
+    </div>
+
+    <div style="display:flex;gap:9px;margin-top:30px;align-items:center;opacity:0;animation:srEntry .7s ease both .4s;">
+      <span class="car-dot" data-dot="0" onClick="{{ dot0 }}" style="width:22px;height:7px;border-radius:999px;background:#9C7E5C;cursor:pointer;transition:all .3s ease;"></span>
+      <span class="car-dot" data-dot="1" onClick="{{ dot1 }}" style="width:7px;height:7px;border-radius:999px;background:#D2C6B2;cursor:pointer;transition:all .3s ease;"></span>
+      <span class="car-dot" data-dot="2" onClick="{{ dot2 }}" style="width:7px;height:7px;border-radius:999px;background:#D2C6B2;cursor:pointer;transition:all .3s ease;"></span>
+    </div>
+    <div style="display:flex;align-items:center;gap:9px;margin-top:18px;color:#8A7A68;font-size:12.5px;letter-spacing:0.06em;opacity:0;animation:srEntry .7s ease both .5s;">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V6.5a1.8 1.8 0 0 1 3.6 0V11"/><path d="M12.6 11V8.5a1.8 1.8 0 0 1 3.6 0V11"/><path d="M16.2 11a1.8 1.8 0 0 1 3.6 0v3.2a6.5 6.5 0 0 1-6.5 6.5h-1.6a6.5 6.5 0 0 1-4.6-1.9l-2.7-2.7a1.4 1.4 0 0 1 2-2L9.4 16"/></svg>
+      左右にスワイプしてストーリーを選べます
+    </div>
+  </div>
+
+  <div id="main-screen" style="">
+  <div style="display:flex;gap:60px;justify-content:center;align-items:flex-start;flex-wrap:wrap;">
+
+    <!-- ============================= GUEST ============================= -->
+    <div id="guest-col" style="width:412px;">
+      <div id="g-prog" style="position:fixed;top:0;left:0;height:3px;width:0;background:#9C7E5C;z-index:60;pointer-events:none;"></div>
+      <div id="g-fabwrap" style="position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(12px);z-index:60;display:flex;flex-direction:row;align-items:center;gap:9px;opacity:0;pointer-events:none;transition:opacity .3s ease,transform .3s ease;">
+        <a id="g-fab" href="https://salonrink.com/neo/photo.html" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:7px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:999px;padding:12px 18px;box-shadow:0 14px 32px -10px rgba(58,51,43,0.7);font-size:12px;font-weight:700;letter-spacing:0.02em;font-family:'Zen Kaku Gothic New',sans-serif;white-space:nowrap;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
+          AI髪診断
+        </a>
+        <a href="https://lin.ee/O6Zh4et" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:7px;background:#FBF8F2;color:#3F7A33;text-decoration:none;border:1px solid #BFD6AE;border-radius:999px;padding:12px 18px;box-shadow:0 14px 32px -10px rgba(58,51,43,0.5);font-size:12px;font-weight:700;letter-spacing:0.02em;font-family:'Zen Kaku Gothic New',sans-serif;white-space:nowrap;">
+          <span style="width:16px;height:16px;border-radius:4px;background:#5DAE54;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;font-weight:700;">L</span>LINEで相談
+        </a>
+      </div>
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;letter-spacing:0.38em;color:#3A332B;">GUEST</div>
+        <div style="font-size:11px;letter-spacing:0.18em;color:#8A7A68;margin-top:4px;">ゲスト（お客様）ページ</div>
+      </div>
+
+      <div style="width:412px;background:#FBF8F2;border-radius:4px;overflow:hidden;box-shadow:0 18px 50px -22px rgba(58,51,43,0.45);color:#3A332B;">
+
+        <!-- HERO -->
+        <div style="position:relative;height:680px;">
+          <image-slot id="g-hero" src="assets/guest-hero.png" style="display:block;width:100%;height:100%;" shape="rect" placeholder="メインビジュアル：朝の光・EMI"></image-slot>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0.42) 0%,rgba(40,34,28,0.05) 22%,rgba(40,34,28,0) 44%,rgba(40,34,28,0.15) 62%,rgba(40,34,28,0.72) 100%);pointer-events:none;"></div>
+          <div style="position:absolute;inset:14px;border:1px solid rgba(251,248,242,0.35);pointer-events:none;"></div>
+          <div style="position:absolute;top:18px;right:20px;pointer-events:none;">
+            <img src="assets/salonrink-logo.png" alt="SALONRINK" style="display:block;width:72px;height:auto;filter:drop-shadow(0 2px 10px rgba(40,34,28,0.4));">
+          </div>
+          <div style="position:absolute;top:30px;left:30px;pointer-events:none;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.34em;color:#FBF8F2;opacity:0;animation:srHero .7s ease both .2s;">SALONRINK</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10px;letter-spacing:0.16em;color:rgba(251,248,242,0.85);margin-top:1px;opacity:0;animation:srHero .7s ease both .3s;">concierge</div>
+            <div style="margin-top:11px;opacity:0;animation:srHero .7s ease both .42s;">
+              <div style="font-family:'Shippori Mincho B1',serif;font-size:13px;font-weight:500;letter-spacing:0.06em;color:#FBF8F2;line-height:1.7;text-shadow:0 1px 8px rgba(40,34,28,0.65);">LINEで相談、<br>マイカルテを持ち運ぼう。</div>
+            </div>
+          </div>
+          <div style="position:absolute;right:28px;top:128px;writing-mode:vertical-rl;font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.4em;color:rgba(251,248,242,0.78);text-transform:uppercase;pointer-events:none;opacity:0;animation:srHero .8s ease both .9s;">Hair &amp; Beauty — Tokyo</div>
+
+          <div style="position:absolute;left:30px;bottom:96px;pointer-events:none;">
+            <div data-hero="1" style="display:flex;align-items:center;gap:10px;opacity:0;animation:srHero .7s cubic-bezier(.22,.61,.36,1) both .15s;margin-bottom:14px;">
+              <span style="width:26px;height:1px;background:#E3C58B;display:inline-block;"></span>
+              <span style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:#FBF8F2;">Guest Story — Vol.01</span>
+            </div>
+            <div data-hero="2" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;color:#FBF8F2;font-size:46px;line-height:0.98;text-shadow:0 2px 18px rgba(40,34,28,0.45);opacity:0;animation:srHero .7s cubic-bezier(.22,.61,.36,1) both .32s;">A day with</div>
+            <div data-hero="3" style="font-family:'Pinyon Script',cursive;font-weight:400;color:#FBF8F2;font-size:118px;line-height:0.9;letter-spacing:0.01em;text-shadow:0 3px 22px rgba(40,34,28,0.5);margin-top:-6px;opacity:0;animation:srHero .8s cubic-bezier(.22,.61,.36,1) both .5s;">Emi</div>
+          </div>
+          <div data-hero="4" style="position:absolute;left:30px;right:30px;bottom:42px;color:#FBF8F2;font-family:'Shippori Mincho B1',serif;font-size:11px;line-height:2;letter-spacing:0.06em;pointer-events:none;text-shadow:0 1px 10px rgba(40,34,28,0.6);opacity:0;animation:srHero .7s ease both .72s;">わたしの髪を、わかってくれる人がいる。サロンを出たあとも続く、美容師との新しいつながり。SalonRinkは、マイカルテを通じて、あなたの髪の変化を一緒に見守ります。</div>
+          <div style="position:absolute;left:30px;bottom:20px;display:flex;align-items:center;gap:8px;color:rgba(251,248,242,0.85);font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:0.4em;text-transform:uppercase;pointer-events:none;opacity:0;animation:srHero .7s ease both 1s;">Scroll<span style="width:22px;height:1px;background:rgba(251,248,242,0.6);display:inline-block;"></span></div>
+          <div data-hero="5" style="display:none;"></div>
+        </div>
+
+        <!-- early AI diagnosis entry (churn-prevention) -->
+        <section style="padding:30px 26px 6px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">01</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">hair diagnosis</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">AI髪診断</span>
+          </div>
+          <div style="background:#FFFFFF;border:1px solid #ECE4D6;border-radius:16px;padding:18px;box-shadow:0 16px 36px -24px rgba(58,51,43,0.45);">
+            <div style="display:flex;align-items:center;gap:7px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
+              <span style="font-size:10px;letter-spacing:0.18em;color:#A89478;">AI髪診断 · 無料</span>
+            </div>
+            <div style="font-family:'Shippori Mincho B1',serif;font-size:18px;line-height:1.6;margin-top:9px;color:#3A332B;">3分でわかる、<br>今日のわたしの髪。</div>
+            <p style="font-size:11px;color:#7A6E60;line-height:1.75;margin-top:9px;">気になるお悩みをひとつ選ぶと、そのまま診断へ進めます。</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px;">
+              <sc-for list="{{ earlyChips }}" as="c" hint-placeholder-count="4">
+                <button onClick="{{ c.onClick }}" style="border:1px solid #E2D6C2;border-radius:9px;padding:10px 8px;font-size:11px;color:#5C5247;background:#FBF8F2;cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;">{{ c.label }}</button>
+              </sc-for>
+            </div>
+            <a href="#" onClick="{{ scrollToDiag }}" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:10px;padding:13px;font-size:13px;font-weight:700;letter-spacing:0.04em;">診断をはじめる <span style="font-size:16px;">›</span></a>
+          </div>
+        </section>
+
+        <!-- 02 morning -->
+        <section style="padding:38px 26px 30px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">02</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">morning</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">朝のひととき</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">いつもの朝、髪を見るたびに、<br>なんだかうれしくない日もある。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">その小さな違和感も、salonrinkはちゃんと覚えている。</div>
+          <div style="position:relative;margin-top:32px;">
+            <div style="position:absolute;right:-12px;top:28px;width:74%;height:84%;background:#E3D7C2;border-radius:60% 40% 52% 48% / 54% 50% 50% 46%;z-index:0;"></div>
+            <div style="position:relative;z-index:1;border-radius:56% 44% 50% 50% / 46% 54% 46% 54%;overflow:hidden;box-shadow:0 22px 46px -24px rgba(58,51,43,0.45);">
+              <image-slot id="g-02" src="assets/guest-02-morning.png" style="display:block;width:100%;height:400px;" shape="rect" placeholder="朝・コーヒーと女性"></image-slot>
+            </div>
+            <div data-glass2 style="position:absolute;left:-6px;bottom:48px;z-index:3;max-width:70%;opacity:0;background:rgba(255,255,255,0.22);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,0.45);border-radius:16px;padding:13px 16px;box-shadow:0 16px 38px -18px rgba(58,51,43,0.5);">
+              <div style="font-family:'Shippori Mincho B1',serif;font-size:13px;line-height:1.7;color:#3A332B;letter-spacing:0.04em;">髪が決まると、<br>その日のわたしも、少し好きになる。</div>
+            </div>
+            <div style="position:absolute;right:-6px;bottom:-8px;z-index:2;background:#FBF8F2;padding:11px 14px;box-shadow:0 12px 26px -12px rgba(58,51,43,0.6);font-family:'Caveat',cursive;font-size:15px;color:#6E5E4C;line-height:1.5;transform:rotate(3deg);"><span style="font-style:italic;">my routine</span><br>· coffee<br>· book<br>· skin care</div>
+          </div>
+        </section>
+
+        <!-- 03 book store -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">03</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">book store</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">本屋さん</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">お気に入りの本屋さんへ、<br>ゆっくりの週末。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">次の予約も、髪の記録も、salonrinkのアプリの中に。</div>
+          <div style="position:relative;margin-top:18px;height:372px;">
+            <image-slot id="g-03a" src="assets/guest-03-bookstore.png" style="display:block;position:absolute;top:8px;right:-26px;width:70%;height:300px;" shape="rect" placeholder="本屋"></image-slot>
+            <span style="position:absolute;bottom:4px;right:12px;font-family:'Cormorant Garamond',serif;font-size:104px;font-weight:500;line-height:1;color:#F2EEE6;mix-blend-mode:soft-light;pointer-events:none;">03</span>
+            <div style="position:absolute;left:-10px;top:0;transform:rotate(-5deg);background:#FBF8F2;padding:6px 6px 7px;box-shadow:0 12px 24px -12px rgba(58,51,43,0.5);width:122px;z-index:2;">
+              <image-slot id="g-03c" src="assets/guest-03-books3.png" style="display:block;width:100%;height:146px;" shape="rect" placeholder="本"></image-slot>
+            </div>
+            <div style="position:absolute;left:-14px;bottom:0;transform:rotate(4deg);background:#FBF8F2;padding:7px 7px 24px;box-shadow:0 16px 30px -14px rgba(58,51,43,0.55);width:168px;z-index:3;">
+              <image-slot id="g-03b" src="assets/guest-03-books2.png" style="display:block;width:100%;height:172px;" shape="rect" placeholder="本"></image-slot>
+              <div style="font-family:'Caveat',cursive;font-size:14px;color:#6E5E4C;text-align:center;margin-top:4px;">weekend reads</div>
+            </div>
+          </div>
+          <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12.5px;color:#A89478;margin-top:6px;">fig. 03 — a slow detour through the bookstore.</div>
+        </section>
+
+        <!-- 04 LINE相談 -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">04</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">LINE相談</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">気になることは、いつでも聞ける。<br>不安な気持ちも、すっと軽くなる。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">salonrinkのLINEで、担当美容師にそのまま相談。</div>
+          <div style="position:relative;margin-top:8px;">
+            <image-slot id="g-04" src="assets/guest-04-photo.png" style="display:block;width:100%;height:380px;border-radius:4px;" shape="rect" placeholder="LINEで相談"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 56%,rgba(40,34,28,0.42) 100%);pointer-events:none;"></div>
+            <span style="position:absolute;top:-28px;left:-14px;font-family:'Cormorant Garamond',serif;font-size:128px;font-weight:500;line-height:1;color:#F2EEE6;mix-blend-mode:soft-light;pointer-events:none;">04</span>
+            <div data-glass style="position:absolute;left:16px;right:16px;bottom:18px;opacity:0;background:rgba(255,255,255,0.18);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);border:1px solid rgba(255,255,255,0.4);border-radius:18px;padding:13px 14px;box-shadow:0 14px 40px -16px rgba(40,34,28,0.6);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                <span style="width:22px;height:22px;border-radius:50%;background:#5DAE54;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><path d="M12 2C6.5 2 2 5.8 2 10.5c0 2.7 1.5 5.1 3.9 6.6-.2.7-.7 2.3-.8 2.7 0 0-.02.1.05.16.07.05.15.02.15.02.36-.05 2.4-1.6 3.3-2.2.74.1 1.5.16 2.3.16 5.5 0 10-3.8 10-8.5S17.5 2 12 2z"/></svg></span>
+                <span style="font-size:11px;font-weight:700;color:#FBF8F2;text-shadow:0 1px 4px rgba(40,34,28,0.5);">SalonRink 相談窓口</span>
+                <span data-glass-time style="margin-left:auto;font-size:9px;color:rgba(251,248,242,0.85);opacity:0;">送信済み 9:41</span>
+              </div>
+              <div data-glass-bubble style="opacity:0;align-self:flex-end;background:rgba(168,217,143,0.92);color:#23341A;border-radius:14px 4px 14px 14px;padding:9px 13px;font-size:11.5px;line-height:1.6;max-width:88%;margin-left:auto;">最近、髪のパサつきが気になります。<span data-glass-check style="display:inline-block;margin-left:6px;vertical-align:middle;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#3F7A33" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7" stroke-dasharray="20" style="animation:srCheck .5s ease forwards 1.1s;"/></svg></span></div>
+            </div>
+          </div>
+          <div style="text-align:right;font-family:'Caveat',cursive;font-size:17px;color:#5DAE54;margin:14px 6px 8px;transform:rotate(-2deg);">Let's 相談してみる！</div>
+
+          <div style="border-radius:16px;overflow:hidden;border:1px solid #E3DACB;box-shadow:0 16px 36px -22px rgba(58,51,43,0.4);">
+            <div style="background:#fff;display:flex;align-items:center;gap:9px;padding:11px 13px;border-bottom:1px solid #EEE7DA;">
+              <span style="color:#9C7E5C;font-size:17px;line-height:1;">‹</span>
+              <span style="display:flex;align-items:center;gap:6px;flex:1;min-width:0;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="#3A332B"><path d="M12 2l8 3v6c0 5-3.4 8.7-8 11-4.6-2.3-8-6-8-11V5z"/></svg>
+                <span style="font-size:13px;font-weight:700;color:#3A332B;">SalonRink</span>
+                <span style="font-size:11px;color:#8A7A68;">相談窓口</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" style="flex-shrink:0;"><circle cx="12" cy="12" r="11" fill="#5DAE54"/><path d="M7 12.4l3.3 3.3L17 9" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A7A68" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8A7A68" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+            </div>
+            <div style="background:#D9E0E8;padding:14px 12px;">
+              <div style="text-align:center;margin-bottom:12px;"><span style="background:rgba(120,134,148,0.28);color:#5B6670;font-size:9.5px;padding:3px 12px;border-radius:999px;">今日</span></div>
+              <div data-line-greet style="display:flex;gap:8px;align-items:flex-end;min-height:54px;">
+                <span style="flex-shrink:0;width:32px;height:32px;border-radius:50%;background:#6E5742;color:#FBF8F2;display:flex;align-items:center;justify-content:center;text-align:center;font-family:'Cormorant Garamond',serif;font-size:8px;line-height:1.05;">Salon<br>Rink</span>
+                <sc-if value="{{ greetTyping }}" hint-placeholder-val="{{ true }}">
+                  <div style="background:#fff;border-radius:4px 15px 15px 15px;padding:13px 15px;display:flex;gap:5px;align-items:center;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite;"></span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite .2s;"></span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite .4s;"></span>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ greetShown }}" hint-placeholder-val="{{ false }}">
+                  <div style="max-width:76%;background:#fff;border-radius:4px 15px 15px 15px;padding:10px 13px;font-size:11.5px;line-height:1.75;color:#3A332B;animation:srRise .45s ease both;">こんにちは！<br>SalonRink相談窓口です🌿<br>あなたの髪のお悩みに合わせて、最適なケアやスタイルをご提案します。<br><br>まずは、いま一番気になる髪の悩みを選んでください。</div>
+                  <span style="font-size:9px;color:#7B8794;align-self:flex-end;animation:srRise .45s ease both;">9:41</span>
+                </sc-if>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+                <sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="0">
+                  <div style="align-self:{{ m.align }};max-width:80%;background:{{ m.bg }};color:{{ m.color }};border-radius:{{ m.radius }};padding:9px 13px;font-size:11.5px;line-height:1.7;animation:srRise .4s ease both;">{{ m.text }}</div>
+                </sc-for>
+                <sc-if value="{{ chatTyping }}" hint-placeholder-val="{{ false }}">
+                  <div style="align-self:flex-start;background:#fff;border-radius:4px 14px 14px 14px;padding:11px 13px;display:flex;gap:5px;align-items:center;">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite;"></span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite .2s;"></span>
+                    <span style="width:6px;height:6px;border-radius:50%;background:#B7C2CE;display:inline-block;animation:srBlink 1.2s infinite .4s;"></span>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ chatShowStyles }}" hint-placeholder-val="{{ false }}">
+                <div style="background:#fff;border-radius:14px;padding:14px;margin-top:10px;animation:srRise .4s ease both;">
+                  <div style="font-size:12.5px;font-weight:700;color:#4F73A8;">おすすめスタイル</div>
+                  <div style="font-size:11px;color:#7A6E60;line-height:1.6;margin-top:3px;">まとまりやすく、毎朝のお手入れも楽に。</div>
+                  <div style="display:flex;gap:11px;padding:13px 0;border-top:1px solid #F0E9DC;margin-top:10px;">
+                    <image-slot id="g-04s1" src="assets/guest-look1.png" style="display:block;width:66px;height:66px;flex-shrink:0;" shape="rounded" radius="9" placeholder=""></image-slot>
+                    <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:#3A332B;">ナチュラルストレートボブ</div><div style="font-size:10.5px;color:#7A6E60;line-height:1.55;margin-top:3px;">ボリュームを抑えて、自然なまとまりに。扱いやすさ◎</div><span style="display:inline-block;margin-top:7px;border:1px solid #D8CDBA;border-radius:999px;padding:4px 12px;font-size:10px;color:#8A7A68;">詳しく見る</span></div>
+                  </div>
+                  <div style="display:flex;gap:11px;padding:13px 0;border-top:1px solid #F0E9DC;">
+                    <image-slot id="g-04s2" src="assets/guest-look2.png" style="display:block;width:66px;height:66px;flex-shrink:0;" shape="rounded" radius="9" placeholder=""></image-slot>
+                    <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:#3A332B;">くびれミディアム</div><div style="font-size:10.5px;color:#7A6E60;line-height:1.55;margin-top:3px;">くびれのシルエットで広がりを抑えつつ、抜け感も演出。</div><span style="display:inline-block;margin-top:7px;border:1px solid #D8CDBA;border-radius:999px;padding:4px 12px;font-size:10px;color:#8A7A68;">詳しく見る</span></div>
+                  </div>
+                  <div style="display:flex;gap:11px;padding:13px 0;border-top:1px solid #F0E9DC;">
+                    <image-slot id="g-04s3" src="assets/guest-look3.png" style="display:block;width:66px;height:66px;flex-shrink:0;" shape="rounded" radius="9" placeholder=""></image-slot>
+                    <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:700;color:#3A332B;">レイヤーロング</div><div style="font-size:10.5px;color:#7A6E60;line-height:1.55;margin-top:3px;">重さを残しながら動きをプラス。広がりを抑えて柔らかい印象に。</div><span style="display:inline-block;margin-top:7px;border:1px solid #D8CDBA;border-radius:999px;padding:4px 12px;font-size:10px;color:#8A7A68;">詳しく見る</span></div>
+                  </div>
+                  <div style="font-size:11px;color:#5C5247;line-height:1.7;margin-top:8px;border-top:1px solid #F0E9DC;padding-top:11px;">気になるスタイルはありますか？<br>他にもご希望に合わせてご提案します！</div>
+                </div>
+              </sc-if>
+
+              <div style="background:#fff;border-radius:14px;padding:14px;margin-top:10px;animation:srPulse 2.6s ease-in-out infinite;">
+                <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:11px;"><span style="font-size:12.5px;font-weight:700;color:#3A332B;">どんな悩みが気になりますか？</span><span style="font-family:'Caveat',cursive;font-size:16px;color:#B5675A;white-space:nowrap;transform:rotate(-3deg);animation:srFlash 1.1s ease-in-out infinite;">tap me! ↓</span></div>
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <sc-for list="{{ chatChips }}" as="c" hint-placeholder-count="6">
+                    <button onClick="{{ c.onClick }}" style-active="transform:scale(0.97);" style="border:1px solid {{ c.border }};border-radius:999px;padding:11px;text-align:center;font-size:12px;color:{{ c.fg }};background:{{ c.bg }};cursor:pointer;font-family:'Zen Kaku Gothic New',sans-serif;transition:all .2s ease;">{{ c.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+            <div style="background:#fff;display:flex;align-items:center;gap:11px;padding:10px 13px;border-top:1px solid #EEE7DA;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A89478" stroke-width="1.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A89478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="3"/><path d="M8 6l1.5-2h5L16 6"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A89478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="M21 16l-5-5L5 20"/></svg>
+              <span style="flex:1;background:#F2EEE6;border-radius:999px;padding:8px 14px;font-size:11px;color:#A89478;">メッセージを入力</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A89478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 14c.8.9 1.9 1.4 3 1.4s2.2-.5 3-1.4"/><circle cx="9" cy="10" r="0.6" fill="#A89478"/><circle cx="15" cy="10" r="0.6" fill="#A89478"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A89478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+            </div>
+          </div>
+        </section>
+
+        <!-- reservation -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:#9C7E5C;">reservation</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">ご予約</span>
+            <span style="flex:1;height:1px;background:#E3DACB;align-self:center;"></span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">行きたい、と思ったその夜に。<br>アプリから、3タップで。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">メニューも日時も、指先で完結。担当の空き状況もその場でわかる。</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:10px;background:#F6F1E8;border:1px solid #ECE4D6;border-radius:8px;padding:8px 11px;"><span style="width:5px;height:5px;border-radius:50%;background:#9C7E5C;display:inline-block;flex-shrink:0;"></span><span style="font-size:11px;color:#8A6F52;line-height:1.6;">予約サイト（HOT PEPPER Beauty等）と連携し、空き状況の確認・予約をご案内します。</span></div>
+
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:18px;overflow:hidden;box-shadow:0 16px 38px -22px rgba(58,51,43,0.45);">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:16px;border-bottom:1px solid #F0E9DC;">
+              <image-slot id="g-bk-salon" src="assets/guest-05-arrive.png" style="display:block;width:60px;height:60px;flex-shrink:0;" shape="rounded" radius="12" placeholder=""></image-slot>
+              <div style="flex:1;min-width:0;">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#3A332B;">hair atelier calm</div>
+                <div style="font-size:11px;color:#8A7A68;margin-top:2px;">渋谷駅から徒歩7分</div>
+                <span style="display:inline-block;margin-top:7px;background:#F6F1E8;border-radius:999px;padding:4px 10px;font-size:10px;color:#9C7E5C;">得意スタイル：ナチュラル・透明感カラー</span>
+              </div>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+            </div>
+
+            <div style="display:flex;align-items:flex-start;padding:16px 16px 4px;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #D8CDBA;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A89478;">1</span><span style="font-size:9px;color:#A89478;">メニュー選択</span></div>
+              <span style="flex:0 0 16px;height:1px;background:#D8CDBA;margin-top:12px;"></span>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><span style="width:24px;height:24px;border-radius:50%;background:#6E5742;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FBF8F2;">2</span><span style="font-size:9px;color:#3A332B;font-weight:700;">日時選択</span></div>
+              <span style="flex:0 0 16px;height:1px;background:#D8CDBA;margin-top:12px;"></span>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #D8CDBA;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A89478;">3</span><span style="font-size:9px;color:#A89478;">情報入力</span></div>
+              <span style="flex:0 0 16px;height:1px;background:#D8CDBA;margin-top:12px;"></span>
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;"><span style="width:24px;height:24px;border-radius:50%;border:1px solid #D8CDBA;display:flex;align-items:center;justify-content:center;font-size:11px;color:#A89478;">4</span><span style="font-size:9px;color:#A89478;">予約完了</span></div>
+            </div>
+
+            <div style="padding:14px 16px 0;">
+              <div style="font-size:13px;font-weight:700;color:#3A332B;margin-bottom:12px;">日時を選択してください</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <span style="color:#C2B097;font-size:14px;">‹</span>
+                <span style="font-family:'Cormorant Garamond',serif;font-size:15px;color:#3A332B;letter-spacing:0.04em;">2026年 6月</span>
+                <span style="color:#9C7E5C;font-size:14px;">›</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:10px;color:#A89478;margin-bottom:4px;">
+                <span style="color:#C0735E;">日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span style="color:#8AA0B8;">土</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:11.5px;color:#5C5247;row-gap:2px;">
+                <span></span><span style="padding:7px 0;">1</span><span style="padding:7px 0;">2</span><span style="padding:7px 0;">3</span><span style="padding:7px 0;">4</span><span style="padding:7px 0;">5</span><span style="padding:7px 0;color:#8AA0B8;">6</span>
+                <span style="padding:7px 0;color:#C0735E;">7</span><span style="padding:7px 0;">8</span><span style="padding:7px 0;">9</span><span style="padding:7px 0;">10</span><span style="padding:7px 0;">11</span><span style="padding:7px 0;">12</span><span style="padding:7px 0;color:#8AA0B8;">13</span>
+                <span style="padding:7px 0;color:#C0735E;">14</span><span style="padding:7px 0;"><span data-bk-day style="display:inline-flex;width:26px;height:26px;border-radius:50%;background:#6E5742;color:#FBF8F2;align-items:center;justify-content:center;animation:srPulse 2.4s ease-in-out infinite;">15</span></span><span style="padding:7px 0;">16</span><span style="padding:7px 0;">17</span><span style="padding:7px 0;">18</span><span style="padding:7px 0;">19</span><span style="padding:7px 0;color:#8AA0B8;">20</span>
+                <span style="padding:7px 0;color:#C0735E;">21</span><span style="padding:7px 0;">22</span><span style="padding:7px 0;">23</span><span style="padding:7px 0;">24</span><span style="padding:7px 0;">25</span><span style="padding:7px 0;">26</span><span style="padding:7px 0;color:#8AA0B8;">27</span>
+                <span style="padding:7px 0;color:#C0735E;">28</span><span style="padding:7px 0;">29</span><span style="padding:7px 0;">30</span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+
+            <div style="padding:14px 16px 0;">
+              <div style="font-size:12px;color:#5C5247;margin-bottom:9px;">2026年6月15日 <span style="color:#A89478;">(月)</span></div>
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                <span style="border:1px solid #E3DACB;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#5C5247;">10:00</span>
+                <span style="border:1px solid #6E5742;background:#6E5742;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#FBF8F2;animation:srPulse 2.4s ease-in-out infinite .3s;">11:00</span>
+                <span style="border:1px solid #E3DACB;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#5C5247;">13:30</span>
+                <span style="border:1px solid #E3DACB;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#5C5247;">15:00</span>
+                <span style="border:1px solid #E3DACB;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#5C5247;">16:30</span>
+                <span style="border:1px solid #E3DACB;border-radius:8px;padding:9px 0;text-align:center;font-size:12px;color:#5C5247;">18:00</span>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;border-top:1px solid #F0E9DC;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+              <image-slot id="g-bk-menu" src="assets/guest-look1.png" style="display:block;width:46px;height:46px;flex-shrink:0;" shape="rounded" radius="8" placeholder=""></image-slot>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:10px;color:#A89478;letter-spacing:0.08em;">選択中のメニュー</div>
+                <div style="font-size:12px;color:#3A332B;margin-top:2px;">カット＋透明感カラー＋トリートメント</div>
+                <div style="font-family:'Cormorant Garamond',serif;font-size:16px;color:#8A6F52;margin-top:1px;">¥14,500<span style="font-size:10px;color:#A89478;"> (税込)</span></div>
+              </div>
+              <span style="flex-shrink:0;border:1px solid #D8CDBA;border-radius:999px;padding:6px 14px;font-size:11px;color:#8A7A68;">変更</span>
+            </div>
+
+            <div style="padding:0 16px 16px;">
+              <button style="width:100%;border:none;background:#3A332B;color:#FBF8F2;font-family:'Zen Kaku Gothic New',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;padding:15px;border-radius:999px;cursor:pointer;">次へ進む</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 05 salon visit -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">05</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">salon visit</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">サロンに行く</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">信頼できる美容師さんに<br>出会えた日に。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">あなたに合う一人を、salonrinkがつなぐ。</div>
+          <div data-reveal style="margin:22px -26px 0;overflow:hidden;width:calc(100% + 52px);opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <div style-hover="animation-play-state:paused;" style="display:flex;align-items:flex-start;width:max-content;animation:srMarquee 26s linear infinite;padding:6px 0 30px;">
+              <div style="width:200px;height:300px;margin-right:13px;margin-top:0;flex-shrink:0;border-radius:100px 100px 6px 6px;background:url('assets/guest-05-visit.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:252px;margin-right:13px;margin-top:34px;flex-shrink:0;border-radius:6px;background:url('assets/guest-05-visit2.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:288px;margin-right:13px;margin-top:12px;flex-shrink:0;border-radius:100px 100px 6px 6px;background:url('assets/guest-05-train-stand.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:316px;margin-right:13px;margin-top:0;flex-shrink:0;border-radius:6px;background:url('assets/guest-05-shoes.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:300px;margin-right:13px;margin-top:0;flex-shrink:0;border-radius:100px 100px 6px 6px;background:url('assets/guest-05-visit.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:252px;margin-right:13px;margin-top:34px;flex-shrink:0;border-radius:6px;background:url('assets/guest-05-visit2.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:288px;margin-right:13px;margin-top:12px;flex-shrink:0;border-radius:100px 100px 6px 6px;background:url('assets/guest-05-train-stand.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+              <div style="width:200px;height:316px;margin-right:13px;margin-top:0;flex-shrink:0;border-radius:6px;background:url('assets/guest-05-shoes.png') center/cover;box-shadow:0 16px 30px -18px rgba(58,51,43,0.5);"></div>
+            </div>
+          </div>
+          <div data-reveal style="margin-top:24px;border-left:2px solid #C2B097;padding-left:16px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <div style="font-family:'Shippori Mincho B1',serif;font-size:15.5px;line-height:1.95;letter-spacing:0.06em;color:#3A332B;">着替えても、街に出ても、<br>髪の記録は、いつも一緒。</div>
+            <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.8;margin-top:10px;">マイカルテはアプリの中に。どのサロンでも、あなたの髪を“知っている”状態から始められる。</div>
+          </div>
+          <div data-reveal style="position:relative;margin-top:12px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-05t" src="assets/guest-05-train-sit.png" style="display:block;width:calc(100% + 52px);height:300px;margin-left:-26px;margin-right:-26px;" shape="rect" placeholder="電車"></image-slot>
+            <span style="position:absolute;top:-26px;left:-14px;font-family:'Cormorant Garamond',serif;font-size:128px;font-weight:500;line-height:1;color:#F2EEE6;mix-blend-mode:soft-light;pointer-events:none;">05</span>
+            <div style="position:absolute;left:-10px;bottom:-18px;transform:rotate(-4deg);background:#FBF8F2;padding:7px 7px 22px;box-shadow:0 16px 30px -14px rgba(58,51,43,0.55);width:132px;z-index:3;">
+              <image-slot id="g-05w" src="assets/guest-05-shoes.png" style="display:block;width:100%;height:150px;" shape="rect" placeholder="街"></image-slot>
+              <div style="font-family:'Caveat',cursive;font-size:13px;color:#6E5E4C;text-align:center;margin-top:4px;">almost there</div>
+            </div>
+          </div>
+          <div data-reveal style="position:relative;margin-top:14px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-05arr" src="assets/guest-05-arrive.png" style="display:block;width:calc(100% + 52px);height:360px;margin-left:-26px;margin-right:-26px;" shape="rect" placeholder="サロン到着"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 45%,rgba(40,34,28,0.38));pointer-events:none;"></div>
+            <div data-glass style="position:absolute;left:18px;right:18px;bottom:18px;background:rgba(255,255,255,0.18);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,0.42);border-radius:16px;padding:15px 18px;box-shadow:0 12px 30px -14px rgba(40,34,28,0.5);opacity:0;transform:translateY(24px) scale(0.96);transition:opacity .9s ease .15s,transform .9s cubic-bezier(.22,.61,.36,1) .15s;">
+              <div style="font-size:9px;letter-spacing:0.22em;color:rgba(251,248,242,0.95);text-shadow:0 1px 3px rgba(40,34,28,0.4);margin-bottom:6px;">MY CARTE</div>
+              <div style="font-size:12.5px;line-height:1.8;color:#FBF8F2;text-shadow:0 1px 5px rgba(40,34,28,0.5);">マイカルテがあるから、<br>“初めて”を何度も説明しなくていい。<br>いつもの美容師さんが、私の髪を知っている。</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 06 hair check / AI診断 -->
+        <section id="g-diagnosis" style="padding:30px 26px 28px;scroll-margin-top:16px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">06</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">hair check</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">髪のチェック</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">ふとした瞬間に気づく、髪の変化。<br>パサつき、うねり、まとまりにくさ…</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">気づいた変化は、AIがその場で診断してカルテに記録。</div>
+          <div style="position:relative;min-height:262px;margin-top:24px;">
+            <image-slot id="g-06" src="assets/guest-06-haircheck.png" style="display:block;position:absolute;top:0;right:0;width:62%;height:240px;" shape="rect" placeholder="髪のチェック"></image-slot>
+            <span style="position:absolute;top:24px;left:-6px;font-family:'Cormorant Garamond',serif;font-size:92px;font-weight:500;line-height:1;color:#CBBDA4;opacity:0.6;pointer-events:none;">06</span>
+            <div style="position:absolute;left:-4px;bottom:10px;width:34%;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12.5px;color:#9C7E5C;line-height:1.45;">a closer look in the mirror.</div>
+          </div>
+          <div style="position:relative;margin-top:18px;min-height:250px;">
+            <image-slot id="g-06b" src="assets/guest-06-aiscan.png" style="display:block;position:absolute;top:0;right:-26px;width:64%;height:240px;" shape="rect" placeholder="AI診断中"></image-slot>
+            <div style="position:absolute;left:0;bottom:34px;max-width:48%;z-index:2;">
+              <div style="font-family:'Caveat',cursive;font-size:17px;color:#9C7E5C;transform:rotate(-3deg);margin-bottom:8px;">try it!</div>
+              <div style="background:#FBF8F2;border:1px solid #ECE4D6;border-radius:12px;padding:13px 14px;box-shadow:0 16px 32px -16px rgba(58,51,43,0.5);font-size:11.5px;line-height:1.8;color:#5C5247;">カメラをかざすだけ。<br>AIが髪をその場で診断。</div>
+            </div>
+          </div>
+          <button onClick="{{ scrollToDiag }}" style="width:100%;margin-top:18px;border:none;background:#9C7E5C;color:#FBF8F2;font-family:'Zen Kaku Gothic New',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.06em;padding:14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 12px 28px -14px rgba(58,51,43,0.5);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
+            AI髪診断を試してみる
+          </button>
+          <div data-reveal style="margin-top:16px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:14px;padding:20px 18px;box-shadow:0 14px 34px -20px rgba(58,51,43,0.45);opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <div style="font-size:10px;letter-spacing:0.16em;color:#A89478;">AI髪診断結果</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-top:2px;">Soft Natural</div>
+            <div style="font-size:11px;color:#8A7A68;letter-spacing:0.08em;">ソフトナチュラルタイプ</div>
+            <div style="display:flex;justify-content:center;margin:6px 0 2px;">
+              <svg width="212" height="186" viewBox="0 0 200 176">
+                <g fill="none" stroke="#EAE1D2" stroke-width="1">
+                  <polygon points="100,34 153,73 133,135 67,135 47,73"></polygon>
+                  <polygon points="100,62 127,81 117,113 83,113 73,81"></polygon>
+                </g>
+                <g stroke="#EAE1D2" stroke-width="1"><line x1="100" y1="90" x2="100" y2="34"/><line x1="100" y1="90" x2="153" y2="73"/><line x1="100" y1="90" x2="133" y2="135"/><line x1="100" y1="90" x2="67" y2="135"/><line x1="100" y1="90" x2="47" y2="73"/></g>
+                <polygon data-grow points="100,50 136,78 118,115 73,128 76,82" fill="rgba(150,122,86,0.28)" stroke="#9C7E5C" stroke-width="1.5" style="transform-box:view-box;transform-origin:100px 90px;transform:scale(0);transition:transform 1.1s cubic-bezier(.34,1.45,.5,1);"></polygon>
+                <g data-grow fill="#9C7E5C" style="transform-box:view-box;transform-origin:100px 90px;transform:scale(0);transition:transform 1.1s cubic-bezier(.34,1.45,.5,1) .1s;"><circle cx="100" cy="50" r="2.4"/><circle cx="136" cy="78" r="2.4"/><circle cx="118" cy="115" r="2.4"/><circle cx="73" cy="128" r="2.4"/><circle cx="76" cy="82" r="2.4"/></g>
+                <g font-family="'Zen Kaku Gothic New',sans-serif">
+                  <text x="100" y="16" text-anchor="middle" font-size="9.5" fill="#8A7A68">うるおい</text><text x="100" y="29" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5C5247">72</text>
+                  <text x="162" y="64" text-anchor="start" font-size="9.5" fill="#8A7A68">まとまり</text><text x="162" y="77" text-anchor="start" font-size="12.5" font-weight="700" fill="#5C5247">68</text>
+                  <text x="38" y="64" text-anchor="end" font-size="9.5" fill="#8A7A68">くせ</text><text x="38" y="77" text-anchor="end" font-size="12.5" font-weight="700" fill="#5C5247">46</text>
+                  <text x="140" y="158" text-anchor="middle" font-size="9.5" fill="#8A7A68">ボリューム <tspan font-size="12" font-weight="700" fill="#5C5247">54</tspan></text>
+                  <text x="60" y="158" text-anchor="middle" font-size="9.5" fill="#8A7A68">ダメージ <tspan font-size="12" font-weight="700" fill="#5C5247">83</tspan></text>
+                </g>
+              </svg>
+            </div>
+            <div style="border-top:1px solid #F0E9DC;margin-top:8px;padding-top:16px;">
+              <div style="font-size:13px;font-weight:700;color:#3A332B;margin-bottom:13px;">おすすめケア</div>
+              <div style="display:flex;flex-direction:column;gap:13px;">
+                <div style="display:flex;gap:12px;align-items:flex-start;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M12 3c3 4 6 7 6 10a6 6 0 0 1-12 0c0-3 3-6 6-10z"/></svg><div style="font-size:12px;line-height:1.6;color:#5C5247;">保湿をしっかりして、うるおいを与えましょう</div></div>
+                <div style="display:flex;gap:12px;align-items:flex-start;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M9.5 3h5v3l1 2v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V8l1-2z"/><path d="M8.5 12h7"/></svg><div style="font-size:12px;line-height:1.6;color:#5C5247;">ダメージ補修で、髪の内部からケアしましょう</div></div>
+                <div style="display:flex;gap:12px;align-items:flex-start;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><rect x="5" y="4" width="14" height="5" rx="1"/><path d="M7.5 9v10M11 9v10M14.5 9v10M18 9v10"/></svg><div style="font-size:12px;line-height:1.6;color:#5C5247;">広がりを抑えるために、まとまりケアを取り入れましょう</div></div>
+              </div>
+            </div>
+            <div style="border-top:1px solid #F0E9DC;margin-top:18px;padding-top:16px;">
+              <div style="font-size:13px;font-weight:700;color:#3A332B;margin-bottom:13px;">おすすめスタイル</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;">
+                <div style="text-align:center;"><image-slot id="g-st1" src="assets/guest-look1.png" style="display:block;width:100%;height:88px;" shape="rounded" radius="9" placeholder=""></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:7px;">ナチュラルレイヤー</div></div>
+                <div style="text-align:center;"><image-slot id="g-st2" src="assets/guest-look2.png" style="display:block;width:100%;height:88px;" shape="rounded" radius="9" placeholder=""></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:7px;">くびれミディ</div></div>
+                <div style="text-align:center;"><image-slot id="g-st3" src="assets/guest-look4.png" style="display:block;width:100%;height:88px;" shape="rounded" radius="9" placeholder=""></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:7px;">ゆるふわウェーブ</div></div>
+              </div>
+              <div style="display:flex;justify-content:center;gap:5px;margin-top:11px;"><span style="width:6px;height:6px;border-radius:50%;background:#9C7E5C;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#E2D6C2;display:inline-block;"></span><span style="width:6px;height:6px;border-radius:50%;background:#E2D6C2;display:inline-block;"></span></div>
+            </div>
+            <div style="background:#F6F1E8;border-radius:12px;padding:14px 15px;margin-top:18px;display:flex;gap:12px;align-items:center;">
+              <div style="flex:1;"><div style="font-size:12.5px;font-weight:700;color:#3A332B;line-height:1.5;">診断結果をマイカルテに保存しました</div><div style="font-size:11px;color:#7A6E60;line-height:1.65;margin-top:5px;">美容師と共有して、あなたに合った提案を受け取りましょう</div></div>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3.5" y="3" width="11" height="18" rx="2"/><path d="M6.5 7h5M6.5 11h5M6.5 15h3"/><circle cx="18" cy="13" r="2.3"/><path d="M14.6 20a3.4 3.4 0 0 1 6.8 0"/></svg>
+            </div>
+            <button style="width:100%;margin-top:12px;border:none;background:#3A332B;color:#FBF8F2;font-family:'Zen Kaku Gothic New',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.08em;padding:14px;border-radius:999px;cursor:pointer;">マイカルテを見る</button>
+            <p style="font-size:11px;color:#A89478;line-height:1.65;margin-top:10px;">※撮影した写真は髪質の解析とカルテ保存のためにのみ使用します。</p>
+          </div>
+        </section>
+
+        <!-- style gallery -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:20px;color:#9C7E5C;">style gallery</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">スタイルギャラリー</span>
+            <span style="flex:1;height:1px;background:#E3DACB;align-self:center;"></span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">診断結果をもとに、<br>似合うスタイルをまとめて。</p>
+          <div style="font-family:'Caveat',cursive;font-size:15px;color:#9C7E5C;text-align:right;margin:6px 4px -4px;">swipe →</div>
+          <div id="g-gallery" data-reveal style="display:flex;gap:12px;overflow-x:auto;margin:14px -26px 0;padding:6px 26px 12px;-webkit-overflow-scrolling:touch;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);scrollbar-width:none;">
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal1" src="assets/guest-look1.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">ナチュラル<br>ストレートボブ</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal2" src="assets/guest-look2.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">くびれ<br>ミディアム</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal3" src="assets/guest-look3.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">レイヤー<br>ロング</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal4" src="assets/guest-look4.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">ゆるふわ<br>ミディ</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal5" src="assets/guest-look5.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">ショート<br>レイヤー</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+            <div style="background:#fff;border:1px solid #ECE4D6;border-radius:13px;overflow:hidden;min-width:172px;scroll-snap-align:start;flex-shrink:0;box-shadow:0 12px 28px -20px rgba(58,51,43,0.4);">
+              <div style="position:relative;"><image-slot id="g-gal6" src="assets/guest-look6.png" style="display:block;width:100%;height:166px;" shape="rect" placeholder=""></image-slot><span style="position:absolute;top:6px;right:6px;width:21px;height:21px;border-radius:50%;background:rgba(255,255,255,0.85);display:flex;align-items:center;justify-content:center;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#C2B097" stroke-width="2"><path d="M20.8 6.6a5 5 0 0 0-7.1 0L12 8.3l-1.7-1.7a5 5 0 1 0-7.1 7.1L12 22l8.8-8.3a5 5 0 0 0 0-7.1z"/></svg></span></div>
+              <div style="padding:8px 7px 9px;text-align:center;"><div style="font-size:10px;font-weight:700;color:#3A332B;line-height:1.4;">さらツヤ<br>ストレート</div><button style="width:100%;margin-top:8px;border:1px solid #D8CDBA;background:#FBF8F2;border-radius:999px;padding:5px;font-size:9.5px;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;cursor:pointer;">詳細を見る</button></div>
+            </div>
+          </div>
+          <button style="width:100%;margin-top:16px;border:none;background:#8A6F52;color:#FBF8F2;font-family:'Zen Kaku Gothic New',sans-serif;font-size:12.5px;letter-spacing:0.1em;padding:14px;border-radius:999px;cursor:pointer;">もっとスタイルを探す</button>
+        </section>
+
+        <!-- 07 before / after -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">07</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">before / after</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">なりたいを、ことばにして。<br>一緒に、いちばんを見つける。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">カウンセリングは、診断結果とカルテを見ながら。骨格も、毎日の手のかかり方も。</div>
+
+          <div data-reveal style="position:relative;margin:0 0 24px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-07s" src="assets/guest-07-cut.png" style="display:block;width:calc(100% + 52px);height:250px;margin-left:-26px;margin-right:-26px;" shape="rect" placeholder="施術中"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(40,34,28,0.5),rgba(40,34,28,0) 52%);pointer-events:none;"></div>
+            <div style="position:absolute;left:6px;bottom:14px;color:#FBF8F2;">
+              <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1;">snip, snip…</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;margin-top:4px;">in the chair.</div>
+            </div>
+          </div>
+          <div data-reveal style="position:relative;margin:0 0 24px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-07finish" src="assets/guest-07-finish.png" style="display:block;width:calc(100% + 52px);height:300px;margin-left:-26px;margin-right:-26px;" shape="rect" placeholder="仕上がり"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 58%,rgba(40,34,28,0.42));pointer-events:none;"></div>
+            <div style="position:absolute;left:8px;bottom:14px;color:#FBF8F2;">
+              <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1;">love it!</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;margin-top:4px;">the new me.</div>
+            </div>
+          </div>
+          <div data-reveal style="position:relative;margin:0 0 24px;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-07walk" src="assets/guest-07-walkhome.png" style="display:block;width:calc(100% + 52px);height:300px;margin-left:-26px;margin-right:-26px;" shape="rect" placeholder="帰り道"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 60%,rgba(40,34,28,0.4));pointer-events:none;"></div>
+            <div style="position:absolute;right:8px;bottom:14px;text-align:right;color:#FBF8F2;">
+              <div style="font-family:'Caveat',cursive;font-size:18px;line-height:1;">feeling good ✺</div>
+              <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;margin-top:4px;">on the way home.</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:4px;margin-bottom:8px;">
+            <span style="font-size:9px;letter-spacing:0.2em;color:#A89478;">BEFORE / AFTER</span>
+            <span style="font-family:'Caveat',cursive;font-size:15px;color:#9C7E5C;">← ドラッグで比較 →</span>
+          </div>
+          <div id="g-ba" style="position:relative;width:100%;height:300px;border-radius:3px;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:none;cursor:ew-resize;">
+            <image-slot id="g-07b" src="assets/guest-ba-after-v2.png" style="position:absolute;inset:0;display:block;width:100%;height:100%;" shape="rect" placeholder="after"></image-slot>
+            <span style="position:absolute;top:10px;right:12px;background:rgba(40,34,28,0.45);color:#FBF8F2;font-size:9px;letter-spacing:0.2em;padding:4px 10px;border-radius:999px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:3;">AFTER</span>
+            <div id="g-ba-before" style="position:absolute;inset:0;width:50%;overflow:hidden;z-index:2;">
+              <image-slot id="g-07a" src="assets/guest-ba-before-v2.png" style="position:absolute;top:0;left:0;height:100%;width:412px;display:block;" shape="rect" placeholder="before"></image-slot>
+              <span style="position:absolute;top:10px;left:12px;background:rgba(40,34,28,0.45);color:#FBF8F2;font-size:9px;letter-spacing:0.2em;padding:4px 10px;border-radius:999px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);">BEFORE</span>
+            </div>
+            <div id="g-ba-handle" style="position:absolute;top:0;bottom:0;left:50%;width:2px;background:#FBF8F2;transform:translateX(-1px);z-index:4;box-shadow:0 0 12px rgba(40,34,28,0.4);pointer-events:none;">
+              <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:#FBF8F2;box-shadow:0 4px 14px rgba(40,34,28,0.35);display:flex;align-items:center;justify-content:center;gap:1px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7l-5 5 5 5M10 7l5 5-5 5" opacity="0.0"/><path d="M11 8l-4 4 4 4M13 8l4 4-4 4"/></svg>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:18px;">
+            <div style="flex:1;text-align:center;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:12px;padding:14px 8px;"><div style="font-size:10px;color:#8A7A68;">リピート率</div><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#3A332B;">78.6<span style="font-size:15px;">%</span></div><div style="font-size:10px;color:#5DAE54;">↑6.4%</div></div>
+            <div style="flex:1;text-align:center;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:12px;padding:14px 8px;"><div style="font-size:10px;color:#8A7A68;">顧客満足度</div><div style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#3A332B;">92.4<span style="font-size:15px;">%</span></div><div style="font-size:10px;color:#5DAE54;">↑8.2%</div></div>
+          </div>
+          <div style="text-align:right;font-size:9px;color:#A89478;margin-top:6px;">※表示はイメージです</div>
+        </section>
+
+        <!-- 08 after support / EC -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">08</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">after support</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">アフターサポート</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">おうちでのケアまで、<br>LINEでしっかりサポート。</p>
+          <div data-reveal style="position:relative;margin:20px -26px 0;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-08lead" src="assets/guest-08-homecare.png" style="display:block;width:calc(100% + 52px);height:300px;" shape="rect" placeholder="ホームケア"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 60%,rgba(40,34,28,0.38));pointer-events:none;"></div>
+            <div style="position:absolute;left:34px;bottom:14px;color:#FBF8F2;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;">my home care routine.</div>
+          </div>
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:14px;padding:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;"><span style="font-size:11px;color:#A89478;letter-spacing:0.1em;">おすすめのホームケアアイテム</span><span style="font-size:9px;color:#A89478;">価格はすべて税込</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+              <div style="text-align:center;"><image-slot id="g-08a" src="assets/guest-product1.png" style="display:block;width:100%;height:82px;" shape="rounded" radius="6" placeholder="bottle"></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:6px;line-height:1.3;">リペア<br>シャンプー</div><div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:#8A6F52;">¥3,300<span style="font-size:8px;">(税込)</span></div></div>
+              <div style="text-align:center;"><image-slot id="g-08b" src="assets/guest-product2.png" style="display:block;width:100%;height:82px;" shape="rounded" radius="6" placeholder="bottle"></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:6px;line-height:1.3;">モイスト<br>トリートメント</div><div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:#8A6F52;">¥3,520<span style="font-size:8px;">(税込)</span></div></div>
+              <div style="text-align:center;"><image-slot id="g-08c" src="assets/guest-product3.png" style="display:block;width:100%;height:82px;" shape="rounded" radius="6" placeholder="bottle"></image-slot><div style="font-size:9.5px;color:#5C5247;margin-top:6px;line-height:1.3;">ヘアオイル<br>セラム</div><div style="font-family:'Cormorant Garamond',serif;font-size:13px;color:#8A6F52;">¥3,960<span style="font-size:8px;">(税込)</span></div></div>
+            </div>
+            <button style="width:100%;margin-top:14px;border:1px solid #8A6F52;background:transparent;color:#8A6F52;font-family:'Zen Kaku Gothic New',sans-serif;font-size:12px;letter-spacing:0.08em;padding:10px;border-radius:8px;cursor:pointer;">商品を見る</button>
+          </div>
+          <div data-glass3wrap style="position:relative;margin:14px -26px 0;">
+            <image-slot id="g-08followup" src="assets/guest-08-followup.png" style="display:block;width:calc(100% + 52px);height:360px;" shape="rect" placeholder="夜・LINE"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(120deg,rgba(40,34,28,0.05),rgba(40,34,28,0.35));pointer-events:none;"></div>
+            <div data-glass3 style="position:absolute;left:26px;right:18px;bottom:18px;opacity:0;background:rgba(255,255,255,0.2);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,0.42);border-radius:18px;padding:14px 15px;box-shadow:0 16px 40px -16px rgba(40,34,28,0.6);">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;">
+                <image-slot id="g-08stylist" src="assets/guest-look2.png" style="display:block;width:26px;height:26px;flex-shrink:0;" shape="circle" placeholder=""></image-slot>
+                <span style="font-size:11px;font-weight:700;color:#FBF8F2;text-shadow:0 1px 4px rgba(40,34,28,0.5);">担当 / Aoi</span>
+                <span style="margin-left:auto;font-size:9px;color:rgba(251,248,242,0.85);">20:30</span>
+              </div>
+              <div style="font-size:11.5px;line-height:1.8;color:#FBF8F2;text-shadow:0 1px 5px rgba(40,34,28,0.5);">今日はご来店ありがとうございました！その後、髪の調子はいかがですか？気になることがあれば、いつでもお気軽にご相談くださいね🌿<br><br>またお会いできるのを楽しみにしています！</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 09 my carte -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">09</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">my carte</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">マイカルテ</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">わたしだけのデータに、<br>髪の履歴をすべて記録。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">カルテはスマホの中に。いつでも、どこからでも持ち運べる。</div>
+          <div data-reveal style="position:relative;margin:20px -26px 0;opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <image-slot id="g-09lead" src="assets/guest-09-carte.png" style="display:block;width:calc(100% + 52px);height:320px;" shape="rect" placeholder="マイカルテを見る"></image-slot>
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0) 42%,rgba(40,34,28,0.5));pointer-events:none;"></div>
+            <div data-glass style="position:absolute;left:18px;right:18px;bottom:18px;background:rgba(255,255,255,0.18);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border:1px solid rgba(255,255,255,0.42);border-radius:16px;padding:15px 18px;box-shadow:0 12px 30px -14px rgba(40,34,28,0.5);opacity:0;transform:translateY(24px) scale(0.96);transition:opacity .9s ease .15s,transform .9s cubic-bezier(.22,.61,.36,1) .15s;">
+              <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px;">
+                <span style="width:18px;height:18px;border-radius:5px;background:#5DAE54;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;">L</span>
+                <span style="font-size:9px;letter-spacing:0.2em;color:rgba(251,248,242,0.95);text-shadow:0 1px 3px rgba(40,34,28,0.4);">LINEと連携</span>
+              </div>
+              <div style="font-size:12.5px;line-height:1.8;color:#FBF8F2;text-shadow:0 1px 5px rgba(40,34,28,0.5);">あなたのマイカルテは、LINEの中に。<br>髪の履歴も、次の予約も、いつも手のひらに。</div>
+            </div>
+          </div>
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:18px;padding:18px;box-shadow:0 14px 34px -20px rgba(58,51,43,0.45);">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #EFE7D9;padding-bottom:12px;"><span style="font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:0.1em;color:#8A7A68;">マイカルテ</span><span style="font-size:14px;color:#C2B097;">×</span></div>
+            <div style="display:flex;align-items:center;gap:11px;margin-top:14px;"><image-slot id="g-09av" src="assets/guest-look3.png" style="display:block;width:42px;height:42px;" shape="circle" placeholder=""></image-slot><div><div style="font-family:'Cormorant Garamond',serif;font-size:17px;">EMI</div><div style="font-size:9px;color:#A89478;">salonrink ID · 0001</div></div></div>
+            <div style="font-size:10px;color:#A89478;letter-spacing:0.12em;margin-top:16px;margin-bottom:8px;">施術履歴</div>
+            <div data-stagger-group style="display:flex;flex-direction:column;gap:8px;">
+              <div data-stagger style="border:1px solid #EFE7D9;border-radius:8px;padding:9px 12px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);"><div style="font-family:'Cormorant Garamond',serif;font-size:12px;color:#8A7A68;">2026.05.22</div><div style="font-size:11px;color:#5C5247;">カット・カラー・トリートメント</div></div>
+              <div data-stagger style="border:1px solid #EFE7D9;border-radius:8px;padding:9px 12px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);"><div style="font-family:'Cormorant Garamond',serif;font-size:12px;color:#8A7A68;">2026.02.10</div><div style="font-size:11px;color:#5C5247;">カット・トリートメント</div></div>
+              <div data-stagger style="border:1px solid #EFE7D9;border-radius:8px;padding:9px 12px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);"><div style="font-family:'Cormorant Garamond',serif;font-size:12px;color:#8A7A68;">2025.11.30</div><div style="font-size:11px;color:#5C5247;">カラー・ヘッドスパ</div></div>
+            </div>
+            <div style="font-size:10px;color:#A89478;letter-spacing:0.12em;margin-top:16px;margin-bottom:8px;">お気に入りスタイル</div>
+            <div data-stagger-group style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;">
+              <div data-stagger style="opacity:0;transform:translateY(12px) scale(0.9);transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.45,.5,1);"><image-slot id="g-09s1" src="assets/guest-look3.png" style="display:block;width:100%;height:58px;" shape="rounded" radius="6" placeholder=""></image-slot></div>
+              <div data-stagger style="opacity:0;transform:translateY(12px) scale(0.9);transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.45,.5,1);"><image-slot id="g-09s2" src="assets/guest-look4.png" style="display:block;width:100%;height:58px;" shape="rounded" radius="6" placeholder=""></image-slot></div>
+              <div data-stagger style="opacity:0;transform:translateY(12px) scale(0.9);transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.45,.5,1);"><image-slot id="g-09s3" src="assets/guest-look5.png" style="display:block;width:100%;height:58px;" shape="rounded" radius="6" placeholder=""></image-slot></div>
+              <div data-stagger style="opacity:0;transform:translateY(12px) scale(0.9);transition:opacity .5s ease,transform .5s cubic-bezier(.34,1.45,.5,1);"><image-slot id="g-09s4" src="assets/guest-look6.png" style="display:block;width:100%;height:58px;" shape="rounded" radius="6" placeholder=""></image-slot></div>
+            </div>
+            <!-- カルテサマリー / HAIR SUMMARY -->
+            <div style="margin-top:18px;padding-top:16px;border-top:1px solid #F0E9DC;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;"><span style="font-size:10px;color:#A89478;letter-spacing:0.12em;">カルテサマリー｜今の髪の状態</span><span style="font-size:9px;color:#A89478;">※イメージ</span></div>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <div style="display:flex;align-items:center;gap:10px;"><span style="width:54px;font-size:10.5px;color:#5C5247;flex-shrink:0;">うるおい</span><span style="flex:1;height:6px;background:#EFE7D9;border-radius:999px;overflow:hidden;"><span style="display:block;width:72%;height:100%;background:linear-gradient(90deg,#7FA8C9,#4F73A8);border-radius:999px;"></span></span><span style="width:24px;font-family:'Cormorant Garamond',serif;font-size:13px;color:#4F73A8;text-align:right;">72</span></div>
+                <div style="display:flex;align-items:center;gap:10px;"><span style="width:54px;font-size:10.5px;color:#5C5247;flex-shrink:0;">まとまり</span><span style="flex:1;height:6px;background:#EFE7D9;border-radius:999px;overflow:hidden;"><span style="display:block;width:68%;height:100%;background:linear-gradient(90deg,#7FA8C9,#4F73A8);border-radius:999px;"></span></span><span style="width:24px;font-family:'Cormorant Garamond',serif;font-size:13px;color:#4F73A8;text-align:right;">68</span></div>
+                <div style="display:flex;align-items:center;gap:10px;"><span style="width:54px;font-size:10.5px;color:#5C5247;flex-shrink:0;">ダメージ</span><span style="flex:1;height:6px;background:#EFE7D9;border-radius:999px;overflow:hidden;"><span style="display:block;width:46%;height:100%;background:linear-gradient(90deg,#D6B68A,#C0995F);border-radius:999px;"></span></span><span style="width:24px;font-family:'Cormorant Garamond',serif;font-size:13px;color:#C0995F;text-align:right;">46</span></div>
+                <div style="display:flex;align-items:center;gap:10px;"><span style="width:54px;font-size:10.5px;color:#5C5247;flex-shrink:0;">くせ</span><span style="flex:1;height:6px;background:#EFE7D9;border-radius:999px;overflow:hidden;"><span style="display:block;width:38%;height:100%;background:linear-gradient(90deg,#D6B68A,#C0995F);border-radius:999px;"></span></span><span style="width:24px;font-family:'Cormorant Garamond',serif;font-size:13px;color:#C0995F;text-align:right;">38</span></div>
+                <div style="display:flex;align-items:center;gap:10px;"><span style="width:54px;font-size:10.5px;color:#5C5247;flex-shrink:0;">ボリューム</span><span style="flex:1;height:6px;background:#EFE7D9;border-radius:999px;overflow:hidden;"><span style="display:block;width:54%;height:100%;background:linear-gradient(90deg,#7FA8C9,#4F73A8);border-radius:999px;"></span></span><span style="width:24px;font-family:'Cormorant Garamond',serif;font-size:13px;color:#4F73A8;text-align:right;">54</span></div>
+              </div>
+              <div style="display:flex;gap:12px;margin-top:16px;align-items:center;">
+                <div style="flex:1;">
+                  <div style="font-size:9px;color:#A89478;letter-spacing:0.1em;">髪質タイプ</div>
+                  <div style="font-family:'Cormorant Garamond',serif;font-size:17px;color:#3A332B;margin-top:2px;">Soft Natural Type</div>
+                  <div style="font-size:10px;color:#8A7A68;margin-top:9px;letter-spacing:0.08em;">おすすめケア</div>
+                  <div style="font-size:11px;color:#5C5247;line-height:1.7;margin-top:3px;">・保湿をしっかり<br>・ダメージ補修<br>・まとまりケア</div>
+                </div>
+                <image-slot id="g-09sum" src="assets/guest-look4.png" style="display:block;width:74px;height:90px;flex-shrink:0;" shape="rounded" radius="8" placeholder=""></image-slot>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:14px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:18px;padding:18px;box-shadow:0 14px 34px -20px rgba(58,51,43,0.45);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:13px;"><span style="font-size:10px;letter-spacing:0.12em;color:#A89478;">あなたの定番カラー</span><span style="font-size:9px;color:#A89478;">※イメージ</span></div>
+            <div style="display:flex;align-items:center;gap:11px;">
+              <span style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8C6A45,#6E4E30);flex-shrink:0;box-shadow:0 2px 6px -2px rgba(58,51,43,0.4);"></span>
+              <div><div style="font-size:13px;font-weight:700;color:#3A332B;">ウォームベージュ／柔らかめ</div><div style="font-size:10px;color:#8A7A68;margin-top:1px;">あなたに似合う、いつもの色味</div></div>
+            </div>
+            <a href="https://salonrink.com/neo/photo.html" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:7px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:11px;padding:13px;margin-top:16px;font-size:13px;font-weight:700;letter-spacing:0.04em;">次回を予約する ›</a>
+          </div>
+
+          <!-- §7 画面3: おかえり後に届くメッセージ（受け取る側） -->
+          <div style="margin-top:14px;">
+            <div style="font-size:11px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.7;margin-bottom:10px;">サロンを出たあとも、担当からちょうどいい一言が。</div>
+            <div style="background-image:linear-gradient(180deg,#8FB0C9,#7892AE);border-radius:16px;padding:15px 13px;">
+              <div style="font-size:9px;color:rgba(255,255,255,0.85);margin-bottom:9px;">担当スタイリストより</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="align-self:flex-start;max-width:84%;background:#fff;color:#2B2722;border-radius:4px 14px 14px 14px;padding:11px 13px;font-size:12px;line-height:1.55;box-shadow:0 4px 10px -6px rgba(0,0,0,0.3);">そろそろお手入れ時期です◎ 毛先に、このホームケアがおすすめです</div>
+                <div style="align-self:flex-start;display:flex;gap:7px;">
+                  <span style="background:#FBF8F2;color:#3F7A33;border:1px solid #BFD6AE;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;">予約する</span>
+                  <span style="background:#FBF8F2;color:#7E6240;border:1px solid #D8CDBA;border-radius:999px;padding:7px 14px;font-size:11px;font-weight:700;">見る</span>
+                </div>
+              </div>
+            </div>
+            <div style="text-align:right;font-size:9px;color:#A89478;margin-top:8px;">※メッセージはイメージです</div>
+          </div>
+        </section>
+
+        <!-- 09.5 レビュー（お客様の声） -->
+        <section style="padding:30px 26px 28px;background:#F6F1E8;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:6px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:#9C7E5C;">05</span>
+            <span style="font-size:10px;letter-spacing:0.2em;color:#A89478;">REVIEWS</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:18px;font-weight:600;line-height:1.6;color:#2F2A24;margin:0 0 4px;">通った人の、本当の声。</p>
+          <div style="display:flex;align-items:center;gap:8px;margin:12px 0 16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#9C7E5C;line-height:1;">4.8</span>
+            <div><div style="color:#E3B84C;font-size:14px;letter-spacing:2px;">★★★★★</div><div style="font-size:10px;color:#8A7A68;margin-top:2px;">312件のレビュー ※サンプル</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="background:#FFFFFF;border:1px solid #ECE4D6;border-radius:13px;padding:14px 15px;">
+              <div style="display:flex;align-items:center;gap:9px;"><img src="assets/stylist-av2.png" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"><div style="flex:1;"><div style="font-size:11.5px;font-weight:700;color:#3A332B;">AOI さん</div><div style="color:#E3B84C;font-size:10px;letter-spacing:1px;">★★★★★</div></div><span style="font-size:9px;color:#A89478;">2026.05</span></div>
+              <div style="font-size:11.5px;line-height:1.7;color:#5C5247;margin-top:9px;">前回の希望をちゃんと覚えていてくれて、説明し直さなくていいのが本当にラク。仕上がりも毎回安定しています。</div>
+            </div>
+            <div style="background:#FFFFFF;border:1px solid #ECE4D6;border-radius:13px;padding:14px 15px;">
+              <div style="display:flex;align-items:center;gap:9px;"><img src="assets/stylist-av3.png" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;"><div style="flex:1;"><div style="font-size:11.5px;font-weight:700;color:#3A332B;">RIN さん</div><div style="color:#E3B84C;font-size:10px;letter-spacing:1px;">★★★★★</div></div><span style="font-size:9px;color:#A89478;">2026.04</span></div>
+              <div style="font-size:11.5px;line-height:1.7;color:#5C5247;margin-top:9px;">おうちでのケアもLINEで相談できて安心。次の予約のタイミングも教えてくれるのが嬉しいです。</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:10px;color:#9C7E5C;margin-top:14px;letter-spacing:0.06em;">すべてのレビューを見る ›</div>
+        </section>
+
+        <!-- 09.6 来店後フィードバック -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:6px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:#9C7E5C;">06</span>
+            <span style="font-size:10px;letter-spacing:0.2em;color:#A89478;">FEEDBACK</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:18px;font-weight:600;line-height:1.6;color:#2F2A24;margin:0 0 4px;">今日の仕上がり、いかがでしたか？</p>
+          <div style="font-size:11px;color:#9C7E5C;line-height:1.7;margin-bottom:16px;">あなたの声が、次回の施術とカルテに反映されます。</div>
+          <div style="background:#FFFFFF;border:1px solid #ECE4D6;border-radius:16px;padding:20px 18px;box-shadow:0 14px 34px -22px rgba(58,51,43,0.4);">
+            <div style="font-size:11px;color:#8A7A68;text-align:center;margin-bottom:10px;">満足度を教えてください</div>
+            <div style="display:flex;justify-content:center;gap:10px;font-size:30px;color:#E3B84C;letter-spacing:3px;">★★★★★</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-top:18px;">
+              <span style="font-size:11px;color:#7E6240;background:#F4EEE3;border:1px solid #E0D2B8;border-radius:999px;padding:7px 14px;">まとまりが良い</span>
+              <span style="font-size:11px;color:#7E6240;background:#F4EEE3;border:1px solid #E0D2B8;border-radius:999px;padding:7px 14px;">色味が理想通り</span>
+              <span style="font-size:11px;color:#7E6240;background:#F4EEE3;border:1px solid #E0D2B8;border-radius:999px;padding:7px 14px;">扱いやすい</span>
+              <span style="font-size:11px;color:#7E6240;background:#F4EEE3;border:1px solid #E0D2B8;border-radius:999px;padding:7px 14px;">持ちが良い</span>
+            </div>
+            <div style="margin-top:16px;background:#FBF8F2;border:1px solid #EFE7D9;border-radius:10px;padding:11px 13px;font-size:11px;color:#A89478;">ひとことメッセージ（任意）…</div>
+            <div style="margin-top:14px;background:#9C7E5C;color:#FBF8F2;border-radius:11px;padding:13px;text-align:center;font-size:13px;font-weight:700;letter-spacing:0.04em;">フィードバックを送る</div>
+            <div style="text-align:center;font-size:9px;color:#A89478;margin-top:10px;">※イメージです</div>
+          </div>
+        </section>
+
+        <!-- 10 data analysis -->
+        <section style="padding:30px 26px 40px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">10</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">data analysis</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">データ分析</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">データ分析で、あなたに<br>ぴったりの提案を。</p>
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:14px;padding:18px 16px;">
+            <div style="font-size:11px;color:#8A7A68;letter-spacing:0.06em;margin-bottom:12px;">髪のコンディション推移</div>
+            <svg width="100%" viewBox="0 0 320 170" style="display:block;">
+              <g stroke="#EFE7D9" stroke-width="1"><line x1="40" y1="20" x2="40" y2="140"/><line x1="40" y1="140" x2="305" y2="140"/><line x1="40" y1="105" x2="305" y2="105"/><line x1="40" y1="70" x2="305" y2="70"/><line x1="40" y1="35" x2="305" y2="35"/></g>
+              <g fill="#A89478" font-size="9" font-family="'Zen Kaku Gothic New',sans-serif"><text x="30" y="143" text-anchor="end">0</text><text x="30" y="108" text-anchor="end">30</text><text x="30" y="73" text-anchor="end">60</text><text x="30" y="38" text-anchor="end">90</text></g>
+              <g fill="#A89478" font-size="9" font-family="'Zen Kaku Gothic New',sans-serif" text-anchor="middle"><text x="62" y="155">1月</text><text x="110" y="155">2月</text><text x="158" y="155">3月</text><text x="206" y="155">4月</text><text x="254" y="155">5月</text><text x="296" y="155">6月</text></g>
+              <polyline points="62,108 110,96 158,88 206,72 254,62 296,50" fill="none" stroke="#4F73A8" stroke-width="2"/>
+              <g fill="#4F73A8"><circle cx="62" cy="108" r="3"/><circle cx="110" cy="96" r="3"/><circle cx="158" cy="88" r="3"/><circle cx="206" cy="72" r="3"/><circle cx="254" cy="62" r="3"/><circle cx="296" cy="50" r="3"/></g>
+              <polyline points="62,124 110,120 158,113 206,110 254,100 296,96" fill="none" stroke="#DB9356" stroke-width="2"/>
+              <g fill="#DB9356"><circle cx="62" cy="124" r="3"/><circle cx="110" cy="120" r="3"/><circle cx="158" cy="113" r="3"/><circle cx="206" cy="110" r="3"/><circle cx="254" cy="100" r="3"/><circle cx="296" cy="96" r="3"/></g>
+            </svg>
+            <div style="display:flex;gap:18px;justify-content:center;margin-top:8px;font-size:10px;color:#5C5247;"><span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:50%;background:#4F73A8;display:inline-block;"></span>うるおい</span><span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:50%;background:#DB9356;display:inline-block;"></span>ダメージ</span></div>
+            <div style="text-align:right;font-size:9px;color:#A89478;margin-top:6px;">※表示はイメージです</div>
+          </div>
+        </section>
+
+        <!-- FOOTER -->
+        <div style="padding:52px 26px 34px;background:linear-gradient(160deg,#2C3024,#3A3B2B);">
+          <div style="text-align:center;color:#F3EFE7;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:30px;letter-spacing:0.3em;font-weight:600;color:#F3EFE7;">SALONRINK</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;letter-spacing:0.18em;color:rgba(243,239,231,0.7);margin-top:2px;">salon concierge</div>
+            <p style="font-family:'Shippori Mincho B1',serif;font-size:13px;line-height:2;letter-spacing:0.08em;margin-top:18px;">美容師と、もっとつながる。<br>あなたの毎日が、もっと輝く。</p>
+
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;">
+              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(243,239,231,0.9);"><span style="width:17px;height:17px;border-radius:50%;border:1px solid rgba(243,239,231,0.5);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:9px;">1</span>撮影</span>
+              <span style="width:14px;height:1px;background:rgba(243,239,231,0.3);"></span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(243,239,231,0.9);"><span style="width:17px;height:17px;border-radius:50%;border:1px solid rgba(243,239,231,0.5);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:9px;">2</span>AI解析</span>
+              <span style="width:14px;height:1px;background:rgba(243,239,231,0.3);"></span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:10px;color:rgba(243,239,231,0.9);"><span style="width:17px;height:17px;border-radius:50%;border:1px solid rgba(243,239,231,0.5);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:9px;">3</span>結果</span>
+            </div>
+
+            <a href="https://salonrink.com/neo/photo.html" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:12px;padding:16px 20px;margin-top:16px;box-shadow:0 12px 28px -12px rgba(0,0,0,0.5);">
+              <span style="display:flex;flex-direction:column;align-items:flex-start;"><span style="font-size:15px;font-weight:700;letter-spacing:0.04em;">AI髪診断をはじめる（無料）</span><span style="font-size:10px;opacity:0.85;margin-top:2px;">カメラで3分診断</span></span>
+              <span style="font-size:18px;">›</span>
+            </a>
+            <a href="https://lin.ee/O6Zh4et" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid rgba(243,239,231,0.6);color:#F3EFE7;text-decoration:none;border-radius:12px;padding:12px;margin-top:12px;font-size:12.5px;letter-spacing:0.06em;">
+              <span style="width:18px;height:18px;border-radius:5px;background:#5DAE54;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:700;">L</span>LINEで相談してみる
+            </a>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:10px;color:rgba(243,239,231,0.7);">
+              <span style="display:flex;align-items:center;gap:4px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>診断は登録不要</span>
+              <span style="display:flex;align-items:center;gap:4px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>その場で結果</span>
+            </div>
+            <p style="font-size:11px;color:rgba(243,239,231,0.6);line-height:1.7;margin-top:10px;text-align:center;">※診断はその場で・登録不要。結果の保存やLINE連携は任意の登録・友だち追加が必要です。</p>
+          </div>
+        </div>
+
+        <dc-import name="SalonNav" variant="guest" hint-size="412px,72px"></dc-import>
+      </div>
+    </div>
+
+        <!-- ============================= STYLIST (v5) ============================= -->
+    <div id="stylist-col" style="width:412px;display:none;">
+      <dc-import name="Stylist Page v5" hint-size="412px,1600px"></dc-import>
+    </div>
+
+    <!-- ============================= AGENT ============================= -->
+    <div id="agent-col" style="width:412px;display:none;">
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:500;letter-spacing:0.38em;color:#3A332B;">AGENT</div>
+        <div style="font-size:11px;letter-spacing:0.18em;color:#8A7A68;margin-top:4px;">代理店ページ</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#F4EAD8;border:1px solid #E0CFA8;border-radius:999px;padding:5px 14px;"><span style="width:6px;height:6px;border-radius:50%;background:#C29A4E;display:inline-block;"></span><span style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#8A6A34;">準備中 — 構想段階のプレビューです</span></div>
+      </div>
+
+      <div style="width:412px;background:#FBF8F2;border-radius:4px;overflow:hidden;box-shadow:0 18px 50px -22px rgba(58,51,43,0.45);color:#3A332B;">
+
+        <!-- HERO -->
+        <div style="position:relative;height:680px;">
+          <div style="position:absolute;top:0;left:0;right:0;z-index:8;background:rgba(40,34,28,0.78);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);color:#F4EAD8;text-align:center;padding:9px 14px;font-size:11px;letter-spacing:0.1em;">※ このページは準備中（構想プレビュー）です</div>
+          <image-slot id="a-hero" src="assets/agent-hero.png" style="display:block;width:100%;height:100%;" shape="rect" placeholder="メインビジュアル：商談・YUKA"></image-slot>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(40,34,28,0.42) 0%,rgba(40,34,28,0.05) 22%,rgba(40,34,28,0) 44%,rgba(40,34,28,0.15) 62%,rgba(40,34,28,0.72) 100%);pointer-events:none;"></div>
+          <div style="position:absolute;inset:14px;border:1px solid rgba(251,248,242,0.35);pointer-events:none;"></div>
+          <div style="position:absolute;top:18px;right:20px;pointer-events:none;">
+            <img src="assets/salonrink-logo.png" alt="SALONRINK" style="display:block;width:72px;height:auto;filter:drop-shadow(0 2px 10px rgba(40,34,28,0.4));">
+          </div>
+          <div style="position:absolute;top:30px;left:30px;pointer-events:none;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.34em;color:#FBF8F2;">SALONRINK</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:10px;letter-spacing:0.16em;color:rgba(251,248,242,0.85);margin-top:1px;">for partners</div>
+          </div>
+          <div style="position:absolute;right:28px;top:128px;writing-mode:vertical-rl;font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.4em;color:rgba(251,248,242,0.78);text-transform:uppercase;pointer-events:none;">Partner Success — Tokyo</div>
+          <div style="position:absolute;left:30px;bottom:96px;pointer-events:none;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+              <span style="width:26px;height:1px;background:#E3C58B;display:inline-block;"></span>
+              <span style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.42em;text-transform:uppercase;color:#FBF8F2;">Partner Story — Vol.01</span>
+            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:500;color:#FBF8F2;font-size:46px;line-height:0.98;text-shadow:0 2px 18px rgba(40,34,28,0.45);">A day with</div>
+            <div style="font-family:'Pinyon Script',cursive;font-weight:400;color:#FBF8F2;font-size:108px;line-height:0.9;letter-spacing:0.01em;text-shadow:0 3px 22px rgba(40,34,28,0.5);margin-top:-6px;">Yuka</div>
+          </div>
+          <div style="position:absolute;left:30px;right:30px;bottom:42px;color:#FBF8F2;font-family:'Shippori Mincho B1',serif;font-size:11px;line-height:2;letter-spacing:0.06em;pointer-events:none;text-shadow:0 1px 10px rgba(40,34,28,0.6);">サロンの想いが、ちゃんと届く仕組みをつくる。導入から運用まで伴走し、地域に愛されるサロンを一緒に育てる。</div>
+        </div>
+
+        <!-- 01 morning -->
+        <section style="padding:38px 26px 30px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">01</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">morning</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">一日のはじまり</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">今日も、サロンとお客様を<br>つなぐ一日が始まる。</p>
+          <image-slot id="a-01" src="assets/stylist-01-prep.png" style="display:block;width:calc(100% + 52px);height:380px;margin:22px -26px 0;" shape="rect" placeholder="朝・PCワーク"></image-slot>
+        </section>
+
+        <!-- 02 hearing -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">02</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">hearing</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">課題ヒアリング</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">サロンの課題を、<br>ていねいに聞き取る。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">現場の声から、本質的な課題を見つける。</div>
+          <image-slot id="a-02" src="assets/stylist-hero.png" style="display:block;width:calc(100% + 52px);height:360px;margin:22px -26px 0;" shape="rect" placeholder="ヒアリング・商談"></image-slot>
+        </section>
+
+        <!-- 03 proposal -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">03</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">proposal</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">プラン提案</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">最適なプランを、<br>データと事例で。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">サロンに合った活用プランを設計する。</div>
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:16px;padding:18px;box-shadow:0 14px 34px -20px rgba(58,51,43,0.45);">
+            <div style="font-size:10px;letter-spacing:0.14em;color:#A89478;margin-bottom:13px;">ご提案プラン</div>
+            <div data-stagger-group style="display:flex;flex-direction:column;gap:10px;">
+              <div data-stagger style="display:flex;align-items:center;gap:11px;border:1px solid #ECE4D6;border-radius:10px;padding:13px 14px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg>
+                <span style="font-size:12.5px;color:#3A332B;font-weight:700;">業務効率化</span>
+              </div>
+              <div data-stagger style="display:flex;align-items:center;gap:11px;border:1px solid #ECE4D6;border-radius:10px;padding:13px 14px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M12 3c3 4 6 7 6 10a6 6 0 0 1-12 0c0-3 3-6 6-10z"/></svg>
+                <span style="font-size:12.5px;color:#3A332B;font-weight:700;">顧客満足度向上</span>
+              </div>
+              <div data-stagger style="display:flex;align-items:center;gap:11px;border:1px solid #ECE4D6;border-radius:10px;padding:13px 14px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 12a9 9 0 1 0 9-9M3 12l3-3M3 12l3 3"/></svg>
+                <span style="font-size:12.5px;color:#3A332B;font-weight:700;">リピート率向上</span>
+              </div>
+              <div data-stagger style="display:flex;align-items:center;gap:11px;border:1px solid #9C7E5C;background:#F6F1E8;border-radius:10px;padding:13px 14px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s cubic-bezier(.22,.61,.36,1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M4 20V4M4 20h16M7 16l4-5 3 3 5-7"/></svg>
+                <span style="font-size:12.5px;color:#8A6F52;font-weight:700;">売上アップ</span>
+                <span style="margin-left:auto;font-size:9px;color:#9C7E5C;">推奨</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 04 support -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">04</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">support</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">導入・運用サポート</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">導入したら、終わりじゃない。<br>定着するまで、伴走する。</p>
+          <image-slot id="a-04" src="assets/stylist-02-tablet.png" style="display:block;width:calc(100% + 52px);height:360px;margin:22px -26px 0;" shape="rect" placeholder="運用サポート・打ち合わせ"></image-slot>
+        </section>
+
+        <!-- 05 data -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">05</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">growth report</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">成長の見える化</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">サロンの成長を、<br>データで可視化する。</p>
+          <div style="margin-top:20px;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:14px;padding:18px 16px;">
+            <div style="font-size:11px;color:#8A7A68;letter-spacing:0.06em;margin-bottom:12px;">サロンの成長レポート</div>
+            <svg width="100%" viewBox="0 0 320 150" style="display:block;">
+              <g stroke="#EFE7D9" stroke-width="1"><line x1="34" y1="20" x2="305" y2="20"/><line x1="34" y1="58" x2="305" y2="58"/><line x1="34" y1="96" x2="305" y2="96"/><line x1="34" y1="120" x2="305" y2="120"/></g>
+              <g fill="#A89478" font-size="9" font-family="'Zen Kaku Gothic New',sans-serif" text-anchor="middle"><text x="63" y="135">1月</text><text x="107" y="135">2月</text><text x="151" y="135">3月</text><text x="195" y="135">4月</text><text x="239" y="135">5月</text><text x="283" y="135">6月</text></g>
+              <polyline data-draw points="63,104 107,92 151,78 195,60 239,44 283,28" fill="none" stroke="#4F73A8" stroke-width="2" style="stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1.4s ease;"/>
+              <g data-draw fill="#4F73A8" style="opacity:0;transition:opacity .5s ease 1s;"><circle cx="63" cy="104" r="3"/><circle cx="107" cy="92" r="3"/><circle cx="151" cy="78" r="3"/><circle cx="195" cy="60" r="3"/><circle cx="239" cy="44" r="3"/><circle cx="283" cy="28" r="3"/></g>
+              <polyline data-draw points="63,112 107,106 151,98 195,92 239,82 283,72" fill="none" stroke="#DB9356" stroke-width="2" style="stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1.4s ease .2s;"/>
+              <g data-draw fill="#DB9356" style="opacity:0;transition:opacity .5s ease 1.2s;"><circle cx="63" cy="112" r="3"/><circle cx="107" cy="106" r="3"/><circle cx="151" cy="98" r="3"/><circle cx="195" cy="92" r="3"/><circle cx="239" cy="82" r="3"/><circle cx="283" cy="72" r="3"/></g>
+            </svg>
+            <div style="display:flex;gap:18px;justify-content:center;margin-top:8px;font-size:10px;color:#5C5247;"><span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:50%;background:#4F73A8;display:inline-block;"></span>来店数</span><span style="display:flex;align-items:center;gap:5px;"><span style="width:9px;height:9px;border-radius:50%;background:#DB9356;display:inline-block;"></span>客単価</span></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:14px;">
+            <div style="flex:1;text-align:center;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:12px;padding:14px 6px;"><div style="font-size:9.5px;color:#8A7A68;">リピート率</div><div style="font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:#3A332B;">78.6<span style="font-size:12px;">%</span></div><div style="font-size:9.5px;color:#5DAE54;">↑6.4%</div></div>
+            <div style="flex:1;text-align:center;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:12px;padding:14px 6px;"><div style="font-size:9.5px;color:#8A7A68;">顧客満足度</div><div style="font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:#3A332B;">92.4<span style="font-size:12px;">%</span></div><div style="font-size:9.5px;color:#5DAE54;">↑8.2%</div></div>
+            <div style="flex:1;text-align:center;background:#FFFFFF;border:1px solid #ECE4D6;border-radius:12px;padding:14px 6px;"><div style="font-size:9.5px;color:#8A7A68;">売上</div><div style="font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:#3A332B;">128<span style="font-size:12px;">%</span></div><div style="font-size:9.5px;color:#5DAE54;">↑20%</div></div>
+          </div>
+          <div style="text-align:right;font-size:9px;color:#A89478;margin-top:6px;">※表示はイメージです</div>
+
+          <!-- salonrink multi-salon admin dashboard -->
+          <div data-reveal style="margin-top:18px;background:#23262E;border-radius:14px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(40,44,52,0.7);opacity:0;transform:translateY(28px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,.61,.36,1);">
+            <div style="display:flex;align-items:center;gap:7px;padding:9px 12px;background:#1C1F25;border-bottom:1px solid #31353F;">
+              <span style="width:9px;height:9px;border-radius:50%;background:#E06A5B;display:inline-block;"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:#E6B45C;display:inline-block;"></span>
+              <span style="width:9px;height:9px;border-radius:50%;background:#7FBF6B;display:inline-block;"></span>
+              <span style="flex:1;text-align:center;font-size:9px;color:#8A91A0;letter-spacing:0.06em;">partner.salonrink.com</span>
+            </div>
+            <div style="padding:14px;background:#363B45;">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <span style="font-size:10.5px;color:#FBF8F2;font-weight:700;letter-spacing:0.06em;">担当サロン ポートフォリオ</span>
+                <span style="font-size:9px;color:#9BA3AF;">YUKA ／ 関東エリア</span>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:11px;">
+                <div style="background:#2C3038;border-radius:9px;padding:11px 9px;text-align:center;"><div style="font-size:8.5px;color:#9BA3AF;">担当店舗</div><div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#FBF8F2;font-weight:600;">14</div></div>
+                <div style="background:#2C3038;border-radius:9px;padding:11px 9px;text-align:center;"><div style="font-size:8.5px;color:#9BA3AF;">稼働率 平均</div><div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#FBF8F2;font-weight:600;">86<span style="font-size:9px;">%</span></div></div>
+                <div style="background:#2C3038;border-radius:9px;padding:11px 9px;text-align:center;"><div style="font-size:8.5px;color:#9BA3AF;">解約率</div><div style="font-family:'Cormorant Garamond',serif;font-size:19px;color:#FBF8F2;font-weight:600;">2.1<span style="font-size:9px;">%</span></div></div>
+              </div>
+              <div style="background:#2C3038;border-radius:10px;padding:12px;">
+                <div style="font-size:9px;color:#9BA3AF;margin-bottom:9px;">店舗別 成長スコア</div>
+                <div style="display:flex;flex-direction:column;gap:9px;">
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:62px;font-size:9px;color:#CBD2DC;">calm 渋谷</span><span style="flex:1;height:7px;background:#23262E;border-radius:4px;overflow:hidden;"><span style="display:block;width:92%;height:100%;background:#7FBF6B;"></span></span><span style="font-size:9px;color:#7FD17A;width:30px;text-align:right;">+22%</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:62px;font-size:9px;color:#CBD2DC;">lumi 表参道</span><span style="flex:1;height:7px;background:#23262E;border-radius:4px;overflow:hidden;"><span style="display:block;width:78%;height:100%;background:#9C7E5C;"></span></span><span style="font-size:9px;color:#7FD17A;width:30px;text-align:right;">+15%</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:62px;font-size:9px;color:#CBD2DC;">noir 自由が丘</span><span style="flex:1;height:7px;background:#23262E;border-radius:4px;overflow:hidden;"><span style="display:block;width:64%;height:100%;background:#9C7E5C;"></span></span><span style="font-size:9px;color:#7FD17A;width:30px;text-align:right;">+9%</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;"><span style="width:62px;font-size:9px;color:#CBD2DC;">sora 横浜</span><span style="flex:1;height:7px;background:#23262E;border-radius:4px;overflow:hidden;"><span style="display:block;width:40%;height:100%;background:#E6B45C;"></span></span><span style="font-size:9px;color:#E6B45C;width:30px;text-align:right;">要支援</span></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;background:#2C3038;border-radius:10px;padding:11px 12px;margin-top:9px;">
+                <span style="width:18px;height:18px;border-radius:50%;background:rgba(230,180,92,0.18);display:flex;align-items:center;justify-content:center;font-size:10px;color:#E6B45C;flex-shrink:0;">!</span>
+                <span style="font-size:9.5px;color:#CBD2DC;line-height:1.5;flex:1;">sora 横浜店：再来率が低下。フォロー施策を提案しましょう。</span>
+              </div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:#A89478;line-height:1.65;margin-top:10px;">※画面はイメージです。複数店舗を1つの管理画面で。</p>
+        </section>
+
+        <!-- 06 future -->
+        <section style="padding:30px 26px 28px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">06</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">future</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">未来を一緒に</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">サロンの未来を、<br>一緒に創る。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">想いをカタチにし、地域に愛されるサロンへ。</div>
+          <image-slot id="a-06" src="assets/agent-hero.png" style="display:block;width:calc(100% + 52px);height:360px;margin:22px -26px 0;" shape="rect" placeholder="サロンの未来・笑顔"></image-slot>
+        </section>
+
+        <!-- 07 ユーザー行動分析 -->
+        <section style="padding:30px 26px 36px;">
+          <div style="display:flex;align-items:baseline;gap:11px;margin-bottom:16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:#C2B097;line-height:1;">07</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;">analytics</span>
+            <span style="font-size:11px;color:#A89478;letter-spacing:0.08em;align-self:center;">行動分析</span>
+          </div>
+          <p style="font-family:'Shippori Mincho B1',serif;font-size:13.5px;line-height:2.15;letter-spacing:0.08em;color:#5C5247;">お客様の動きを、<br>数字で理解する。</p>
+          <div style="font-size:11.5px;color:#9C7E5C;letter-spacing:0.06em;line-height:1.75;margin-top:10px;">診断・閲覧・再来導線。どこで離れ、どこで動いたかが見える。</div>
+
+          <div style="margin-top:18px;background:#23262E;border-radius:16px;padding:18px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;"><span style="font-size:11px;color:#9BA3AF;letter-spacing:0.06em;">行動サマリー（直近30日）<span style="color:#6B7280;"> ※サンプル</span></span><span style="font-size:9px;color:#7FD17A;background:rgba(127,209,122,0.16);border-radius:999px;padding:3px 8px;">● 計測中</span></div>
+            <!-- funnel -->
+            <div style="display:flex;flex-direction:column;gap:7px;">
+              <div style="display:flex;align-items:center;gap:10px;"><span style="width:78px;font-size:10px;color:#C8CDD6;flex-shrink:0;">AI診断 開始</span><span style="flex:1;height:22px;background:#2E3340;border-radius:5px;overflow:hidden;"><span style="display:block;width:100%;height:100%;background:linear-gradient(90deg,#C2A878,#9C7E5C);"></span></span><span style="width:42px;font-family:'Cormorant Garamond',serif;font-size:14px;color:#F3EFE7;text-align:right;">1,240</span></div>
+              <div style="display:flex;align-items:center;gap:10px;"><span style="width:78px;font-size:10px;color:#C8CDD6;flex-shrink:0;">診断 完了</span><span style="flex:1;height:22px;background:#2E3340;border-radius:5px;overflow:hidden;"><span style="display:block;width:82%;height:100%;background:linear-gradient(90deg,#C2A878,#9C7E5C);"></span></span><span style="width:42px;font-family:'Cormorant Garamond',serif;font-size:14px;color:#F3EFE7;text-align:right;">1,020</span></div>
+              <div style="display:flex;align-items:center;gap:10px;"><span style="width:78px;font-size:10px;color:#C8CDD6;flex-shrink:0;">LINE 連携</span><span style="flex:1;height:22px;background:#2E3340;border-radius:5px;overflow:hidden;"><span style="display:block;width:61%;height:100%;background:linear-gradient(90deg,#C2A878,#9C7E5C);"></span></span><span style="width:42px;font-family:'Cormorant Garamond',serif;font-size:14px;color:#F3EFE7;text-align:right;">756</span></div>
+              <div style="display:flex;align-items:center;gap:10px;"><span style="width:78px;font-size:10px;color:#C8CDD6;flex-shrink:0;">予約・再来</span><span style="flex:1;height:22px;background:#2E3340;border-radius:5px;overflow:hidden;"><span style="display:block;width:38%;height:100%;background:linear-gradient(90deg,#8FB07A,#5DAE54);"></span></span><span style="width:42px;font-family:'Cormorant Garamond',serif;font-size:14px;color:#F3EFE7;text-align:right;">472</span></div>
+            </div>
+            <!-- kpi row -->
+            <div style="display:flex;gap:8px;margin-top:16px;">
+              <div style="flex:1;background:#2E3340;border-radius:10px;padding:11px 10px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#F3EFE7;">61%</div><div style="font-size:8.5px;color:#9BA3AF;margin-top:2px;">LINE開封率</div></div>
+              <div style="flex:1;background:#2E3340;border-radius:10px;padding:11px 10px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#F3EFE7;">38%</div><div style="font-size:8.5px;color:#9BA3AF;margin-top:2px;">再来導線CTR</div></div>
+              <div style="flex:1;background:#2E3340;border-radius:10px;padding:11px 10px;text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:20px;color:#F3EFE7;">68日</div><div style="font-size:8.5px;color:#9BA3AF;margin-top:2px;">平均来店周期</div></div>
+            </div>
+          </div>
+          <p style="font-size:11px;color:#A89478;line-height:1.65;margin-top:10px;">※画面はイメージ・数値はサンプルです。どの場面で離れたかが分かり、打ち手につながります。</p>
+        </section>
+
+        <!-- FOOTER -->
+        <div style="position:relative;padding:48px 26px 30px;overflow:hidden;">
+          <image-slot id="a-foot" src="assets/stylist-hero.png" style="position:absolute;inset:0;width:100%;height:100%;" shape="rect" placeholder=""></image-slot>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(58,62,74,0.82),rgba(44,48,58,0.92));"></div>
+          <div style="position:relative;text-align:center;color:#F3EFE7;">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:30px;letter-spacing:0.3em;font-weight:600;">SALONRINK</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;letter-spacing:0.18em;color:rgba(243,239,231,0.7);margin-top:2px;">for partners</div>
+            <p style="font-family:'Shippori Mincho B1',serif;font-size:13px;line-height:2;letter-spacing:0.08em;margin-top:18px;">サロンの成長を、データで支える。<br>地域に愛されるサロンを、一緒に。</p>
+            <a href="https://lin.ee/O6Zh4et" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:space-between;gap:10px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:12px;padding:16px 20px;margin-top:24px;box-shadow:0 12px 28px -12px rgba(0,0,0,0.5);">
+              <span style="display:flex;flex-direction:column;align-items:flex-start;"><span style="font-size:15px;font-weight:700;letter-spacing:0.04em;">事前登録する（先行案内）</span><span style="font-size:11px;opacity:0.85;margin-top:2px;">提供開始時にご案内します</span></span>
+              <span style="font-size:18px;">›</span>
+            </a>
+            <p style="font-size:11px;color:rgba(243,239,231,0.65);line-height:1.7;margin-top:12px;">※ AGENT機能は現在準備中です。画面はすべて構想イメージで、数値・実績を保証するものではありません。</p>
+          </div>
+        </div>
+
+        <dc-import name="SalonNav" variant="agent" hint-size="412px,72px"></dc-import>
+      </div>
+    </div>
+
+    <!--PAGES-->
+
+  </div>
+
+  <div style="max-width:412px;margin:52px auto 0;">
+    <dc-import name="Carte Sync Map" hint-size="412px,1100px"></dc-import>
+  </div>
+  <div style="max-width:412px;margin:16px auto 0;background:#2E2820;border-radius:16px;padding:48px 30px;text-align:center;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#C2A878;">THE MESSAGE</div>
+    <p style="font-family:'Shippori Mincho B1',serif;font-size:26px;font-weight:600;line-height:1.5;color:#F6EFE2;margin:16px 0 0;">髪を、ひとりにしない。</p>
+    <p style="font-size:12px;line-height:1.95;color:#BDB2A0;margin:18px 0 0;">来店前・当日・おかえり後。サロンを出たあとも、ずっとそばに。LINEで共有するマイカルテが、お客様と美容師をつなぐ。</p>
+  </div>
+
+  <div id="sr-legal-footer" style="max-width:412px;margin:16px auto 0;font-family:'Zen Kaku Gothic New',sans-serif;">
+    <div style="background:#FBF8F2;border:1px solid #ECE4D6;border-radius:16px;padding:30px 26px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#B0996E;">FOR SALON OWNERS</div>
+      <div style="font-family:'Shippori Mincho B1',serif;font-size:19px;font-weight:600;color:#2B2722;margin-top:12px;letter-spacing:0.04em;">サロンを経営されている方へ</div>
+      <p style="font-size:12.5px;line-height:1.9;color:#5C5247;margin:12px 0 20px;">初期費用0円・月額¥1,980〜・14日間無料。<br>解約はいつでも、違約金なし。</p>
+      <a href="https://salonrink.com/register" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:999px;padding:14px 26px;font-size:13px;font-weight:700;letter-spacing:0.04em;">14日間無料で始める ›</a>
+    </div>
+    <div style="background:#3A332B;border-radius:16px;margin-top:14px;padding:26px;">
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <a href="https://salonrink.com/company" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;">運営会社</a>
+        <a href="https://salonrink.com/privacy" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;">プライバシーポリシー</a>
+        <a href="https://salonrink.com/terms" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;">利用規約</a>
+        <a href="https://salonrink.com/tokushoho" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;">特定商取引法に基づく表記</a>
+        <a href="https://salonrink.com/contact" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:12.5px;letter-spacing:0.06em;">お問い合わせ</a>
+      </div>
+      <div style="border-top:1px solid rgba(207,198,186,0.18);margin-top:20px;padding-top:18px;">
+        <p style="font-size:10.5px;line-height:1.75;color:#9C9486;margin:0;">※AI髪診断は髪質・好みの傾向の可視化であり、医療・効能を保証するものではありません。</p>
+        <p style="font-family:'Cormorant Garamond',serif;font-size:11.5px;color:#CFC6BA;margin:12px 0 0;letter-spacing:0.08em;">© AOKAE合同会社　SALONRINK</p>
+      </div>
+    </div>
+  </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  state = { msgs: [], typing: false, picked: null, greetTyping: false, greetShown: false, simGuests: 200, q2done: false, hue: 0, sat: 1, bright: 1, panelOpen: false };
+  quizData = [
+    { q: 'いま、いちばん気になる髪の悩みは？', opts: [{ label: 'パサつき・乾燥', key: 'dry' }, { label: '広がり・うねり', key: 'frizz' }, { label: 'カラーの色落ち', key: 'color' }] },
+    { q: '朝のスタイリングにかける時間は？', opts: [{ label: '5分以内でさっと', key: 'fast' }, { label: '10分くらい', key: 'mid' }, { label: 'じっくり整えたい', key: 'slow' }] },
+  ];
+  quizProducts = {
+    dry: { name: 'モイスト ヘアオイル', desc: '乾燥した毛先まで、うるおいを閉じ込める。', price: '¥3,960 (税込)', img: 'assets/guest-product3.png' },
+    frizz: { name: 'リペア シャンプー', desc: '広がりを抑えて、まとまる髪へ。', price: '¥3,300 (税込)', img: 'assets/guest-product1.png' },
+    color: { name: 'カラーケア パープルSP', desc: '退色を抑え、サロンの色を長もちさせる。', price: '¥3,300 (税込)', img: 'assets/guest-product2.png' },
+  };
+  quizAnswer(key) { this.setState((s) => ({ quizAns: [...s.quizAns, key], quizStep: s.quizStep + 1 })); }
+  quizReset() { this.setState({ quizStep: 0, quizAns: [] }); }
+  fmtYen(v) { return '¥' + (v / 10000).toFixed(0) + '万'; }
+  answers = {
+    '広がり・まとまりがない': '広がりは、毛量と水分バランスの調整がカギ。まとまりの出るカット＋洗い流さないトリートメントで扱いやすくなります◎',
+    'パサつき・乾燥': '乾燥には高保湿のシャンプー＆ヘアオイルを。週1回の集中トリートメントで、指通りが変わってきますよ。',
+    'うねり・くせ': 'うねりは髪の水分ムラが原因のことが多いです。まずはケアで扱いやすさを整えて、必要なら矯正もご提案します。',
+    'ダメージ・切れ毛': 'ダメージには内部補修のトリートメントを。アイロンは160℃以下に設定すると、切れ毛を防げます。',
+    'カラーの持ちが悪い': '色持ちにはカラーシャンプーが◎ すすぎをぬるま湯（38℃前後）にすると、退色を抑えられます。',
+    'その他': 'どんな小さなことでも大丈夫。気になることを教えてください。担当美容師が一緒に考えます。',
+  };
+  styleMsg(m) {
+    const out = m.role === 'out';
+    return { ...m, align: out ? 'flex-end' : 'flex-start', bg: out ? '#A8D98F' : '#fff', color: out ? '#2C3A24' : '#3A332B', radius: out ? '14px 4px 14px 14px' : '4px 14px 14px 14px' };
+  }
+  selectTab(name) {
+    ['guest', 'stylist', 'agent'].forEach((t) => {
+      const col = document.getElementById(t + '-col');
+      if (col) col.style.display = (t === name) ? '' : 'none';
+      const tab = document.getElementById('tab-' + t);
+      if (tab) { tab.style.background = (t === name) ? '#3A332B' : 'transparent'; tab.style.color = (t === name) ? '#FBF8F2' : '#8A7A68'; }
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  enterTab(name) {
+    this.selectTab(name);
+    const m = document.getElementById('main-screen');
+    if (m) window.scrollTo({ top: m.getBoundingClientRect().top + window.scrollY - 8, behavior: 'smooth' });
+  }
+  backToEntry() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  setTone(key, val) {
+    if (key === null) { this.setState({ hue: 0, sat: 1, bright: 1 }, () => this.applyTone()); }
+    else { this.setState({ [key]: val }, () => this.applyTone()); }
+  }
+  applyTone() {
+    const f = 'hue-rotate(' + this.state.hue + 'deg) saturate(' + this.state.sat + ') brightness(' + this.state.bright + ')';
+    ['entry-screen', 'main-screen'].forEach((id) => { const el = document.getElementById(id); if (el) el.style.filter = f; });
+    try { localStorage.setItem('sr-tone', JSON.stringify({ h: this.state.hue, s: this.state.sat, b: this.state.bright })); } catch (e) {}
+  }
+  carGo(idx) {
+    this.carIdx = ((idx % 3) + 3) % 3;
+    const root = this.rootRef.current || document;
+    root.querySelectorAll('.car-card').forEach((card) => {
+      const i = +card.getAttribute('data-car');
+      let d = i - this.carIdx; if (d > 1) d -= 3; if (d < -1) d += 3;
+      if (d === 0) { card.style.transform = 'translateX(0) scale(1) rotateY(0deg)'; card.style.zIndex = '3'; card.style.opacity = '1'; card.style.filter = 'none'; }
+      else if (d === -1) { card.style.transform = 'translateX(-298px) scale(0.78) rotateY(20deg)'; card.style.zIndex = '1'; card.style.opacity = '0.5'; card.style.filter = 'brightness(0.74)'; }
+      else { card.style.transform = 'translateX(298px) scale(0.78) rotateY(-20deg)'; card.style.zIndex = '1'; card.style.opacity = '0.5'; card.style.filter = 'brightness(0.74)'; }
+    });
+    root.querySelectorAll('.car-dot').forEach((dot) => {
+      const on = +dot.getAttribute('data-dot') === this.carIdx;
+      dot.style.width = on ? '22px' : '7px';
+      dot.style.background = on ? '#9C7E5C' : '#D2C6B2';
+    });
+  }
+  scrollToDiag(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    const el = document.getElementById('g-diagnosis');
+    if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: 'smooth' });
+  }
+  pick(concern) {
+    if (this.state.typing) return;
+    this.setState((s) => ({ msgs: [...s.msgs, { role: 'out', text: concern }], typing: true, picked: concern }));
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      this.setState((s) => ({ msgs: [...s.msgs, { role: 'in', text: this.answers[concern] }], typing: false }));
+    }, 1200);
+  }
+  renderVals() {
+    const concerns = ['広がり・まとまりがない', 'パサつき・乾燥', 'うねり・くせ', 'ダメージ・切れ毛', 'カラーの持ちが悪い', 'その他'];
+    return {
+      rootRef: this.rootRef,
+      tabGuest: () => this.selectTab('guest'),
+      tabStylist: () => this.selectTab('stylist'),
+      tabAgent: () => this.selectTab('agent'),
+      enterGuest: () => this.enterTab('guest'),
+      enterStylist: () => this.enterTab('stylist'),
+      enterPartner: () => this.enterTab('agent'),
+      carClick0: () => this.enterTab('guest'),
+      carClick1: () => this.enterTab('stylist'),
+      carClick2: () => this.enterTab('agent'),
+      dot0: () => this.carGo(0),
+      dot1: () => this.carGo(1),
+      dot2: () => this.carGo(2),
+      enterCurrent: () => this.enterTab(['guest','stylist','agent'][this.carIdx || 0]),
+      backToEntry: () => this.backToEntry(),
+      hue: this.state.hue, sat: this.state.sat, bright: this.state.bright, panelOpen: this.state.panelOpen,
+      togglePanel: () => this.setState((s) => ({ panelOpen: !s.panelOpen })),
+      onHue: (e) => this.setTone('hue', parseInt(e.target.value, 10)),
+      onSat: (e) => this.setTone('sat', parseFloat(e.target.value)),
+      onBright: (e) => this.setTone('bright', parseFloat(e.target.value)),
+      resetTone: () => this.setTone(null),
+      q2open: !this.state.q2done,
+      q2done: this.state.q2done,
+      q2pick: () => this.setState({ q2done: true }),
+      q2reset: () => this.setState({ q2done: false }),
+      simGuests: this.state.simGuests,
+      onSim: (e) => this.setState({ simGuests: parseInt(e.target.value, 10) }),
+      simBefore: (() => { const g = this.state.simGuests; return this.fmtYen(g * 8000); })(),
+      simAfter: (() => { const g = this.state.simGuests; return this.fmtYen(Math.round(g * 8000 * 1.28)); })(),
+      simUplift: (() => { const g = this.state.simGuests; return '+' + this.fmtYen(Math.round(g * 8000 * 0.28)) + ' / 月'; })(),
+      scrollToDiag: (e) => this.scrollToDiag(e),
+      earlyChips: ['広がり・まとまり', 'パサつき・乾燥', 'うねり・くせ', 'ダメージ・切れ毛'].map((c) => ({ label: c, onClick: (e) => this.scrollToDiag(e) })),
+      chatMsgs: this.state.msgs.map((m) => this.styleMsg(m)),
+      chatTyping: this.state.typing,
+      chatShowStyles: !!this.state.picked && !this.state.typing,
+      greetTyping: this.state.greetTyping,
+      greetShown: this.state.greetShown,
+      chatChips: concerns.map((c) => {
+        const active = this.state.picked === c;
+        return { label: c, onClick: () => this.pick(c), bg: active ? '#F0DAD6' : '#fff', fg: active ? '#B5675A' : '#3A332B', border: active ? '#E3B9B0' : '#E3DACB' };
+      }),
+    };
+  }
+  componentDidMount() {
+    const root = this.rootRef.current || document;
+    this.carIdx = 0;
+    this.carGo(0);
+    const carWrap = document.getElementById('car-wrap');
+    if (carWrap) {
+      let paused = false;
+      this._carTimer = setInterval(() => { if (!paused) this.carGo((this.carIdx || 0) + 1); }, 3200);
+      ['mouseenter', 'pointerdown', 'touchstart'].forEach((ev) => carWrap.addEventListener(ev, () => { paused = true; }, { passive: true }));
+      carWrap.addEventListener('mouseleave', () => { paused = false; });
+    }
+    setTimeout(() => this.selectTab('guest'), 0);
+    try { const t = JSON.parse(localStorage.getItem('sr-tone') || 'null'); if (t) { this.setState({ hue: t.h, sat: t.s, bright: t.b }, () => this.applyTone()); } } catch (e) {}
+    const chats = root.querySelectorAll('[data-chat]');
+    chats.forEach((chat) => {
+      const bubbles = Array.from(chat.querySelectorAll('[data-bubble]'));
+      const typing = chat.querySelector('[data-typing]');
+      let played = false;
+      const reveal = (el) => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; };
+      const run = () => {
+        if (played) return; played = true;
+        let t = 250;
+        bubbles.forEach((b, i) => {
+          const isLastIncoming = typing && i === bubbles.length - 1;
+          if (isLastIncoming) {
+            setTimeout(() => { typing.style.display = 'flex'; requestAnimationFrame(() => { typing.style.opacity = '1'; }); }, t);
+            t += 1100;
+            setTimeout(() => { typing.style.display = 'none'; reveal(b); }, t);
+            t += 700;
+          } else {
+            setTimeout(() => reveal(b), t);
+            t += 850;
+          }
+        });
+      };
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { run(); io.disconnect(); } });
+      }, { threshold: 0.35 });
+      io.observe(chat);
+    });
+
+    const col = document.getElementById('guest-col');
+    const bar = document.getElementById('g-prog');
+    const fab = document.getElementById('g-fabwrap');
+    if (col && bar && fab) {
+      const upd = () => {
+        const r = col.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const total = Math.max(r.height - vh, 1);
+        const pct = Math.min(Math.max(-r.top / total, 0), 1);
+        bar.style.left = Math.max(r.left, 0) + 'px';
+        bar.style.width = (pct * r.width) + 'px';
+        const inView = r.bottom > vh * 0.6 && r.top < vh * 0.4;
+        fab.style.opacity = inView ? '1' : '0';
+        fab.style.transform = 'translateX(-50%) translateY(' + (inView ? '0' : '12px') + ')';
+        fab.style.pointerEvents = inView ? 'auto' : 'none';
+        fab.style.left = (r.left + r.width / 2) + 'px';
+      };
+      window.addEventListener('scroll', upd, { passive: true });
+      window.addEventListener('resize', upd);
+      upd();
+    }
+
+    const reveals = (this.rootRef.current || document).querySelectorAll('[data-reveal]');
+    const ro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; e.target.querySelectorAll('[data-grow]').forEach((g, i) => { g.style.animation = 'srGrow 1.1s cubic-bezier(.34,1.45,.5,1) ' + (i * 0.12) + 's both'; }); ro.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    reveals.forEach((el) => ro.observe(el));
+
+    const glassPanels = (this.rootRef.current || document).querySelectorAll('[data-glass]');
+    const gro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'none'; gro.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    glassPanels.forEach((el) => gro.observe(el));
+
+    const groups = (this.rootRef.current || document).querySelectorAll('[data-stagger-group]');
+    const sro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.querySelectorAll('[data-stagger]').forEach((item, i) => {
+            setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'none'; }, i * 130);
+          });
+          sro.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.25 });
+    groups.forEach((el) => sro.observe(el));
+
+    const counters = (this.rootRef.current || document).querySelectorAll('[data-count]');
+    const cro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          const el = e.target;
+          const target = parseFloat(el.getAttribute('data-count'));
+          const dur = 1100, t0 = performance.now();
+          const tick = (now) => {
+            const p = Math.min((now - t0) / dur, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = Math.round(target * eased);
+            if (p < 1) requestAnimationFrame(tick);
+            else el.textContent = target;
+          };
+          requestAnimationFrame(tick);
+          cro.unobserve(el);
+        }
+      });
+    }, { threshold: 0.6 });
+    counters.forEach((el) => cro.observe(el));
+
+    const draws = (this.rootRef.current || document).querySelectorAll('[data-draw]');
+    const dro = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) { e.target.style.strokeDashoffset = '0'; e.target.style.opacity = '1'; dro.unobserve(e.target); }
+      });
+    }, { threshold: 0.3 });
+    draws.forEach((el) => dro.observe(el));
+
+    const ba = document.getElementById('g-ba');
+    if (ba) {
+      const before = document.getElementById('g-ba-before');
+      const handle = document.getElementById('g-ba-handle');
+      let dragging = false;
+      const setPct = (clientX) => {
+        const r = ba.getBoundingClientRect();
+        let pct = ((clientX - r.left) / r.width) * 100;
+        pct = Math.max(2, Math.min(98, pct));
+        before.style.width = pct + '%';
+        handle.style.left = pct + '%';
+      };
+      const down = (e) => { dragging = true; setPct(e.touches ? e.touches[0].clientX : e.clientX); };
+      const move = (e) => { if (dragging) setPct(e.touches ? e.touches[0].clientX : e.clientX); };
+      const up = () => { dragging = false; };
+      ba.addEventListener('mousedown', down); ba.addEventListener('touchstart', down, { passive: true });
+      window.addEventListener('mousemove', move); window.addEventListener('touchmove', move, { passive: true });
+      window.addEventListener('mouseup', up); window.addEventListener('touchend', up);
+    }
+
+    const gallery = document.getElementById('g-gallery');
+    if (gallery) {
+      let paused = false;
+      gallery.addEventListener('mouseenter', () => { paused = true; });
+      gallery.addEventListener('mouseleave', () => { paused = false; });
+      gallery.addEventListener('touchstart', () => { paused = true; }, { passive: true });
+      gallery.addEventListener('touchend', () => { setTimeout(() => { paused = false; }, 1500); }, { passive: true });
+      setInterval(() => {
+        if (paused) return;
+        if (gallery.scrollLeft >= gallery.scrollWidth - gallery.clientWidth - 1) gallery.scrollLeft = 0;
+        else gallery.scrollLeft += 1;
+      }, 24);
+    }
+
+    const glass = (this.rootRef.current || document).querySelector('[data-glass]');
+    if (glass) {
+      const bubble = glass.querySelector('[data-glass-bubble]');
+      const time = glass.querySelector('[data-glass-time]');
+      const gob = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            glass.style.animation = 'srGlassUp .6s cubic-bezier(.22,.61,.36,1) both';
+            if (bubble) bubble.style.animation = 'srSendOut .45s ease both .55s';
+            if (time) time.style.animation = 'srSendOut .4s ease both 1.5s';
+            gob.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.55 });
+      gob.observe(glass);
+    }
+
+    const glass2 = (this.rootRef.current || document).querySelector('[data-glass2]');
+    if (glass2) {
+      const g2 = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            glass2.style.animation = 'srGlassUp .7s cubic-bezier(.22,.61,.36,1) both .2s';
+            g2.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      g2.observe(glass2);
+    }
+
+    const glass3 = (this.rootRef.current || document).querySelector('[data-glass3]');
+    if (glass3) {
+      const g3 = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            glass3.style.animation = 'srGlassUp .7s cubic-bezier(.22,.61,.36,1) both .2s';
+            g3.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      g3.observe(glass3);
+    }
+
+    const greet = (this.rootRef.current || document).querySelector('[data-line-greet]');
+    if (greet) {
+      const go = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !this.state.greetShown && !this.state.greetTyping) {
+            this.setState({ greetTyping: true });
+            setTimeout(() => this.setState({ greetTyping: false, greetShown: true }), 1400);
+            go.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.5 });
+      go.observe(greet);
+    }
+  }
+}
+</script>
+</body>
+</html>
