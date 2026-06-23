@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
+        { source: '/', destination: '/lp/index.html' },
         { source: '/lp', destination: '/lp/index.html' },
         { source: '/lp/customer', destination: '/lp-mock/customer.html' },
         { source: '/lp/salon', destination: '/lp-mock/salon.html' },
