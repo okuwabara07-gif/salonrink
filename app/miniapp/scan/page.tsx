@@ -337,9 +337,24 @@ export default function ScanPage() {
                     {`悩み ${p.matchCount} 件マッチ`}
                   </div>
                 )}
-                <div style={{ fontSize: '12px', color: C.muted }}>
+                <div style={{ fontSize: '12px', color: C.muted, marginBottom: '8px' }}>
                   ¥{p.price?.toLocaleString()}
                 </div>
+                <a
+                  href={`/miniapp/effect-log?productId=${p.id}&productName=${encodeURIComponent(p.name)}&concern=${encodeURIComponent(diagResult.primaryConcern)}&diagId=${diagId}`}
+                  style={{
+                    display: 'inline-block',
+                    padding: '8px 12px',
+                    backgroundColor: C.olive,
+                    color: '#fff',
+                    textDecoration: 'none',
+                    borderRadius: '4px',
+                    fontSize: '12px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  この商品の効果を記録
+                </a>
               </div>
             ))}
           </div>

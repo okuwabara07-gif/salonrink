@@ -169,7 +169,7 @@ export async function saveToKarte(
       return { success: false, error: updateDiagError.message };
     }
 
-    // Step 2: customer_plan.karte_count++ （UPSERT + increment）
+    // Step 2: customer_plan.karte_count++ （plan は上書きしない）
     const { data: plan, error: selectError } = await supabase
       .from('customer_plan')
       .select('karte_count')
@@ -182,20 +182,31 @@ export async function saveToKarte(
     }
 
     const currentCount = plan?.karte_count || 0;
-    const { error: upsertError } = await supabase
-      .from('customer_plan')
-      .upsert(
-        {
-          line_user_id: lineUserId,
-          plan: 'free',
-          karte_count: currentCount + 1,
-        },
-        { onConflict: 'line_user_id' }
-      );
 
-    if (upsertError) {
-      console.error('[scan/actions] customer_plan upsert error:', upsertError);
-      return { success: false, error: upsertError.message };
+    // 既存行 → karte_count のみ UPDATE
+    if (plan) {
+      const { error: updateError } = await supabase
+        .from('customer_plan')
+        .update({ karte_count: currentCount + 1 })
+        .eq('line_user_id', lineUserId);
+
+      if (updateError) {
+        console.error('[scan/actions] customer_plan update error:', updateError);
+        return { success: false, error: updateError.message };
+      }
+    } else {
+      // 新規行 → INSERT（plan は DB default に任せる）
+      const { error: insertError } = await supabase
+        .from('customer_plan')
+        .insert({
+          line_user_id: lineUserId,
+          karte_count: currentCount + 1,
+        });
+
+      if (insertError) {
+        console.error('[scan/actions] customer_plan insert error:', insertError);
+        return { success: false, error: insertError.message };
+      }
     }
 
     return { success: true };
