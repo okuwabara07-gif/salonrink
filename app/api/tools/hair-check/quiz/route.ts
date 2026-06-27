@@ -42,6 +42,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         result,
         ai_used: false,
         converted_to_karte: false,
+        source: typeof body.source === 'string' ? body.source : 'karte',
       })
     } catch (e) {
       console.warn('[tools/hair-check/quiz] save skipped:', e)

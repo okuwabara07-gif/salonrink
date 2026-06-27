@@ -137,7 +137,7 @@ export default function HairCheckPage() {
       const res = await fetch('/api/tools/hair-check/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers: next }),
+        body: JSON.stringify({ answers: next, source: 'haircheck' }),
       })
       const data = await res.json()
       if (data.result) {
