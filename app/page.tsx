@@ -1,36 +1,47 @@
 import type { Metadata } from 'next';
 import LpPageFinal from '@/features/lp-v2-final/LpPageFinal';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com';
+
 export const metadata: Metadata = {
-  title: 'SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。',
+  title: 'SalonRink | 美容サロンの予約・カルテ管理を月 ¥1,980 から',
   description:
-    'いまのLINE公式アカウントに、AIカルテと顧客記憶を追加するだけ。新しいアプリ不要、最短5分で開始。月¥1,980から、14日間無料。',
+    '紙カルテとホットペッパーの二重管理をやめませんか。小規模サロンのための LINE 予約・カルテ管理。月額 ¥1,980・初期費用 0 円・14 日間無料。',
   keywords: [
-    'サロンコンシェルジュ',
-    'SalonRink Concierge',
-    'AIカルテ',
-    'LINE予約',
-    '美容サロン',
     'サロン管理',
+    'LINE予約',
+    '予約システム',
+    '顧客管理',
+    '美容サロン',
+    'カルテ管理',
     'SaaS',
-    'AOKAE合同会社',
   ],
   authors: [{ name: 'AOKAE合同会社' }],
+  alternates: { canonical: siteUrl },
   openGraph: {
-    title: 'SalonRink Concierge — 再来店率と業務時間を、LINEひとつで変える。',
+    title: 'SalonRink | 美容サロンの予約・カルテ管理を月 ¥1,980 から',
     description:
-      'いまのLINE公式アカウントに、AIカルテと顧客記憶を追加。新アプリ不要、最短5分で開始。月¥1,980から、14日間無料。',
-    url: 'https://salonrink.com',
-    siteName: 'SalonRink Concierge',
+      '紙カルテとホットペッパーの二重管理をやめませんか。小規模サロンのための LINE 予約・カルテ管理。14 日間無料で試せます。',
+    url: siteUrl,
+    siteName: 'SalonRink',
     locale: 'ja_JP',
     type: 'website',
+    images: [
+      {
+        url: `${siteUrl}/og-image.jpg`,
+        width: 1200,
+        height: 630,
+        alt: 'SalonRink',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SalonRink Concierge | 再来店率と業務時間を、LINEひとつで変える。',
+    title: 'SalonRink | 美容サロンの予約・カルテ管理を月 ¥1,980 から',
     description:
-      'LINE公式アカウントに追加するだけで、AIカルテと顧客記憶が動作。新アプリ不要、5分で開始。月¥1,980から。',
+      '紙カルテとホットペッパーの二重管理をやめませんか。LINE 予約・カルテ管理システム。14 日間無料。',
     creator: '@salonrink_jp',
+    images: [`${siteUrl}/og-image.jpg`],
   },
 };
 
