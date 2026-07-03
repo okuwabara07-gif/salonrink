@@ -1,9 +1,18 @@
 import type { MetadataRoute } from 'next'
+import { getAllBlogPostsFromDb } from '@/lib/blog-db'
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = new URL(siteUrl)
+
+  const blogPosts = await getAllBlogPostsFromDb()
+  const blogUrls = blogPosts.map(post => ({
+    url: new URL(`/blog/${post.slug}`, baseUrl).toString(),
+    lastModified: new Date(post.date),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
 
   return [
     {
@@ -54,5 +63,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    {
+      url: new URL('/blog', baseUrl).toString(),
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    ...blogUrls,
   ]
 }
