@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { getAllBlogPostsFromDb } from '@/lib/blog-db'
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
+const siteUrl = 'https://salonrink.com'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = new URL(siteUrl)
