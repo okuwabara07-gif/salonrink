@@ -24,7 +24,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/neo', destination: '/', permanent: true },
-      { source: '/neo/:path*', destination: '/', permanent: true },
       { source: '/diagnosis.html', destination: '/neo/diagnosis.html', permanent: false },
       { source: '/quiz.html', destination: '/neo/quiz.html', permanent: false },
       { source: '/photo.html', destination: '/neo/photo.html', permanent: false },
