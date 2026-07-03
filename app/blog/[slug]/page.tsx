@@ -6,7 +6,22 @@ import Link from "next/link";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export const revalidate = 0;
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const filePosts = getAllPosts();
+    const dbPosts = await getAllBlogPostsFromDb();
+    const allPosts = [...filePosts, ...dbPosts];
+    return allPosts.map(post => ({
+      slug: post.slug,
+    }));
+  } catch (error) {
+    console.error('[blog] generateStaticParams error:', error);
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
