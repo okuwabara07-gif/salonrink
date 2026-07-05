@@ -28,7 +28,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const dbPost = await getBlogPostFromDb(slug);
   const post = dbPost || getPostBySlug(slug);
   if (!post) return {};
-  return { title: `${post.title} | SalonRink`, description: post.description };
+  return {
+    title: `${post.title} | SalonRink`,
+    description: post.description,
+    alternates: { canonical: `https://salonrink.com/blog/${slug}` },
+  };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
