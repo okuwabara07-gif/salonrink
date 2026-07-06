@@ -27,7 +27,7 @@ export async function openCustomerPortal(): Promise<{ ok: boolean; url?: string;
       },
       body: new URLSearchParams({
         customer: salon.stripe_customer_id,
-        return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
+        return_url: 'https://salonrink.com/dashboard',
       }).toString(),
     })
 

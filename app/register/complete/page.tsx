@@ -40,7 +40,7 @@ export default async function RegisterCompletePage({
   }).eq('id', salon.id)
 
   const supabase = await createClient()
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const origin = 'https://salonrink.com'
   const { error } = await supabase.auth.signInWithOtp({
     email: salon.email,
     options: { emailRedirectTo: `${origin}/auth/callback` },
