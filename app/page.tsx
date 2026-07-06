@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import LpPageFinal from '@/features/lp-v2-final/LpPageFinal';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com';
+const siteUrl = 'https://salonrink.com';
 
 export const metadata: Metadata = {
   title: 'SalonRink | 美容サロンの予約・カルテ管理を月 ¥1,980 から',
