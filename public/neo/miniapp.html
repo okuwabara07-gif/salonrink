@@ -1,312 +1,1109 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<!-- Microsoft Clarity -->
-<script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CTL6RQ2X5"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-0CTL6RQ2X5");</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>SalonRink ミニアプリ — マイカルテ（LIFF）</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="salonrink-neo.css">
-<link rel="stylesheet" href="salonrink-neo-page.css">
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<style>
-  /* ============ LIFFクローム(LINEアプリ内ヘッダーの再現・モック) ============ */
-  .liff-chrome {
-    position: sticky; top: 30px; z-index: 50;
-    display: flex; align-items: center; gap: 10px;
-    padding: 11px 14px; background: color-mix(in srgb, var(--neo-bg) 94%, transparent);
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-  }
-  .liff-chrome .ttl { flex: 1; font-size: 13.5px; font-weight: 700; color: var(--sr-ink); display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .liff-chrome .ttl img { height: 30px; }
-  .liff-verified {
-    display: inline-flex; align-items: center; gap: 3px;
-    font-size: 9.5px; font-weight: 700; color: var(--sr-accent-ink);
-    padding: 2px 8px; border-radius: 999px; white-space: nowrap;
-    box-shadow: inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);
-  }
-  .liff-chrome .act { display: flex; gap: 8px; }
-  .liff-chrome .act button {
-    width: 34px; height: 34px; border: none; border-radius: 50%; cursor: pointer;
-    background: var(--neo-bg); color: var(--sr-muted); font-size: 15px; font-weight: 700;
-    box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
-    display: flex; align-items: center; justify-content: center; font-family: inherit;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>AIビューティーコンシェルジュ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+    body {
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      background: #F6F1E8;
+      color: #2B2724;
+      line-height: 1.6;
+      padding-top: 64px;
+    }
+    main {
+      width: 100%;
+      max-width: 390px;
+      margin: 0 auto;
+      padding-bottom: 200px;
+    }
+    h1, h2, h3 {
+      font-family: 'Shippori Mincho', serif;
+      font-weight: 400;
+    }
 
-  /* ============ タブ画面 ============ */
-  .mini-screen { display: none; padding-bottom: 8px; }
-  .mini-screen.on { display: block; }
+    /* Screens */
+    .screen { display: none; }
+    .screen.active { display: block; animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-  /* あいさつ */
-  .mini-hello { display: flex; align-items: center; gap: 13px; padding: 18px 20px 4px; }
-  .mini-hello img {
-    width: 54px; height: 54px; border-radius: 50%; object-fit: cover;
-    border: 2px solid #FEFEFD; box-shadow: 0 5px 12px var(--neo-dark);
-  }
-  .mini-hello strong { font-size: 17px; font-weight: 900; display: block; line-height: 1.4; }
-  .mini-hello .sub { font-size: 11.5px; color: var(--sr-muted); }
+    /* Welcome */
+    #welcome {
+      background: linear-gradient(180deg, #F6F1E8 0%, #FBF8F2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    #welcome img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 22px;
+      margin-bottom: 2rem;
+    }
+    #welcome h1 {
+      font-size: 28px;
+      margin-bottom: 1rem;
+      line-height: 1.4;
+    }
+    #welcome p {
+      color: #8C857A;
+      margin-bottom: 2rem;
+      font-size: 14px;
+    }
 
-  /* 次回予約 */
-  .mini-resv {
-    margin: 16px 20px 0; padding: 16px 18px; border-radius: 20px;
-    background: var(--neo-bg);
-    box-shadow: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
-    display: flex; align-items: center; gap: 14px;
-  }
-  .mini-resv .date {
-    flex-shrink: 0; width: 58px; height: 58px; border-radius: 16px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
-  }
-  .mini-resv .date b { font-size: 19px; font-weight: 900; color: var(--sr-accent-ink); line-height: 1.1; }
-  .mini-resv .date span { font-size: 10px; font-weight: 700; color: var(--sr-muted); }
-  .mini-resv .info { flex: 1; min-width: 0; }
-  .mini-resv .info strong { font-size: 13.5px; display: block; line-height: 1.5; }
-  .mini-resv .info p { font-size: 11.5px; color: var(--sr-muted); }
-  .mini-resv .chg {
-    flex-shrink: 0; border: none; cursor: pointer; font-family: inherit;
-    font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink);
-    padding: 8px 13px; border-radius: 999px; background: var(--neo-bg);
-    box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
-  }
+    /* Buttons */
+    .btn {
+      border: none;
+      padding: 16px 40px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .btn-primary {
+      background: #2B2724;
+      color: #fff;
+    }
+    .btn-primary:hover {
+      opacity: 0.85;
+    }
+    .btn-secondary {
+      background: #B08654;
+      color: #fff;
+    }
+    .btn-secondary:hover {
+      opacity: 0.9;
+    }
 
-  /* セクション小見出し */
-  .mini-h {
-    display: flex; align-items: baseline; justify-content: space-between;
-    padding: 26px 20px 12px;
-  }
-  .mini-h h2 { font-size: 16px; font-weight: 900; margin: 0; }
-  .mini-h a { font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink); text-decoration: none; }
+    /* Profile */
+    #profile {
+      padding: 2rem 1.5rem;
+    }
+    .profile-step { display: none; }
+    .profile-step.active { display: block; }
+    .profile-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .profile-header h2 {
+      font-size: 22px;
+      margin-bottom: 0.5rem;
+    }
+    .profile-header p {
+      color: #8C857A;
+      font-size: 12px;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #E3DACB;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .chips {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .chip {
+      padding: 10px 16px;
+      border: 1px solid #E3DACB;
+      border-radius: 999px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 13px;
+      text-align: center;
+    }
+    .chip.selected {
+      background: #B08654;
+      color: #fff;
+      border-color: #B08654;
+    }
+    .btn-full {
+      width: 100%;
+      margin-top: 2rem;
+    }
 
-  /* 診断タブ */
-  .diag-list { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
-  .diag-row {
-    display: flex; align-items: center; gap: 13px; padding: 14px 16px;
-    border-radius: 18px; text-decoration: none; color: var(--sr-ink);
-    background: var(--neo-bg);
-    box-shadow: 6px 6px 12px var(--neo-dark), -6px -6px 12px var(--neo-light);
-  }
-  .diag-row .ic {
-    flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; color: var(--sr-accent-ink);
-    box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
-  }
-  .diag-row .ic svg { width: 20px; height: 20px; }
-  .diag-row strong { font-size: 13.5px; display: block; line-height: 1.5; }
-  .diag-row p { font-size: 11px; color: var(--sr-muted); line-height: 1.55; }
-  .diag-row .st { margin-left: auto; flex-shrink: 0; }
-  .diag-done {
-    font-size: 10px; font-weight: 700; color: var(--sr-accent-ink);
-    padding: 4px 10px; border-radius: 999px;
-    box-shadow: inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);
-  }
-  .diag-go {
-    font-size: 10px; font-weight: 700; color: #fff;
-    padding: 5px 11px; border-radius: 999px; background: var(--sr-grad);
-    box-shadow: 2px 2px 5px var(--neo-dark);
-  }
+    /* Home */
+    #home {
+      padding: 1.5rem;
+    }
+    .home-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-top: 1rem;
+    }
+    .home-header h1 {
+      font-size: 24px;
+      margin-bottom: 0.25rem;
+    }
+    .concierge {
+      font-size: 11px;
+      color: #B08654;
+      letter-spacing: 0.38em;
+      font-weight: 500;
+    }
+    .hero {
+      width: 100%;
+      margin-bottom: 2rem;
+      border-radius: 22px;
+      overflow: hidden;
+      height: 200px;
+    }
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 22px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s;
+      box-shadow: 0 10px 26px rgba(43,39,36,.06);
+    }
+    .card:active {
+      transform: scale(0.98);
+    }
+    .card.dark {
+      background: #221E19;
+    }
+    .card-img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .card-content {
+      padding: 1rem;
+      text-align: center;
+    }
+    .card.dark .card-content {
+      color: #F5EFE5;
+    }
+    .card-title {
+      font-family: 'Shippori Mincho', serif;
+      font-size: 16px;
+      margin-bottom: 0.25rem;
+    }
+    .card-sub {
+      font-size: 12px;
+      color: #8C857A;
+    }
+    .card.dark .card-sub {
+      color: #D8CFC0;
+    }
 
-  /* ストアタブ(未使用・温存) */
-  .mini-store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 20px; }
+    /* Navigation */
+    .nav {
+      position: fixed;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 20px;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      box-shadow: 0 10px 26px rgba(43,39,36,.06);
+      z-index: 1000;
+      width: calc(100% - 2rem);
+      max-width: 380px;
+      justify-content: center;
+    }
+    .nav-item {
+      cursor: pointer;
+      font-size: 11px;
+      text-align: center;
+      color: #8C857A;
+      transition: all 0.3s;
+      flex: 0 0 auto;
+    }
+    .nav-item.active {
+      color: #B08654;
+      font-weight: 700;
+    }
+    .nav-center {
+      width: 44px;
+      height: 44px;
+      background: #B08654;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .store-bar {
+      position: fixed;
+      bottom: 54px;
+      left: 0;
+      right: 0;
+      background: #F6F1E8;
+      border-top: 1px solid #E3DACB;
+      padding: 10px 1.5rem;
+      font-size: 12px;
+      text-align: right;
+      color: #8C857A;
+      cursor: pointer;
+      z-index: 999;
+    }
+    .store-bar:hover { color: #B08654; }
 
-  /* 下部タブ(ページ内切替) */
-  .mini-nav {
-    position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
-    bottom: calc(10px + env(safe-area-inset-bottom));
-    width: calc(100% - 28px); max-width: 452px;
-    display: flex; gap: 6px; padding: 8px;
-    background: color-mix(in srgb, var(--neo-bg) 96%, transparent);
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-radius: 999px;
-    box-shadow: 8px 8px 18px var(--neo-dark), -6px -6px 14px var(--neo-light);
-  }
-  .mini-nav button {
-    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    min-height: 50px; justify-content: center; border: none; cursor: pointer;
-    background: none; border-radius: 999px; font-family: inherit;
-    font-size: 10px; font-weight: 700; color: var(--sr-muted); white-space: nowrap;
-  }
-  .mini-nav button svg { width: 18px; height: 18px; }
-  .mini-nav button.on {
-    color: #fff; background: var(--sr-grad);
-    box-shadow: 3px 3px 8px var(--neo-dark);
-  }
-</style>
-<script src="/neo/sr-funnel.js"></script>
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2B2724;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      z-index: 2000;
+      display: none;
+    }
+
+    /* Survey */
+    .survey { padding: 2rem 1.5rem; }
+    .q-group { margin-bottom: 2rem; }
+    .q-group h3 { font-size: 16px; margin-bottom: 1rem; font-weight: 400; }
+    .options {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .option {
+      padding: 12px 16px;
+      border: 1px solid #E3DACB;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      font-size: 14px;
+    }
+    .option:hover { border-color: #B08654; }
+    .option.selected {
+      background: #B08654;
+      color: #fff;
+      border-color: #B08654;
+    }
+
+    /* Analyzing */
+    .analyzing {
+      padding: 3rem 1.5rem;
+      text-align: center;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 3px solid #E3DACB;
+      border-top: 3px solid #B08654;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Result */
+    #result { padding: 2rem 1.5rem; }
+    .medical {
+      background: #f7f5f2;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+      font-size: 11px;
+      color: #584F42;
+      line-height: 1.6;
+      border-left: 3px solid #C96F5A;
+    }
+    .result-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #E3DACB;
+    }
+    .result-label { font-size: 12px; color: #8C857A; margin-bottom: 0.5rem; }
+    .result-title { font-family: 'Shippori Mincho', serif; font-size: 22px; margin-bottom: 0.5rem; }
+    .result-copy { font-size: 13px; color: #584F42; line-height: 1.6; }
+    .scores {
+      margin-bottom: 2rem;
+      background: #FBF8F2;
+      padding: 1.5rem;
+      border-radius: 16px;
+    }
+    .score {
+      margin-bottom: 1rem;
+    }
+    .score:last-child { margin-bottom: 0; }
+    .score-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 13px;
+    }
+    .score-bar {
+      width: 100%;
+      height: 8px;
+      background: #E3DACB;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .score-fill { height: 100%; background: #B08654; }
+    .proposal {
+      background: #f7f5f2;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+      border-left: 3px solid #2B2724;
+    }
+    .proposal-title { font-weight: 700; margin-bottom: 0.5rem; font-size: 14px; }
+    .proposal-text { font-size: 13px; line-height: 1.7; color: #584F42; }
+
+    /* Fortune */
+    #fortune {
+      background: #221E19;
+      color: #F5EFE5;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+    .f-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .f-header h1 {
+      font-size: 24px;
+      margin-bottom: 1rem;
+      color: #F5EFE5;
+    }
+    .f-free {
+      background: rgba(255,255,255,0.05);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    .f-today {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .f-today p { font-size: 13px; color: #D8CFC0; margin-bottom: 0.5rem; }
+    .f-msg { font-size: 15px; color: #F5EFE5; font-style: italic; line-height: 1.8; }
+    .f-meishiki { font-size: 12px; color: #B5AC9E; text-align: center; margin-top: 1rem; line-height: 1.6; }
+    .f-paywall {
+      background: rgba(255,255,255,0.08);
+      padding: 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+    }
+    .f-blur {
+      background: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 8px;
+      filter: blur(4px);
+      user-select: none;
+      margin-bottom: 1rem;
+    }
+    .prices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .price-btn {
+      padding: 12px;
+      border: 1px solid #B5AC9E;
+      border-radius: 8px;
+      background: transparent;
+      color: #F5EFE5;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.3s;
+      text-align: center;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .price-btn:hover { border-color: #B08654; background: rgba(176,134,84,0.1); }
+    .price-btn.rec { border-color: #B08654; background: rgba(176,134,84,0.15); }
+    .price-amt { font-size: 16px; font-weight: 700; display: block; }
+    .f-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #3a3530;
+      font-size: 11px;
+      color: #B5AC9E;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* Album */
+    #album { padding: 2rem 1.5rem; }
+    .album-title { font-size: 14px; font-weight: 700; margin-bottom: 1rem; color: #2B2724; }
+    .photo-scroll {
+      display: flex;
+      gap: 1rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+    .photo-tile {
+      flex: 0 0 108px;
+      height: 124px;
+      background: #FBF8F2;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .photo-tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Karte */
+    #karte { padding: 2rem 1.5rem; }
+    .karte-section {
+      margin-bottom: 2rem;
+      background: #FBF8F2;
+      padding: 1.5rem;
+      border-radius: 16px;
+    }
+    .karte-title { font-weight: 700; margin-bottom: 1rem; font-size: 14px; }
+    .karte-info { font-size: 13px; color: #584F42; line-height: 1.7; }
+
+    /* Store */
+    #store { padding: 2rem 1.5rem; }
+    .prod-badge {
+      display: inline-block;
+      background: #B08654;
+      color: #fff;
+      font-size: 11px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .prod-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #E3DACB;
+    }
+    .prod-img {
+      width: 100%;
+      height: 150px;
+      background: #FBF8F2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #A39B8D;
+    }
+    .prod-info { padding: 1rem; }
+    .prod-name { font-size: 12px; font-weight: 500; margin-bottom: 0.5rem; color: #2B2724; }
+    .prod-price { font-size: 13px; font-weight: 700; color: #B08654; }
+
+    /* Mypage */
+    #mypage { padding-bottom: 200px; }
+    .cover { height: 200px; background: #FBF8F2; margin-bottom: 2rem; overflow: hidden; border-radius: 12px; }
+    .cover img { width: 100%; height: 100%; object-fit: cover; }
+    .stats {
+      padding: 2rem 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .stat {
+      background: #FBF8F2;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .stat-num { font-size: 20px; font-weight: 700; color: #B08654; }
+    .stat-label { font-size: 11px; color: #8C857A; margin-top: 0.5rem; }
+    .settings {
+      padding: 0 1.5rem;
+    }
+    .setting-item {
+      padding: 1rem 0;
+      border-bottom: 1px solid #E3DACB;
+      font-size: 14px;
+      color: #2B2724;
+      cursor: pointer;
+    }
+
+    /* Stylist */
+    #stylist { padding: 2rem 1.5rem; }
+    .stylist-btns {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    .stylist-btn {
+      padding: 16px;
+      border: 1px solid #E3DACB;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      text-align: center;
+      transition: all 0.3s;
+      font-weight: 500;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+    }
+    .stylist-btn.line {
+      background: #06C755;
+      color: #fff;
+      border-color: #06C755;
+    }
+
+    /* Share */
+    #share { padding: 2rem 1.5rem; }
+    .share-preview {
+      background: #FBF8F2;
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-bottom: 2rem;
+    }
+    .share-title { font-weight: 700; margin-bottom: 0.5rem; }
+    .share-text { font-size: 13px; color: #584F42; line-height: 1.7; }
+  </style>
 </head>
 <body>
-<div class="sr sr-page" id="app" data-screen-label="LINEミニアプリ（LIFF）">
-<header class="liff-chrome" data-screen-label="LIFFヘッダー">
-    <div class="ttl">
-      <img src="assets/logo.png" alt="SalonRink Concierge" style="filter: brightness(0.82) saturate(1.45) contrast(1.12);">
-      <span class="liff-verified">LINEログイン済み</span>
-    </div>
-    <div class="act">
-      <button aria-label="メニュー">⋯</button>
-      <button aria-label="閉じる">×</button>
-    </div>
-  </header>
+<main id="app">
+  <!-- Welcome -->
+  <section id="welcome" class="screen active">
+    <img src="assets/logo.png" alt="SALONRINK CONCIERGE">
+    <h1>はじめまして。<br>あなたの美容カルテをつくりましょう</h1>
+    <p>アプリは不要。LINEからそのまま使えます。</p>
+    <button class="btn btn-primary" onclick="app.goToProfile()">プロフィールを登録する</button>
+  </section>
 
-  <!-- ════════ タブ1: マイカルテ ════════ -->
-  <section class="mini-screen on" id="tabKarte" data-screen-label="マイカルテ">
-    <div class="mini-hello" id="karteHello">
-      <div>
-        <strong id="karteName">ようこそ</strong>
-        <span class="sub" id="kartePlan">読み込み中…</span>
+  <!-- Profile -->
+  <section id="profile" class="screen">
+    <div class="profile-step active" id="p1">
+      <div class="profile-header">
+        <h2>プロフィール登録 <span style="color:#B08654;">①/②</span></h2>
+        <p>基本情報</p>
+      </div>
+      <div class="form-group">
+        <label>お名前 <span style="color:#C96F5A;">*</span></label>
+        <input type="text" id="pName" placeholder="例）山田 花子">
+      </div>
+      <div class="form-group">
+        <label>生年月日 <span style="color:#C96F5A;">*</span></label>
+        <input type="date" id="pBirth">
+      </div>
+      <div class="form-group">
+        <label>性別 <span style="color:#C96F5A;">*</span></label>
+        <select id="pGender">
+          <option value="">選択</option>
+          <option value="f">女性</option>
+          <option value="m">男性</option>
+          <option value="o">その他</option>
+        </select>
+      </div>
+      <button class="btn btn-secondary btn-full" onclick="app.nextProfile()">次へ</button>
+    </div>
+
+    <div class="profile-step" id="p2">
+      <div class="profile-header">
+        <h2>プロフィール登録 <span style="color:#B08654;">②/②</span></h2>
+        <p>気になることを選択</p>
+      </div>
+      <div class="form-group">
+        <label>気になること（複数選択可）</label>
+        <div class="chips">
+          <div class="chip" data-c="damage" onclick="app.toggleChip(this)">ダメージ</div>
+          <div class="chip" data-c="dry" onclick="app.toggleChip(this)">乾燥</div>
+          <div class="chip" data-c="oily" onclick="app.toggleChip(this)">べたつき</div>
+          <div class="chip" data-c="frizz" onclick="app.toggleChip(this)">広がり</div>
+          <div class="chip" data-c="scalp" onclick="app.toggleChip(this)">頭皮</div>
+          <div class="chip" data-c="gray" onclick="app.toggleChip(this)">白髪</div>
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-full" onclick="app.doneProfile()">登録完了</button>
+    </div>
+  </section>
+
+  <!-- Home -->
+  <section id="home" class="screen">
+    <div class="home-header">
+      <h1>SALONRINK</h1>
+      <div class="concierge">CONCIERGE</div>
+    </div>
+    <div class="hero">
+      <img src="assets/home-hero2.png" alt="">
+    </div>
+    <div class="grid-2">
+      <div class="card" onclick="app.startDiag('hair_quality')">
+        <img class="card-img" src="assets/diag-hair.png" alt="">
+        <div class="card-content">
+          <div class="card-title">髪質診断</div>
+          <div class="card-sub">5問で判定</div>
+        </div>
+      </div>
+      <div class="card" onclick="app.startDiag('gray_check')">
+        <img class="card-img" src="assets/diag-gray.png" alt="">
+        <div class="card-content">
+          <div class="card-title">白髪チェック</div>
+          <div class="card-sub">5問で判定</div>
+        </div>
+      </div>
+      <div class="card" onclick="app.startDiag('nail')">
+        <img class="card-img" src="assets/diag-nail.png" alt="">
+        <div class="card-content">
+          <div class="card-title">ネイル診断</div>
+          <div class="card-sub">5問で判定</div>
+        </div>
+      </div>
+      <div class="card" onclick="app.startDiag('scalp')">
+        <img class="card-img" src="assets/diag-scalp.png" alt="">
+        <div class="card-content">
+          <div class="card-title">頭皮診断</div>
+          <div class="card-sub">4問で判定</div>
+        </div>
+      </div>
+      <div class="card" onclick="app.startDiag('personal_color')">
+        <img class="card-img" src="assets/diag-color.png" alt="">
+        <div class="card-content">
+          <div class="card-title">パーソナルカラー</div>
+          <div class="card-sub">6問で判定</div>
+        </div>
+      </div>
+      <div class="card dark" onclick="app.goFortune()">
+        <img class="card-img" src="assets/diag-fortune.png" alt="">
+        <div class="card-content">
+          <div class="card-title">ビューティー占い</div>
+          <div class="card-sub">課金・順次追加</div>
+        </div>
       </div>
     </div>
-
-    <div class="mini-h"><h2>診断履歴</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
-    <div style="padding: 0 20px;" id="karteDiagList">
-      <div class="neo-panel"><p class="sr-note" style="text-align:center;">読み込み中…</p></div>
-    </div>
-
-    <p class="sr-note" style="padding: 0 22px; text-align: center;">提供：AOKAE合同会社</p>
   </section>
 
-  <!-- ════════ タブ2: 診断 ════════ -->
-  <section class="mini-screen" id="tabDiag" data-screen-label="診断">
-    <div class="mini-h" style="padding-top: 20px;"><h2>4つのAIビューティ診断</h2></div>
-    <p style="padding: 0 22px 14px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">あなたを深く理解して、ぴったりの提案につなげます。<br>すべて無料・約30秒。</p>
-    <div class="diag-list">
-      <a class="diag-row" href="photo.html?ref=mini-photo">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
-        <div><strong>写真AI診断</strong><p>1枚撮るだけで髪の傾向をチェック</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
-      <a class="diag-row" href="quiz.html?kind=beauty_dna&ref=mini-bdna">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg></span>
-        <div><strong>Beauty DNA 診断</strong><p>あなたの美容タイプを総合分析</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
-
-      <a class="diag-row" href="quiz.html?kind=hair_quality&ref=mini-hairq">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/></svg></span>
-        <div><strong>髪質診断</strong><p>クセ・太さ・ダメージの傾向</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
-      <a class="diag-row" href="quiz.html?kind=scalp&ref=mini-scalp">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="6"/><path d="M9 20c.8-1.5 1.8-2 3-2s2.2.5 3 2"/></svg></span>
-        <div><strong>頭皮・スカルプ診断</strong><p>頭皮環境の傾向をチェック</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
+  <!-- Diag Intro -->
+  <section id="diagIntro" class="screen">
+    <div style="padding:2rem 1.5rem; text-align:center;">
+      <h2 style="font-size:24px; margin-bottom:1rem; font-family:'Shippori Mincho', serif; font-weight:400;" id="introTitle">髪質診断</h2>
+      <p style="color:#8C857A; margin-bottom:2rem; line-height:1.8;">簡単な質問に答えるだけで、<br>あなたの髪の傾向が分かります。</p>
+      <button class="btn btn-primary" onclick="app.startSurvey()">診断をはじめる</button>
+      <button class="btn" style="background:#F6F1E8; color:#2B2724; border:1px solid #E3DACB; margin-top:1rem;" onclick="app.goHome()">戻る</button>
     </div>
-    <p class="sr-note" style="padding: 14px 22px 0; text-align: center;">※AIによる見た目の傾向とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
   </section>
 
-  <nav class="mini-nav" data-screen-label="ミニアプリ下部タブ">
-    <button class="on" data-tab="tabKarte">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
-      マイカルテ
-    </button>
-    <button data-tab="tabDiag">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      診断
-    </button>
-  </nav>
+  <!-- Survey -->
+  <section id="survey" class="screen">
+    <div class="survey" id="surveyQ"></div>
+    <button class="btn btn-secondary btn-full" style="margin:0 1.5rem; width:calc(100% - 3rem);" onclick="app.endSurvey()">診断する</button>
+  </section>
 
+  <!-- Analyzing -->
+  <section id="analyzing" class="screen">
+    <div class="analyzing">
+      <div class="spinner"></div>
+      <p>診断中...</p>
+    </div>
+  </section>
+
+  <!-- Result -->
+  <section id="result" class="screen">
+    <div class="medical">本診断は、ご自宅でのお手入れの参考にしていただくための目安であり、医療的な診断ではありません。</div>
+    <div class="result-header">
+      <div class="result-label" id="resL"></div>
+      <div class="result-title" id="resT"></div>
+      <div class="result-copy" id="resC"></div>
+    </div>
+    <div class="scores" id="scores"></div>
+    <div class="proposal">
+      <div class="proposal-title">あなたのコンシェルジュからの提案</div>
+      <div class="proposal-text" id="propText"></div>
+      <button class="btn btn-secondary" style="width:100%; margin-top:1rem; padding:14px;" onclick="app.deepAdvice()">AIに深掘り相談</button>
+    </div>
+    <button class="btn btn-primary" style="width:100%; padding:14px; margin-bottom:1rem;" onclick="app.saveResult()">この結果を保存</button>
+    <button class="btn" style="background:#F6F1E8; color:#2B2724; border:1px solid #E3DACB; width:100%; padding:14px;" onclick="app.goHome()">ホームに戻る</button>
+  </section>
+
+  <!-- Fortune -->
+  <section id="fortune" class="screen">
+    <div class="f-header">
+      <h1>ビューティー占い</h1>
+      <p style="font-size:12px; color:#B5AC9E;">四柱推命×占星術で、あなたの美しさを引き出すタイミングを占います</p>
+    </div>
+    <p style="font-size:13px; color:#D8CFC0; line-height:1.7; margin-bottom:2rem;">できることをちょっと覗いてみませんか？<br>無料で「今日のひとこと」と「命式」が見られます。</p>
+    <div class="f-free">
+      <div class="f-today">
+        <p style="font-size:11px; color:#B5AC9E; margin-bottom:1rem;">今日のひとこと</p>
+        <div class="f-msg">「今のあなたはすべてを優しく包み込む準備ができています」</div>
+      </div>
+      <div class="f-meishiki">
+        <strong>命式ダイジェスト</strong><br>
+        <span id="meishikiTxt">四柱推命に基づく情報が表示されます</span>
+      </div>
+    </div>
+    <div class="f-paywall">
+      <p style="color:#D8CFC0; margin-bottom:1rem; font-size:13px;">詳細な鑑定をご覧になるには</p>
+      <div class="f-blur">
+        <p>◆ あなたの総合運</p>
+        <p>◆ 開運のポイント</p>
+        <p>◆ テーマ別詳細鑑定</p>
+      </div>
+      <div class="prices">
+        <button class="price-btn" onclick="app.selectPlan('day')">
+          <span class="price-amt">¥55</span>
+          <span>1日お試し</span>
+        </button>
+        <button class="price-btn rec" onclick="app.selectPlan('month')">
+          <span class="price-amt">¥480</span>
+          <span>月額<br>おすすめ</span>
+        </button>
+      </div>
+    </div>
+    <div class="f-footer">本コンテンツは娯楽を目的としたものであり、結果を保証するものではありません。</div>
+  </section>
+
+  <!-- Album -->
+  <section id="album" class="screen">
+    <h2 style="padding:2rem 1.5rem 1rem; font-size:22px;">アルバム</h2>
+    <div style="padding:0 1.5rem;">
+      <div class="album-title">Before/After</div>
+      <div class="photo-scroll">
+        <div class="photo-tile" style="background:#FBF8F2; display:flex; align-items:center; justify-content:center; color:#A39B8D; font-size:12px;">写真を追加</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Karte -->
+  <section id="karte" class="screen">
+    <h2 style="padding:2rem 1.5rem 1rem; font-size:22px;">事前カルテ</h2>
+    <div style="padding:0 1.5rem;">
+      <div class="karte-section">
+        <div class="karte-title">診断結果</div>
+        <div class="karte-info">最新の診断情報が自動入力されます</div>
+      </div>
+      <div class="karte-section">
+        <div class="karte-title">今回の希望</div>
+        <div class="chips">
+          <div class="chip" style="font-size:12px;">カット</div>
+          <div class="chip" style="font-size:12px;">カラー</div>
+          <div class="chip" style="font-size:12px;">白髪ぼかし</div>
+          <div class="chip" style="font-size:12px;">パーマ</div>
+        </div>
+      </div>
+      <div class="karte-section">
+        <div class="karte-title">メモ</div>
+        <textarea style="width:100%; padding:10px; border:1px solid #E3DACB; border-radius:8px; font-size:13px; font-family:'Zen Kaku Gothic New', sans-serif; min-height:100px; resize:none;" placeholder="ご要望やご質問があればお書きください"></textarea>
+      </div>
+      <button class="btn btn-primary btn-full" style="margin:2rem 0;" onclick="app.sendKarte()">送信する</button>
+    </div>
+  </section>
+
+  <!-- Store -->
+  <section id="store" class="screen">
+    <h2 style="padding:2rem 1.5rem 1rem; font-size:22px;">オンラインストア</h2>
+    <div style="padding:0 1.5rem;">
+      <div class="prod-badge">髪質診断</div>
+      <p style="font-size:12px; color:#8C857A; margin-bottom:1rem;">あなたの診断結果に基づいた商品をお勧めします</p>
+      <div class="prod-grid">
+        <div class="prod-card">
+          <div class="prod-img">シャンプー</div>
+          <div class="prod-info">
+            <div class="prod-name">ダメージケアシャンプー</div>
+            <div class="prod-price">¥3,500</div>
+          </div>
+        </div>
+        <div class="prod-card">
+          <div class="prod-img">トリートメント</div>
+          <div class="prod-info">
+            <div class="prod-name">集中保湿トリート</div>
+            <div class="prod-price">¥4,200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mypage -->
+  <section id="mypage" class="screen">
+    <div class="cover">
+      <img src="assets/profile-photo.png" alt="" style="object-position:center 30%;">
+    </div>
+    <div style="background:#fff; padding:1.5rem; border-radius:16px; margin:-30px 1.5rem 2rem; position:relative; box-shadow:0 10px 26px rgba(43,39,36,.06);">
+      <div class="result-title" id="mpName">プロフィール</div>
+      <div class="result-label" id="mpMeta"></div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num" id="sDay">-</div>
+        <div class="stat-label">前回の来店</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="sDiag">0</div>
+        <div class="stat-label">診断回数</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num" id="sPhoto">0</div>
+        <div class="stat-label">ケア記録</div>
+      </div>
+    </div>
+    <div class="settings">
+      <div class="setting-item" onclick="app.goStore()">⭐ オンラインストア</div>
+      <div class="setting-item" onclick="app.showToast('設定画面')">⚙️ 設定</div>
+      <div class="setting-item" onclick="app.showToast('バージョン情報')">ℹ️ バージョン情報</div>
+    </div>
+  </section>
+
+  <!-- Stylist -->
+  <section id="stylist" class="screen">
+    <h2 style="padding:2rem 1.5rem; font-size:22px;">担当美容師の登録</h2>
+    <p style="padding:0 1.5rem; color:#8C857A; margin-bottom:2rem;">毎回のカウンセリングをスムーズにするために、担当の美容師さんをご登録ください。</p>
+    <div style="padding:0 1.5rem;">
+      <div class="stylist-btns">
+        <button class="stylist-btn line" onclick="app.showToast('LINE登録')">LINEで友だち登録する</button>
+        <button class="stylist-btn" onclick="app.showToast('友だち選択')">友だちから選ぶ</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Share -->
+  <section id="share" class="screen">
+    <h2 style="padding:2rem 1.5rem; font-size:22px;">診断結果を共有</h2>
+    <div style="padding:0 1.5rem;">
+      <div class="share-preview">
+        <div class="share-title">あなたの診断結果</div>
+        <div class="share-text">最新の診断結果をキャプチャして、美容師さんに送信することができます。</div>
+      </div>
+      <button class="btn btn-secondary" style="width:100%; padding:14px; margin-bottom:1rem;" onclick="app.shareResult()">LINEで送信</button>
+      <button class="btn" style="background:#F6F1E8; color:#2B2724; border:1px solid #E3DACB; width:100%; padding:14px;" onclick="app.goHome()">戻る</button>
+    </div>
+  </section>
+</main>
+
+<!-- Nav -->
+<div class="nav" id="nav">
+  <div class="nav-item active" onclick="app.goFortune()">占い</div>
+  <div class="nav-item" onclick="app.goAlbum()">アルバム</div>
+  <div class="nav-center" onclick="app.showDiagMenu()">診</div>
+  <div class="nav-item" onclick="app.goKarte()">カルテ</div>
+  <div class="nav-item" onclick="app.goMypage()">マイページ</div>
 </div>
-<script>
-// ============ タブ切替 ============
-(function () {
-  var nav = document.querySelector('.mini-nav');
-  nav.addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) { return; }
-    nav.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
-    document.querySelectorAll('.mini-screen').forEach(function (s) {
-      s.classList.toggle('on', s.id === b.dataset.tab);
-    });
-    window.scrollTo(0, 0);
-  });
-  document.getElementById('toDiagLink').addEventListener('click', function (e) {
-    e.preventDefault();
-    nav.querySelector('[data-tab="tabDiag"]').click();
-  });
-})();
+<div class="store-bar" onclick="app.goStore()">オンラインストア ›</div>
+<div class="toast" id="toast"></div>
 
-// ============ ref引き継ぎ(LIFFでは liff.state から取得) ============
-(function () {
-  var ref = null;
-  try {
-    var q = new URLSearchParams(location.search);
-    ref = q.get('ref');
-    if (ref) { sessionStorage.setItem('sr-ref', ref); }
-    else { ref = sessionStorage.getItem('sr-ref'); }
-  } catch (e) {}
-  if (!ref) { return; }
-  document.querySelectorAll('a[href]').forEach(function (a) {
-    var href = a.getAttribute('href');
-    if (!href || href.charAt(0) === '#') { return; }
-    try {
-      var url = new URL(href, location.href);
-      var cur = url.searchParams.get('ref');
-      if (cur && cur.indexOf('__') !== -1) { return; }
-      url.searchParams.set('ref', cur ? cur + '__' + ref : ref);
-      a.href = url.toString();
-    } catch (e) {}
-  });
-})();
-</script>
 <script>
-(function () {
-  'use strict';
-  var LIFF_ID = "2010387325-N1TlMFzx"; // 本番用 LIFF ID (SalonRink LINEミニアプリチャネル)
-  var MYCARTE = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte";
-  function byId(id){ return document.getElementById(id); }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function fmtDate(s){ try{ var d=new Date(s); return (d.getMonth()+1)+'/'+d.getDate(); }catch(e){ return ''; } }
-  var KM={tsuya:'ツヤ',matomari:'まとまり',uruoi:'うるおい',volume:'ボリューム',hari_koshi:'ハリ・コシ'};
-  function bars(scores){
-    return Object.keys(scores).slice(0,4).map(function(k){
-      var v=Math.max(0,Math.min(100,Math.round(Number(scores[k])||0)));
-      return '<div class="neo-meter"><span class="lbl">'+esc(k)+'</span><span class="track"><span class="fill" style="width:'+v+'%"></span></span><span class="val">'+v+'%</span></div>';
+const LIFF_ID = '2010387323-3nLl1HmS';
+const SUPABASE_URL = 'https://fmpmgilgvvfezursmyic.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZtcG1naWxndnZmZXp1cnNteWljIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDY1MzExNjgsImV4cCI6MTczMjE1MTE2OH0.6I_9Dkq_1lNMV5dKT3zF1tRfLd5h9eKyX3m_ZvKZ_FY';
+
+const app = {
+  s: { screen: 'welcome', name: '', birth: '', gender: '', concerns: [], diag: null, answers: [], },
+  qs: {
+    hair_quality: [
+      { q: '1. 髪がきしむことはありますか？', o: ['いつも', 'よく', 'たまに', 'ほぼなし'] },
+      { q: '2. 髪が乾きやすいですか？', o: ['非常に', 'やや', 'ふつう', 'しっとり'] },
+      { q: '3. 毛先のダメージを感じますか？', o: ['かなり', 'まあまあ', 'すこし', 'なし'] },
+      { q: '4. ハリ・コシがありますか？', o: ['ない', 'やや', 'まあある', 'ある'] },
+      { q: '5. 全体的な髪の状態は？', o: ['悪い', 'ふつう', '良い', '非常に良い'] },
+    ],
+    gray_check: [
+      { q: '1. 白髪は全体の何％ですか？', o: ['0%', '1-10%', '11-30%', '31%以上'] },
+      { q: '2. 白髪が目立ちますか？', o: ['かなり', 'やや', 'あまり', 'なし'] },
+      { q: '3. 白髪のお手入れ頻度は？', o: ['毎月', '2ヶ月', '3ヶ月以上', '対応なし'] },
+      { q: '4. 髪色のニーズは？', o: ['明るく', 'やや明るく', 'ふつう', '暗め'] },
+      { q: '5. 白髪ぼかしに興味はありますか？', o: ['あり', 'やや', 'なし', 'わからない'] },
+    ],
+    nail: [
+      { q: '1. 爪の状態は？', o: ['悪い', 'ふつう', '良い', '非常に良い'] },
+      { q: '2. 爪の悩みは？', o: ['割れやすい', 'もろい', 'ほぼなし', 'わからない'] },
+      { q: '3. ネイルケアの頻度は？', o: ['毎日', '週3-4日', '週1-2日', 'ほぼしない'] },
+      { q: '4. 理想の爪は？', o: ['長め', 'やや長め', 'ふつう', '短め'] },
+      { q: '5. ネイルカラーは？', o: ['よくする', 'たまに', 'ほぼしない', 'わからない'] },
+    ],
+    scalp: [
+      { q: '1. 頭皮の状態は？', o: ['悪い', 'ふつう', '良い', '非常に良い'] },
+      { q: '2. フケやかゆみはありますか？', o: ['ある', 'たまに', 'ほぼなし', 'なし'] },
+      { q: '3. 頭皮の脂感は？', o: ['多い', 'やや', 'ふつう', '少ない'] },
+      { q: '4. シャンプー後の快適さは？', o: ['悪い', 'ふつう', '良い', '非常に良い'] },
+    ],
+    personal_color: [
+      { q: '1. 肌のトーンは？', o: ['黄みよりで暖かい', 'やや黄み', 'ニュートラル', 'ピンク・冷たい'] },
+      { q: '2. 肌の明るさは？', o: ['暗い', '暗め', '中程度', '明るい'] },
+      { q: '3. よく似合うと言われる色は？', o: ['黒・白・紫', '紺・グレー・紫', 'ベージュ・黄・黄緑', 'レッド・ローズ・青'] },
+      { q: '4. 金と銀、どちらが似合いますか？', o: ['金がとても似合う', 'どちらかというと金', 'どちらでもOK', '銀が似合う'] },
+      { q: '5. メイクの印象は？', o: ['濃いめ推奨', 'やや濃いめ', 'ナチュラル', 'フェミニン'] },
+      { q: '6. 得意な色使いは？', o: ['深い色', 'やや深い', 'クリア・明るい', 'やや明るい'] },
+    ],
+  },
+  res: {
+    hair_quality: { label: '髪質診断', t: ['ダメージヘア', 'ノーマルヘア', 'ケアヘア', 'ツヤケア'], c: ['髪のダメージが気になります。集中ケアをお勧めします。', 'バランスの取れた髪の状態です。現在のケアを継続してください。', 'よくケアされている髪です。その状態を維持しましょう。', '非常にツヤのある髪です。このケアを続けてください。'], ax: ['ダメージ', 'うるおい', 'ハリ・コシ'] },
+    gray_check: { label: '白髪チェック', t: ['白髪なし', 'わずかな白髪', '中程度の白髪', '多い白髪'], c: ['白髪はほぼありません。定期的なチェックをお勧めします。', 'わずかな白髪が見られます。対応を検討してもいい時期です。', '中程度の白髪があります。ご自身に合ったケアを探しましょう。', '白髪が多くあります。定期的なケアがお勧めです。'], ax: ['白髪量', 'カバー対応', 'ケア頻度'] },
+    nail: { label: 'ネイル診断', t: ['もろいネイル', '標準ネイル', '健康ネイル', '強いネイル'], c: ['爪がもろい傾向です。栄養ケアをお勧めします。', '爪の状態は標準的です。基本のケアをしましょう。', '爪は健康的です。現在のケアを継続してください。', '爪は非常に強いです。そのままのケアでいいでしょう。'], ax: ['強度', '保湿', 'ツヤ'] },
+    scalp: { label: '頭皮診断', t: ['悪い頭皮', '注意が必要', 'ふつう', '非常に良好'], c: ['頭皮の状態が気になります。専門的なケアをお勧めします。', '頭皮に注意が必要です。ケアを強化してください。', '頭皮の状態はふつうです。現在のケアを継続してください。', '頭皮の状態は非常に良好です。その状態を維持してください。'], ax: ['脂分', 'かゆみ', '清潔感'] },
+    personal_color: { label: 'パーソナルカラー診断', t: ['ウォーム系', 'やや暖色寄り', 'クール系', 'フェミニン系'], c: ['あなたはウォーム系のカラーが似合います。黄み系を意識してみてください。', 'やや暖色寄りのカラーが得意です。ベージュ系を試してみてください。', 'クール系のカラーが似合います。ピンク・紫を意識してみてください。', 'フェミニン系のカラーが似合います。ローズやレッド系を試してみてください。'], ax: ['暖色度', 'クリア度', 'ディープ度'] },
+  },
+  prop: {
+    hair_quality: 'ダメージを最小限にするヘアケア日程をお勧めします。',
+    gray_check: '白髪ぼかしのタイミングと色選びについてご相談ください。',
+    nail: '爪のキューティクルケアを重点的に行いましょう。',
+    scalp: '頭皮クレンジングの導入をお勧めします。',
+    personal_color: 'あなたに似合う色の選び方をご一緒に探しましょう。',
+  },
+
+  init() {
+    try {
+      liff.init({ liffId: LIFF_ID }).then(() => {
+        if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+        const stored = localStorage.getItem('salonrink_profile');
+        if (stored) { Object.assign(this.s, JSON.parse(stored)); this.goHome(); }
+      });
+    } catch(e) {
+      const stored = localStorage.getItem('salonrink_profile');
+      if (stored) { Object.assign(this.s, JSON.parse(stored)); this.goHome(); }
+    }
+  },
+
+  show(id) { document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); },
+  goToProfile() { this.show('profile'); },
+  nextProfile() {
+    this.s.name = document.getElementById('pName').value;
+    this.s.birth = document.getElementById('pBirth').value;
+    this.s.gender = document.getElementById('pGender').value;
+    if (!this.s.name || !this.s.birth || !this.s.gender) { this.showToast('すべてを入力してください'); return; }
+    document.getElementById('p1').classList.remove('active');
+    document.getElementById('p2').classList.add('active');
+  },
+  toggleChip(el) { el.classList.toggle('selected'); },
+  doneProfile() {
+    this.s.concerns = Array.from(document.querySelectorAll('.chip.selected')).map(c => c.dataset.c);
+    if (this.s.concerns.length === 0) { this.showToast('1つ以上選択してください'); return; }
+    localStorage.setItem('salonrink_profile', JSON.stringify(this.s));
+    this.goHome();
+  },
+
+  goHome() { this.show('home'); },
+  startDiag(kind) {
+    this.s.diag = kind;
+    document.getElementById('introTitle').textContent = this.res[kind].label;
+    this.show('diagIntro');
+  },
+  startSurvey() {
+    this.s.answers = [];
+    const qs = this.qs[this.s.diag];
+    const html = qs.map((q, i) => `<div class="q-group"><h3>${q.q}</h3><div class="options">${q.o.map((opt, j) => `<div class="option" onclick="app.pickOption(${i}, ${j}, this)">${opt}</div>`).join('')}</div></div>`).join('');
+    document.getElementById('surveyQ').innerHTML = html;
+    this.show('survey');
+  },
+  pickOption(i, j, el) {
+    document.querySelectorAll('.option').forEach(e => { if (e.parentElement === el.parentElement) e.classList.remove('selected'); });
+    el.classList.add('selected');
+    this.s.answers[i] = j;
+  },
+  endSurvey() {
+    if (this.s.answers.length !== this.qs[this.s.diag].length) { this.showToast('すべてに答えてください'); return; }
+    this.show('analyzing');
+    setTimeout(() => this.showResult(), 2000);
+  },
+  showResult() {
+    const r = this.res[this.s.diag];
+    const score = Math.floor(this.s.answers.reduce((a, b) => a + b) / this.s.answers.length * 25);
+    const idx = Math.min(Math.floor(score / 25), r.t.length - 1);
+    document.getElementById('resL').textContent = r.label;
+    document.getElementById('resT').textContent = r.t[idx];
+    document.getElementById('resC').textContent = r.c[idx];
+    const scoresHtml = r.ax.map(ax => {
+      const v = 30 + Math.random() * 70;
+      return `<div class="score"><div class="score-label"><span>${ax}</span><span>${Math.round(v)}%</span></div><div class="score-bar"><div class="score-fill" style="width:${v}%"></div></div></div>`;
     }).join('');
-  }
-  function diagCard(d){
-    var r=d.result||{};
-    var label=r.label||(d.diagnosis_type==='photo'?'写真AI診断':'診断');
-    var typeName=r.type_name||r.type||'';
-    var scores=r.scores||{}; var disp={};
-    Object.keys(scores).forEach(function(k){ disp[KM[k]||k]=scores[k]; });
-    return '<div class="neo-panel" style="margin-bottom:12px;">'+
-      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">'+
-        '<strong style="color:var(--sr-ink);">'+esc(label)+(typeName?'：'+esc(typeName):'')+'</strong>'+
-        '<span class="sub" style="font-size:11px;color:var(--sr-muted);">'+fmtDate(d.saved_at||d.created_at)+'</span>'+
-      '</div><div class="neo-meters">'+bars(disp)+'</div></div>';
-  }
-  function loadKarte(userId){
-    fetch(MYCARTE,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:userId})})
-      .then(function(r){return r.json();}).then(function(data){
-        if(!data||!data.ok) throw new Error('failed');
-        var planTxt=(data.plan&&data.plan.is_premium)?'プレミアム会員':'無料会員';
-        var mc=((data.month_count!=null)?data.month_count:0)+'/'+((data.plan&&data.plan.diag_limit)||2);
-        var pl=byId('kartePlan'); if(pl) pl.textContent=planTxt+' · 今月の診断 '+mc;
-        var list=byId('karteDiagList');
-        if(data.diagnoses&&data.diagnoses.length){
-          list.innerHTML=data.diagnoses.map(diagCard).join('');
-        } else {
-          list.innerHTML='<div class="neo-panel"><p class="sr-note" style="text-align:center;">まだ診断がありません。<br><a href="#" id="emptyToDiag">診断タブ</a>からはじめましょう。</p></div>';
-          var e=byId('emptyToDiag'); if(e) e.addEventListener('click',function(ev){ev.preventDefault(); var n=document.querySelector('.mini-nav [data-tab="tabDiag"]'); if(n)n.click();});
-        }
-      }).catch(function(){ var pl=byId('kartePlan'); if(pl) pl.textContent='カルテを読み込めませんでした'; });
-  }
-  if(typeof liff==='undefined'){ var pl0=byId('kartePlan'); if(pl0) pl0.textContent='LINEから開くとカルテが表示されます'; return; }
-  liff.init({liffId:LIFF_ID}).then(function(){
-    if(!liff.isLoggedIn()){ liff.login({redirectUri:location.href}); return; }
-    return liff.getProfile().then(function(p){
-      var name=(p&&p.displayName)?p.displayName:'ゲスト';
-      var v=document.querySelector('.liff-verified'); if(v) v.textContent=name;
-      var nm=byId('karteName'); if(nm) nm.textContent=name+' さん';
-      loadKarte(p.userId);
-    });
-  }).catch(function(){ var pl1=byId('kartePlan'); if(pl1) pl1.textContent='LINEから開くとカルテが表示されます'; });
-})();
+    document.getElementById('scores').innerHTML = scoresHtml;
+    document.getElementById('propText').textContent = this.prop[this.s.diag];
+    this.show('result');
+  },
+  deepAdvice() { this.showToast('¥110 の課金が必要です\nまたはクレジット5回 ¥500'); },
+  saveResult() { this.showToast('結果を保存しました'); },
+
+  goFortune() {
+    this.show('fortune');
+    if (this.s.birth) {
+      const d = new Date(this.s.birth);
+      const m = ['やぎ', 'みずがめ', 'うお', 'おひつじ', 'おうし', 'ふたご', 'かに', 'しし', 'おとめ', 'てんびん', 'さそり', 'いて'];
+      const t = ['大成', '開拓', 'バランス', 'こだわり', 'ロマン'];
+      const c = ['緑', '赤', '黄', '白', '黒'];
+      const idx = (d.getDate() + d.getMonth() + 1) % 5;
+      document.getElementById('meishikiTxt').innerHTML = `${t[idx]} | ${m[d.getMonth()]} | 開運色: ${c[idx]}`;
+    }
+  },
+  selectPlan(p) { this.showToast(`${p === 'day' ? '¥55' : '¥480'} の決済画面へ`); },
+
+  goAlbum() { this.show('album'); },
+  goKarte() { this.show('karte'); },
+  sendKarte() { this.showToast('カルテを送信しました'); },
+  goStore() { this.show('store'); },
+  goMypage() {
+    this.show('mypage');
+    document.getElementById('mpName').textContent = this.s.name || 'プロフィール';
+    if (this.s.birth) {
+      const d = new Date(this.s.birth);
+      const t = ['大成', '開拓', 'バランス', 'こだわり', 'ロマン'][(d.getDate() + d.getMonth() + 1) % 5];
+      const m = ['やぎ', 'みずがめ', 'うお', 'おひつじ', 'おうし', 'ふたご', 'かに', 'しし', 'おとめ', 'てんびん', 'さそり', 'いて'][d.getMonth()];
+      document.getElementById('mpMeta').textContent = `${t} | ${m}`;
+    }
+  },
+  showDiagMenu() { this.showToast('診断メニュー'); setTimeout(() => this.goHome(), 300); },
+  shareResult() { this.showToast('LINEで送信'); },
+
+  showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2000);
+  },
+};
+
+app.init();
 </script>
 </body>
 </html>
