@@ -1481,9 +1481,9 @@ class Component extends DCLogic {
       },
       nail: {
         kanji: '爪', short: 'ネイル', tint: '#C08A8A', grad: "url('assets/diag-nail.png') center 42% / cover no-repeat", title: 'ネイル診断',
-        desc: '爪の強度・乾燥・縦筋をチェック',
+        desc: '縦筋・うるおい・色みをチェック',
         introTitle: '素爪の健康状態を、手軽にチェック。',
-        introBody: '爪の縦筋・乾燥・強度をAIが解析します。ジェルネイルのお休み期間の判断や、ベースケア選びに役立ちます。',
+        introBody: '爪の縦筋・うるおい・色みをAIが解析します。ジェルネイルのお休み期間の判断や、ベースケア選びに役立ちます。',
         personalNote: '2週間ごとの再診断で、ケアの効果を記録できます。',
         tips: ['撮影は2枚：①手全体 → ②指先のアップ', 'ネイルオフした素爪で撮影してください', '2枚目は1円玉を隣に置くと、爪のサイズ計測がより正確になります'],
         shots: ['手全体', '指先（爪のアップ）'],
@@ -1491,7 +1491,7 @@ class Component extends DCLogic {
         score: 71, scoreLabel: 'ネイルスコア', delta: '初回診断',
         verdict: '乾燥ぎみ・縦筋が出はじめ', verdictSub: '爪の水分量がやや不足しています。オイルケアで改善しやすい状態です。',
         metrics: [
-          { label: '強度', value: '76 / 100', pct: 76, barColor: '#C08A8A', note: '二枚爪のリスクは低めです' },
+          { label: '色み', value: '76 / 100', pct: 76, barColor: '#C08A8A', note: '健康的なピンク色です' },
           { label: 'うるおい', value: '58 / 100', pct: 58, barColor: '#CC9999', note: '甘皮まわりの乾燥が見られます' },
           { label: '表面のなめらかさ', value: '69 / 100', pct: 69, barColor: '#C08A8A', note: '縦筋は加齢・乾燥の初期サイン' }
         ],
@@ -1552,7 +1552,7 @@ class Component extends DCLogic {
       },
       scalp: {
         kanji: '頭', short: '頭皮', tint: '#7E8B74', grad: "url('assets/diag-scalp.png') center 30% / cover no-repeat", title: '頭皮診断',
-        desc: '皮脂・乾燥・毛穴をチェック',
+        desc: '皮脂・乾燥・赤みをチェック',
         introTitle: '髪の土台、頭皮からきれいに。',
         introBody: '頭皮の色味・皮脂バランス・乾燥のサインをAIが解析します。結果に応じて、専門スタッフのカウンセリングをご案内します。',
         personalNote: '結果はWCサイトのカウンセリング予約にそのまま連携できます。',
@@ -1563,7 +1563,7 @@ class Component extends DCLogic {
         metrics: [
           { label: '皮脂バランス', value: '70 / 100', pct: 70, barColor: '#7E8B74', note: 'テカリ・ベタつきは正常範囲です' },
           { label: 'うるおい', value: '54 / 100', pct: 54, barColor: '#93A188', note: '乾燥によるかゆみに注意' },
-          { label: '毛穴クリア', value: '72 / 100', pct: 72, barColor: '#7E8B74', note: '詰まりは少なく健康的です' }
+          { label: '赤みのサイン', value: '72 / 100', pct: 72, barColor: '#7E8B74', note: '敏感な状態は少なく健康的です' }
         ],
         advice: '頭皮スコア65は「ケアの始めどき」。問診の内容と合わせると、乾燥ケア中心のホームケアが合っています。セルフケアに加えて、専門カウンセリングで原因の特定もおすすめです。',
         ecLabel: '頭皮ケアECで見る',
@@ -1580,7 +1580,7 @@ class Component extends DCLogic {
     const s = this.state;
     const diags = this.getDiags();
     const d = diags[s.diag] || diags.hair;
-    const order = ['hair', 'scalp'];
+    const order = ['hair', 'gray', 'scalp', 'nail', 'color'];
     const stylists = this.getStylists();
     const curStylist = stylists[s.pStylist];
     const userName = s.pName || 'ゲスト';
