@@ -213,7 +213,13 @@
       <div style="font-size:11px; color:#A39B8D; line-height:1.7; margin-top:14px;">撮影した写真は診断のためだけに使用されます。ご自身で共有しない限り、他の人に見られることはありません。</div>
     </div>
     <div style="padding:16px 24px 26px;">
-      <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
+      <sc-if value="{{ isHairDiag }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
+      </sc-if>
+      <sc-if value="{{ notHairDiag }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#F1EADF; border-radius:14px; padding:14px 16px; font-size:12px; color:#8C7B62; line-height:1.6; margin-bottom:14px;">📸 写真解析は順次追加予定です。まずは質問にお答えください。</div>
+        <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">質問に答えて診断する</div>
+      </sc-if>
     </div>
   </div>
   </sc-if>
@@ -1323,6 +1329,7 @@ async function apiCall(path,body,useAnon=false){
 }
 
 const quiz_diagnose=(kind,answers)=>apiCall('/quiz-diagnose',{kind,answers,line_user_id:LINE_UID});
+const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
@@ -1769,6 +1776,8 @@ class Component extends DCLogic {
       isProfile: s.screen === 'profile',
       isHome: s.screen === 'home',
       isIntro: s.screen === 'intro',
+      isHairDiag: s.diag === 'hair',
+      notHairDiag: s.diag !== 'hair',
       isCamera: s.screen === 'camera',
       isAnalyzing: s.screen === 'analyzing',
       isResult: s.screen === 'result',
@@ -2131,16 +2140,25 @@ class Component extends DCLogic {
         this.setState({ screen: 'analyzing', camStep: 1 });
         clearTimeout(this._at);
         this._at = setTimeout(async () => {
-          const answers = [s.diagPhoto || 'photo1', s.diagPhoto2 || 'photo2'];
-          const res = await quiz_diagnose(s.diag || 'hair', answers);
-          if(res.status === 200 && res.data) {
-            track('diag_done', { kind: s.diag });
-            this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
+          let res;
+          if (s.diag === 'hair' && s.diagPhoto) {
+            res = await hair_diagnose(s.diagPhoto);
+            if(res.status === 200 && res.data) {
+              const data = await res.data;
+              if(data && data.result) {
+                track('diag_done', { kind: 'hair' });
+                this.setState({ diagResult: data.result, diagResultId: null, screen: 'result', diagCount: this.state.diagCount + 1 });
+              } else { throw new Error(data?.message || '診断に失敗しました'); }
+            } else { throw new Error('通信エラー'); }
           } else {
-            this.showToast('診断に失敗しました。もう一度お試しください');
-            this.setState({ screen: 'intro' });
+            const answers = [s.diagPhoto || 'photo1', s.diagPhoto2 || 'photo2'];
+            res = await quiz_diagnose(s.diag || 'hair', answers);
+            if(res.status === 200 && res.data) {
+              track('diag_done', { kind: s.diag });
+              this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
+            } else { throw new Error('診断に失敗しました'); }
           }
-        }, 2700);
+        }, 2700).catch(e => { this.showToast(e.message || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); });
       },
       registerBefore: () => {
         this.setState({
