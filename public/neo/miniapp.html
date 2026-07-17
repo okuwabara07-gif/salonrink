@@ -305,10 +305,12 @@
     <div style="flex:1; overflow-y:auto; padding:16px 20px 28px;">
       <div style="display:flex; align-items:center; gap:18px; background:#fff; border-radius:22px; padding:20px; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
         <div style="position:relative; width:110px; height:110px; flex-shrink:0;">
+          <sc-if value="{{ showRing }}" hint-placeholder-val="{{ true }}">
           <svg width="110" height="110" viewBox="0 0 120 120">
             <circle cx="60" cy="60" r="54" fill="none" stroke="#EFE9DE" stroke-width="8"></circle>
             <circle cx="60" cy="60" r="54" fill="none" stroke="#B08654" stroke-width="8" stroke-linecap="round" stroke-dasharray="339" stroke-dashoffset="{{ ringOffset }}" transform="rotate(-90 60 60)"></circle>
           </svg>
+          </sc-if>
           <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;">
             <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:700; color:#2B2724; line-height:1;">{{ diagScore }}</div>
             <div style="font-size:9.5px; color:#8C857A;">{{ diagScoreLabel }}</div>
@@ -468,7 +470,9 @@
         <div onClick="{{ goShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14.5px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで美容師に共有する</div>
         <div onClick="{{ registerBefore }}" style="background:#fff; border:1px solid #D9D2C6; border-radius:999px; padding:14px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer;" style-hover="border-color:#B08654;">ビフォー写真としてアルバムに登録</div>
         <div onClick="{{ startCamera }}" style="padding:10px; text-align:center; font-size:12.5px; color:#8C857A; cursor:pointer;">もう一度診断する</div>
-        <div style="font-size:10px; color:#A39B8D; margin-top:20px; padding:12px; line-height:1.6;">{{ diagResult.disclaimer }}</div>
+        <sc-if value="{{ diagDisclaimer }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:10px; color:#A39B8D; margin-top:20px; padding:12px; line-height:1.6;">{{ diagDisclaimer }}</div>
+        </sc-if>
       </div>
     </div>
   </div>
@@ -1322,7 +1326,6 @@ async function apiCall(path,body,useAnon=false){
   return {status:r.status,data:await r.json().catch(()=>null)};
 }
 
-const quiz_diagnose=(kind,answers)=>apiCall('/quiz-diagnose',{kind,answers,line_user_id:LINE_UID});
 const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 const photo_diagnose=(kind,dataUrl)=>fetch(API+'/photo-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind,image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
@@ -1707,6 +1710,10 @@ class Component extends DCLogic {
       value: Math.round(val),
       pct: Math.round(val)
     })) : [];
+    const dr = s.diagResult || null;
+    const drOverall = scoresList.length ? Math.round(scoresList.reduce((a,b)=>a+b.pct,0)/scoresList.length) : (d.score||0);
+    const drMetrics = scoresList.map(m => ({ label:m.label, value:m.pct+' / 100', pct:m.pct, barColor: m.pct>=70?'#B08654':(m.pct>=40?'#C4956A':'#C08A8A'), note:'' }));
+    const isColor = s.diag === 'color';
     const step = s.profileStep;
 
     return {
@@ -2016,10 +2023,13 @@ class Component extends DCLogic {
       diagPhoto2El: s.diagPhoto2 ? React.createElement('img', { src: s.diagPhoto2, alt: '診断写真2', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } }) : null,
       isNailCam: s.diag === 'nail' || s.diag === 'hand',
       isOvalCam: s.diag !== 'nail' && s.diag !== 'hand',
-      diagScore: d.score, diagScoreLabel: d.scoreLabel, diagDelta: d.delta,
-      ringOffset: Math.round(339 * (1 - d.score / 100)),
-      diagVerdict: d.verdict, diagVerdictSub: d.verdictSub,
-      scoresList: scoresList, diagAdvice: d.advice,
+      diagScore: dr ? drOverall : d.score, diagScoreLabel: dr ? '目安スコア' : d.scoreLabel, diagDelta: dr ? '' : d.delta,
+      ringOffset: Math.round(339 * (1 - (dr ? drOverall : d.score) / 100)),
+      showRing: !isColor,
+      diagVerdict: dr ? (dr.type || '') : d.verdict, diagVerdictSub: dr ? (dr.comment || '') : d.verdictSub,
+      diagMetrics: dr ? drMetrics : d.metrics,
+      diagAdvice: (dr && dr.care_tips) ? dr.care_tips.map(t => '・' + t).join('\n') : d.advice,
+      diagDisclaimer: dr ? (dr.disclaimer || '写真の見た目からの提案です。医療的な診断ではありません。') : '',
       hasProducts: !!d.products, isCounsel: s.diag === 'scalp',
       isSurvey: s.screen === 'survey',
       isScalpResult: s.diag === 'scalp',
@@ -2098,9 +2108,9 @@ class Component extends DCLogic {
       },
       goMyPage: () => this.go('mypage'),
       goShare: () => {
-        const diagMsg = d.title + '診断: スコア ' + d.score + '/100\n' + d.verdict;
+        const head = dr ? (d.title + '診断: ' + (dr.type || '') + '（目安 ' + drOverall + '/100）') : (d.title + '診断: スコア ' + d.score + '/100');
         const footer = '\nSalonRink | AIビューティーコンシェルジュ https://miniapp.line.me/2010387325-N1TlMFzx';
-        this.setState({ shareMsg: diagMsg + footer, screen: 'share' });
+        this.setState({ shareMsg: head + footer, screen: 'share' });
       },
       backToIntro: () => this.go('intro'),
       backToResult: () => this.go('result'),
@@ -2175,14 +2185,15 @@ class Component extends DCLogic {
           this.setState({ ...patch, screen: 'analyzing', camStep: 1 });
           clearTimeout(this._at);
           this._at = setTimeout(async () => {
-            const answers = [this.state.diagPhoto || 'photo1', this.state.diagPhoto2 || 'photo2'];
-            const res = await quiz_diagnose(this.state.diag || 'hair', answers);
-            if(res.status === 200 && res.data) {
-              this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
-            } else {
-              this.showToast('診断に失敗しました。もう一度お試しください');
-              this.setState({ screen: 'intro' });
-            }
+            const dg = this.state.diag || 'hair';
+            const photo = this.state.diagPhoto;
+            const res = (dg === 'hair') ? await hair_diagnose(photo) : await photo_diagnose(dg, photo);
+            if (res.status === 200 && res.data) {
+              const data = await res.data;
+              if (data && data.result) {
+                this.setState({ diagResult: data.result, diagResultId: data.share_code || null, screen: 'result', diagCount: this.state.diagCount + 1 });
+              } else { this.showToast(data?.message || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); }
+            } else { this.showToast('診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); }
           }, 2700);
         };
         reader.readAsDataURL(f);
