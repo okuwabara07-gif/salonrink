@@ -28,5 +28,11 @@
       "path": "/api/cron/nurture-draft",
       "schedule": "0 7 * * 1-5"
     }
+  ],
+  "headers": [
+    {
+      "source": "/neo/(.*\\.html)",
+      "headers": [{ "key": "Cache-Control", "value": "no-store, must-revalidate" }]
+    }
   ]
 }
