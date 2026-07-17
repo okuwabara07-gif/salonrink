@@ -1109,7 +1109,7 @@
         <div onClick="{{ goFortune }}" style="font-size:12px; color:#B08654; font-weight:700; cursor:pointer;">{{ planAction }} ›</div>
       </div>
       <sc-if value="{{ subscribed }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fff; border-radius:18px; padding:14px 16px; display:flex; align-items:center; gap:12px; margin:-12px 0 20px; border:1px solid rgba(227,218,203,.5);">
+      <div style="background:#fff; border-radius:18px; padding:14px 16px; display:flex; align-items:center; gap:12px; margin:0 0 20px; border:1px solid rgba(227,218,203,.5);">
         <div style="width:36px; height:24px; border-radius:5px; background:#635BFF; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">S</div>
         <div style="flex:1;">
           <div style="font-size:12.5px; font-weight:700;">お支払い方法（Stripe）</div>
@@ -2093,7 +2093,11 @@ class Component extends DCLogic {
         this.go('fortune');
       },
       goMyPage: () => this.go('mypage'),
-      goShare: () => this.go('share'),
+      goShare: () => {
+        const diagMsg = d.title + '診断: スコア ' + d.score + '/100\n' + d.verdict;
+        const footer = '\nSalonRink | AIビューティーコンシェルジュ https://miniapp.line.me/2010387325-N1TlMFzx';
+        this.setState({ shareMsg: diagMsg + footer, screen: 'share' });
+      },
       backToIntro: () => this.go('intro'),
       backToResult: () => this.go('result'),
       askDeepAdvice: async () => {
@@ -2179,7 +2183,17 @@ class Component extends DCLogic {
         };
         reader.readAsDataURL(f);
       },
-      sendShare: () => { this.setState({ screen: 'home', shareMsg: '' }); this.showToast(curStylist.name + 'さんにLINEで送信しました'); },
+      sendShare: async () => {
+        const footer = '\n— このカルテは SalonRink ミニアプリで作成されました\n美容師の方へ: お客様カルテの管理を無料で始める → https://salonrink.com/?ref=karte';
+        const fullMsg = (s.shareMsg || '') + footer;
+        try {
+          if (liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
+            const r = await liff.shareTargetPicker([{ type: 'text', text: fullMsg }]);
+            if (r) { track('karte_send'); this.setState({ screen:'home', shareMsg:'' }); this.showToast('LINEで送信しました'); }
+            else { this.showToast('送信をキャンセルしました'); }
+          } else { this.showToast('LINEアプリ内でのみ送信できます'); }
+        } catch(e) { this.showToast('送信に失敗しました。もう一度お試しください'); }
+      },
       subscribe: () => this.go('checkout'),
       isCheckout: s.screen === 'checkout',
       isPaying: !!s.paying,
