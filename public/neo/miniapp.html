@@ -269,7 +269,7 @@
     </div>
     <div style="padding:20px 0 30px; display:flex; align-items:center; justify-content:center; gap:40px;">
       <div onClick="{{ pickDiagPhoto }}" style="font-size:12px; color:#E8E1D6; width:60px; text-align:center; cursor:pointer;">ライブラリ</div>
-      <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
+      <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
       <div onClick="{{ takePhoto }}" style="width:68px; height:68px; border-radius:999px; border:4px solid rgba(255,255,255,.9); display:flex; align-items:center; justify-content:center; cursor:pointer;">
         <div style="width:52px; height:52px; border-radius:999px; background:#fff;"></div>
       </div>
@@ -2136,25 +2136,7 @@ class Component extends DCLogic {
         else this.setState({ screen: 'camera', camStep: 1, diagPhoto: null, diagPhoto2: null });
       },
       takePhoto: () => {
-        const twoShot = d.shots && d.shots.length > 1;
-        if (twoShot && (s.camStep || 1) === 1) {
-          this.setState({ camStep: 2 });
-          this.showToast('1枚目を撮影しました。続けて2枚目をどうぞ');
-          return;
-        }
-        this.setState({ screen: 'analyzing', camStep: 1 });
-        clearTimeout(this._at);
-        this._at = setTimeout(async () => {
-          let res;
-          res = (s.diag === 'hair') ? await hair_diagnose(s.diagPhoto) : await photo_diagnose(s.diag, s.diagPhoto);
-          if (res.status === 200 && res.data) {
-            const data = await res.data;
-            if (data && data.result) {
-              track('diag_done', { kind: s.diag });
-              this.setState({ diagResult: data.result, diagResultId: data.share_code || null, screen: 'result', diagCount: this.state.diagCount + 1 });
-            } else { throw new Error(data?.message || '診断に失敗しました'); }
-          } else { throw new Error('通信エラー'); }
-        }, 2700).catch(e => { this.showToast(e.message || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); });
+        if (this._diagRef && this._diagRef.current) this._diagRef.current.click();
       },
       registerBefore: () => {
         this.setState({
