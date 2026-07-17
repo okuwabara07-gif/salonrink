@@ -29,11 +29,13 @@
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; padding:20px 28px 34px; animation:fadein .3s ease; background:#F2EBDF; overflow-y:auto;">
-    <div style="height:200px; background:linear-gradient(180deg, rgba(246,241,232,.18) 0%, rgba(246,241,232,.45) 34%, rgba(246,241,232,.90) 58%, rgba(246,241,232,.97) 72%), url('assets/home-hero.png') center / cover no-repeat; border-radius:16px; margin-bottom:24px;"></div>
-    <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="width:76px; height:auto; margin-bottom:12px; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
-    <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:16px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
-    <div style="font-size:14px; color:#6B655C; line-height:1.9; margin-bottom:32px; flex:1;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
+  <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; padding:20px 28px 34px; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.18) 0%, rgba(246,241,232,.45) 34%, rgba(246,241,232,.90) 58%, rgba(246,241,232,.97) 72%), url('assets/home-hero.png') center 56px / 92% auto no-repeat, #F2EBDF;">
+    <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="width:76px; height:auto; align-self:flex-start; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:28px;">
+
+      <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:16px; text-shadow:0 1px 12px rgba(246,241,232,.9);">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div><div style="font-size:14px; color:#6B655C; line-height:1.9;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
+      
+    </div>
     <div style="display:flex; flex-direction:column; gap:12px;">
       <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
       <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
@@ -101,6 +103,32 @@
           </div>
           <div style="width:48px; height:28px; border-radius:99px; background: {{ notifyBg }}; position:relative; transition:background .2s; flex-shrink:0;">
             <div style="position:absolute; top:3px; left: {{ notifyKnob }}px; width:22px; height:22px; border-radius:99px; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.2); transition:left .2s;"></div>
+          </div>
+        </div>
+        <div style="margin-top:26px; padding-top:22px; border-top:1px solid #E3DACB;">
+          <div style="font-size:12.5px; font-weight:700; margin-bottom:10px;">来店頻度</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;">
+            <sc-for list="{{ visitFreqOptions }}" as="vf" hint-placeholder-count="4">
+              <div onClick="{{ vf.onSelect }}" style="padding:10px 14px; border-radius:999px; font-size:12.5px; font-weight:500; cursor:pointer; background: {{ vf.bg }}; color: {{ vf.color }}; border:1px solid {{ vf.border }};">{{ vf.label }}</div>
+            </sc-for>
+          </div>
+          <div style="font-size:12.5px; font-weight:700; margin-bottom:10px;">毎日のケア時間</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;">
+            <sc-for list="{{ careTimeOptions }}" as="ct" hint-placeholder-count="3">
+              <div onClick="{{ ct.onSelect }}" style="padding:10px 14px; border-radius:999px; font-size:12.5px; font-weight:500; cursor:pointer; background: {{ ct.bg }}; color: {{ ct.color }}; border:1px solid {{ ct.border }};">{{ ct.label }}</div>
+            </sc-for>
+          </div>
+          <div style="font-size:12.5px; font-weight:700; margin-bottom:10px;">月の美容予算</div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:26px;">
+            <sc-for list="{{ budgetOptions }}" as="b" hint-placeholder-count="4">
+              <div onClick="{{ b.onSelect }}" style="padding:10px 14px; border-radius:999px; font-size:12.5px; font-weight:500; cursor:pointer; background: {{ b.bg }}; color: {{ b.color }}; border:1px solid {{ b.border }};">{{ b.label }}</div>
+            </sc-for>
+          </div>
+          <div style="font-size:12.5px; font-weight:700; margin-bottom:10px;">気になることで★いちばん気になることを1つ選ぶ</div>
+          <div style="display:flex; flex-wrap:wrap; gap:10px;">
+            <sc-for list="{{ topConcernOptions }}" as="tc" hint-placeholder-count="8">
+              <div onClick="{{ tc.onSelect }}" style="padding:11px 16px; border-radius:999px; font-size:13px; font-weight:500; cursor:pointer; background: {{ tc.bg }}; color: {{ tc.color }}; border:1px solid {{ tc.border }}; display:flex; align-items:center; gap:6px;"><span style="font-size:12px;">{{ tc.star }}</span>{{ tc.label }}</div>
+            </sc-for>
           </div>
         </div>
         <div style="height:150px; border-radius:18px; margin-top:16px; background:url('assets/profile-photo.png') center 30% / cover no-repeat; box-shadow:0 8px 22px rgba(43,39,36,.08);"></div>
@@ -442,8 +470,6 @@
         <div onClick="{{ registerBefore }}" style="background:#fff; border:1px solid #D9D2C6; border-radius:999px; padding:14px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer;" style-hover="border-color:#B08654;">ビフォー写真としてアルバムに登録</div>
         <div onClick="{{ startCamera }}" style="padding:10px; text-align:center; font-size:12.5px; color:#8C857A; cursor:pointer;">もう一度診断する</div>
       </div>
-
-      <div style="font-size:10.5px; color:#8C857A; line-height:1.8; margin-top:20px; padding-top:16px; border-top:1px solid #F0EAE0;">※ 各チェックは日々のお手入れの参考のための目安であり、医療的な診断ではありません</div>
     </div>
   </div>
   </sc-if>
@@ -727,7 +753,7 @@
               </div>
               <div>
                 <div style="font-size:12px; font-weight:700; color:#F5EFE5; margin-bottom:4px;">診断結果とあわせたひとこと</div>
-                <div style="font-size:12px; line-height:1.9; color:#B5AC9E;">髪質チェックの結果とあわせて読むと、今月は「うるおいを整える」ことを意識すると良さそうです。</div>
+                <div style="font-size:12px; line-height:1.9; color:#B5AC9E;">髪質診断でうるおい不足の傾向が出ています。運気的にも「整える」月なので、7/18の来店で保湿トリートメントを合わせると相乗効果が期待できます。</div>
               </div>
             </div>
           </sc-if>
@@ -747,7 +773,7 @@
             <div style="display:flex; justify-content:space-between;"><div>星回り（占星術）</div><div>金星がホームサインに。魅力が高まる日</div></div>
             <div style="display:flex; justify-content:space-between;"><div>ラッキーカラー</div><div>テラコッタ</div></div>
             <div style="display:flex; justify-content:space-between;"><div>ラッキーアイテム</div><div>ヘアオイル</div></div>
-            <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:12px;">前回の髪質診断と連動：今週は「うるおい補給」を重点に。夜のオイルケアを意識して取り入れるのが良さそうな週です。</div>
+            <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:12px;">前回の髪質診断と連動：今週は「うるおい補給」を重点に。夜のオイルケアが特に効果的な週です。</div>
           </div>
         </div>
         <div style="background:rgba(255,255,255,.06); border-radius:20px; padding:20px; margin-bottom:14px;">
@@ -763,8 +789,6 @@
         </div>
         <div onClick="{{ goShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:14px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;">LINEで美容師に共有する</div>
       </sc-if>
-
-      <div style="font-size:10.5px; color:#8C857A; line-height:1.8; margin-top:20px; padding:16px 0; border-top:1px solid rgba(255,255,255,.1);">本コンテンツは娯楽を目的としたものであり、結果は目安です</div>
     </div>
   </div>
   </sc-if>
@@ -883,12 +907,12 @@
 
   <!-- ═══ マイページ ═══ -->
   <sc-if value="{{ isMyPage }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="マイページ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; width:100%; box-sizing:border-box;">
+  <div data-screen-label="マイページ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">マイページ</div>
     </div>
-    <div style="flex:1; overflow-y:auto; padding:16px 20px 110px; width:100%; max-width:100%; margin:0 auto; box-sizing:border-box;">
+    <div style="flex:1; overflow-y:auto; padding:16px 20px 110px;">
 
       <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
 
@@ -1085,7 +1109,7 @@
         <div onClick="{{ goFortune }}" style="font-size:12px; color:#B08654; font-weight:700; cursor:pointer;">{{ planAction }} ›</div>
       </div>
       <sc-if value="{{ subscribed }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fff; border-radius:18px; padding:14px 16px; display:flex; align-items:center; gap:12px; margin:0 0 20px; border:1px solid rgba(227,218,203,.5);">
+      <div style="background:#fff; border-radius:18px; padding:14px 16px; display:flex; align-items:center; gap:12px; margin:-12px 0 20px; border:1px solid rgba(227,218,203,.5);">
         <div style="width:36px; height:24px; border-radius:5px; background:#635BFF; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700;">S</div>
         <div style="flex:1;">
           <div style="font-size:12.5px; font-weight:700;">お支払い方法（Stripe）</div>
@@ -1264,8 +1288,8 @@
 
   <!-- ═══ ボトムナビ ═══ -->
   <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
-  <div onClick="{{ goStore }}" style="position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:350px; background: {{ storeBarBg }}; color: {{ storeBarColor }}; border-radius:999px; padding:7px; text-align:center; font-size:10.5px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:10; box-shadow:0 8px 20px rgba(43,39,36,.18);" style-hover="opacity:.9;">オンラインストア ›</div>
-  <div style="position:absolute; bottom:50px; left:50%; transform:translateX(-50%); width:calc(100% - 32px); max-width:390px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:8px 10px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
+  <div onClick="{{ goStore }}" style="position:absolute; bottom:14px; left:72px; right:72px; background: {{ storeBarBg }}; color: {{ storeBarColor }}; border-radius:999px; padding:7px; text-align:center; font-size:10.5px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:10; box-shadow:0 8px 20px rgba(43,39,36,.18);" style-hover="opacity:.9;">オンラインストア ›</div>
+  <div style="position:absolute; bottom:50px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:8px 10px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
     <div onClick="{{ goFortune }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; color: {{ navFortuneColor }}; background: {{ navFortuneBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">占い</div>
     <div onClick="{{ goAlbum }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; color: {{ navAlbumColor }}; background: {{ navAlbumBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">アルバム</div>
     <div onClick="{{ openSheet }}" style="width:54px; height:54px; border-radius:999px; background:linear-gradient(150deg,#C89B67,#B08654); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; margin:0 6px; box-shadow:0 8px 20px rgba(176,134,84,.45); flex-shrink:0;" style-hover="background:#9A7344;">
@@ -1306,6 +1330,12 @@ const fortune_select=(t)=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:
 const upsert_profile=(p)=>apiCall('/upsert-profile',{...p,line_user_id:LINE_UID},true);
 const list_base_items=()=>apiCall('/list-base-items',{},true);
 
+const SUPABASE_URL='https://fmpmgilgvvfezursmyic.supabase.co';
+const track=(event,props={})=>fetch(SUPABASE_URL+'/rest/v1/user_events',{method:'POST',
+ headers:{apikey:ANON,authorization:'Bearer '+ANON,'content-type':'application/json',
+ prefer:'return=minimal'},body:JSON.stringify({line_user_id:LINE_UID||null,
+ event,kind:props.kind||null,props})}).catch(()=>{});
+
 class Component extends DCLogic {
   state = {
     screen: (this.props && this.props.skipOnboarding) ? 'home' : 'welcome',
@@ -1313,6 +1343,7 @@ class Component extends DCLogic {
     editingProfile: false,
     pName: '', pBirth: '', pGender: null,
     pConcerns: ['うねり・パサつき', '白髪が気になる'],
+    pVisitFrequency: null, pCareTime: null, pBeautyBudget: null, pTopConcern: null,
     pStylist: 0,
     pNotify: true,
     diag: 'hair',
@@ -1389,7 +1420,6 @@ class Component extends DCLogic {
   getDiags() {
     return {
       hair: {
-        kind: 'hair_quality',
         kanji: '髪', short: '髪質', tint: '#B08654', grad: "url('assets/diag-hair.png') center 32% / cover no-repeat", title: '髪質診断',
         desc: 'うるおい・ツヤ・ダメージをAI解析',
         introTitle: '今の髪の状態を、カメラで正確に。',
@@ -1415,11 +1445,10 @@ class Component extends DCLogic {
         ]
       },
       gray: {
-        kind: 'gray_check',
         kanji: '白', short: '白髪', tint: '#8C8478', grad: "url('assets/diag-gray.png') center 38% / cover no-repeat", title: '白髪診断',
         desc: '白髪の量と分布を測定・記録',
         introTitle: '白髪の「今」を知って、先回りケア。',
-        introBody: '生え際・分け目・サイドの白髪の割合をAIが測定します。前回との比較で変化も追えるので、ケアの手応えを記録できます。',
+        introBody: '生え際・分け目・サイドの白髪の割合をAIが測定します。前回との比較で変化も追えるので、ケアの効果が見えます。',
         personalNote: 'プロフィールの「白髪が気になる」のお悩みを考慮して診断します。',
         tips: ['撮影は2枚：①顔まわり（生え際） → ②頭頂部（分け目）', '生え際は前髪を上げて撮るとより正確', 'カラー直後は1週間あけるのがおすすめ'],
         shots: ['顔まわり（生え際）', '頭頂部（分け目）'],
@@ -1431,7 +1460,7 @@ class Component extends DCLogic {
           { label: '分け目', value: '14%', pct: 14, barColor: '#8C8478', note: '前回(6月)から2%減少しました' },
           { label: 'サイド', value: '8%', pct: 8, barColor: '#8C8478', note: 'ほとんど目立たないレベルです' }
         ],
-        advice: '白髪率10〜15%は、カラートリートメントでの「ぼかしケア」を始めやすい段階です。次回来店時のカラー相談もおすすめです。',
+        advice: '白髪率10〜15%は、カラートリートメントでの「ぼかしケア」が最も効果的な時期です。次回来店時のカラー相談もおすすめです。',
         ecLabel: '白髪ケアECで見る',
         products: [
           { tag: '週1回の色育て', name: 'カラーケア トリートメント', price: '¥3,080' },
@@ -1440,12 +1469,11 @@ class Component extends DCLogic {
         ]
       },
       nail: {
-        kind: 'nail',
         kanji: '爪', short: 'ネイル', tint: '#C08A8A', grad: "url('assets/diag-nail.png') center 42% / cover no-repeat", title: 'ネイル診断',
         desc: '爪の強度・乾燥・縦筋をチェック',
         introTitle: '素爪の健康状態を、手軽にチェック。',
         introBody: '爪の縦筋・乾燥・強度をAIが解析します。ジェルネイルのお休み期間の判断や、ベースケア選びに役立ちます。',
-        personalNote: '2週間ごとの再診断で、ケアの変化を記録できます。',
+        personalNote: '2週間ごとの再診断で、ケアの効果を記録できます。',
         tips: ['撮影は2枚：①手全体 → ②指先のアップ', 'ネイルオフした素爪で撮影してください', '2枚目は1円玉を隣に置くと、爪のサイズ計測がより正確になります'],
         shots: ['手全体', '指先（爪のアップ）'],
         analyzingNote: '爪の状態を解析中…',
@@ -1465,7 +1493,6 @@ class Component extends DCLogic {
         ]
       },
       hand: {
-        kind: 'beauty_dna',
         kanji: '手', short: '手肌', tint: '#BE9B7B', grad: 'linear-gradient(150deg,#E6D8C8,#BE9B7B)', title: '手肌診断',
         desc: '手のうるおい・ハリをチェック',
         introTitle: '年齢が出やすい手元こそ、丁寧に。',
@@ -1481,7 +1508,7 @@ class Component extends DCLogic {
           { label: 'うるおい', value: '55 / 100', pct: 55, barColor: '#CBAE93', note: '水仕事後の乾燥に注意' },
           { label: 'ハリ', value: '72 / 100', pct: 72, barColor: '#BE9B7B', note: '年齢サインはまだ目立ちません' }
         ],
-        advice: '水仕事のあとすぐの保湿と、就寝前のハンドパックがおすすめ。日中のUVケアも手肌の変化を意識するのに役立ちます。',
+        advice: '水仕事のあとすぐの保湿と、就寝前のハンドパックがおすすめ。日中のUVケアも手肌の老化予防に効果的です。',
         ecLabel: 'ハンドケアECで見る',
         products: [
           { tag: '毎日の基本ケア', name: 'モイスト ハンドクリーム', price: '¥2,090' },
@@ -1490,7 +1517,6 @@ class Component extends DCLogic {
         ]
       },
       color: {
-        kind: 'personal_color',
         kanji: '彩', short: 'カラー', tint: '#9B7E9E', grad: "url('assets/diag-color.png') center 55% / cover no-repeat", title: 'パーソナルカラー診断',
         desc: '似合う色のタイプをAI判定',
         introTitle: 'あなたを輝かせる色を、見つけましょう。',
@@ -1514,7 +1540,6 @@ class Component extends DCLogic {
         ]
       },
       scalp: {
-        kind: 'scalp',
         kanji: '頭', short: '頭皮', tint: '#7E8B74', grad: "url('assets/diag-scalp.png') center 30% / cover no-repeat", title: '頭皮診断',
         desc: '皮脂・乾燥・毛穴をチェック',
         introTitle: '髪の土台、頭皮からきれいに。',
@@ -1596,6 +1621,51 @@ class Component extends DCLogic {
         color: active ? '#fff' : '#584F42',
         border: active ? '#2B2724' : '#E3DACB',
         onSelect: () => this.setState({ pGender: i })
+      };
+    });
+
+    const visitFreqOptions = ['月1回', '2ヶ月に1回', '3ヶ月以上', '不定期'].map((label) => {
+      const active = s.pVisitFrequency === label;
+      return {
+        label,
+        bg: active ? '#2B2724' : '#fff',
+        color: active ? '#fff' : '#584F42',
+        border: active ? '#2B2724' : '#E3DACB',
+        onSelect: () => this.setState({ pVisitFrequency: label })
+      };
+    });
+
+    const careTimeOptions = ['5分未満', '5～15分', '15分以上'].map((label) => {
+      const active = s.pCareTime === label;
+      return {
+        label,
+        bg: active ? '#2B2724' : '#fff',
+        color: active ? '#fff' : '#584F42',
+        border: active ? '#2B2724' : '#E3DACB',
+        onSelect: () => this.setState({ pCareTime: label })
+      };
+    });
+
+    const budgetOptions = ['～5千円', '～1万円', '～3万円', '3万円以上'].map((label) => {
+      const active = s.pBeautyBudget === label;
+      return {
+        label,
+        bg: active ? '#2B2724' : '#fff',
+        color: active ? '#fff' : '#584F42',
+        border: active ? '#2B2724' : '#E3DACB',
+        onSelect: () => this.setState({ pBeautyBudget: label })
+      };
+    });
+
+    const topConcernOptions = concernList.map((label) => {
+      const active = s.pTopConcern === label;
+      return {
+        label,
+        star: active ? '★' : '',
+        bg: active ? '#2B2724' : '#fff',
+        color: active ? '#fff' : '#584F42',
+        border: active ? '#2B2724' : '#E3DACB',
+        onSelect: () => this.setState({ pTopConcern: active ? null : label })
       };
     });
 
@@ -1795,6 +1865,7 @@ class Component extends DCLogic {
       exMonthColor: s.exTab === 'month' ? '#221E19' : '#D8CFC0',
       exMonthBg: s.exTab === 'month' ? '#B08654' : 'transparent',
       goStore: async () => {
+        track('store_view');
         const res = await list_base_items();
         if(res.status === 200 && res.data && Array.isArray(res.data.items)) {
           this.setState({ storeItems: res.data.items });
@@ -1842,10 +1913,11 @@ class Component extends DCLogic {
       onName: (e) => this.setState({ pName: e.target.value }),
       onBirth: (e) => this.setState({ pBirth: e.target.value }),
       genders, concerns, stylists: stylistOpts,
+      visitFreqOptions, careTimeOptions, budgetOptions, topConcernOptions,
       notifyBg: s.pNotify ? '#06C755' : '#D9D2C6',
       notifyKnob: s.pNotify ? 23 : 3,
       toggleNotify: () => this.setState({ pNotify: !s.pNotify }),
-      startProfile: () => this.setState({ screen: 'profile', profileStep: 1, editingProfile: false }),
+      startProfile: () => { track('register_start'); this.setState({ screen: 'profile', profileStep: 1, editingProfile: false }); },
       skipProfile: () => this.go('home'),
       editProfile: () => this.setState({ screen: 'profile', profileStep: 1, editingProfile: true }),
       profileBack: () => {
@@ -1867,12 +1939,17 @@ class Component extends DCLogic {
             birth: s.pBirth,
             gender: s.pGender,
             concerns: s.pConcerns,
+            visit_frequency: s.pVisitFrequency,
+            care_time: s.pCareTime,
+            beauty_budget: s.pBeautyBudget,
+            top_concern: s.pTopConcern,
             notify: s.pNotify,
             stylist_name: this.getStylists()[s.pStylist]?.name,
             avatar_url: s.avatar || null
           };
           const res = await upsert_profile(profileData);
           if(res.status === 200) {
+            track('register_done');
             this.go(s.editingProfile ? 'mypage' : 'home');
             this.showToast(s.editingProfile ? 'プロフィールを保存しました' : 'プロフィールを登録しました');
           } else {
@@ -1974,6 +2051,9 @@ class Component extends DCLogic {
         const res = await fortune_select(t.key);
         if(res.status === 409) {
           this.showToast('本日選択済みです。明日以降にお試しください');
+        } else if(res.status === 402) {
+          track('fortune_paywall_tap');
+          this.showToast('プレミアム会員向け機能です');
         } else if(res.status === 200) {
           this.setState({ dayTopic: t.key });
           this.showToast('「' + t.label + '」の詳細鑑定を開きました');
@@ -1997,10 +2077,12 @@ class Component extends DCLogic {
       goHome: () => this.go('home'),
       goAlbum: () => this.go('album'),
       goFortune: async () => {
+        track('fortune_view');
         const res = await fortune_status();
         if(res.status === 200 && res.data) {
           const access = res.data.access || 'none';
           if(access === 'none') {
+            track('fortune_paywall_view');
             this.setState({ fortuneAccess: 'none' });
           } else if(access === 'day') {
             this.setState({ fortuneAccess: 'day', dayPass: true });
@@ -2015,6 +2097,7 @@ class Component extends DCLogic {
       backToIntro: () => this.go('intro'),
       backToResult: () => this.go('result'),
       askDeepAdvice: async () => {
+        track('deep_advice_tap');
         const q = prompt('AIに何について相談されたいですか？');
         if(!q) return;
         const res = await deep_advice(s.diagResultId || 'test', q);
@@ -2030,6 +2113,7 @@ class Component extends DCLogic {
       openSheet: () => this.setState({ sheetOpen: true }),
       closeSheet: () => this.setState({ sheetOpen: false }),
       startCamera: () => {
+        track('diag_start', { kind: s.diag });
         if (d.survey) this.setState({ screen: 'survey' });
         else this.setState({ screen: 'camera', camStep: 1, diagPhoto: null, diagPhoto2: null });
       },
@@ -2044,8 +2128,9 @@ class Component extends DCLogic {
         clearTimeout(this._at);
         this._at = setTimeout(async () => {
           const answers = [s.diagPhoto || 'photo1', s.diagPhoto2 || 'photo2'];
-          const res = await quiz_diagnose(d.kind || 'hair_quality', answers);
+          const res = await quiz_diagnose(s.diag || 'hair', answers);
           if(res.status === 200 && res.data) {
+            track('diag_done', { kind: s.diag });
             this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
           } else {
             this.showToast('診断に失敗しました。もう一度お試しください');
@@ -2083,10 +2168,7 @@ class Component extends DCLogic {
           clearTimeout(this._at);
           this._at = setTimeout(async () => {
             const answers = [this.state.diagPhoto || 'photo1', this.state.diagPhoto2 || 'photo2'];
-            const diags = this.getDiags();
-            const diagKey = this.state.diag || 'hair';
-            const kind = diags[diagKey]?.kind || 'hair_quality';
-            const res = await quiz_diagnose(kind, answers);
+            const res = await quiz_diagnose(this.state.diag || 'hair', answers);
             if(res.status === 200 && res.data) {
               this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
             } else {
@@ -2107,6 +2189,7 @@ class Component extends DCLogic {
       cardCvc: s.cardCvc || '', onCardCvc: (e) => this.setState({ cardCvc: e.target.value }),
       cardName: s.cardName || '', onCardName: (e) => this.setState({ cardName: e.target.value }),
       payNow: async () => {
+        track('checkout_open');
         if (s.paying) return;
         this.setState({ paying: true });
         const plan = s.planSel || 'month';
