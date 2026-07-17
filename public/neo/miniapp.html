@@ -213,13 +213,7 @@
       <div style="font-size:11px; color:#A39B8D; line-height:1.7; margin-top:14px;">撮影した写真は診断のためだけに使用されます。ご自身で共有しない限り、他の人に見られることはありません。</div>
     </div>
     <div style="padding:16px 24px 26px;">
-      <sc-if value="{{ isHairDiag }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
-      </sc-if>
-      <sc-if value="{{ notHairDiag }}" hint-placeholder-val="{{ true }}">
-        <div style="background:#F1EADF; border-radius:14px; padding:14px 16px; font-size:12px; color:#8C7B62; line-height:1.6; margin-bottom:14px;">📸 写真解析は順次追加予定です。まずは質問にお答えください。</div>
-        <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">質問に答えて診断する</div>
-      </sc-if>
+      <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
     </div>
   </div>
   </sc-if>
@@ -410,16 +404,15 @@
       <div style="background:#fff; border-radius:22px; padding:18px 20px; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
         <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:14px;">項目別スコア</div>
         <div style="display:flex; flex-direction:column; gap:13px;">
-          <sc-for list="{{ diagMetrics }}" as="m" hint-placeholder-count="4">
+          <sc-for list="{{ scoresList }}" as="m" hint-placeholder-count="4">
             <div>
               <div style="display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:5px;">
                 <div style="font-weight:500;">{{ m.label }}</div>
                 <div style="color:#8C857A;">{{ m.value }}</div>
               </div>
               <div style="height:5px; background:#EFE9DE; border-radius:99px; overflow:hidden;">
-                <div style="height:100%; background: {{ m.barColor }}; border-radius:99px; width: {{ m.pct }}%;"></div>
+                <div style="height:100%; background:linear-gradient(90deg,#D4AF87 0%,#E8C9A0 100%); border-radius:99px; width: {{ m.pct }}%;"></div>
               </div>
-              <div style="font-size:10.5px; color:#A39B8D; margin-top:4px; line-height:1.5;">{{ m.note }}</div>
             </div>
           </sc-for>
         </div>
@@ -475,6 +468,7 @@
         <div onClick="{{ goShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14.5px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで美容師に共有する</div>
         <div onClick="{{ registerBefore }}" style="background:#fff; border:1px solid #D9D2C6; border-radius:999px; padding:14px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer;" style-hover="border-color:#B08654;">ビフォー写真としてアルバムに登録</div>
         <div onClick="{{ startCamera }}" style="padding:10px; text-align:center; font-size:12.5px; color:#8C857A; cursor:pointer;">もう一度診断する</div>
+        <div style="font-size:10px; color:#A39B8D; margin-top:20px; padding:12px; line-height:1.6;">{{ diagResult.disclaimer }}</div>
       </div>
     </div>
   </div>
@@ -1330,6 +1324,7 @@ async function apiCall(path,body,useAnon=false){
 
 const quiz_diagnose=(kind,answers)=>apiCall('/quiz-diagnose',{kind,answers,line_user_id:LINE_UID});
 const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+const photo_diagnose=(kind,dataUrl)=>fetch(API+'/photo-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind,image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
@@ -1563,12 +1558,6 @@ class Component extends DCLogic {
         ],
         advice: '頭皮スコア65は「ケアの始めどき」。問診の内容と合わせると、乾燥ケア中心のホームケアが合っています。セルフケアに加えて、専門カウンセリングで原因の特定もおすすめです。',
         ecLabel: '頭皮ケアECで見る',
-        survey: [
-          { q: '頭皮のかゆみ・フケはありますか？', options: ['ほぼない', 'ときどき', 'よくある'] },
-          { q: 'シャンプーの頻度は？', options: ['毎日', '2日に1回', 'それ以下'] },
-          { q: '頭皮の自覚症状に近いのは？', options: ['べたつき', '乾燥', '敏感・赤み'] },
-          { q: '抜け毛は気になりますか？', options: ['気にならない', '少し', 'かなり'] }
-        ],
         products: [
           { tag: '問診結果に合わせて', name: '薬用スカルプシャンプー', price: '¥3,080' },
           { tag: '乾燥対策', name: '頭皮用 保湿ローション', price: '¥2,640' },
@@ -1712,6 +1701,12 @@ class Component extends DCLogic {
       { day: '金', h: 55 }, { day: '土', h: 78 }, { day: '日', h: 64 }
     ].map((b) => ({ ...b, color: b.h > 80 ? '#B08654' : 'rgba(176,134,84,.45)' }));
 
+    const SCORE_LABELS = {tsuya:'ツヤ', matomari:'まとまり', uruoi:'うるおい', volume:'ボリューム', hari_koshi:'ハリ・コシ', shiraga:'白髪の割合(目安)', bunpu:'白髪の広がり', nemoto:'根元の伸び', tekari:'皮脂・テカリ', kansou:'乾燥のサイン', akami:'赤みのサイン', tatesuji:'縦筋', iromi:'色み・血色', warm:'ウォーム寄り', akarusa:'明るさ・クリア', fukami:'深み'};
+    const scoresList = s.diagResult?.scores ? Object.entries(s.diagResult.scores).map(([key, val]) => ({
+      label: SCORE_LABELS[key] || key,
+      value: Math.round(val),
+      pct: Math.round(val)
+    })) : [];
     const step = s.profileStep;
 
     return {
@@ -2024,7 +2019,7 @@ class Component extends DCLogic {
       diagScore: d.score, diagScoreLabel: d.scoreLabel, diagDelta: d.delta,
       ringOffset: Math.round(339 * (1 - d.score / 100)),
       diagVerdict: d.verdict, diagVerdictSub: d.verdictSub,
-      diagMetrics: d.metrics, diagAdvice: d.advice,
+      scoresList: scoresList, diagAdvice: d.advice,
       hasProducts: !!d.products, isCounsel: s.diag === 'scalp',
       isSurvey: s.screen === 'survey',
       isScalpResult: s.diag === 'scalp',
@@ -2141,23 +2136,14 @@ class Component extends DCLogic {
         clearTimeout(this._at);
         this._at = setTimeout(async () => {
           let res;
-          if (s.diag === 'hair' && s.diagPhoto) {
-            res = await hair_diagnose(s.diagPhoto);
-            if(res.status === 200 && res.data) {
-              const data = await res.data;
-              if(data && data.result) {
-                track('diag_done', { kind: 'hair' });
-                this.setState({ diagResult: data.result, diagResultId: null, screen: 'result', diagCount: this.state.diagCount + 1 });
-              } else { throw new Error(data?.message || '診断に失敗しました'); }
-            } else { throw new Error('通信エラー'); }
-          } else {
-            const answers = [s.diagPhoto || 'photo1', s.diagPhoto2 || 'photo2'];
-            res = await quiz_diagnose(s.diag || 'hair', answers);
-            if(res.status === 200 && res.data) {
+          res = (s.diag === 'hair') ? await hair_diagnose(s.diagPhoto) : await photo_diagnose(s.diag, s.diagPhoto);
+          if (res.status === 200 && res.data) {
+            const data = await res.data;
+            if (data && data.result) {
               track('diag_done', { kind: s.diag });
-              this.setState({ diagResult: res.data.result, diagResultId: res.data.id, screen: 'result', diagCount: this.state.diagCount + 1 });
-            } else { throw new Error('診断に失敗しました'); }
-          }
+              this.setState({ diagResult: data.result, diagResultId: data.share_code || null, screen: 'result', diagCount: this.state.diagCount + 1 });
+            } else { throw new Error(data?.message || '診断に失敗しました'); }
+          } else { throw new Error('通信エラー'); }
         }, 2700).catch(e => { this.showToast(e.message || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); });
       },
       registerBefore: () => {
