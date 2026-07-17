@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [
+        { source: '/', destination: '/index.html' },
         { source: '/lp', destination: '/lp/index.html' },
         { source: '/lp/customer', destination: '/lp-mock/customer.html' },
         { source: '/lp/salon', destination: '/lp-mock/salon.html' },
@@ -22,6 +23,8 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      { source: '/tokushoho', destination: '/tokusho', permanent: false },
+      { source: '/contact', destination: 'https://lin.ee/UDNlEOAA', permanent: false },
       { source: '/neo', destination: '/', permanent: true },
       { source: '/diagnosis.html', destination: '/neo/diagnosis.html', permanent: false },
       { source: '/quiz.html', destination: '/neo/quiz.html', permanent: false },
