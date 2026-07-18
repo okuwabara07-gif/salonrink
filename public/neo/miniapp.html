@@ -26,6 +26,8 @@
 <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="430px,900px">
 
 <div style="height:100%; display:flex; flex-direction:column; background: {{ appBg }}; color:#2B2724; font-family:'Zen Kaku Gothic New',sans-serif; position:relative; overflow:hidden; padding-top:64px; box-sizing:border-box;">
+  <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
+  <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ libInputRef }}" style="display:none;">
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
@@ -143,7 +145,7 @@
 
   <!-- ═══ HOME ═══ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.30) 0%, rgba(246,241,232,.55) 26%, rgba(246,241,232,.88) 46%, rgba(246,241,232,.96) 60%), url('assets/home-hero2.png') center top / cover no-repeat;">
+  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.15) 0%, rgba(246,241,232,.78) 11%, #F6F1E8 22%, #F6F1E8 100%), url('assets/home-hero2.png') center top / cover no-repeat;">
     <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 8px 24px;">
       <div>
         <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; letter-spacing:.08em;">{{ salonName }}</div>
@@ -248,46 +250,9 @@
   </sc-if>
 
   <!-- ═══ カメラ ═══ -->
-  <sc-if value="{{ isCamera }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="カメラ撮影" style="flex:1; display:flex; flex-direction:column; color:#2B2724; animation:fadein .3s ease;">
-    <div style="display:flex; align-items:center; gap:12px; padding:14px 18px;">
-      <div onClick="{{ backToIntro }}" style="cursor:pointer; font-size:20px; color:#2B2724; padding:2px 6px;">‹</div>
-      <div style="font-size:15px; font-weight:600; color:#2B2724;">{{ diagTitle }} ・ 撮影</div>
-    </div>
-    <div style="flex:1; margin:6px 20px 0; border-radius:28px; background:linear-gradient(180deg,#FBF3EF,#F6EDE8); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:34px 24px;">
-      <div style="position:relative; display:flex; align-items:center; justify-content:center;">
-        <sc-if value="{{ isNailCam }}" hint-placeholder-val="{{ false }}">
-          <div style="width:212px; height:150px; border:2px dashed {{ diagTint }}; border-radius:22px; opacity:.7;"></div>
-        </sc-if>
-        <sc-if value="{{ isOvalCam }}" hint-placeholder-val="{{ true }}">
-          <div style="width:232px; height:250px; border:2px dashed {{ diagTint }}; border-radius:50%; opacity:.7;"></div>
-        </sc-if>
-        <sc-if value="{{ isNailSizeCam }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute; right:22px; bottom:26px; width:52px; height:52px; border:2px dashed {{ diagTint }}; border-radius:999px; display:flex; align-items:center; justify-content:center; font-size:8.5px; color:{{ diagTint }}; text-align:center; line-height:1.4;">1円玉を<br>ここに</div>
-        </sc-if>
-        <svg width="52" height="52" viewBox="0 0 24 24" fill="none" style="position:absolute;">
-          <path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h1.8l1-1.6A1 1 0 0 1 9.9 5h4.2a1 1 0 0 1 .84.46l1 1.54h1.8A1.5 1.5 0 0 1 19 8.5v9A1.5 1.5 0 0 1 17.5 19h-11A1.5 1.5 0 0 1 5 17.5v-9Z" stroke="{{ diagTint }}" stroke-width="1.5"/>
-          <circle cx="12" cy="12.5" r="3.4" stroke="{{ diagTint }}" stroke-width="1.5"/>
-        </svg>
-      </div>
-      <div style="margin-top:26px; font-size:17px; font-weight:700; color:#2B2724; text-align:center; line-height:1.5;">{{ camGuide }}</div>
-      <div style="margin-top:8px; font-size:12px; color:#8C857A; text-align:center;">枠に合わせて、明るい場所で撮影してください</div>
-    </div>
-    <div style="padding:18px 24px 26px;">
-      <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
-      <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ libInputRef }}" style="display:none;">
-      <div onClick="{{ takePhoto }}" style="background:{{ diagTint }}; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15.5px; font-weight:700; letter-spacing:.04em; cursor:pointer; box-shadow:0 10px 24px rgba(43,39,36,.14);">撮影する</div>
-      <div onClick="{{ pickLibPhoto }}" style="margin-top:16px; display:flex; align-items:center; justify-content:center; gap:10px; color:{{ diagTint }}; font-size:13px; cursor:pointer;">
-        <span style="flex:1; height:1px; background:rgba(140,133,122,.3); max-width:56px;"></span>ライブラリから選ぶ<span style="flex:1; height:1px; background:rgba(140,133,122,.3); max-width:56px;"></span>
-      </div>
-      <div style="margin-top:14px; text-align:center; font-size:11px; color:#A39B8D; line-height:1.6;">撮影した写真は診断のためだけに使用されます</div>
-    </div>
-  </div>
-  </sc-if>
-
   <!-- ═══ 解析中 ═══ -->
   <sc-if value="{{ isAnalyzing }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="解析中" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#fff; gap:26px;">
+  <div data-screen-label="解析中" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#2B2724; gap:26px;">
     <div style="position:relative; width:150px; height:190px; border:2px solid rgba(176,134,84,.6); border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
       <div style="position:absolute; left:8%; right:8%; height:2px; background:linear-gradient(90deg,transparent,#B08654,transparent); animation:scanmove 2.2s ease-in-out infinite;"></div>
     </div>
@@ -1780,14 +1745,13 @@ class Component extends DCLogic {
       coverFeatureSub: '髪質スコア74 ・ 集中保湿のすすめ',
       coverLine2: '白髪率12% いまが「ぼかし」どき',
       coverLine3: '7/18はイメチェン日和',
-      appBg: (s.screen === 'camera' || s.screen === 'analyzing') ? '#141210' : (s.screen === 'fortune' ? '#221E19' : '#F6F1E8'),
+      appBg: (s.screen === 'analyzing') ? '#F6F1E8' : (s.screen === 'fortune' ? '#221E19' : '#F6F1E8'),
       isWelcome: s.screen === 'welcome',
       isProfile: s.screen === 'profile',
       isHome: s.screen === 'home',
       isIntro: s.screen === 'intro',
       isHairDiag: s.diag === 'hair',
       notHairDiag: s.diag !== 'hair',
-      isCamera: s.screen === 'camera',
       isAnalyzing: s.screen === 'analyzing',
       isResult: s.screen === 'result',
       isShare: s.screen === 'share',
@@ -2140,7 +2104,7 @@ class Component extends DCLogic {
       startCamera: () => {
         track('diag_start', { kind: s.diag });
         if (d.survey) this.setState({ screen: 'survey' });
-        else this.setState({ screen: 'camera', camStep: 1, diagPhoto: null, diagPhoto2: null });
+        else { this.setState({ camStep: 1, diagPhoto: null, diagPhoto2: null }); this.showToast('明るい場所で、対象がはっきり写るように撮影してください'); if (this._diagRef && this._diagRef.current) this._diagRef.current.click(); }
       },
       takePhoto: () => {
         if (this._diagRef && this._diagRef.current) this._diagRef.current.click();
@@ -2164,7 +2128,7 @@ class Component extends DCLogic {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
         e.target.value = '';
-        const twoShot = d.shots && d.shots.length > 1;
+        const twoShot = false;
         const reader = new FileReader();
         reader.onload = async (ev) => {
           if (twoShot && (this.state.camStep || 1) === 1) {
