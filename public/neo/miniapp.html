@@ -18,6 +18,7 @@
   @keyframes barfill { 0%{ width:8%;} 60%{ width:74%;} 100%{ width:96%;} }
   @keyframes fadein { from{ opacity:0; transform:translateY(8px);} to{ opacity:1; transform:translateY(0);} }
   @keyframes sheetup { from{ transform:translateY(40px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  @keyframes slideup { from{ transform:translateY(100%);} to{ transform:translateY(0);} }
   @keyframes pulse { 0%,100%{ opacity:.5;} 50%{ opacity:1;} }
 </style>
 </helmet>
@@ -396,6 +397,16 @@
 
       <div onClick="{{ askDeepAdvice }}" style="background:#fff; border:1.5px solid #B08654; color:#B08654; border-radius:16px; padding:14px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer; margin-bottom:24px;" style-hover="background:#FBF8F2;">AIに深掘り相談する</div>
 
+      <sc-if value="{{ deepAdviceResponse }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff; border-radius:18px; padding:16px 20px; margin-bottom:24px; border:1px solid #D9D2C6; box-shadow:0 4px 12px rgba(43,39,36,.06);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+          <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em;">コンシェルジュからの回答</div>
+          <div onClick="{{ () => this.setState({ deepAdviceResponse: null }) }}" style="cursor:pointer; font-size:16px; color:#8C857A;">✕</div>
+        </div>
+        <div style="font-size:12.5px; color:#584F42; line-height:1.8; white-space:pre-wrap;">{{ deepAdviceResponse }}</div>
+      </div>
+      </sc-if>
+
       <sc-if value="{{ isScalpResult }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff; border-radius:22px; padding:18px 20px; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
         <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:12px;">問診メモ</div>
@@ -480,6 +491,39 @@
     </div>
     <div style="padding:16px 20px 26px;">
       <div onClick="{{ sendShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで送信する</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══ 深掘り相談シート ═══ -->
+  <sc-if value="{{ deepAdviceSheetOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(43,39,36,.4); z-index:998; animation:fadein .3s ease;" onClick="{{ () => this.setState({ deepAdviceSheetOpen: false }) }}"></div>
+  <div style="position:fixed; bottom:0; left:0; right:0; background:#fff; border-radius:28px 28px 0 0; z-index:999; max-height:80vh; display:flex; flex-direction:column; animation:slideup .3s ease;">
+    <div style="padding:20px 24px 16px; border-bottom:1px solid #E3DACB;">
+      <div style="font-size:18px; font-weight:700; color:#2B2724;">何を相談しますか？</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; padding:20px 24px; display:flex; flex-direction:column; gap:12px;">
+      <sc-for list="{{ deepAdviceOptions }}" as="opt" hint-placeholder-count="4">
+        <div onClick="{{ () => this.submitDeepAdvice(opt.value) }}" style="background:#F6F1E8; border-radius:14px; padding:14px 16px; text-align:center; font-size:13.5px; font-weight:600; color:#2B2724; cursor:pointer; border:1px solid #E3DACB;" style-hover="background:#F1EADF;">{{ opt.label }}</div>
+      </sc-for>
+      <div onClick="{{ () => this.setState({ deepAdviceCustom: true }) }}" style="background:#fff; border:1.5px solid #B08654; border-radius:14px; padding:14px 16px; text-align:center; font-size:13.5px; font-weight:600; color:#B08654; cursor:pointer;" style-hover="background:#FBF8F2;">その他（自由に入力）</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ═══ カスタム相談入力 ═══ -->
+  <sc-if value="{{ s.deepAdviceCustom }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(43,39,36,.4); z-index:998; animation:fadein .3s ease;" onClick="{{ () => this.setState({ deepAdviceCustom: false }) }}"></div>
+  <div style="position:fixed; bottom:0; left:0; right:0; background:#fff; border-radius:28px 28px 0 0; z-index:999; max-height:80vh; display:flex; flex-direction:column; animation:slideup .3s ease;">
+    <div style="padding:20px 24px 16px; border-bottom:1px solid #E3DACB;">
+      <div style="font-size:18px; font-weight:700; color:#2B2724;">何を相談されたいですか？</div>
+    </div>
+    <div style="flex:1; overflow-y:auto; padding:20px 24px;">
+      <textarea ref="{{ this._customQRef = this._customQRef || React.createRef() }}" style="width:100%; min-height:120px; padding:12px; border:1px solid #E3DACB; border-radius:12px; font-family:inherit; font-size:14px; resize:none; box-sizing:border-box; color:#2B2724;"></textarea>
+    </div>
+    <div style="padding:16px 24px 26px; display:flex; gap:12px;">
+      <div onClick="{{ () => this.setState({ deepAdviceCustom: false }) }}" style="flex:1; background:#fff; border:1px solid #D9D2C6; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; color:#6B655C; cursor:pointer;">キャンセル</div>
+      <div onClick="{{ () => { const q = this._customQRef?.current?.value; if(q) this.submitDeepAdvice(q); } }}" style="flex:1; background:{{ deepAdviceSubmitting ? '#C0B8A8' : '#B08654' }}; color:#fff; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; cursor:{{ deepAdviceSubmitting ? 'default' : 'pointer' }};">{{ deepAdviceSubmitting ? '考え中…' : '送信' }}</div>
     </div>
   </div>
   </sc-if>
@@ -2001,6 +2045,15 @@ class Component extends DCLogic {
       diagMetrics: dr ? drMetrics : d.metrics,
       diagAdvice: (dr && dr.care_tips) ? dr.care_tips.map(t => '・' + t).join('\n') : d.advice,
       diagDisclaimer: dr ? (dr.disclaimer || '写真の見た目からの提案です。医療的な診断ではありません。') : '',
+      deepAdviceSheetOpen: !!s.deepAdviceSheetOpen,
+      deepAdviceSubmitting: !!s.deepAdviceSubmitting,
+      deepAdviceResponse: s.deepAdviceResponse,
+      deepAdviceOptions: [
+        { label: '毎日のケアの正しい手順', value: '毎日のケアの正しい手順' },
+        { label: '自分に合う商品の選び方', value: '自分に合う商品の選び方' },
+        { label: 'サロンで何をお願いすべき？', value: 'サロンで何をお願いすべき？' },
+        { label: s.diag === 'hair' ? '乾燥・うねりの対策' : s.diag === 'gray' ? '白髪との上手な付き合い方' : s.diag === 'scalp' ? '頭皮ケアの始め方' : s.diag === 'nail' ? '爪を強くするお手入れ' : s.diag === 'color' ? '似合うヘアカラーの方向性' : 'その他', value: s.diag === 'hair' ? '乾燥・うねりの対策' : s.diag === 'gray' ? '白髪との上手な付き合い方' : s.diag === 'scalp' ? '頭皮ケアの始め方' : s.diag === 'nail' ? '爪を強くするお手入れ' : s.diag === 'color' ? '似合うヘアカラーの方向性' : 'その他' }
+      ],
       hasProducts: !!d.products, isCounsel: s.diag === 'scalp',
       isSurvey: s.screen === 'survey',
       isScalpResult: s.diag === 'scalp',
@@ -2085,16 +2138,20 @@ class Component extends DCLogic {
       },
       backToIntro: () => this.go('intro'),
       backToResult: () => this.go('result'),
-      askDeepAdvice: async () => {
+      askDeepAdvice: () => {
+        this.setState({ deepAdviceSheetOpen: true });
+      },
+      submitDeepAdvice: async (q) => {
+        if(!q || this.state.deepAdviceSubmitting) return;
         track('deep_advice_tap');
-        const q = prompt('AIに何について相談されたいですか？');
-        if(!q) return;
+        this.setState({ deepAdviceSubmitting: true });
         const res = await deep_advice(s.diagResultId || 'test', q);
+        this.setState({ deepAdviceSubmitting: false, deepAdviceSheetOpen: false });
         if(res.status === 402) {
           this.setState({ screen: 'checkout' });
           this.showToast('深掘り相談はプレミアム会員特典です');
         } else if(res.status === 200 && res.data) {
-          this.showToast('AIからのアドバイス：' + (res.data.advice || 'お返事が届きました'));
+          this.setState({ deepAdviceResponse: res.data.advice });
         } else {
           this.showToast('相談に失敗しました。もう一度お試しください');
         }
