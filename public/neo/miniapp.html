@@ -441,13 +441,6 @@
           </sc-for>
         </div>
       </sc-if>
-      <sc-if value="{{ isCounsel }}" hint-placeholder-val="{{ false }}">
-        <div style="background:#2B2724; color:#F5EFE5; border-radius:22px; padding:22px; margin-bottom:24px;">
-          <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; margin-bottom:6px;">頭皮ケアの専門カウンセリングへ</div>
-          <div style="font-size:12px; color:#B5AC9E; line-height:1.7; margin-bottom:14px;">診断結果をもとに、WCサイトで専門スタッフによる頭皮カウンセリングをご案内します。結果データはそのまま連携されます。</div>
-          <div style="background:#B08654; color:#fff; border-radius:999px; text-align:center; font-size:13px; font-weight:700; padding:13px; cursor:pointer;" style-hover="background:#9A7344;">WCサイトでカウンセリング予約</div>
-        </div>
-      </sc-if>
 
       <div style="display:flex; flex-direction:column; gap:10px;">
         <div onClick="{{ goShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14.5px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで美容師に共有する</div>
@@ -1564,8 +1557,7 @@ class Component extends DCLogic {
         kanji: '頭', short: '頭皮', tint: '#7E8B74', grad: "url('assets/diag-scalp.png') center 30% / cover no-repeat", title: '頭皮診断',
         desc: '皮脂・乾燥・赤みをチェック',
         introTitle: '髪の土台、頭皮からきれいに。',
-        introBody: '頭皮の色味・皮脂バランス・乾燥のサインをAIが解析します。結果に応じて、専門スタッフのカウンセリングをご案内します。',
-        personalNote: '結果はWCサイトのカウンセリング予約にそのまま連携できます。',
+        introBody: '頭皮の色味・皮脂バランス・乾燥のサインをAIが解析します。',
         tips: ['分け目を広げて頭皮が見えるように', 'シャンプー後2〜3時間あけると正確です', 'フラッシュは使わず明るい場所で'],
         analyzingNote: '頭皮の色味・皮脂バランスを解析中…',
         score: 65, scoreLabel: '頭皮スコア', delta: '前回比 +4',
@@ -1575,7 +1567,7 @@ class Component extends DCLogic {
           { label: 'うるおい', value: '54 / 100', pct: 54, barColor: '#93A188', note: '乾燥によるかゆみに注意' },
           { label: '赤みのサイン', value: '72 / 100', pct: 72, barColor: '#7E8B74', note: '敏感な状態は少なく健康的です' }
         ],
-        advice: '頭皮スコア65は「ケアの始めどき」。問診の内容と合わせると、乾燥ケア中心のホームケアが合っています。セルフケアに加えて、専門カウンセリングで原因の特定もおすすめです。',
+        advice: '頭皮スコア65は「ケアの始めどき」。問診の内容と合わせると、乾燥ケア中心のホームケアが合っています。',
         ecLabel: '頭皮ケアECで見る',
         products: [
           { tag: '問診結果に合わせて', name: '薬用スカルプシャンプー', price: '¥3,080' },
