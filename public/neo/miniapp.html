@@ -269,7 +269,7 @@
 
   <!-- ═══ 診断結果 ═══ -->
   <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="診断結果" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="診断結果" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">{{ diagTitle }}の結果</div>
@@ -425,7 +425,7 @@
       <sc-if value="{{ hasProducts }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
           <div style="font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600;">あなたにおすすめ</div>
-          <a href="#" style="font-size:12px; text-decoration:none;">{{ diagEcLabel }} ›</a>
+          <div onClick="{{ () => { console.log('EC link tapped'); liff.openWindow({ url: 'https://example.com/ec', external: true }); } }}" style="font-size:12px; cursor:pointer; color:#B08654; text-decoration:none;">{{ diagEcLabel }} ›</div>
         </div>
         <div style="display:flex; gap:12px; overflow-x:auto; margin:0 -20px 24px; padding:2px 20px 8px;">
           <sc-for list="{{ diagProducts }}" as="p" hint-placeholder-count="3">
@@ -456,7 +456,7 @@
 
   <!-- ═══ 共有 ═══ -->
   <sc-if value="{{ isShare }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="美容師へ共有" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="美容師へ共有" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ backToResult }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">美容師に共有</div>
@@ -523,7 +523,7 @@
 
   <!-- ═══ アルバム ═══ -->
   <sc-if value="{{ isAlbum }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ビフォーアフター アルバム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="ビフォーアフター アルバム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">アルバム</div>
@@ -565,7 +565,7 @@
 
   <!-- ═══ 占い ═══ -->
   <sc-if value="{{ isFortune }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ビューティー占い" style="flex:1; display:flex; flex-direction:column; overflow:hidden; color:#F5EFE5; animation:fadein .3s ease;">
+  <div data-screen-label="ビューティー占い" style="flex:1; display:flex; flex-direction:column; overflow:hidden; color:#F5EFE5; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid rgba(255,255,255,.08);">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#B5AC9E; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">ビューティー占い</div>
@@ -864,7 +864,7 @@
 
   <!-- ═══ Stripe決済 ═══ -->
   <sc-if value="{{ isCheckout }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="Stripe決済" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="Stripe決済" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goFortune }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">お支払い</div>
@@ -1252,7 +1252,7 @@
 
   <!-- ═══ ストア ═══ -->
   <sc-if value="{{ isStore }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ストア" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="ストア" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">ストア</div>
@@ -1277,7 +1277,7 @@
                     <div style="padding:11px 12px 13px;">
                       <div style="font-size:12px; font-weight:700; line-height:1.45; margin-bottom:4px; min-height:34px;">{{ p.name }}</div>
                       <div style="font-size:12px; color:#8C857A; margin-bottom:9px;">{{ p.price }}</div>
-                      <div style="border:1px solid #B08654; color:#B08654; border-radius:999px; text-align:center; font-size:11px; font-weight:700; padding:6px;">ECで見る</div>
+                      <div onClick="{{ () => { console.log('Product EC tapped:', p.name); liff.openWindow({ url: 'https://example.com/ec/' + p.id, external: true }); } }}" style="border:1px solid #B08654; color:#B08654; border-radius:999px; text-align:center; font-size:11px; font-weight:700; padding:6px; cursor:pointer;">ECで見る</div>
                     </div>
                   </div>
                 </sc-for>
