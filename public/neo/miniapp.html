@@ -425,7 +425,7 @@
       <sc-if value="{{ hasProducts }}" hint-placeholder-val="{{ true }}">
         <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:12px;">
           <div style="font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600;">あなたにおすすめ</div>
-          <div onClick="{{ () => { console.log('EC link tapped'); liff.openWindow({ url: 'https://example.com/ec', external: true }); } }}" style="font-size:12px; cursor:pointer; color:#B08654; text-decoration:none;">{{ diagEcLabel }} ›</div>
+          <div onClick="{{ () => { console.log('Result EC link tapped:', diagEcLabel); if(storeItems&&storeItems.length>0) liff.openWindow({ url: storeItems[0].item_url, external: true }); } }}" style="font-size:12px; cursor:pointer; color:#B08654; text-decoration:none;">{{ diagEcLabel }} ›</div>
         </div>
         <div style="display:flex; gap:12px; overflow-x:auto; margin:0 -20px 24px; padding:2px 20px 8px;">
           <sc-for list="{{ diagProducts }}" as="p" hint-placeholder-count="3">
@@ -1581,6 +1581,9 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state;
+    if((s.screen === 'store' || s.screen === 'result') && (!s.storeItems || s.storeItems.length === 0)) {
+      this.loadStore();
+    }
     const diags = this.getDiags();
     const d = diags[s.diag] || diags.hair;
     const order = ['hair', 'gray', 'scalp', 'nail', 'color'];
