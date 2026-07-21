@@ -1351,6 +1351,14 @@ const track=(event,props={})=>fetch(SUPABASE_URL+'/rest/v1/user_events',{method:
  prefer:'return=minimal'},body:JSON.stringify({line_user_id:LINE_UID||null,
  event,kind:props.kind||null,props})}).catch(()=>{});
 
+let showToastRef=null;
+window.onerror=(msg,url,line,col,err)=>{
+  const errMsg=`JS Error (${line}:${col}): ${msg}`;
+  console.error(errMsg);
+  if(showToastRef) showToastRef(errMsg);
+  return true;
+};
+
 class Component extends DCLogic {
   state = {
     screen: (this.props && this.props.skipOnboarding) ? 'home' : 'welcome',
@@ -1380,6 +1388,7 @@ class Component extends DCLogic {
     clearTimeout(this._tt);
     this.setState({ toast: msg });
     this._tt = setTimeout(() => this.setState({ toast: null }), 2200);
+    showToastRef = this.showToast.bind(this);
   }
 
   go(screen) { this.setState({ screen }); }
