@@ -37,9 +37,8 @@
       <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:16px; text-shadow:0 1px 12px rgba(246,241,232,.9);">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div><div style="font-size:14px; color:#6B655C; line-height:1.9;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
 
     </div>
-    <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="display:flex; flex-direction:column;">
       <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
-      <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
     </div>
   </div>
   </sc-if>
@@ -1994,7 +1993,6 @@ class Component extends DCLogic {
       notifyKnob: s.pNotify ? 23 : 3,
       toggleNotify: () => this.setState({ pNotify: !s.pNotify }),
       startProfile: () => { track('register_start'); this.setState({ screen: 'profile', profileStep: 1, editingProfile: false }); },
-      skipProfile: () => this.go('home'),
       editProfile: () => this.setState({ screen: 'profile', profileStep: 1, editingProfile: true }),
       profileBack: () => {
         if (step > 1) this.setState({ profileStep: step - 1 });
