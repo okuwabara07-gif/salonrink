@@ -23,14 +23,14 @@
 </style>
 </helmet>
 
-<div style="width:100%; min-height:100dvh; display:flex; flex-direction:column; background: {{ appBg }}; color:#2B2724; font-family:'Zen Kaku Gothic New',sans-serif; position:relative; overflow:hidden; padding-top: env(safe-area-inset-top); box-sizing:border-box; margin:0 auto; max-width:480px;">
+<div style="width:100%; min-height:100dvh; display:flex; flex-direction:column; background: {{ appBg }}; color:#2B2724; font-family:'Zen Kaku Gothic New',sans-serif; position:relative; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-top: env(safe-area-inset-top); box-sizing:border-box; margin:0 auto; max-width:480px;">
   <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
   <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ libInputRef }}" style="display:none;">
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; min-height:100dvh; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10;">
-    <div style="flex:1; min-height:0; width:100%; position:relative; overflow:hidden;">
+  <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh;">
+    <div style="flex:0 0 auto; height: 42vh; max-height: 380px; width:100%; position:relative; overflow:hidden;">
       <img src="assets/home-hero.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center 20%;">
       <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="position:absolute; top:20px; left:28px; width:76px; height:auto; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
       <div style="position:absolute; inset:auto 0 0 0; height:120px; background:linear-gradient(to bottom, rgba(246,241,232,0), #F6F1E8); pointer-events:none;"></div>
