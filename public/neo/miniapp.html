@@ -167,12 +167,15 @@
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
         <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="4">
-          <div onClick="{{ mi.onSelect }}" style="background:#fff; border-radius:22px; overflow:hidden; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;">
+          <div onClick="{{ mi.onSelect }}" style="background:#fff; border-radius:22px; overflow:hidden; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5); position:relative;" style-hover="border-color:#B08654;">
             <div style="height:84px; background: {{ mi.grad }};"></div>
             <div style="padding:13px 14px 15px;">
               <div style="font-size:14px; font-weight:700; margin-bottom:4px;">{{ mi.title }}</div>
               <div style="font-size:11px; color:#8C857A; line-height:1.55; border-top:1px solid #F0EAE0; padding-top:7px;">{{ mi.desc }}</div>
             </div>
+            <sc-if condition="{{ mi.badge }}">
+              <div style="position:absolute; top:10px; right:10px; background:#B08654; color:#fff; border-radius:4px; padding:3px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">{{ mi.badge }}</div>
+            </sc-if>
           </div>
         </sc-for>
         <div onClick="{{ goFortune }}" style="background:#2B2724; color:#F5EFE5; border-radius:22px; overflow:hidden; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.15);">
@@ -1685,12 +1688,20 @@ class Component extends DCLogic {
     const gold = '#B08654', off = '#A39B8D';
 
     const openDiag = (id) => this.setState({ diag: id, screen: 'intro', sheetOpen: false });
+    const showWaitlist = (kind) => {
+      this.showToast('この診断はまもなく登場します。公開時はLINEでお知らせします');
+      track('waitlist_tap', { kind });
+    };
 
-    const menuItems = order.filter(id => id === 'hair').map((id) => ({
-      kanji: diags[id].kanji, tint: diags[id].tint, grad: diags[id].grad,
-      title: diags[id].title, desc: diags[id].desc,
-      onSelect: () => openDiag(id)
-    }));
+    const menuItems = order.map((id) => {
+      const isWaitlist = ['gray_check', 'scalp', 'nail', 'personal_color'].includes(id);
+      return {
+        kanji: diags[id].kanji, tint: diags[id].tint, grad: diags[id].grad,
+        title: diags[id].title, desc: diags[id].desc,
+        badge: isWaitlist ? '近日公開' : null,
+        onSelect: () => isWaitlist ? showWaitlist(id) : openDiag(id)
+      };
+    });
 
     const chipItems = order.map((id) => ({
       kanji: diags[id].kanji, tint: diags[id].tint, short: diags[id].short,
