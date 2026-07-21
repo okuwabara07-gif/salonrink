@@ -276,6 +276,7 @@
       <div style="margin-left:auto; font-size:11px; color:#A39B8D;">2026/7/15</div>
     </div>
     <div style="flex:1; overflow-y:auto; padding:16px 20px 28px;">
+      <div onClick="{{ saveKarte }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:14px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; margin-bottom:16px;" style-hover="background:#403A34;">カルテとしてLINEに保存</div>
       <div style="display:flex; align-items:center; gap:18px; background:#fff; border-radius:22px; padding:20px; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
         <div style="position:relative; width:110px; height:110px; flex-shrink:0;">
           <sc-if value="{{ showRing }}" hint-placeholder-val="{{ true }}">
@@ -1364,8 +1365,9 @@ async function apiCall(path,body,useAnon=false){
   return {status:r.status,data:await r.json().catch(()=>null)};
 }
 
-const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
-const photo_diagnose=(kind,dataUrl,surveyAns)=>fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:LINE_UID||undefined,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+let SESSION_ID = 'ses_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,session_id:SESSION_ID,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+const photo_diagnose=(kind,dataUrl,surveyAns)=>fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:LINE_UID||undefined,session_id:SESSION_ID,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
@@ -1377,7 +1379,7 @@ const list_products=(kind)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/func
 const SUPABASE_URL='https://fmpmgilgvvfezursmyic.supabase.co';
 const track=(event,props={})=>fetch(SUPABASE_URL+'/rest/v1/user_events',{method:'POST',
  headers:{apikey:ANON,authorization:'Bearer '+ANON,'content-type':'application/json',
- prefer:'return=minimal'},body:JSON.stringify({line_user_id:LINE_UID||null,
+ prefer:'return=minimal'},body:JSON.stringify({line_user_id:LINE_UID||null,session_id:SESSION_ID,
  event,kind:props.kind||null,props})}).catch(()=>{});
 
 let showToastRef=null;
@@ -1403,6 +1405,7 @@ class Component extends DCLogic {
   state = {
     screen: (this.props && this.props.skipOnboarding) ? 'home' : 'welcome',
     profileStep: 1,
+    sessionId: 'ses_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
     editingProfile: false,
     pName: '', pBirth: '', pGender: null,
     pConcerns: ['うねり・パサつき', '白髪が気になる'],
@@ -2018,6 +2021,12 @@ class Component extends DCLogic {
         if (step > 1) this.setState({ profileStep: step - 1 });
         else this.go(s.editingProfile ? 'mypage' : 'welcome');
       },
+      saveKarte: async () => {
+        if(!window.LINE_UID) { this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください'); return; }
+        if(!s.pName) { this.go('profile'); this.showToast('プロフィール登録後にご利用ください'); return; }
+        const res = await apiCall('/save-karte', {diagnosis_id: s.diagResultId, line_user_id: LINE_UID});
+        if(res.status === 200) { this.showToast('カルテをLINEに保存しました'); } else { this.showToast('保存に失敗しました。もう一度お試しください'); }
+      },
       isStylist: s.screen === 'stylist',
       goStylist: () => this.setState({ screen: 'stylist', stylistMode: null }),
       stylistModeNone: !s.stylistMode,
@@ -2026,7 +2035,7 @@ class Component extends DCLogic {
       stylistPickFriend: () => this.setState({ stylistMode: 'list' }),
       saveStylist: () => { this.go('mypage'); this.showToast('担当美容師を' + this.getStylists()[this.state.pStylist].name + 'さんに登録しました'); },
       profileNext: async () => {
-        if (step < 2) this.setState({ profileStep: step + 1 });
+        if (step < 2) { track('register_step',{step: step + 1}); this.setState({ profileStep: step + 1 }); }
         else {
           if(!window.LINE_UID){ try{ window.LINE_UID=(await liff.getProfile()).userId; }catch(e){} }
           if(!window.LINE_UID){ this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください'); return; }
@@ -2332,7 +2341,7 @@ class Component extends DCLogic {
         });
         this.showToast('新しい記録を作成しました');
       },
-      storeItems: (s.storeItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.item_url,external:true}) }catch(e){ window.open(item.item_url) } }})),
+      storeItems: (s.storeItems || []).map(item => ({...item, onTap: () => { track('store_item_tap',{item_id:item.id}); try{ liff.openWindow({url:item.item_url,external:true}) }catch(e){ window.open(item.item_url) } }})),
       affiliateItems: (s.affiliateItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.ec_url,external:true}) }catch(e){ window.open(item.ec_url) } }})),
     };
     showToastRef = this.showToast.bind(this);
@@ -2344,7 +2353,11 @@ class Component extends DCLogic {
     try {
       window.LINE_UID = null;
       await liff.init({liffId:'2010387325-N1TlMFzx'});
-      if(!liff.isLoggedIn()){liff.login();}else{window.LINE_UID=(await liff.getProfile()).userId;}
+      if(!liff.isLoggedIn()){liff.login();}else{
+        const profile = await liff.getProfile();
+        window.LINE_UID = profile.userId;
+        if(profile.displayName && !this.state.pName) this.setState({ pName: profile.displayName });
+      }
     } catch (e) { console.error('LIFF init error:', e); }
 
     try {
