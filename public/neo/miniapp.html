@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <style>
-  body { margin:0; background:#E9E4DA; }
+  body { margin:0; background:#F6F1E8; overflow:hidden; }
   a { color:#B08654; } a:hover { color:#8F6A3E; }
   input { outline:none; }
   @keyframes scanmove { 0%{ transform:translateY(-90px);} 50%{ transform:translateY(90px);} 100%{ transform:translateY(-90px);} }
@@ -23,32 +23,30 @@
 </style>
 </helmet>
 
-<div style="min-height:100vh; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px; font-family:'Zen Kaku Gothic New',sans-serif;">
-<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="430px,900px">
-
-<div style="height:100%; display:flex; flex-direction:column; background: {{ appBg }}; color:#2B2724; font-family:'Zen Kaku Gothic New',sans-serif; position:relative; overflow:hidden; padding-top:64px; box-sizing:border-box;">
+<div style="width:100%; min-height:100dvh; display:flex; flex-direction:column; background: {{ appBg }}; color:#2B2724; font-family:'Zen Kaku Gothic New',sans-serif; position:relative; overflow:hidden; padding-top: env(safe-area-inset-top); box-sizing:border-box; margin:0 auto; max-width:480px;">
   <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
   <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ libInputRef }}" style="display:none;">
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; padding:20px 28px 34px; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,0) 0%, rgba(246,241,232,.30) 24%, rgba(246,241,232,.86) 42%, #F6F1E8 54%, #F6F1E8 100%), url('assets/home-hero.png') center 56px / 92% auto no-repeat, #F2EBDF;">
-    <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="width:76px; height:auto; align-self:flex-start; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-bottom:28px;">
-
-      <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:16px; text-shadow:0 1px 12px rgba(246,241,232,.9);">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div><div style="font-size:14px; color:#6B655C; line-height:1.9;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
-      
+  <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; min-height:100dvh; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10;">
+    <div style="flex:1; background:linear-gradient(180deg, rgba(246,241,232,0) 0%, rgba(246,241,232,.30) 24%, rgba(246,241,232,.86) 42%, #F6F1E8 54%, #F6F1E8 100%), url('assets/home-hero.png') center 50% / 92% auto no-repeat; background-size: contain; background-position: center; display:flex; flex-direction:column; padding:20px 28px; position:relative; object-fit:cover;">
+      <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="width:76px; height:auto; align-self:flex-start; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85)); margin-bottom:auto;">
     </div>
-    <div style="display:flex; flex-direction:column; gap:12px;">
-      <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
-      <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
+    <div style="padding:24px 28px; display:flex; flex-direction:column; gap:16px; margin-top:auto; padding-bottom: calc(24px + env(safe-area-inset-bottom));">
+      <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:8px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
+      <div style="font-size:14px; color:#6B655C; line-height:1.9; margin-bottom:12px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
+        <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
+      </div>
     </div>
   </div>
   </sc-if>
 
   <!-- ═══ プロフィール登録 ═══ -->
   <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="プロフィール登録" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="プロフィール登録" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ profileBack }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">{{ profileHeader }}</div>
@@ -146,7 +144,7 @@
 
   <!-- ═══ HOME ═══ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.15) 0%, rgba(246,241,232,.78) 11%, #F6F1E8 22%, #F6F1E8 100%), url('assets/home-hero2.png') center top / cover no-repeat;">
+  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.15) 0%, rgba(246,241,232,.78) 11%, #F6F1E8 22%, #F6F1E8 100%), url('assets/home-hero2.png') center top / cover no-repeat; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 8px 24px;">
       <div>
         <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; letter-spacing:.08em;">{{ salonName }}</div>
@@ -193,7 +191,7 @@
 
   <!-- ═══ 診断イントロ ═══ -->
   <sc-if value="{{ isIntro }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="診断イントロ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="診断イントロ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">{{ diagTitle }}</div>
@@ -223,7 +221,7 @@
 
   <!-- ═══ 問診 ═══ -->
   <sc-if value="{{ isSurvey }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="頭皮問診" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="頭皮問診" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ backToIntro }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">{{ diagTitle }} ・ 問診</div>
@@ -253,15 +251,15 @@
   <!-- ═══ カメラ ═══ -->
   <!-- ═══ 解析中 ═══ -->
   <sc-if value="{{ isAnalyzing }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="解析中" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#2B2724; gap:26px;">
-    <div style="position:relative; width:150px; height:190px; border:2px solid rgba(176,134,84,.6); border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+  <div data-screen-label="解析中" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#2B2724; min-height:100dvh; background: linear-gradient(180deg, #F6F1E8 0%, #EDE6D9 100%); width:100%;">
+    <div style="position:relative; width:150px; height:190px; border:2px solid rgba(176,134,84,.6); border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; margin-bottom:32px;">
       <div style="position:absolute; left:8%; right:8%; height:2px; background:linear-gradient(90deg,transparent,#B08654,transparent); animation:scanmove 2.2s ease-in-out infinite;"></div>
     </div>
-    <div style="text-align:center;">
+    <div style="text-align:center; margin-bottom:32px;">
       <div style="font-family:'Shippori Mincho',serif; font-size:18px; font-weight:600; margin-bottom:8px;">AIが解析しています</div>
       <div style="font-size:12px; color:#B5AC9E;">{{ analyzingNote }}</div>
     </div>
-    <div style="width:180px; height:3px; background:rgba(255,255,255,.15); border-radius:99px; overflow:hidden;">
+    <div style="width:min(280px, 70vw); height:3px; background:rgba(43,39,36,.15); border-radius:99px; overflow:hidden;">
       <div style="height:100%; background:#B08654; border-radius:99px; animation:barfill 2.6s ease forwards;"></div>
     </div>
   </div>
@@ -808,7 +806,7 @@
 
   <!-- ═══ 担当美容師の登録 ═══ -->
   <sc-if value="{{ isStylist }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="担当美容師の登録" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="担当美容師の登録" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goMyPage }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">担当美容師の登録</div>
@@ -920,7 +918,7 @@
 
   <!-- ═══ マイページ ═══ -->
   <sc-if value="{{ isMyPage }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="マイページ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="マイページ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">マイページ</div>
@@ -1070,8 +1068,8 @@
         </div>
       </div>
 
-      <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:10px;">気になること</div>
-      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;">
+      <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:10px; padding:0 0;">気になること</div>
+      <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; padding:0 0;">
         <sc-for list="{{ myConcerns }}" as="mc" hint-placeholder-count="3">
           <div style="background:#fff; border:1px solid #E3DACB; border-radius:999px; padding:8px 14px; font-size:12px; font-weight:500; color:#584F42;">{{ mc }}</div>
         </sc-for>
@@ -1081,9 +1079,9 @@
         <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em;">診断ダイジェスト</div>
         <div onClick="{{ goAlbum }}" style="font-size:12px; color:#B08654; cursor:pointer;">記録を見る ›</div>
       </div>
-      <div style="display:flex; gap:10px; overflow-x:auto; margin:0 -20px 20px; padding:2px 20px 8px;">
+      <div style="display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:20px; padding:0 0;">
         <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
-          <div onClick="{{ h.onOpen }}" style="flex-shrink:0; width:118px; background:#fff; border-radius:18px; padding:14px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);" style-hover="border-color:#B08654;">
+          <div onClick="{{ h.onOpen }}" style="flex:0 0 118px; background:#fff; border-radius:18px; padding:14px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);" style-hover="border-color:#B08654;">
             <div style="width:30px; height:30px; border-radius:999px; background: {{ h.tint }}; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho',serif; font-size:12px; font-weight:600; margin-bottom:10px;">{{ h.kanji }}</div>
             <div style="font-size:12px; font-weight:700; margin-bottom:2px;">{{ h.title }}</div>
             <div style="font-family:'Shippori Mincho',serif; font-size:24px; font-weight:700; color:#B08654; line-height:1.2;">{{ h.score }}</div>
@@ -1097,9 +1095,9 @@
         <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em;">診断した写真 ・ ビフォー/アフター</div>
         <div onClick="{{ goAlbum }}" style="font-size:12px; color:#B08654; cursor:pointer;">アルバムを見る ›</div>
       </div>
-      <div style="display:flex; gap:10px; overflow-x:auto; margin:0 -20px 20px; padding:2px 20px 8px;">
+      <div style="display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:20px; padding:0 0;">
         <sc-for list="{{ album }}" as="al" hint-placeholder-count="2">
-          <div onClick="{{ goAlbum }}" style="flex-shrink:0; width:138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);" style-hover="border-color:#B08654;">
+          <div onClick="{{ goAlbum }}" style="flex:0 0 138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);" style-hover="border-color:#B08654;">
             <div style="height:150px; position:relative; overflow:hidden; background:linear-gradient(160deg,#D8CDBD,#B9AB95);">
               {{ al.beforeEl }}
               <div style="position:absolute; left:8px; bottom:8px; font-size:9px; background:rgba(43,39,36,.55); color:#fff; border-radius:999px; padding:3px 8px;">{{ al.badge }}</div>
@@ -1167,7 +1165,7 @@
 
   <!-- ═══ 事前カルテ ═══ -->
   <sc-if value="{{ isKarte }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="事前カルテ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease;">
+  <div data-screen-label="事前カルテ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
       <div style="font-size:15px; font-weight:700;">事前カルテ</div>
