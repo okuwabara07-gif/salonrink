@@ -30,12 +30,13 @@
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; min-height:100dvh; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10;">
-    <div style="flex:1; background:linear-gradient(180deg, rgba(246,241,232,0) 0%, rgba(246,241,232,.30) 24%, rgba(246,241,232,.86) 42%, #F6F1E8 54%, #F6F1E8 100%), url('assets/home-hero.png') center 50% / 92% auto no-repeat; background-size: contain; background-position: center; display:flex; flex-direction:column; padding:20px 28px; position:relative; object-fit:cover;">
-      <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="width:76px; height:auto; align-self:flex-start; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85)); margin-bottom:auto;">
+    <div style="flex:0 0 auto; height: clamp(180px, 45vh, 280px); width:100%; position:relative; overflow:hidden; background:linear-gradient(180deg, rgba(246,241,232,0) 0%, rgba(246,241,232,.30) 24%, rgba(246,241,232,.86) 42%, #F6F1E8 54%, #F6F1E8 100%);">
+      <img src="assets/home-hero.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center top;">
+      <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="position:absolute; top:20px; left:28px; width:76px; height:auto; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
     </div>
-    <div style="padding:24px 28px; display:flex; flex-direction:column; gap:16px; margin-top:auto; padding-bottom: calc(24px + env(safe-area-inset-bottom));">
-      <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:600; line-height:1.35; margin-bottom:8px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
-      <div style="font-size:14px; color:#6B655C; line-height:1.9; margin-bottom:12px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
+    <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding:24px 28px calc(24px + env(safe-area-inset-bottom));">
+      <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; line-height:1.4; margin-bottom:12px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
+      <div style="font-size:14px; color:#6B655C; line-height:1.8; margin-bottom:24px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
       <div style="display:flex; flex-direction:column; gap:12px;">
         <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
         <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
@@ -425,9 +426,9 @@
           <div style="font-family:'Shippori Mincho',serif; font-size:17px; font-weight:600;">あなたにおすすめ</div>
           <div onClick="{{ () => { console.log('Result EC link tapped:', diagEcLabel); if(storeItems&&storeItems.length>0) liff.openWindow({ url: storeItems[0].item_url, external: true }); } }}" style="font-size:12px; cursor:pointer; color:#B08654; text-decoration:none;">{{ diagEcLabel }} ›</div>
         </div>
-        <div style="display:flex; gap:12px; overflow-x:auto; margin:0 -20px 24px; padding:2px 20px 8px;">
+        <div style="display:flex; gap:12px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:24px; padding:0 0;">
           <sc-for list="{{ diagProducts }}" as="p" hint-placeholder-count="3">
-            <div style="flex-shrink:0; width:138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;">
+            <div style="flex:0 0 138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;">
               <div style="height:96px; background:linear-gradient(160deg,#EDE6D9,#D8CDBB); display:flex; align-items:center; justify-content:center; font-size:10px; color:#A39B8D; letter-spacing:.1em;">商品画像</div>
               <div style="padding:11px 12px 13px;">
                 <div style="font-size:10px; color:#B08654; font-weight:700; margin-bottom:3px;">{{ p.tag }}</div>
@@ -535,9 +536,9 @@
               <div style="font-size:12.5px; font-weight:700;">{{ row.title }}</div>
               <div style="font-size:10.5px; color:#A39B8D;">{{ row.count }}枚</div>
             </div>
-            <div style="display:flex; gap:8px; overflow-x:auto; margin:0 -20px; padding:0 20px 4px;">
+            <div style="display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:0 0 4px;">
               <sc-for list="{{ row.tiles }}" as="g" hint-placeholder-count="3">
-                <div onClick="{{ g.onOpen }}" style="flex-shrink:0; width:108px; cursor:pointer;">
+                <div onClick="{{ g.onOpen }}" style="flex:0 0 108px; cursor:pointer;">
                   <div style="height:124px; border-radius:14px; position:relative; overflow:hidden; background: {{ g.grad }};" style-hover="opacity:.92;">
                     {{ g.el }}
                     <sc-if value="{{ g.isAdd }}" hint-placeholder-val="{{ false }}">
