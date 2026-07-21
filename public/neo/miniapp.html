@@ -1683,7 +1683,7 @@ class Component extends DCLogic {
 
     const openDiag = (id) => this.setState({ diag: id, screen: 'intro', sheetOpen: false });
 
-    const menuItems = order.map((id) => ({
+    const menuItems = order.filter(id => id === 'hair').map((id) => ({
       kanji: diags[id].kanji, tint: diags[id].tint, grad: diags[id].grad,
       title: diags[id].title, desc: diags[id].desc,
       onSelect: () => openDiag(id)
