@@ -32,11 +32,8 @@
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh; padding-top: max(16px, env(safe-area-inset-top)); padding-left:20px; padding-right:20px; padding-bottom: calc(20px + env(safe-area-inset-bottom));">
     <div style="flex:0 0 auto; display:flex; flex-direction:column; gap:18px;">
-      <div style="flex:0 0 auto; height: 38vh; max-height: 340px; width:100%; position:relative; overflow:hidden;">
-        <img src="assets/home-hero.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center 20%;">
-        <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="position:absolute; top:20px; left:28px; width:76px; height:auto; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
-        <div style="position:absolute; inset:auto 0 0 0; height:120px; background:linear-gradient(to bottom, rgba(246,241,232,0), #F6F1E8); pointer-events:none;"></div>
-      </div>
+      <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="height:60px; display:block; margin:0 auto 14px;">
+      <img src="assets/home-hero2.png" alt="" style="width:100%; height:40vh; max-height:360px; object-fit:cover; object-position:center 30%; border-radius:22px; display:block;">
       <div style="flex:0 0 auto; display:flex; flex-direction:column;">
         <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; line-height:1.4; margin-bottom:10px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
         <div style="font-size:14px; color:#6B655C; line-height:1.8; margin-bottom:22px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
