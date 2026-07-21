@@ -1391,6 +1391,16 @@ class Component extends DCLogic {
 
   go(screen) { this.setState({ screen }); }
 
+  async loadStore() {
+    const res = await list_base_items();
+    console.log('loadStore response:', res);
+    if(res.status === 200 && res.data && (Array.isArray(res.data.items) || Array.isArray(res.data))) {
+      this.setState({ storeItems: res.data.items || res.data });
+    } else {
+      this.setState({ storeError: true });
+    }
+  }
+
   computeMeishiki(birth) {
     const m = (birth || '').match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})/);
     if (!m) return null;
@@ -1893,15 +1903,6 @@ class Component extends DCLogic {
       exDayBg: (s.exTab || 'day') === 'day' ? '#B08654' : 'transparent',
       exMonthColor: s.exTab === 'month' ? '#221E19' : '#D8CFC0',
       exMonthBg: s.exTab === 'month' ? '#B08654' : 'transparent',
-      loadStore: async () => {
-        const res = await list_base_items();
-        console.log('loadStore response:', res);
-        if(res.status === 200 && res.data && (Array.isArray(res.data.items) || Array.isArray(res.data))) {
-          this.setState({ storeItems: res.data.items || res.data });
-        } else {
-          this.setState({ storeError: true });
-        }
-      },
       goStore: async () => {
         track('store_view');
         await this.loadStore();
