@@ -1,0 +1,72 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AOKAE Ops</title><style>
+body{font-family:-apple-system,'Hiragino Sans',sans-serif;background:#F6F1E8;color:#2B2724;margin:0 auto;padding:16px 14px 60px;max-width:640px}
+h1{font-size:18px;margin:4px 0 2px}.sub{font-size:12px;color:#8a8175;margin-bottom:14px}
+h2{font-size:14px;margin:22px 0 8px;border-bottom:1px solid #e3dacb;padding-bottom:6px}.cnt{color:#B08654;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.c{background:#fff;border-radius:14px;padding:12px;border:1px solid rgba(227,218,203,.6)}
+.n{font-size:20px;font-weight:800;color:#B08654}.l{font-size:11px;color:#6b6357;margin-top:2px}.s{color:#a89e8f;margin-left:6px}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;font-size:12px}
+td{padding:8px 10px;border-bottom:1px solid #f0e9dc}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}.ok{background:#4caf7d}.ng{background:#d9534f}
+.chip{display:inline-block;background:#fff;border:1px solid #e3dacb;border-radius:999px;padding:4px 10px;font-size:11px;margin:3px 4px 0 0}
+.chip b{color:#B08654}
+.fun{background:#fff;border-radius:14px;padding:10px 12px;font-size:12px;line-height:2}
+.fun b{color:#B08654}
+.note{background:#fff;border-radius:12px;margin:6px 0;border:1px solid rgba(227,218,203,.6)}
+.note summary{padding:10px 12px;font-size:13px;cursor:pointer;list-style:none}
+.note summary b{color:#B08654;margin-right:6px}.m{display:block;font-size:10.5px;color:#a89e8f;margin-top:2px}
+.note pre{margin:0;padding:0 12px 12px;font-size:11.5px;line-height:1.8;white-space:pre-wrap;color:#4a443c;font-family:inherit}
+.p1 summary b{color:#c0392b}#err{color:#c0392b;font-size:13px}
+</style></head><body>
+<h1>AOKAE Ops Dashboard</h1><div class="sub" id="sub">読み込み中…</div>
+<div id="app"></div><div id="err"></div>
+<script>
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const k=new URLSearchParams(location.search).get('k')||'';
+const API='https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/vault-dashboard?k='+encodeURIComponent(k);
+const LBL={doing:'🔥 進行中',considering:'🤔 検討中',idea:'💡 アイデア',hold:'⏸ 保留',done:'✅ 完了(直近の改善)'};
+const KJP={hair_quality:'髪質',scalp:'頭皮',beauty_dna:'DNA',gray_check:'白髪',personal_color:'カラー',nail:'ネイル',photo:'写真'};
+const FJP=[['register_start','登録開始'],['register_done','登録完了'],['diag_start','診断開始'],['diag_done','診断完了'],['fortune_view','占い閲覧'],['fortune_paywall_view','占い壁'],['fortune_paywall_tap','壁タップ'],['checkout_open','決済へ'],['deep_advice_tap','深掘り'],['karte_send','カルテ送信'],['store_view','ストア']];
+const card=(l,v,s)=>v===undefined?'':`<div class="c"><div class="n">${v}</div><div class="l">${l}${s?`<span class="s">${s}</span>`:''}</div></div>`;
+async function load(){
+ try{
+  const r=await fetch(API);
+  if(r.status===403){document.getElementById('sub').textContent='';document.getElementById('err').textContent='アクセスキーが無効です。URL末尾の ?k= を確認してください。';return;}
+  const d=await r.json();const st=d.stats||{},notes=d.notes||[],cron=d.cron||[],dk=d.diag_kinds||{},fn=d.funnel||{},sp=d.stripe;
+  const now=new Date();document.getElementById('sub').textContent=`更新 ${now.getMonth()+1}/${now.getDate()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} · 5分ごと自動更新`;
+  let h=`<h2>📊 実数サマリ</h2><div class="grid">`
+   +card('プロフィール登録',st.profiles)
+   +card('診断 累計',st.diag,`24h: ${st.diag_24h??0}`)
+   +(sp?card('売上 直近30日',`¥${(sp.rev_30d??0).toLocaleString()}`,`${sp.charges_30d??0}件`):'')
+   +card('イベント 累計',st.events,`24h: ${st.events_24h??0}`)
+   +card('占い有効 / 会員',(st.fortune_active!==undefined)?`${st.fortune_active} / ${st.premium??0}`:undefined)
+   +card('AI相談 / 残クレジット',(st.deep_advices!==undefined)?`${st.deep_advices} / ${st.credits_sum??0}`:undefined)
+   +card('HPB予約 累計',st.hpb_total)
+   +card('BASE商品(公開)',st.base_items)
+   +`</div>`;
+  if(st.kirei_articles!==undefined||st.aokae_articles!==undefined){
+   h+=`<h2>📝 記事工場</h2><table>`
+    +`<tr><td>キレイ鶴見ブログ</td><td>${st.kirei_articles??0} 本</td><td>最新 ${esc(st.kirei_latest||'-')}</td></tr>`
+    +`<tr><td>aokae.net</td><td>${st.aokae_articles??0} 本</td><td>最新 ${esc(st.aokae_latest||'-')}</td></tr>`
+    +`</table>`;}
+  const dkKeys=Object.keys(dk);
+  if(dkKeys.length){h+=`<h2>🔬 診断内訳</h2><div>`+dkKeys.map(x=>`<span class="chip">${esc(KJP[x]||x)} <b>${dk[x]}</b></span>`).join('')+`</div>`;}
+  const fnRows=FJP.filter(([key])=>fn[key]!==undefined);
+  h+=`<h2>🛒 ファネル(累計)</h2><div class="fun">`+(fnRows.length?fnRows.map(([key,jp])=>`${jp} <b>${fn[key]}</b>`).join(' → '):'まだイベントなし(発信前)')+`</div>`;
+  h+=`<h2>🚦 稼働状況(cron 最新実行)</h2><table>`+(cron.map(c=>`<tr><td><span class="dot ${c.status==='succeeded'?'ok':'ng'}"></span>${esc(c.job)}</td><td>${esc(c.t)}</td><td>${c.status==='succeeded'?'OK':esc(c.status)}</td></tr>`).join('')||'<tr><td>(なし)</td></tr>')+`</table>`;
+  const g={};for(const n of notes)(g[n.status]=g[n.status]||[]).push(n);
+  for(const s of ['doing','considering','idea','hold','done']){
+   if(!g[s]||!g[s].length)continue;
+   h+=`<h2>${LBL[s]} <span class="cnt">${g[s].length}</span></h2>`;
+   for(const n of g[s].slice(0,s==='done'?20:40)){
+    h+=`<details class="note p${n.priority}"><summary><b>P${n.priority}</b> ${esc(n.title)}<span class="m">${esc(n.category||'')} · ${esc(n.updated)}</span></summary><pre>${esc(n.body||'')}</pre></details>`;
+   }
+  }
+  document.getElementById('app').innerHTML=h;
+ }catch(e){document.getElementById('err').textContent='読み込みに失敗しました: '+e;}
+}
+load();setInterval(load,300000);
+</script></body></html>
