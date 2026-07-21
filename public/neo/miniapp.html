@@ -1294,6 +1294,33 @@
           </div>
         </sc-for>
       </div>
+
+      <sc-if value="{{ affiliateItems }}" hint-placeholder-val="{{ false }}">
+      <div style="margin-top:32px; padding-top:22px; border-top:1px solid #E3DACB;">
+        <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+          <div style="font-size:13px; font-weight:700;">診断からのおすすめ</div>
+          <div style="font-size:9px; font-weight:700; color:#fff; background:#E8A76E; border-radius:4px; padding:2px 6px; letter-spacing:.05em;">[PR]</div>
+        </div>
+        <div style="font-size:11px; color:#8C857A; line-height:1.6; margin-bottom:12px;">あなたの診断にぴったりな商品をセレクト</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <sc-for list="{{ affiliateItems }}" as="aff" hint-placeholder-count="6">
+            <div style="background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;" onClick="{{ () => { console.log('Affiliate tapped:', aff.display_name); track('affiliate_tap', {product: aff.display_name, source: aff.source}); liff.openWindow({ url: aff.ec_url, external: true }); } }}">
+              <div style="height:96px; background:linear-gradient(160deg,#EDE6D9,#D8CDBB); display:flex; align-items:center; justify-content:center; overflow:hidden;">
+                <img src="{{ aff.image_url }}" alt="{{ aff.display_name }}" style="width:100%; height:100%; object-fit:cover;">
+              </div>
+              <div style="padding:11px 12px 13px;">
+                <div style="font-size:11px; font-weight:700; line-height:1.4; margin-bottom:4px; min-height:32px;">{{ aff.display_name }}</div>
+                <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                  <div style="font-size:11px; color:#8C857A;">¥{{ aff.price }}</div>
+                  <div style="font-size:8px; font-weight:700; color:#fff; background:#8C857A; border-radius:3px; padding:1px 4px;">{{ aff.mall_label }}</div>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
     </div>
   </div>
   </sc-if>
@@ -1342,6 +1369,7 @@ const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'
 const fortune_select=(t)=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'select_topic',topic:t});
 const upsert_profile=(p)=>apiCall('/upsert-profile',{...p,line_user_id:LINE_UID},true);
 const list_base_items=()=>apiCall('/list-base-items',{},true);
+const list_products=(kind)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/list-products?kind='+encodeURIComponent(kind)+'&limit=6').then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))})).catch(e=>({status:0,data:null}));
 
 const SUPABASE_URL='https://fmpmgilgvvfezursmyic.supabase.co';
 const track=(event,props={})=>fetch(SUPABASE_URL+'/rest/v1/user_events',{method:'POST',
@@ -1398,6 +1426,18 @@ class Component extends DCLogic {
       this.setState({ storeItems: res.data.items || res.data });
     } else {
       this.setState({ storeError: true });
+    }
+    const s = this.state;
+    const diagKind = s.diagResult ? s.diagResult.kind : null;
+    let affiliateKind = null;
+    if(diagKind === 'gray_check') affiliateKind = 'gray_check';
+    else if(diagKind === 'personal_color') affiliateKind = 'personal_color';
+    if(affiliateKind) {
+      const afres = await list_products(affiliateKind);
+      console.log('affiliate products response:', afres);
+      if(afres.status === 200 && afres.data && Array.isArray(afres.data.items)) {
+        this.setState({ affiliateItems: afres.data.items });
+      }
     }
   }
 
