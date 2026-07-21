@@ -29,16 +29,16 @@
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh;">
-    <div style="flex:0 0 auto; height: 42vh; max-height: 380px; width:100%; position:relative; overflow:hidden;">
+  <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh; justify-content:center; padding:24px 20px calc(24px + env(safe-area-inset-bottom));">
+    <div style="flex:0 0 auto; height: 38vh; max-height: 340px; width:100%; position:relative; overflow:hidden; margin-bottom:18px;">
       <img src="assets/home-hero.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center 20%;">
       <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="position:absolute; top:20px; left:28px; width:76px; height:auto; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
       <div style="position:absolute; inset:auto 0 0 0; height:120px; background:linear-gradient(to bottom, rgba(246,241,232,0), #F6F1E8); pointer-events:none;"></div>
     </div>
-    <div style="flex:0 0 auto; display:flex; flex-direction:column; padding:20px 28px calc(24px + env(safe-area-inset-bottom));">
-      <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; line-height:1.4; margin-bottom:12px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
-      <div style="font-size:14px; color:#6B655C; line-height:1.8; margin-bottom:24px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
-      <div style="display:flex; flex-direction:column; gap:12px;">
+    <div style="flex:0 0 auto; display:flex; flex-direction:column;">
+      <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; line-height:1.4; margin-bottom:10px;">はじめまして。<br>あなたの美容カルテを<br>つくりましょう</div>
+      <div style="font-size:14px; color:#6B655C; line-height:1.8; margin-bottom:22px;">{{ salonName }}の公式ミニアプリです。プロフィールを登録すると、AI診断や占いがあなた仕様になります。</div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
         <div onClick="{{ startProfile }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:17px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">プロフィールを登録する</div>
         <div onClick="{{ skipProfile }}" style="padding:10px; text-align:center; font-size:13px; color:#8C857A; cursor:pointer;">あとで登録する</div>
       </div>
