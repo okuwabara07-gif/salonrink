@@ -1272,7 +1272,7 @@
               </div>
               <div style="font-size:11.5px; color:#8C857A; line-height:1.7; margin-bottom:10px;">{{ sec.reason }}</div>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                <sc-for list="{{ storeItems }}" as="item" hint-placeholder-count="4">
+                <sc-for list="{{ sec.products }}" as="item" hint-placeholder-count="4">
                   <div style="background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;" onClick="{{ item.onTap }}">
                     <div style="height:96px; background:linear-gradient(160deg,#EDE6D9,#D8CDBB); display:flex; align-items:center; justify-content:center; overflow:hidden;">
                       <img src="{{ item.img_url }}" alt="{{ item.title }}" style="width:100%; height:100%; object-fit:cover;">
@@ -1417,6 +1417,7 @@ class Component extends DCLogic {
     diagResult: null,
     diagResultId: null,
     storeItems: [],
+    storeItemsByKind: {},
     fortuneAccess: 'none',
     errorBand: null,
     album: [
@@ -1435,13 +1436,15 @@ class Component extends DCLogic {
   go(screen) { this.setState({ screen }); }
 
   async loadStore() {
-    const res = await list_base_items();
-    console.log('loadStore response:', res);
-    if(res.status === 200 && res.data && (Array.isArray(res.data.items) || Array.isArray(res.data))) {
-      this.setState({ storeItems: res.data.items || res.data });
-    } else {
-      this.setState({ storeError: true });
+    const kindMap = { hair: 'hair_quality', gray: 'gray', scalp: 'scalp', nail: 'nail', color: 'personal_color' };
+    const storeItemsByKind = {};
+    for (const [key, kind] of Object.entries(kindMap)) {
+      const res = await list_base_items();
+      if(res.status === 200 && res.data && Array.isArray(res.data.items)) {
+        storeItemsByKind[key] = res.data.items;
+      }
     }
+    this.setState({ storeItemsByKind });
     const s = this.state;
     const diagKind = s.diagResult ? s.diagResult.kind : null;
     let affiliateKind = null;
@@ -1973,14 +1976,15 @@ class Component extends DCLogic {
         const todo = order.filter((id) => !history.some((h) => h.id === id));
         return [...done, ...todo].map((id) => {
           const h = history.find((x) => x.id === id);
+          const items = s.storeItemsByKind[id] || [];
           return {
             title: diags[id].title, diagnosed: !!h, notDiagnosed: !h,
             score: h ? h.score : 0, date: h ? h.date : '',
             reason: reasons[id] || 'あなたの診断結果に合わせて選んでいます。',
-            products: (diags[id].products || []).slice(0, 2),
+            products: items.slice(0, 2), hasProducts: items.length > 0,
             onStart: () => this.setState({ sheetOpen: true })
           };
-        });
+        }).filter(sec => sec.diagnosed ? sec.hasProducts : true);
       })(),
       navStoreColor: s.screen === 'store' ? '#fff' : off,
       navStoreBg: s.screen === 'store' ? '#B08654' : 'transparent',
