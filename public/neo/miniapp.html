@@ -2324,7 +2324,7 @@ class Component extends DCLogic {
         this.showToast('新しい記録を作成しました');
       },
       storeItems: (s.storeItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.item_url,external:true}) }catch(e){ window.open(item.item_url) } }})),
-      affiliateItems: (s.affiliateItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.ec_url,external:true}) }catch(e){ window.open(item.ec_url) } }}}),
+      affiliateItems: (s.affiliateItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.ec_url,external:true}) }catch(e){ window.open(item.ec_url) } }})),
     };
     showToastRef = this.showToast.bind(this);
     errorBandRef = (msg) => this.setState({ errorBand: msg });
