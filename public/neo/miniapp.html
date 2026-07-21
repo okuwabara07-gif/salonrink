@@ -766,7 +766,7 @@
               </div>
               <div>
                 <div style="font-size:12px; font-weight:700; color:#F5EFE5; margin-bottom:4px;">診断結果とあわせたひとこと</div>
-                <div style="font-size:12px; line-height:1.9; color:#B5AC9E;">髪質診断でうるおい不足の傾向が出ています。運気的にも「整える」月なので、7/18の来店で保湿トリートメントを合わせると相乗効果が期待できます。</div>
+                <div style="font-size:12px; line-height:1.9; color:#B5AC9E;">髪質診断でうるおい不足の傾向が出ています。運気的にも「整える」月なので、7/18の来店で保湿トリートメントを合わせると相乗的な手応えが期待される目安です。</div>
               </div>
             </div>
           </sc-if>
@@ -786,7 +786,7 @@
             <div style="display:flex; justify-content:space-between;"><div>星回り（占星術）</div><div>金星がホームサインに。魅力が高まる日</div></div>
             <div style="display:flex; justify-content:space-between;"><div>ラッキーカラー</div><div>テラコッタ</div></div>
             <div style="display:flex; justify-content:space-between;"><div>ラッキーアイテム</div><div>ヘアオイル</div></div>
-            <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:12px;">前回の髪質診断と連動：今週は「うるおい補給」を重点に。夜のオイルケアが特に効果的な週です。</div>
+            <div style="border-top:1px solid rgba(255,255,255,.1); padding-top:12px;">前回の髪質診断と連動：今週は「うるおい補給」を重点に。夜のオイルケアが特に適切な目安の週とされています。</div>
           </div>
         </div>
         <div style="background:rgba(255,255,255,.06); border-radius:20px; padding:20px; margin-bottom:14px;">
@@ -802,6 +802,7 @@
         </div>
         <div onClick="{{ goShare }}" style="background:#06C755; color:#fff; border-radius:999px; padding:14px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;">LINEで美容師に共有する</div>
       </sc-if>
+      <div style="font-size:11px; color:#8C857A; text-align:center; padding:20px 0; line-height:1.7; border-top:1px solid rgba(176,134,84,.2); margin-top:26px;">本コンテンツは娯楽を目的としたものであり、結果は目安です</div>
     </div>
   </div>
   </sc-if>
@@ -1534,7 +1535,7 @@ class Component extends DCLogic {
         kanji: '白', short: '白髪', tint: '#8C8478', grad: "url('assets/diag-gray.png') center 38% / cover no-repeat", title: '白髪診断',
         desc: '白髪の量と分布を測定・記録',
         introTitle: '白髪の「今」を知って、先回りケア。',
-        introBody: '生え際・分け目・サイドの白髪の割合をAIが測定します。前回との比較で変化も追えるので、ケアの効果が見えます。',
+        introBody: '生え際・分け目・サイドの白髪の割合をAIが測定します。前回との比較で変化も追えるので、ケアの変化が数字で見える目安になります。',
         personalNote: 'プロフィールの「白髪が気になる」のお悩みを考慮して診断します。',
         tips: ['撮影は2枚：①顔まわり（生え際） → ②頭頂部（分け目）', '生え際は前髪を上げて撮るとより正確', 'カラー直後は1週間あけるのがおすすめ'],
         shots: ['顔まわり（生え際）', '頭頂部（分け目）'],
@@ -1546,7 +1547,7 @@ class Component extends DCLogic {
           { label: '分け目', value: '14%', pct: 14, barColor: '#8C8478', note: '前回(6月)から2%減少しました' },
           { label: 'サイド', value: '8%', pct: 8, barColor: '#8C8478', note: 'ほとんど目立たないレベルです' }
         ],
-        advice: '白髪率10〜15%は、カラートリートメントでの「ぼかしケア」が最も効果的な時期です。次回来店時のカラー相談もおすすめです。',
+        advice: '白髪率10〜15%は、カラートリートメントでの「ぼかしケア」が適切とされる時期の目安です。次回来店時のカラー相談もおすすめです。',
         ecLabel: '白髪ケアECで見る',
         products: [
           { tag: '週1回の色育て', name: 'カラーケア トリートメント', price: '¥3,080' },
@@ -1559,7 +1560,7 @@ class Component extends DCLogic {
         desc: '縦筋・うるおい・色みをチェック',
         introTitle: '素爪の健康状態を、手軽にチェック。',
         introBody: '爪の縦筋・うるおい・色みをAIが解析します。ジェルネイルのお休み期間の判断や、ベースケア選びに役立ちます。',
-        personalNote: '2週間ごとの再診断で、ケアの効果を記録できます。',
+        personalNote: '2週間ごとの再診断で、ケアの変化を数字で記録できます。',
         tips: ['撮影は2枚：①手全体 → ②指先のアップ', 'ネイルオフした素爪で撮影してください', '2枚目は1円玉を隣に置くと、爪のサイズ計測がより正確になります'],
         shots: ['手全体', '指先（爪のアップ）'],
         analyzingNote: '爪の状態を解析中…',
@@ -1594,7 +1595,7 @@ class Component extends DCLogic {
           { label: 'うるおい', value: '55 / 100', pct: 55, barColor: '#CBAE93', note: '水仕事後の乾燥に注意' },
           { label: 'ハリ', value: '72 / 100', pct: 72, barColor: '#BE9B7B', note: '年齢サインはまだ目立ちません' }
         ],
-        advice: '水仕事のあとすぐの保湿と、就寝前のハンドパックがおすすめ。日中のUVケアも手肌の老化予防に効果的です。',
+        advice: '水仕事のあとすぐの保湿と、就寝前のハンドパックがおすすめ。日中のUVケアも手肌の老化予防の目安として位置付けられています。',
         ecLabel: 'ハンドケアECで見る',
         products: [
           { tag: '毎日の基本ケア', name: 'モイスト ハンドクリーム', price: '¥2,090' },
