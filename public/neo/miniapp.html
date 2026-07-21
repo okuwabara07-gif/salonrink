@@ -1366,8 +1366,19 @@ async function apiCall(path,body,useAnon=false){
 }
 
 let SESSION_ID = 'ses_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-const hair_diagnose=(dataUrl)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({image:dataUrl,line_user_id:LINE_UID||undefined,session_id:SESSION_ID,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
-const photo_diagnose=(kind,dataUrl,surveyAns)=>fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:LINE_UID||undefined,session_id:SESSION_ID,consent_stats:true,consent_photo:false})}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+window.DEBUG_SESSION = SESSION_ID;
+const hair_diagnose=(dataUrl)=>{
+  const sid=SESSION_ID, uid=LINE_UID;
+  const payload={image:dataUrl,line_user_id:uid||undefined,session_id:sid,consent_stats:true,consent_photo:false};
+  console.log('[hair-diagnose]',{sid,uid,payload});
+  return fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+};
+const photo_diagnose=(kind,dataUrl,surveyAns)=>{
+  const sid=SESSION_ID, uid=LINE_UID;
+  const payload={kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:uid||undefined,session_id:sid,consent_stats:true,consent_photo:false};
+  console.log('[photo-diagnose]',{sid,uid,payload});
+  return fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+};
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
@@ -2342,7 +2353,7 @@ class Component extends DCLogic {
         this.showToast('新しい記録を作成しました');
       },
       storeItems: (s.storeItems || []).map(item => ({...item, onTap: () => { track('store_item_tap',{item_id:item.id}); try{ liff.openWindow({url:item.item_url,external:true}) }catch(e){ window.open(item.item_url) } }})),
-      affiliateItems: (s.affiliateItems || []).map(item => ({...item, onTap: () => { try{ liff.openWindow({url:item.ec_url,external:true}) }catch(e){ window.open(item.ec_url) } }})),
+      affiliateItems: (s.affiliateItems || []).map(item => ({...item, onTap: () => { track('affiliate_tap',{product_id:item.id,mall:item.mall_label}); try{ liff.openWindow({url:item.ec_url,external:true}) }catch(e){ window.open(item.ec_url) } }})),
     };
     showToastRef = this.showToast.bind(this);
     errorBandRef = (msg) => this.setState({ errorBand: msg });
