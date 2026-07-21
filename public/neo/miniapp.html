@@ -11,7 +11,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;600;700&amp;family=Zen+Kaku+Gothic+New:wght@400;500;700&amp;display=swap" rel="stylesheet">
 <style>
-  body { margin:0; background:#F6F1E8; }
+  html { overflow-x:hidden; }
+  body { margin:0; background:#F6F1E8; overflow-x:hidden; }
   a { color:#B08654; } a:hover { color:#8F6A3E; }
   input { outline:none; }
   @keyframes scanmove { 0%{ transform:translateY(-90px);} 50%{ transform:translateY(90px);} 100%{ transform:translateY(-90px);} }
@@ -29,8 +30,8 @@
 
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh; padding:20px 20px calc(20px + env(safe-area-inset-bottom));">
-    <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:18px;">
+  <div data-screen-label="ようこそ" style="flex:0 0 auto; display:flex; flex-direction:column; width:100%; background:#F6F1E8; animation:fadein .3s ease; position:relative; z-index:10; min-height:100dvh; padding-top: max(16px, env(safe-area-inset-top)); padding-left:20px; padding-right:20px; padding-bottom: calc(20px + env(safe-area-inset-bottom));">
+    <div style="flex:0 0 auto; display:flex; flex-direction:column; gap:18px;">
       <div style="flex:0 0 auto; height: 38vh; max-height: 340px; width:100%; position:relative; overflow:hidden;">
         <img src="assets/home-hero.png" alt="" style="width:100%; height:100%; object-fit:cover; object-position:center 20%;">
         <img src="assets/logo.png" alt="SALONRINK CONCIERGE" style="position:absolute; top:20px; left:28px; width:76px; height:auto; filter:drop-shadow(0 2px 8px rgba(246,241,232,.85));">
