@@ -31,6 +31,15 @@
   <input type="file" accept="image/*" capture="environment" onChange="{{ onDiagFile }}" ref="{{ diagInputRef }}" style="display:none;">
   <input type="file" accept="image/*" onChange="{{ onDiagFile }}" ref="{{ libInputRef }}" style="display:none;">
 
+  <!-- ═══ LIFF不可メッセージ ═══ -->
+  <sc-if value="{{ isLiffRequired }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="LIFF-required" style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 28px; background:#F6F1E8; animation:fadein .3s ease;">
+    <div style="font-size:20px; margin-bottom:20px; text-align:center;">📱</div>
+    <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:12px; text-align:center;">LINEアプリで開いてください</div>
+    <div style="font-size:14px; color:#6B655C; line-height:1.8; text-align:center;">このミニアプリはLINEアプリ内でのみご利用いただけます。ブラウザからのアクセスはサポートされていません。</div>
+  </div>
+  </sc-if>
+
   <!-- ═══ ようこそ ═══ -->
   <sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="ようこそ" style="flex:1; display:flex; flex-direction:column; padding:20px 28px 34px; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.18) 0%, rgba(246,241,232,.45) 34%, rgba(246,241,232,.90) 58%, rgba(246,241,232,.97) 72%), url('assets/home-hero.png') center 56px / 92% auto no-repeat, #F2EBDF;">
@@ -1922,6 +1931,7 @@ class Component extends DCLogic {
       coverLine2: '白髪率12% いまが「ぼかし」どき',
       coverLine3: '7/18はイメチェン日和',
       appBg: (s.screen === 'analyzing') ? '#F6F1E8' : (s.screen === 'fortune' ? '#221E19' : '#F6F1E8'),
+      isLiffRequired: s.screen === 'liff-required',
       isWelcome: s.screen === 'welcome',
       isProfile: s.screen === 'profile',
       isHome: s.screen === 'home',
@@ -2444,21 +2454,45 @@ class Component extends DCLogic {
     }
 
     // Initialize LIFF and get LINE user ID
-    try {
-      window.LINE_UID = null;
-      await liff.init({liffId:'2009962150-475Lr5g8'});
-      console.log('[LIFF] initialized, isLoggedIn:', liff.isLoggedIn());
+    window.LINE_UID = null;
+    window.LIFF_AVAILABLE = typeof liff !== 'undefined';
 
-      if(!liff.isLoggedIn()){
-        console.log('[LIFF] user not logged in, redirecting to login');
+    if (!window.LIFF_AVAILABLE) {
+      console.error('[LIFF] SDK not available - must run in LINE app');
+      this.setState({ screen: 'liff-required' });
+      return;
+    }
+
+    try {
+      // 1) 初期化を完全に await
+      await liff.init({liffId:'2009962150-475Lr5g8'});
+      console.log('[LIFF] init completed, isLoggedIn:', liff.isLoggedIn());
+
+      // 2) ログイン確認。未ログインなら liff.login()
+      if (!liff.isLoggedIn()) {
+        console.log('[LIFF] not logged in, calling liff.login()');
         liff.login();
-      } else {
-        const profile = await liff.getProfile();
-        window.LINE_UID = profile.userId;
-        console.log('[LIFF] userId obtained:', window.LINE_UID, 'displayName:', profile.displayName);
-        if(profile.displayName && !this.state.pName) this.setState({ pName: profile.displayName });
+        return; // login() は画面遷移するため、ここで終了
       }
-    } catch (e) { console.error('LIFF init error:', e); }
+
+      // 3) ログイン済みなら profile 取得 → LINE_UID 代入
+      const profile = await liff.getProfile();
+      window.LINE_UID = profile?.userId || null;
+      console.log('[LIFF] userId obtained:', window.LINE_UID, 'displayName:', profile?.displayName);
+
+      if (!window.LINE_UID) {
+        console.error('[LIFF] userId is null even after login');
+        this.showToast('LINEユーザー情報が取得できませんでした。LINEアプリを再起動してください。');
+        return;
+      }
+
+      if(profile?.displayName && !this.state.pName) {
+        this.setState({ pName: profile.displayName });
+      }
+    } catch (e) {
+      console.error('[LIFF] init error:', e);
+      this.showToast('LINE初期化に失敗しました。LINEアプリ内でご利用ください。');
+    }
 
     try {
       const d = JSON.parse(localStorage.getItem('salonrink_profile') || 'null');
