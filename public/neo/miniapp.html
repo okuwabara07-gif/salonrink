@@ -1713,7 +1713,14 @@ class Component extends DCLogic {
     const userName = s.pName || 'ゲスト';
     const gold = '#B08654', off = '#A39B8D';
 
-    const openDiag = (id) => this.setState({ diag: id, screen: 'intro', sheetOpen: false });
+    const openDiag = (id) => {
+      if (!window.LINE_UID) {
+        this.showToast('LINEアプリ内での利用が必要です。もう一度お試しください。');
+        console.warn('[openDiag] LINE_UID not available, cannot proceed to diagnosis');
+        return;
+      }
+      this.setState({ diag: id, screen: 'intro', sheetOpen: false });
+    };
     const showWaitlist = (kind) => {
       this.showToast('この診断はまもなく登場します。公開時はLINEでお知らせします');
       track('waitlist_tap', { kind });
@@ -2439,10 +2446,16 @@ class Component extends DCLogic {
     // Initialize LIFF and get LINE user ID
     try {
       window.LINE_UID = null;
-      await liff.init({liffId:'2010387325-N1TlMFzx'});
-      if(!liff.isLoggedIn()){liff.login();}else{
+      await liff.init({liffId:'2009962150-475Lr5g8'});
+      console.log('[LIFF] initialized, isLoggedIn:', liff.isLoggedIn());
+
+      if(!liff.isLoggedIn()){
+        console.log('[LIFF] user not logged in, redirecting to login');
+        liff.login();
+      } else {
         const profile = await liff.getProfile();
         window.LINE_UID = profile.userId;
+        console.log('[LIFF] userId obtained:', window.LINE_UID, 'displayName:', profile.displayName);
         if(profile.displayName && !this.state.pName) this.setState({ pName: profile.displayName });
       }
     } catch (e) { console.error('LIFF init error:', e); }
