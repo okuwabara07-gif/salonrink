@@ -1466,6 +1466,62 @@ class Component extends DCLogic {
 
   storeLoaded = false;
 
+  async bootstrapLIFF() {
+    // Check LIFF SDK availability
+    if (typeof liff === 'undefined') {
+      console.error('[LIFF] SDK not available');
+      return { ok: false, reason: 'no_sdk' };
+    }
+
+    try {
+      await liff.init({ liffId: '2009962150-475Lr5g8' });
+      console.log('[LIFF] init completed');
+    } catch (e) {
+      console.error('[LIFF] init failed:', e);
+      return { ok: false, reason: 'init_failed', detail: String(e) };
+    }
+
+    if (!liff.isLoggedIn()) {
+      console.log('[LIFF] not logged in, redirecting to login');
+      liff.login({ redirectUri: location.href });
+      return { ok: false, reason: 'login_redirect' };
+    }
+
+    let profile;
+    try {
+      profile = await liff.getProfile();
+    } catch (e) {
+      console.error('[LIFF] getProfile failed:', e);
+      return { ok: false, reason: 'no_profile', detail: String(e) };
+    }
+
+    if (!profile || !profile.userId) {
+      console.error('[LIFF] userId is null');
+      return { ok: false, reason: 'no_profile' };
+    }
+
+    window.LINE_UID = profile.userId;
+    console.log('[LIFF] LINE_UID confirmed:', window.LINE_UID, 'displayName:', profile.displayName);
+    return { ok: true, uid: window.LINE_UID, displayName: profile.displayName };
+  }
+
+  async checkRegistered() {
+    if (!window.LINE_UID) return false;
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/get-profile`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', apikey: ANON, authorization: `Bearer ${ANON}` },
+        body: JSON.stringify({ line_user_id: window.LINE_UID })
+      });
+      if (!res.ok) return false;
+      const j = await res.json();
+      return j?.ok === true && j?.exists === true;
+    } catch (e) {
+      console.error('[checkRegistered]', e);
+      return false;
+    }
+  }
+
   submitDeepAdvice = async (q) => {
     if(!q || this.state.deepAdviceSubmitting) return;
     track('deep_advice_tap');
@@ -2453,73 +2509,35 @@ class Component extends DCLogic {
       localStorage.removeItem('salonrink_profile');
     }
 
-    // Initialize LIFF and get LINE user ID
-    window.LINE_UID = null;
-    window.LIFF_AVAILABLE = typeof liff !== 'undefined';
-
-    if (!window.LIFF_AVAILABLE) {
-      console.error('[LIFF] SDK not available - must run in LINE app');
+    // Bootstrap LIFF: init → login check → userId acquire
+    const boot = await this.bootstrapLIFF();
+    if (!boot.ok) {
+      if (boot.reason === 'login_redirect') return; // login() でリダイレクト中
+      if (boot.reason === 'init_failed' || boot.reason === 'no_profile') {
+        this.showToast('LINE初期化に失敗しました。LINEアプリ内でご利用ください。');
+      }
       this.setState({ screen: 'liff-required' });
       return;
     }
 
-    try {
-      // 1) 初期化を完全に await
-      await liff.init({liffId:'2009962150-475Lr5g8'});
-      console.log('[LIFF] init completed, isLoggedIn:', liff.isLoggedIn());
-
-      // 2) ログイン確認。未ログインなら liff.login()
-      if (!liff.isLoggedIn()) {
-        console.log('[LIFF] not logged in, calling liff.login()');
-        liff.login();
-        return; // login() は画面遷移するため、ここで終了
-      }
-
-      // 3) ログイン済みなら profile 取得 → LINE_UID 代入
-      const profile = await liff.getProfile();
-      window.LINE_UID = profile?.userId || null;
-      console.log('[LIFF] userId obtained:', window.LINE_UID, 'displayName:', profile?.displayName);
-
-      if (!window.LINE_UID) {
-        console.error('[LIFF] userId is null even after login');
-        this.showToast('LINEユーザー情報が取得できませんでした。LINEアプリを再起動してください。');
-        return;
-      }
-
-      if(profile?.displayName && !this.state.pName) {
-        this.setState({ pName: profile.displayName });
-      }
-    } catch (e) {
-      console.error('[LIFF] init error:', e);
-      this.showToast('LINE初期化に失敗しました。LINEアプリ内でご利用ください。');
+    // LINE_UID 確定。displayName をセット
+    if (boot.displayName && !this.state.pName) {
+      this.setState({ pName: boot.displayName });
     }
 
+    // Load localStorage（補助情報のみ）
     try {
       const d = JSON.parse(localStorage.getItem('salonrink_profile') || 'null');
       if (d && typeof d === 'object') {
-        // 登録済みユーザーはようこそ画面をスキップして直接ホームへ（LINEログインで自動認識される想定）
-        if ((d.pName || d.avatar) && this.state.screen === 'welcome') d.screen = 'home';
         this.setState(d);
       }
     } catch (e) {}
 
-    // Verify profile existence on server（ローカルフラグより優先）
-    try {
-      if (window.LINE_UID) {
-        const checkRes = await fetch(`${SUPABASE_URL}/functions/v1/get-profile`, {
-          method: 'POST',
-          headers: { 'content-type': 'application/json', apikey: ANON, authorization: `Bearer ${ANON}` },
-          body: JSON.stringify({ line_user_id: window.LINE_UID })
-        });
-        if (checkRes.ok) {
-          const checkJson = await checkRes.json();
-          if (checkJson?.ok === true && checkJson?.exists === false) {
-            // Profile not found on server → reset to welcome screen（ローカルフラグを信用しない）
-            this.setState({ screen: 'welcome' });
-          }
-        }
-      }
-    } catch (e) { console.error('Profile verification failed:', e); }
+    // Server truth: 登録済み判定
+    const registered = await this.checkRegistered();
+    if (!registered) {
+      this.setState({ screen: 'welcome' });
+    }
 
     // Load store items once at mount
     this.loadStore();
