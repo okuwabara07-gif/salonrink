@@ -22,6 +22,7 @@
   @keyframes sheetup { from{ transform:translateY(40px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
   @keyframes slideup { from{ transform:translateY(100%);} to{ transform:translateY(0);} }
   @keyframes pulse { 0%,100%{ opacity:.5;} 50%{ opacity:1;} }
+  @keyframes spin { from{ transform:rotate(0deg);} to{ transform:rotate(360deg);} }
 </style>
 </helmet>
 
@@ -528,9 +529,19 @@
     <div style="flex:1; overflow-y:auto; padding:20px 24px;">
       <textarea ref="{{ this._customQRef = this._customQRef || React.createRef() }}" style="width:100%; min-height:120px; padding:12px; border:1px solid #E3DACB; border-radius:12px; font-family:inherit; font-size:14px; resize:none; box-sizing:border-box; color:#2B2724;"></textarea>
     </div>
-    <div style="padding:16px 24px 26px; display:flex; gap:12px;">
-      <div onClick="{{ closeDeepAdviceCustom }}" style="flex:1; background:#fff; border:1px solid #D9D2C6; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; color:#6B655C; cursor:pointer;">キャンセル</div>
-      <div onClick="{{ submitDeepAdviceCustom }}" style="flex:1; background:{{ deepAdviceSubmitting ? '#C0B8A8' : '#B08654' }}; color:#fff; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; cursor:{{ deepAdviceSubmitting ? 'default' : 'pointer' }};">{{ deepAdviceSubmitting ? '考え中…' : '送信' }}</div>
+    <sc-if value="{{ deepAdviceSubmitting }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:16px 24px 0; text-align:center; font-size:13px; color:#B08654; font-weight:600;">
+        {{ deepAdviceMessage }}
+      </div>
+    </sc-if>
+    <div style="padding:{{ deepAdviceSubmitting ? '12px' : '16px' }} 24px 26px; display:flex; gap:12px;">
+      <div onClick="{{ closeDeepAdviceCustom }}" style="flex:1; background:#fff; border:1px solid #D9D2C6; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; color:{{ deepAdviceSubmitting ? '#C0B8A8' : '#6B655C' }}; cursor:{{ deepAdviceSubmitting ? 'default' : 'pointer' }}; pointer-events:{{ deepAdviceSubmitting ? 'none' : 'auto' }};">キャンセル</div>
+      <div onClick="{{ submitDeepAdviceCustom }}" style="flex:1; background:{{ deepAdviceSubmitting ? '#C0B8A8' : '#B08654' }}; color:#fff; border-radius:12px; padding:12px; text-align:center; font-size:14px; font-weight:600; cursor:{{ deepAdviceSubmitting ? 'default' : 'pointer' }}; display:flex; align-items:center; justify-content:center; gap:8px; pointer-events:{{ deepAdviceSubmitting ? 'none' : 'auto' }};">
+        <sc-if value="{{ deepAdviceSubmitting }}" hint-placeholder-val="{{ false }}">
+          <div style="width:14px; height:14px; border:2px solid rgba(255,255,255,.3); border-top:2px solid #fff; border-radius:50%; animation:spin .6s linear infinite;"></div>
+        </sc-if>
+        {{ deepAdviceSubmitting ? 'AIが分析中…' : '送信' }}
+      </div>
     </div>
   </div>
   </sc-if>
@@ -1526,9 +1537,26 @@ class Component extends DCLogic {
   submitDeepAdvice = async (q) => {
     if(!q || this.state.deepAdviceSubmitting) return;
     track('deep_advice_tap');
-    this.setState({ deepAdviceSubmitting: true });
+
+    // Set submitting state with initial progress message
+    this.setState({ deepAdviceSubmitting: true, deepAdviceMessage: '診断結果を確認しています' });
+
+    // Rotate progress messages every 2.5s while submitting
+    const messages = ['診断結果を確認しています', 'AIが考えています', '回答をまとめています'];
+    let msgIdx = 1;
+    const msgInterval = setInterval(() => {
+      this.setState({ deepAdviceMessage: messages[msgIdx % messages.length] });
+      msgIdx++;
+    }, 2500);
+
     const res = await deep_advice(this.state.diagResultId || 'test', q);
-    this.setState({ deepAdviceSubmitting: false, deepAdviceSheetOpen: false });
+
+    // Stop rotating messages
+    clearInterval(msgInterval);
+
+    // Restore button state + close sheet
+    this.setState({ deepAdviceSubmitting: false, deepAdviceSheetOpen: false, deepAdviceMessage: null });
+
     if(res.status === 402) {
       this.setState({ screen: 'checkout' });
       this.showToast('深掘り相談はプレミアム会員特典です');
