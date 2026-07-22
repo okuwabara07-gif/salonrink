@@ -1386,7 +1386,7 @@ const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:w
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
 const fortune_select=(t)=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'select_topic',topic:t});
-const upsert_profile=(p)=>apiCall('/upsert-profile',{...p,line_user_id:LINE_UID},true);
+const upsert_profile=(p)=>apiCall('/upsert-profile',{...p,line_user_id:window.LINE_UID||null,session_id:window.SESSION_ID},true);
 const list_base_items=()=>apiCall('/list-base-items',{},true);
 const list_products=(kind)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/list-products?kind='+encodeURIComponent(kind)+'&limit=6').then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))})).catch(e=>({status:0,data:null}));
 
@@ -2088,29 +2088,35 @@ class Component extends DCLogic {
       profileNext: async () => {
         if (step < 2) { track('register_step',{step: step + 1}); this.setState({ profileStep: step + 1 }); }
         else {
-          if(!window.LINE_UID){ try{ window.LINE_UID=(await liff.getProfile()).userId; }catch(e){} }
-          if(!window.LINE_UID){ this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください'); return; }
-          const displayName = s.pName || ((await liff.getProfile()).displayName || '');
-          const profileData = {
-            display_name: displayName,
-            birth: s.pBirth,
-            gender: s.pGender,
-            concerns: s.pConcerns,
-            visit_frequency: s.pVisitFrequency,
-            care_time: s.pCareTime,
-            beauty_budget: s.pBeautyBudget,
-            top_concern: s.pTopConcern,
-            notify: s.pNotify,
-            stylist_name: this.getStylists()[s.pStylist]?.name,
-            avatar_url: s.avatar || null
-          };
-          const res = await upsert_profile(profileData);
-          if(res.status === 200) {
+          try {
+            if(!window.LINE_UID){ try{ window.LINE_UID=(await liff.getProfile()).userId; }catch(e){} }
+            if(!window.LINE_UID){ this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください'); return; }
+            const displayName = s.pName || ((await liff.getProfile()).displayName || '');
+            const profileData = {
+              display_name: displayName,
+              birth: s.pBirth,
+              gender: s.pGender,
+              concerns: s.pConcerns,
+              visit_frequency: s.pVisitFrequency,
+              care_time: s.pCareTime,
+              beauty_budget: s.pBeautyBudget,
+              top_concern: s.pTopConcern,
+              notify: s.pNotify,
+              stylist_name: this.getStylists()[s.pStylist]?.name,
+              avatar_url: s.avatar || null
+            };
+            const res = await upsert_profile(profileData);
+            if(!res.ok) throw new Error(`HTTP ${res.status}: ${res.data?.error || 'registration failed'}`);
+            const json = res.data;
+            if(!json?.ok) throw new Error(json?.error || 'server returned not ok');
+            // ★成功したここで初めて状態遷移★
             track('register_done');
             this.go(s.editingProfile ? 'mypage' : 'home');
             this.showToast(s.editingProfile ? 'プロフィールを保存しました' : 'プロフィールを登録しました');
-          } else {
-            this.showToast('保存に失敗しました(コード: '+res.status+')');
+          } catch (e) {
+            // ★失敗時は画面に表示、状態遷移しない★
+            const msg = e instanceof Error ? e.message : '保存に失敗しました。もう一度お試しください。';
+            this.showToast(msg);
           }
         }
       },
