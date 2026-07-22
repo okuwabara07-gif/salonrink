@@ -2089,27 +2089,64 @@ class Component extends DCLogic {
         if (step < 2) { track('register_step',{step: step + 1}); this.setState({ profileStep: step + 1 }); }
         else {
           try {
-            if(!window.LINE_UID){ try{ window.LINE_UID=(await liff.getProfile()).userId; }catch(e){} }
-            if(!window.LINE_UID){ this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください'); return; }
-            const displayName = s.pName || ((await liff.getProfile()).displayName || '');
-            const profileData = {
-              display_name: displayName,
-              birth: s.pBirth,
-              gender: s.pGender,
-              concerns: s.pConcerns,
-              visit_frequency: s.pVisitFrequency,
-              care_time: s.pCareTime,
-              beauty_budget: s.pBeautyBudget,
-              top_concern: s.pTopConcern,
-              notify: s.pNotify,
-              stylist_name: this.getStylists()[s.pStylist]?.name,
-              avatar_url: s.avatar || null
+            // Get LINE user ID from liff
+            const prof = await liff.getProfile();
+            const line_user_id = prof?.userId;
+            if(!line_user_id || line_user_id.length < 5) {
+              this.showToast('LINEログインを確認中です。数秒後にもう一度お試しください');
+              return;
+            }
+            window.LINE_UID = line_user_id;
+
+            const display_name = s.pName || prof?.displayName || '';
+            const body = {
+              line_user_id,
+              display_name,
+              birth: s.pBirth || undefined,
+              gender: s.pGender || undefined,
+              concerns: s.pConcerns || undefined,
+              visit_frequency: s.pVisitFrequency || undefined,
+              care_time: s.pCareTime || undefined,
+              beauty_budget: s.pBeautyBudget || undefined,
+              top_concern: s.pTopConcern || undefined,
+              notify: s.pNotify || undefined,
+              stylist_name: this.getStylists()[s.pStylist]?.name || undefined,
+              avatar_url: s.avatar || null,
+              consents: {
+                version: 'v1',
+                service: true,
+                stats_thirdparty: false,
+                marketing: s.pNotify === true
+              }
             };
-            const res = await upsert_profile(profileData);
-            if(!res.ok) throw new Error(`HTTP ${res.status}: ${res.data?.error || 'registration failed'}`);
-            const json = res.data;
-            if(!json?.ok) throw new Error(json?.error || 'server returned not ok');
-            // ★成功したここで初めて状態遷移★
+            Object.keys(body).forEach(k => body[k] === undefined && delete body[k]);
+
+            let res;
+            try {
+              res = await fetch(`${SUPABASE_URL}/functions/v1/upsert-profile`, {
+                method: 'POST',
+                headers: {
+                  'content-type': 'application/json',
+                  apikey: ANON,
+                  authorization: `Bearer ${ANON}`
+                },
+                body: JSON.stringify(body)
+              });
+            } catch (e) {
+              throw new Error(`登録リクエストに失敗しました（通信/CORS）: ${String(e)}`);
+            }
+
+            if (!res.ok) {
+              const detail = await res.text().catch(() => '');
+              throw new Error(`登録に失敗しました (HTTP ${res.status}): ${detail}`);
+            }
+
+            const json = await res.json();
+            if (!json?.ok) {
+              throw new Error(`登録に失敗しました: ${json?.error ?? 'unknown'}`);
+            }
+
+            // ★成功したここで初めて状態遷移・ローカルフラグ更新★
             track('register_done');
             this.go(s.editingProfile ? 'mypage' : 'home');
             this.showToast(s.editingProfile ? 'プロフィールを保存しました' : 'プロフィールを登録しました');
