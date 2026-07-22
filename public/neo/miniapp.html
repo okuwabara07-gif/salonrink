@@ -433,7 +433,7 @@
         </div>
         <div style="display:flex; gap:12px; overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:24px; padding:0 0;">
           <sc-for list="{{ diagProducts }}" as="p" hint-placeholder-count="3">
-            <div style="flex:0 0 138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;">
+            <div onClick="{{ p.onTap }}" style="flex:0 0 138px; background:#fff; border-radius:18px; overflow:hidden; cursor:pointer; box-shadow:0 8px 22px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5);" style-hover="border-color:#B08654;">
               <div style="height:96px; background:linear-gradient(160deg,#EDE6D9,#D8CDBB); display:flex; align-items:center; justify-content:center; font-size:10px; color:#A39B8D; letter-spacing:.1em;">商品画像</div>
               <div style="padding:11px 12px 13px;">
                 <div style="font-size:10px; color:#B08654; font-weight:700; margin-bottom:3px;">{{ p.tag }}</div>
@@ -1457,6 +1457,22 @@ class Component extends DCLogic {
 
   storeLoaded = false;
 
+  submitDeepAdvice = async (q) => {
+    if(!q || this.state.deepAdviceSubmitting) return;
+    track('deep_advice_tap');
+    this.setState({ deepAdviceSubmitting: true });
+    const res = await deep_advice(this.state.diagResultId || 'test', q);
+    this.setState({ deepAdviceSubmitting: false, deepAdviceSheetOpen: false });
+    if(res.status === 402) {
+      this.setState({ screen: 'checkout' });
+      this.showToast('深掘り相談はプレミアム会員特典です');
+    } else if(res.status === 200 && res.data) {
+      this.setState({ deepAdviceResponse: res.data.advice });
+    } else {
+      this.showToast('相談に失敗しました。もう一度お試しください');
+    }
+  };
+
   async loadStore() {
     if(this.storeLoaded) return;
     this.storeLoaded = true;
@@ -2169,7 +2185,8 @@ class Component extends DCLogic {
         { label: 'サロンで何をお願いすべき？', value: 'サロンで何をお願いすべき？' },
         { label: s.diag === 'hair' ? '乾燥・うねりの対策' : s.diag === 'gray' ? '白髪との上手な付き合い方' : s.diag === 'scalp' ? '頭皮ケアの始め方' : s.diag === 'nail' ? '爪を強くするお手入れ' : s.diag === 'color' ? '似合うヘアカラーの方向性' : 'その他', value: s.diag === 'hair' ? '乾燥・うねりの対策' : s.diag === 'gray' ? '白髪との上手な付き合い方' : s.diag === 'scalp' ? '頭皮ケアの始め方' : s.diag === 'nail' ? '爪を強くするお手入れ' : s.diag === 'color' ? '似合うヘアカラーの方向性' : 'その他' }
       ].map(o => ({...o, onPick: () => this.submitDeepAdvice(o.value)})),
-      hasProducts: !!d.products, isCounsel: s.diag === 'scalp',
+      hasProducts: ((s.storeItemsByKind && s.storeItemsByKind[s.diag]) || []).length > 0,
+      isCounsel: s.diag === 'scalp',
       isSurvey: s.screen === 'survey',
       isScalpResult: s.diag === 'scalp',
       surveyQs: (d.survey || []).map((sq, qi) => ({
@@ -2190,7 +2207,8 @@ class Component extends DCLogic {
         a: (s.surveyAns || {})[qi] != null ? sq.options[(s.surveyAns || {})[qi]] : '未回答'
       })),
       surveyDone: () => this.setState({ screen: 'camera', camStep: 1, diagPhoto: null, diagPhoto2: null }),
-      diagProducts: d.products || [], diagEcLabel: d.ecLabel,
+      diagProducts: ((s.storeItemsByKind && s.storeItemsByKind[s.diag]) || []).map(it => ({ tag:'おすすめ', name: it.title, price: '¥'+Number(it.price||0).toLocaleString(), onTap: () => { track('store_item_tap',{item_id:it.item_id}); try{ liff.openWindow({url:it.item_url,external:true}) }catch(e){ window.open(it.item_url) } } })),
+      diagEcLabel: d.ecLabel,
       subscribed: s.subscribed, notSubscribed: !s.subscribed,
       showPlans: !s.subscribed && !s.dayPass,
       showDayPick: !s.subscribed && !!s.dayPass && !s.dayTopic,
@@ -2259,21 +2277,6 @@ class Component extends DCLogic {
           return;
         }
         this.setState({ deepAdviceSheetOpen: true });
-      },
-      submitDeepAdvice: async (q) => {
-        if(!q || this.state.deepAdviceSubmitting) return;
-        track('deep_advice_tap');
-        this.setState({ deepAdviceSubmitting: true });
-        const res = await deep_advice(s.diagResultId || 'test', q);
-        this.setState({ deepAdviceSubmitting: false, deepAdviceSheetOpen: false });
-        if(res.status === 402) {
-          this.setState({ screen: 'checkout' });
-          this.showToast('深掘り相談はプレミアム会員特典です');
-        } else if(res.status === 200 && res.data) {
-          this.setState({ deepAdviceResponse: res.data.advice });
-        } else {
-          this.showToast('相談に失敗しました。もう一度お試しください');
-        }
       },
       closeDeepSheet: () => this.setState({ deepAdviceSheetOpen: false }),
       closeDeepAdviceResponse: () => this.setState({ deepAdviceResponse: null }),
