@@ -1962,7 +1962,7 @@ class Component extends DCLogic {
       karteTargets: (() => {
         const list = [];
         if (s.pStylist) list.push({ key: 'stylist', label: '担当の美容師さん', desc: '登録済みの担当スタイリストのLINEへ' });
-        list.push({ key: 'salon', label: '美容室の公式LINE', desc: '来店予定のサロンのトークへ' });
+        list.push({ key: 'salon', label: 'ヘアサロン公式LINE', desc: '来店予定のサロンのトークへ' });
         list.push({ key: 'friend', label: 'LINEの友だちから選ぶ', desc: '友だちの美容師さんなどに送る' });
         const cur = s.karteTarget || (s.pStylist ? 'stylist' : 'salon');
         return list.map((t) => {
@@ -1972,7 +1972,7 @@ class Component extends DCLogic {
       })(),
       sendKarte: () => {
         const cur = s.karteTarget || (s.pStylist ? 'stylist' : 'salon');
-        const label = cur === 'stylist' ? '担当の美容師さん' : (cur === 'salon' ? '美容室の公式LINE' : 'LINEの友だち');
+        const label = cur === 'stylist' ? '担当の美容師さん' : (cur === 'salon' ? 'ヘアサロン公式LINE' : 'LINEの友だち');
         this.go('home');
         this.showToast(label + 'に事前カルテを送信しました');
       },
