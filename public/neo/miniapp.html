@@ -2466,8 +2466,8 @@ class Component extends DCLogic {
         });
         if (checkRes.ok) {
           const checkJson = await checkRes.json();
-          if (!checkJson?.ok || !checkJson?.profile) {
-            // Profile not found on server → reset to welcome screen
+          if (checkJson?.ok === true && checkJson?.exists === false) {
+            // Profile not found on server → reset to welcome screen（ローカルフラグを信用しない）
             this.setState({ screen: 'welcome' });
           }
         }
