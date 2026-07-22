@@ -1382,7 +1382,7 @@ const photo_diagnose=(kind,dataUrl,surveyAns)=>{
   console.log('[photo-diagnose POST]',{sid,uid,payload});
   return fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 };
-const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:LINE_UID,question:q});
+const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:window.LINE_UID||null,session_id:window.SESSION_ID,question:q});
 const checkout=async(kind)=>{const r=await apiCall('/create-checkout',{line_user_id:LINE_UID,kind});if(r.data&&r.data.url)location.href=r.data.url;};
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
 const fortune_select=(t)=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'select_topic',topic:t});
