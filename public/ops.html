@@ -69,4 +69,112 @@ async function load(){
  }catch(e){document.getElementById('err').textContent='読み込みに失敗しました: '+e;}
 }
 load();setInterval(load,300000);
-</script></body></html>
+</script>
+
+<section id="ops-console" style="max-width:900px;margin:24px auto;padding:0 16px;font-family:system-ui,-apple-system,sans-serif;">
+  <div id="ops-stats" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;"></div>
+  <div id="ops-alerts"></div>
+  <div id="ops-drafts"></div>
+</section>
+
+<script>
+(function () {
+  var FN = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/ops-console";
+  var KEY = new URLSearchParams(location.search).get("k") || "";
+
+  var esc = function (s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  };
+
+  function card(inner, accent) {
+    return '<div style="border:1px solid #e5e0d8;border-left:4px solid ' + accent +
+      ';border-radius:8px;padding:12px 14px;margin-bottom:10px;background:#fff;">' + inner + "</div>";
+  }
+
+  function chip(label, value, danger) {
+    return '<div style="background:' + (danger ? "#fdecec" : "#f5f2ed") +
+      ';border-radius:8px;padding:8px 12px;font-size:13px;">' +
+      '<div style="color:#8a8177;font-size:11px;">' + esc(label) + "</div>" +
+      '<div style="font-weight:600;">' + esc(value) + "</div></div>";
+  }
+
+  function decide(type, id, action, btn) {
+    btn.disabled = true;
+    btn.textContent = "処理中…";
+    fetch(FN + "?k=" + encodeURIComponent(KEY), {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ type: type, id: id, action: action })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (r && r.ok) load();
+        else { btn.disabled = false; btn.textContent = "失敗"; }
+      })
+      .catch(function () { btn.disabled = false; btn.textContent = "失敗"; });
+  }
+
+  function render(d) {
+    var s = d.stats || {};
+    document.getElementById("ops-stats").innerHTML =
+      chip("SNS下書き", (s.sns_draft_count || 0) + "件") +
+      chip("承認待ち", (s.approval_count || 0) + "件") +
+      chip("アラート", (s.alert_count || 0) + "件", (s.alert_count || 0) > 0) +
+      chip("最終診断", s.last_diagnosis || "なし") +
+      chip("最終操作", s.last_event || "なし");
+
+    var a = d.alerts || [];
+    document.getElementById("ops-alerts").innerHTML =
+      "<h3>監視アラート</h3>" +
+      (a.length === 0 ? "<p>異常なし</p>" : a.map(function (x) {
+        return card(
+          '<div style="font-size:11px;font-weight:700;color:' +
+            (x.severity === "critical" ? "#c0392b" : "#b8860b") + ';">' +
+            esc(String(x.severity).toUpperCase()) + "</div>" +
+          "<div>" + esc(x.message) + "</div>" +
+          '<div style="font-size:11px;color:#8a8177;margin-top:4px;">検知 ' + esc(x.since) + "</div>",
+          x.severity === "critical" ? "#c0392b" : "#d4a017"
+        );
+      }).join(""));
+
+    var dr = d.sns_drafts || [];
+    document.getElementById("ops-drafts").innerHTML =
+      "<h3>SNS下書き（承認するとcronが投稿）</h3>" +
+      (dr.length === 0 ? "<p>下書きはありません</p>" : dr.map(function (x) {
+        return card(
+          '<div style="font-size:11px;color:#8a8177;">' +
+            esc(x.platform) + " / " + esc(x.tenant) + " / " + esc(x.created) + "</div>" +
+          '<div style="font-weight:600;margin:4px 0;">' + esc(x.title) + "</div>" +
+          '<div style="white-space:pre-wrap;font-size:14px;line-height:1.6;">' + esc(x.body) + "</div>" +
+          (x.media_url ? '<img src="' + esc(x.media_url) + '" style="max-width:200px;margin-top:8px;border-radius:6px;">' : "") +
+          '<div style="margin-top:10px;display:flex;gap:8px;">' +
+            '<button data-id="' + esc(x.id) + '" data-act="approve" class="ops-b" style="padding:8px 18px;border:0;border-radius:6px;background:#2f6f4f;color:#fff;cursor:pointer;">承認</button>' +
+            '<button data-id="' + esc(x.id) + '" data-act="reject" class="ops-b" style="padding:8px 18px;border:1px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;">却下</button>' +
+          "</div>",
+          "#2f6f4f"
+        );
+      }).join(""));
+
+    Array.prototype.forEach.call(document.querySelectorAll(".ops-b"), function (b) {
+      b.addEventListener("click", function () {
+        decide("sns", b.getAttribute("data-id"), b.getAttribute("data-act"), b);
+      });
+    });
+  }
+
+  function load() {
+    fetch(FN + "?k=" + encodeURIComponent(KEY))
+      .then(function (r) { return r.json(); })
+      .then(render)
+      .catch(function () {
+        document.getElementById("ops-console").innerHTML = "<p>読み込みに失敗しました</p>";
+      });
+  }
+
+  load();
+  setInterval(load, 60000);
+})();
+</script>
+</body></html>
