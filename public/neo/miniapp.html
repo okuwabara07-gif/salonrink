@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="salonrink-neo-page.css">
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <style>
-  /* ============ LIFFクローム(LINEアプリ内ヘッダーの再現・モック) ============ */
+  /* ============ LIFFクローム(ブラウザ確認用モック) ============ */
   .liff-chrome {
     position: sticky; top: 30px; z-index: 50;
     display: flex; align-items: center; gap: 10px;
@@ -42,52 +42,23 @@
   /* LINEミニアプリ内ではLINE本体がヘッダーを描くため、モックを隠す */
   body.in-liff .liff-chrome { display: none; }
 
-  /* ============ タブ画面 ============ */
+  /* ============ 画面切替 ============ */
   .mini-screen { display: none; padding-bottom: 8px; }
   .mini-screen.on { display: block; }
+  .app-stage { display: none; }
+  .app-stage.on { display: block; }
 
-  /* あいさつ */
+  /* ============ あいさつ ============ */
   .mini-hello { display: flex; align-items: center; gap: 13px; padding: 18px 20px 4px; }
-  .mini-hello img {
-    width: 54px; height: 54px; border-radius: 50%; object-fit: cover;
-    border: 2px solid #FEFEFD; box-shadow: 0 5px 12px var(--neo-dark);
-  }
   .mini-hello strong { font-size: 17px; font-weight: 900; display: block; line-height: 1.4; }
   .mini-hello .sub { font-size: 11.5px; color: var(--sr-muted); }
 
-  /* 次回予約 */
-  .mini-resv {
-    margin: 16px 20px 0; padding: 16px 18px; border-radius: 20px;
-    background: var(--neo-bg);
-    box-shadow: 7px 7px 14px var(--neo-dark), -7px -7px 14px var(--neo-light);
-    display: flex; align-items: center; gap: 14px;
-  }
-  .mini-resv .date {
-    flex-shrink: 0; width: 58px; height: 58px; border-radius: 16px;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light);
-  }
-  .mini-resv .date b { font-size: 19px; font-weight: 900; color: var(--sr-accent-ink); line-height: 1.1; }
-  .mini-resv .date span { font-size: 10px; font-weight: 700; color: var(--sr-muted); }
-  .mini-resv .info { flex: 1; min-width: 0; }
-  .mini-resv .info strong { font-size: 13.5px; display: block; line-height: 1.5; }
-  .mini-resv .info p { font-size: 11.5px; color: var(--sr-muted); }
-  .mini-resv .chg {
-    flex-shrink: 0; border: none; cursor: pointer; font-family: inherit;
-    font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink);
-    padding: 8px 13px; border-radius: 999px; background: var(--neo-bg);
-    box-shadow: 3px 3px 6px var(--neo-dark), -3px -3px 6px var(--neo-light);
-  }
-
-  /* セクション小見出し */
-  .mini-h {
-    display: flex; align-items: baseline; justify-content: space-between;
-    padding: 26px 20px 12px;
-  }
+  /* ============ セクション小見出し ============ */
+  .mini-h { display: flex; align-items: baseline; justify-content: space-between; padding: 26px 20px 12px; }
   .mini-h h2 { font-size: 16px; font-weight: 900; margin: 0; }
   .mini-h a { font-size: 11.5px; font-weight: 700; color: var(--sr-accent-ink); text-decoration: none; }
 
-  /* 診断タブ */
+  /* ============ 診断タブ ============ */
   .diag-list { display: flex; flex-direction: column; gap: 14px; padding: 0 20px; }
   .diag-row {
     display: flex; align-items: center; gap: 13px; padding: 14px 16px;
@@ -104,21 +75,13 @@
   .diag-row strong { font-size: 13.5px; display: block; line-height: 1.5; }
   .diag-row p { font-size: 11px; color: var(--sr-muted); line-height: 1.55; }
   .diag-row .st { margin-left: auto; flex-shrink: 0; }
-  .diag-done {
-    font-size: 10px; font-weight: 700; color: var(--sr-accent-ink);
-    padding: 4px 10px; border-radius: 999px;
-    box-shadow: inset 2px 2px 4px var(--neo-dark), inset -2px -2px 4px var(--neo-light);
-  }
   .diag-go {
     font-size: 10px; font-weight: 700; color: #fff;
     padding: 5px 11px; border-radius: 999px; background: var(--sr-grad);
     box-shadow: 2px 2px 5px var(--neo-dark);
   }
 
-  /* ストアタブ(未使用・温存) */
-  .mini-store-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; padding: 0 20px; }
-
-  /* 下部タブ(ページ内切替) */
+  /* ============ 下部タブ ============ */
   .mini-nav {
     position: fixed; left: 50%; transform: translateX(-50%); z-index: 40;
     bottom: calc(10px + env(safe-area-inset-bottom));
@@ -136,10 +99,66 @@
     font-size: 10px; font-weight: 700; color: var(--sr-muted); white-space: nowrap;
   }
   .mini-nav button svg { width: 18px; height: 18px; }
-  .mini-nav button.on {
-    color: #fff; background: var(--sr-grad);
-    box-shadow: 3px 3px 8px var(--neo-dark);
+  .mini-nav button.on { color: #fff; background: var(--sr-grad); box-shadow: 3px 3px 8px var(--neo-dark); }
+  body.stage-reg .mini-nav { display: none; }
+
+  /* ============ 登録フロー ============ */
+  .reg-wrap { padding: 26px 22px 40px; }
+  .reg-lead { font-size: 12.5px; color: var(--sr-muted); line-height: 1.9; margin: 10px 0 22px; }
+  .reg-wrap h1 { font-size: 22px; font-weight: 900; line-height: 1.5; margin: 0; color: var(--sr-ink); }
+  .reg-step { font-size: 11px; font-weight: 700; color: var(--sr-accent-ink); letter-spacing: .08em; }
+  .fld { margin-bottom: 20px; }
+  .fld > label { display: block; font-size: 12.5px; font-weight: 700; color: var(--sr-ink); margin-bottom: 8px; }
+  .fld .hint { font-size: 11px; color: var(--sr-muted); font-weight: 400; margin-left: 6px; }
+  .fld input[type="text"], .fld input[type="date"], .fld select {
+    width: 100%; box-sizing: border-box; font-family: inherit; font-size: 15px; color: var(--sr-ink);
+    padding: 13px 14px; border: none; border-radius: 14px; background: var(--neo-bg);
+    box-shadow: inset 3px 3px 7px var(--neo-dark), inset -3px -3px 7px var(--neo-light);
+    -webkit-appearance: none; appearance: none;
   }
+  .fld input:focus, .fld select:focus { outline: 2px solid var(--sr-accent-ink); outline-offset: 1px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips button {
+    font-family: inherit; font-size: 12.5px; font-weight: 700; cursor: pointer;
+    padding: 9px 14px; border: none; border-radius: 999px;
+    background: var(--neo-bg); color: var(--sr-muted);
+    box-shadow: 3px 3px 7px var(--neo-dark), -3px -3px 7px var(--neo-light);
+  }
+  .chips button.on { color: #fff; background: var(--sr-grad); box-shadow: inset 2px 2px 5px rgba(0,0,0,.18); }
+  .sw-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+  .sw { position: relative; width: 50px; height: 30px; flex-shrink: 0; border: none; border-radius: 999px; cursor: pointer;
+        background: var(--neo-bg); box-shadow: inset 3px 3px 6px var(--neo-dark), inset -3px -3px 6px var(--neo-light); }
+  .sw::after { content: ""; position: absolute; top: 4px; left: 4px; width: 22px; height: 22px; border-radius: 50%;
+               background: #FEFEFD; box-shadow: 0 2px 5px var(--neo-dark); transition: transform .18s ease; }
+  .sw.on { background: var(--sr-grad); }
+  .sw.on::after { transform: translateX(20px); }
+  .reg-err { display: none; margin: 0 0 16px; padding: 12px 14px; border-radius: 12px; background: #FBEDEA; color: #93482F; font-size: 13px; line-height: 1.6; }
+
+  /* ============ マイページ ============ */
+  .mp-list { display: flex; flex-direction: column; gap: 12px; padding: 0 20px; }
+  .mp-row {
+    display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
+    padding: 15px 16px; border: none; border-radius: 16px; cursor: pointer;
+    font-family: inherit; font-size: 13.5px; font-weight: 700; color: var(--sr-ink);
+    background: var(--neo-bg); text-decoration: none;
+    box-shadow: 5px 5px 11px var(--neo-dark), -5px -5px 11px var(--neo-light);
+  }
+  .mp-row .arw { margin-left: auto; color: var(--sr-muted); font-weight: 700; }
+  .mp-kv { padding: 0 20px; }
+  .mp-kv .row { display: flex; justify-content: space-between; gap: 14px; padding: 11px 2px; border-bottom: 1px solid rgba(186,166,150,.28); font-size: 13px; }
+  .mp-kv .row:last-child { border-bottom: none; }
+  .mp-kv .k { color: var(--sr-muted); flex-shrink: 0; }
+  .mp-kv .v { color: var(--sr-ink); font-weight: 700; text-align: right; word-break: break-all; }
+  .build-tag { font-size: 10px; opacity: .55; }
+
+  /* ============ トースト ============ */
+  #toast {
+    position: fixed; left: 50%; bottom: 90px; transform: translateX(-50%) translateY(12px);
+    z-index: 90; max-width: 88%; padding: 12px 18px; border-radius: 999px;
+    background: rgba(47,56,51,.94); color: #fff; font-size: 13px; font-weight: 700;
+    opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+  }
+  #toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 <script src="/neo/sr-funnel.js"></script>
 </head>
@@ -156,160 +175,600 @@
     </div>
   </header>
 
-  <!-- ════════ タブ1: マイカルテ ════════ -->
-  <section class="mini-screen on" id="tabKarte" data-screen-label="マイカルテ">
-    <div class="mini-hello" id="karteHello">
-      <div>
-        <strong id="karteName">ようこそ</strong>
-        <span class="sub" id="kartePlan">読み込み中…</span>
+  <!-- ════════════════ ステージA: 起動中 ════════════════ -->
+  <section class="app-stage on" id="stageBoot" data-screen-label="起動中">
+    <div style="padding: 70px 24px; text-align: center;">
+      <p class="sr-note" id="bootMsg">読み込み中…</p>
+    </div>
+  </section>
+
+  <!-- ════════════════ ステージB: 登録フロー ════════════════ -->
+  <section class="app-stage" id="stageReg" data-screen-label="登録フロー">
+
+    <!-- ようこそ -->
+    <div class="mini-screen on reg-wrap" id="regWelcome" data-screen-label="ようこそ">
+      <span class="reg-step">はじめまして</span>
+      <h1>あなた専用の<br>ヘアカルテをつくります。</h1>
+      <p class="reg-lead">
+        いくつか質問に答えるだけで、診断結果とケアの記録が
+        ひとつにまとまります。<br>入力は約1分。あとから変更もできます。
+      </p>
+      <button class="sr-btn sr-btn-line sr-btn-lg" id="regStart">はじめる</button>
+      <p class="sr-note" style="text-align:center; margin-top:14px;">
+        ご入力いただいた内容は、カルテの作成とケアのご提案にのみ利用します。<br>
+        <a href="#" id="regPrivacy" style="color:var(--sr-accent-ink);">プライバシーポリシー</a>
+      </p>
+    </div>
+
+    <!-- プロフィール入力 -->
+    <div class="mini-screen reg-wrap" id="regProfile" data-screen-label="プロフィール入力">
+      <span class="reg-step">プロフィール</span>
+      <h1 style="font-size:20px;">あなたのことを<br>教えてください。</h1>
+      <p class="reg-lead" style="margin-bottom:20px;">＊印は必須です。ほかは後からでも大丈夫です。</p>
+
+      <div class="reg-err" id="regErr"></div>
+
+      <div class="fld">
+        <label for="pName">お名前・ニックネーム ＊</label>
+        <input type="text" id="pName" maxlength="30" autocomplete="nickname" placeholder="例：さくら">
       </div>
-    </div>
 
-    <div class="mini-h"><h2>診断履歴</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
-    <div style="padding: 0 20px;" id="karteDiagList">
-      <div class="neo-panel"><p class="sr-note" style="text-align:center;">読み込み中…</p></div>
-    </div>
+      <div class="fld">
+        <label for="pBirth">生年月日 <span class="hint">占い・年代別の提案に使います</span></label>
+        <input type="date" id="pBirth" min="1900-01-01" max="2026-12-31">
+      </div>
 
-    <p class="sr-note" style="padding: 0 22px; text-align: center;">提供：AOKAE合同会社<br><span style="font-size:10px;opacity:.6;">build 0816-A</span></p>
+      <div class="fld">
+        <label>いちばん気になること <span class="hint">ひとつ選んでください</span></label>
+        <div class="chips" id="pTopConcern">
+          <button type="button" data-v="うねり・広がり">うねり・広がり</button>
+          <button type="button" data-v="パサつき・乾燥">パサつき・乾燥</button>
+          <button type="button" data-v="白髪">白髪</button>
+          <button type="button" data-v="ボリューム">ボリューム</button>
+          <button type="button" data-v="ダメージ">ダメージ</button>
+          <button type="button" data-v="頭皮">頭皮</button>
+        </div>
+      </div>
+
+      <div class="fld">
+        <label>そのほか気になること <span class="hint">いくつでも</span></label>
+        <div class="chips" id="pConcerns">
+          <button type="button" data-v="ツヤ">ツヤ</button>
+          <button type="button" data-v="まとまり">まとまり</button>
+          <button type="button" data-v="くせ毛">くせ毛</button>
+          <button type="button" data-v="細毛">細毛</button>
+          <button type="button" data-v="カラーの持ち">カラーの持ち</button>
+          <button type="button" data-v="枝毛・切れ毛">枝毛・切れ毛</button>
+          <button type="button" data-v="ニオイ・べたつき">ニオイ・べたつき</button>
+        </div>
+      </div>
+
+      <div class="fld">
+        <label for="pStylistName">担当美容師のお名前 <span class="hint">任意</span></label>
+        <input type="text" id="pStylistName" maxlength="30" placeholder="例：山田 花子">
+      </div>
+
+      <div class="fld">
+        <label for="pVisit">サロンに行く頻度</label>
+        <select id="pVisit">
+          <option value="">選択してください</option>
+          <option value="1か月に1回以上">1か月に1回以上</option>
+          <option value="2〜3か月に1回">2〜3か月に1回</option>
+          <option value="半年に1回">半年に1回</option>
+          <option value="年に1回以下">年に1回以下</option>
+        </select>
+      </div>
+
+      <div class="fld">
+        <label for="pCareTime">毎日のケアにかけられる時間</label>
+        <select id="pCareTime">
+          <option value="">選択してください</option>
+          <option value="5分未満">5分未満</option>
+          <option value="5〜15分">5〜15分</option>
+          <option value="15分以上">15分以上</option>
+        </select>
+      </div>
+
+      <div class="fld">
+        <label for="pBudget">ヘアケアにかける月の予算</label>
+        <select id="pBudget">
+          <option value="">選択してください</option>
+          <option value="〜3,000円">〜3,000円</option>
+          <option value="3,000〜6,000円">3,000〜6,000円</option>
+          <option value="6,000〜10,000円">6,000〜10,000円</option>
+          <option value="10,000円以上">10,000円以上</option>
+        </select>
+      </div>
+
+      <div class="fld">
+        <div class="sw-row">
+          <label for="pNotify" style="margin:0;">ケアのタイミングをLINEで受け取る</label>
+          <button type="button" class="sw on" id="pNotify" role="switch" aria-checked="true" aria-label="LINE通知"></button>
+        </div>
+      </div>
+
+      <button class="sr-btn sr-btn-line sr-btn-lg" id="regSubmit">この内容ではじめる</button>
+      <button class="dx-back" id="regBack">‹ もどる</button>
+    </div>
   </section>
 
-  <!-- ════════ タブ2: 診断 ════════ -->
-  <section class="mini-screen" id="tabDiag" data-screen-label="診断">
-    <div class="mini-h" style="padding-top: 20px;"><h2>4つのAIビューティ診断</h2></div>
-    <p style="padding: 0 22px 14px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">あなたを深く理解して、ぴったりの提案につなげます。<br>すべて無料・約30秒。</p>
-    <div class="diag-list">
-      <a class="diag-row" href="photo.html?ref=mini-photo">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
-        <div><strong>写真AI診断</strong><p>1枚撮るだけで髪の傾向をチェック</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
-      <a class="diag-row" href="quiz.html?kind=beauty_dna&ref=mini-bdna">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg></span>
-        <div><strong>Beauty DNA 診断</strong><p>あなたの美容タイプを総合分析</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
+  <!-- ════════════════ ステージC: 本体 ════════════════ -->
+  <section class="app-stage" id="stageApp" data-screen-label="アプリ本体">
 
-      <a class="diag-row" href="quiz.html?kind=hair_quality&ref=mini-hairq">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/></svg></span>
-        <div><strong>髪質診断</strong><p>クセ・太さ・ダメージの傾向</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
-      <a class="diag-row" href="quiz.html?kind=scalp&ref=mini-scalp">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="6"/><path d="M9 20c.8-1.5 1.8-2 3-2s2.2.5 3 2"/></svg></span>
-        <div><strong>頭皮・スカルプ診断</strong><p>頭皮環境の傾向をチェック</p></div>
-        <span class="st diag-go">はじめる</span>
-      </a>
+    <!-- タブ1: マイカルテ -->
+    <div class="mini-screen on" id="tabKarte" data-screen-label="マイカルテ">
+      <div class="mini-hello" id="karteHello">
+        <div>
+          <strong id="karteName">ようこそ</strong>
+          <span class="sub" id="kartePlan">読み込み中…</span>
+        </div>
+      </div>
+
+      <div class="mini-h"><h2>診断履歴</h2><a href="#" id="toDiagLink">すべての診断 ›</a></div>
+      <div style="padding: 0 20px;" id="karteDiagList">
+        <div class="neo-panel"><p class="sr-note" style="text-align:center;">読み込み中…</p></div>
+      </div>
+
+      <p class="sr-note" style="padding: 18px 22px 0; text-align: center;">提供：AOKAE合同会社</p>
     </div>
-    <p class="sr-note" style="padding: 14px 22px 0; text-align: center;">※AIによる見た目の傾向とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
-  </section>
 
-  <nav class="mini-nav" data-screen-label="ミニアプリ下部タブ">
-    <button class="on" data-tab="tabKarte">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
-      マイカルテ
-    </button>
-    <button data-tab="tabDiag">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-      診断
-    </button>
-  </nav>
+    <!-- タブ2: 診断 -->
+    <div class="mini-screen" id="tabDiag" data-screen-label="診断">
+      <div class="mini-h" style="padding-top: 20px;"><h2>4つのAIビューティ診断</h2></div>
+      <p style="padding: 0 22px 14px; font-size: 12px; color: var(--sr-muted); line-height: 1.8;">あなたを深く理解して、ぴったりの提案につなげます。<br>すべて無料・約30秒。</p>
+      <div class="diag-list">
+        <a class="diag-row" href="photo.html?ref=mini-photo">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.5"/></svg></span>
+          <div><strong>写真AI診断</strong><p>1枚撮るだけで髪の傾向をチェック</p></div>
+          <span class="st diag-go">はじめる</span>
+        </a>
+        <a class="diag-row" href="quiz.html?kind=beauty_dna&ref=mini-bdna">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 3c0 6 12 6 12 12M18 3c0 6-12 6-12 12M6 21c0-2 1-3.5 2.6-4.5M18 21c0-6-12-6-12-12"/></svg></span>
+          <div><strong>Beauty DNA 診断</strong><p>あなたの美容タイプを総合分析</p></div>
+          <span class="st diag-go">はじめる</span>
+        </a>
+        <a class="diag-row" href="quiz.html?kind=hair_quality&ref=mini-hairq">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3c-3 4-6 6-6 10a6 6 0 0 0 12 0c0-4-3-6-6-10z"/></svg></span>
+          <div><strong>髪質診断</strong><p>クセ・太さ・ダメージの傾向</p></div>
+          <span class="st diag-go">はじめる</span>
+        </a>
+        <a class="diag-row" href="quiz.html?kind=scalp&ref=mini-scalp">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="6"/><path d="M9 20c.8-1.5 1.8-2 3-2s2.2.5 3 2"/></svg></span>
+          <div><strong>頭皮・スカルプ診断</strong><p>頭皮環境の傾向をチェック</p></div>
+          <span class="st diag-go">はじめる</span>
+        </a>
+      </div>
+      <p class="sr-note" style="padding: 14px 22px 0; text-align: center;">※AIによる見た目の傾向とケアの目安です。<br>結果はイメージであり、状態・効果を保証するものではありません。</p>
+    </div>
+
+    <!-- タブ3: マイページ -->
+    <div class="mini-screen" id="tabMy" data-screen-label="マイページ">
+      <div class="mini-h" style="padding-top: 20px;"><h2>マイページ</h2></div>
+
+      <div class="mp-kv neo-panel" style="margin: 0 20px;">
+        <div class="row"><span class="k">お名前</span><span class="v" id="mvName">—</span></div>
+        <div class="row"><span class="k">生年月日</span><span class="v" id="mvBirth">—</span></div>
+        <div class="row"><span class="k">気になること</span><span class="v" id="mvConcern">—</span></div>
+        <div class="row"><span class="k">担当美容師</span><span class="v" id="mvStylist">—</span></div>
+        <div class="row"><span class="k">来店頻度</span><span class="v" id="mvVisit">—</span></div>
+        <div class="row"><span class="k">LINE通知</span><span class="v" id="mvNotify">—</span></div>
+      </div>
+
+      <div class="mini-h"><h2 style="font-size:14px;">設定</h2></div>
+      <div class="mp-list">
+        <button class="mp-row" id="mpEdit">
+          プロフィールを編集する<span class="arw">›</span>
+        </button>
+      </div>
+
+      <div class="mini-h"><h2 style="font-size:14px;">規約・お問い合わせ</h2></div>
+      <div class="mp-list">
+        <a class="mp-row" href="#" id="mpContact">お問い合わせ<span class="arw">›</span></a>
+        <a class="mp-row" href="#" id="mpTerms">利用規約<span class="arw">›</span></a>
+        <a class="mp-row" href="#" id="mpPrivacy">プライバシーポリシー<span class="arw">›</span></a>
+        <a class="mp-row" href="#" id="mpTokusho">特定商取引法に基づく表記<span class="arw">›</span></a>
+      </div>
+
+      <p class="sr-note" style="padding: 24px 22px 0; text-align: center;">
+        提供：AOKAE合同会社<br><span class="build-tag">build 0816-B</span>
+      </p>
+    </div>
+
+    <nav class="mini-nav" data-screen-label="ミニアプリ下部タブ">
+      <button class="on" data-tab="tabKarte">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+        マイカルテ
+      </button>
+      <button data-tab="tabDiag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        診断
+      </button>
+      <button data-tab="tabMy">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        マイページ
+      </button>
+    </nav>
+  </section>
 
 </div>
-<script>
-// ============ タブ切替 ============
-(function () {
-  var nav = document.querySelector('.mini-nav');
-  nav.addEventListener('click', function (e) {
-    var b = e.target.closest('button'); if (!b) { return; }
-    nav.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
-    document.querySelectorAll('.mini-screen').forEach(function (s) {
-      s.classList.toggle('on', s.id === b.dataset.tab);
-    });
-    window.scrollTo(0, 0);
-  });
-  document.getElementById('toDiagLink').addEventListener('click', function (e) {
-    e.preventDefault();
-    nav.querySelector('[data-tab="tabDiag"]').click();
-  });
-})();
 
-// ============ ref引き継ぎ(LIFFでは liff.state から取得) ============
-(function () {
-  var ref = null;
-  try {
-    var q = new URLSearchParams(location.search);
-    ref = q.get('ref');
-    if (ref) { sessionStorage.setItem('sr-ref', ref); }
-    else { ref = sessionStorage.getItem('sr-ref'); }
-  } catch (e) {}
-  if (!ref) { return; }
-  document.querySelectorAll('a[href]').forEach(function (a) {
-    var href = a.getAttribute('href');
-    if (!href || href.charAt(0) === '#') { return; }
-    try {
-      var url = new URL(href, location.href);
-      var cur = url.searchParams.get('ref');
-      if (cur && cur.indexOf('__') !== -1) { return; }
-      url.searchParams.set('ref', cur ? cur + '__' + ref : ref);
-      a.href = url.toString();
-    } catch (e) {}
-  });
-})();
-</script>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 (function () {
   'use strict';
-  var LIFF_ID = "2010387325-N1TlMFzx";
-  var MYCARTE = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/get-mycarte";
-  function byId(id){ return document.getElementById(id); }
-  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
-  function fmtDate(s){ try{ var d=new Date(s); return (d.getMonth()+1)+'/'+d.getDate(); }catch(e){ return ''; } }
-  var KM={tsuya:'ツヤ',matomari:'まとまり',uruoi:'うるおい',volume:'ボリューム',hari_koshi:'ハリ・コシ'};
-  function bars(scores){
-    return Object.keys(scores).slice(0,4).map(function(k){
-      var v=Math.max(0,Math.min(100,Math.round(Number(scores[k])||0)));
-      return '<div class="neo-meter"><span class="lbl">'+esc(k)+'</span><span class="track"><span class="fill" style="width:'+v+'%"></span></span><span class="val">'+v+'%</span></div>';
+
+  // ════════════ 設定 ════════════
+  var LIFF_ID     = "2010387325-N1TlMFzx";
+  var FN          = "https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/";
+  var GET_PROFILE = FN + "get-profile";
+  var UPSERT      = FN + "upsert-profile";
+  var MYCARTE     = FN + "get-mycarte";
+  var URL_TERMS   = "https://salonrink.com/terms";
+  var URL_PRIVACY = "https://salonrink.com/privacy";
+  var URL_TOKUSHO = "https://salonrink.com/tokusho";
+  var MAIL_TO     = "mailto:info@aokae.net?subject=" + encodeURIComponent("SalonRink ミニアプリについて");
+
+  // ════════════ 状態 ════════════
+  var S = {
+    uid: null,
+    lineName: '',
+    profile: null,
+    editing: false
+  };
+
+  // ════════════ ユーティリティ ════════════
+  function byId(id) { return document.getElementById(id); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function fmtDate(s) { try { var d = new Date(s); return (d.getMonth() + 1) + '/' + d.getDate(); } catch (e) { return ''; } }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var t = byId('toast'); if (!t) { return; }
+    t.textContent = msg; t.classList.add('on');
+    if (toastTimer) { clearTimeout(toastTimer); }
+    toastTimer = setTimeout(function () { t.classList.remove('on'); }, 2600);
+  }
+
+  function track(ev, props) {
+    try { if (window.srTrack) { window.srTrack(ev, props || {}); } } catch (e) {}
+    try { if (window.gtag) { gtag('event', ev, props || {}); } } catch (e) {}
+  }
+
+  function openExternal(url) {
+    try {
+      if (window.liff && liff.isInClient && liff.isInClient() && liff.openWindow) {
+        liff.openWindow({ url: url, external: true }); return;
+      }
+    } catch (e) {}
+    window.open(url, '_blank', 'noopener');
+  }
+
+  // ════════════ ステージ制御 ════════════
+  function stage(name) {
+    ['stageBoot', 'stageReg', 'stageApp'].forEach(function (id) {
+      var el = byId(id); if (el) { el.classList.toggle('on', id === name); }
+    });
+    document.body.classList.toggle('stage-reg', name === 'stageReg');
+    window.scrollTo(0, 0);
+  }
+  function regScreen(id) {
+    ['regWelcome', 'regProfile'].forEach(function (x) {
+      var el = byId(x); if (el) { el.classList.toggle('on', x === id); }
+    });
+    window.scrollTo(0, 0);
+  }
+
+  // ════════════ タブ ════════════
+  (function () {
+    var nav = document.querySelector('.mini-nav');
+    if (!nav) { return; }
+    nav.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) { return; }
+      nav.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      document.querySelectorAll('#stageApp .mini-screen').forEach(function (s) {
+        s.classList.toggle('on', s.id === b.dataset.tab);
+      });
+      window.scrollTo(0, 0);
+      track('tab_change', { tab: b.dataset.tab });
+    });
+    var link = byId('toDiagLink');
+    if (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var n = nav.querySelector('[data-tab="tabDiag"]'); if (n) { n.click(); }
+      });
+    }
+  })();
+
+  // ════════════ ref引き継ぎ ════════════
+  (function () {
+    var ref = null;
+    try {
+      var q = new URLSearchParams(location.search);
+      ref = q.get('ref');
+      if (ref) { sessionStorage.setItem('sr-ref', ref); }
+      else { ref = sessionStorage.getItem('sr-ref'); }
+    } catch (e) {}
+    if (!ref) { return; }
+    document.querySelectorAll('a[href]').forEach(function (a) {
+      var href = a.getAttribute('href');
+      if (!href || href.charAt(0) === '#' || href.indexOf('mailto:') === 0) { return; }
+      try {
+        var url = new URL(href, location.href);
+        var cur = url.searchParams.get('ref');
+        if (cur && cur.indexOf('__') !== -1) { return; }
+        url.searchParams.set('ref', cur ? cur + '__' + ref : ref);
+        a.href = url.toString();
+      } catch (e) {}
+    });
+  })();
+
+  // ════════════ チップUI ════════════
+  function chipSingle(wrapId) {
+    var w = byId(wrapId); if (!w) { return; }
+    w.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) { return; }
+      var was = b.classList.contains('on');
+      w.querySelectorAll('button').forEach(function (x) { x.classList.remove('on'); });
+      if (!was) { b.classList.add('on'); }
+    });
+  }
+  function chipMulti(wrapId) {
+    var w = byId(wrapId); if (!w) { return; }
+    w.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) { return; }
+      b.classList.toggle('on');
+    });
+  }
+  function chipGet(wrapId, multi) {
+    var w = byId(wrapId); if (!w) { return multi ? [] : ''; }
+    var on = Array.prototype.slice.call(w.querySelectorAll('button.on')).map(function (b) { return b.dataset.v; });
+    return multi ? on : (on[0] || '');
+  }
+  function chipSet(wrapId, val) {
+    var w = byId(wrapId); if (!w) { return; }
+    var arr = Array.isArray(val) ? val : (val ? [val] : []);
+    w.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', arr.indexOf(b.dataset.v) >= 0); });
+  }
+  chipSingle('pTopConcern');
+  chipMulti('pConcerns');
+
+  // 通知スイッチ
+  (function () {
+    var sw = byId('pNotify'); if (!sw) { return; }
+    sw.addEventListener('click', function () {
+      var on = sw.classList.toggle('on');
+      sw.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+  })();
+
+  // ════════════ フォーム ⇄ プロフィール ════════════
+  function formFill(p) {
+    p = p || {};
+    byId('pName').value = p.display_name || S.lineName || '';
+    byId('pBirth').value = p.birth || '';
+    chipSet('pTopConcern', p.top_concern || '');
+    chipSet('pConcerns', Array.isArray(p.concerns) ? p.concerns : []);
+    byId('pStylistName').value = p.stylist_name || '';
+    byId('pVisit').value = p.visit_frequency || '';
+    byId('pCareTime').value = p.care_time || '';
+    byId('pBudget').value = p.beauty_budget || '';
+    var sw = byId('pNotify');
+    var on = (p.notify === undefined || p.notify === null) ? true : !!p.notify;
+    sw.classList.toggle('on', on);
+    sw.setAttribute('aria-checked', on ? 'true' : 'false');
+  }
+
+  function formRead() {
+    return {
+      line_user_id: S.uid,
+      display_name: (byId('pName').value || '').trim(),
+      birth: byId('pBirth').value || '',
+      top_concern: chipGet('pTopConcern', false),
+      concerns: chipGet('pConcerns', true),
+      stylist_name: (byId('pStylistName').value || '').trim(),
+      visit_frequency: byId('pVisit').value || '',
+      care_time: byId('pCareTime').value || '',
+      beauty_budget: byId('pBudget').value || '',
+      notify: byId('pNotify').classList.contains('on')
+    };
+  }
+
+  function regError(msg) {
+    var b = byId('regErr');
+    if (!b) { return; }
+    if (!msg) { b.style.display = 'none'; b.textContent = ''; return; }
+    b.textContent = msg; b.style.display = 'block';
+    b.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // ════════════ マイページ描画 ════════════
+  function renderMyPage() {
+    var p = S.profile || {};
+    var dash = '—';
+    byId('mvName').textContent = p.display_name || dash;
+    byId('mvBirth').textContent = p.birth || dash;
+    var c = [];
+    if (p.top_concern) { c.push(p.top_concern); }
+    if (Array.isArray(p.concerns)) { c = c.concat(p.concerns); }
+    byId('mvConcern').textContent = c.length ? c.join('・') : dash;
+    byId('mvStylist').textContent = p.stylist_name || '指名なし';
+    byId('mvVisit').textContent = p.visit_frequency || dash;
+    byId('mvNotify').textContent = p.notify ? 'オン' : 'オフ';
+  }
+
+  // ════════════ カルテ読み込み ════════════
+  var KM = { tsuya: 'ツヤ', matomari: 'まとまり', uruoi: 'うるおい', volume: 'ボリューム', hari_koshi: 'ハリ・コシ' };
+
+  function bars(scores) {
+    return Object.keys(scores).slice(0, 4).map(function (k) {
+      var v = Math.max(0, Math.min(100, Math.round(Number(scores[k]) || 0)));
+      return '<div class="neo-meter"><span class="lbl">' + esc(k) + '</span><span class="track"><span class="fill" style="width:' + v + '%"></span></span><span class="val">' + v + '%</span></div>';
     }).join('');
   }
-  function diagCard(d){
-    var r=d.result||{};
-    var label=r.label||(d.diagnosis_type==='photo'?'写真AI診断':'診断');
-    var typeName=r.type_name||r.type||'';
-    var scores=r.scores||{}; var disp={};
-    Object.keys(scores).forEach(function(k){ disp[KM[k]||k]=scores[k]; });
-    return '<div class="neo-panel" style="margin-bottom:12px;">'+
-      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">'+
-        '<strong style="color:var(--sr-ink);">'+esc(label)+(typeName?'：'+esc(typeName):'')+'</strong>'+
-        '<span class="sub" style="font-size:11px;color:var(--sr-muted);">'+fmtDate(d.saved_at||d.created_at)+'</span>'+
-      '</div><div class="neo-meters">'+bars(disp)+'</div></div>';
+
+  function diagCard(d) {
+    var r = d.result || {};
+    var label = r.label || (d.diagnosis_type === 'photo' ? '写真AI診断' : '診断');
+    var typeName = r.type_name || r.type || '';
+    var scores = r.scores || {}; var disp = {};
+    Object.keys(scores).forEach(function (k) { disp[KM[k] || k] = scores[k]; });
+    return '<div class="neo-panel" style="margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;">' +
+        '<strong style="color:var(--sr-ink);">' + esc(label) + (typeName ? '：' + esc(typeName) : '') + '</strong>' +
+        '<span class="sub" style="font-size:11px;color:var(--sr-muted);">' + fmtDate(d.saved_at || d.created_at) + '</span>' +
+      '</div><div class="neo-meters">' + bars(disp) + '</div></div>';
   }
-  function loadKarte(userId){
-    fetch(MYCARTE,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:userId})})
-      .then(function(r){return r.json();}).then(function(data){
-        if(!data||!data.ok) throw new Error('failed');
-        var planTxt=(data.plan&&data.plan.is_premium)?'プレミアム会員':'無料会員';
-        var mc=((data.month_count!=null)?data.month_count:0)+'/'+((data.plan&&data.plan.diag_limit)||2);
-        var pl=byId('kartePlan'); if(pl) pl.textContent=planTxt+' · 今月の診断 '+mc;
-        var list=byId('karteDiagList');
-        if(data.diagnoses&&data.diagnoses.length){
-          list.innerHTML=data.diagnoses.map(diagCard).join('');
-        } else {
-          list.innerHTML='<div class="neo-panel"><p class="sr-note" style="text-align:center;">まだ診断がありません。<br><a href="#" id="emptyToDiag">診断タブ</a>からはじめましょう。</p></div>';
-          var e=byId('emptyToDiag'); if(e) e.addEventListener('click',function(ev){ev.preventDefault(); var n=document.querySelector('.mini-nav [data-tab="tabDiag"]'); if(n)n.click();});
+
+  function loadKarte() {
+    if (!S.uid) { return; }
+    fetch(MYCARTE, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ line_user_id: S.uid })
+    }).then(function (r) { return r.json(); }).then(function (data) {
+      if (!data || !data.ok) { throw new Error('failed'); }
+      var planTxt = (data.plan && data.plan.is_premium) ? 'プレミアム会員' : '無料会員';
+      var mc = ((data.month_count != null) ? data.month_count : 0) + '/' + ((data.plan && data.plan.diag_limit) || 2);
+      var pl = byId('kartePlan'); if (pl) { pl.textContent = planTxt + ' · 今月の診断 ' + mc; }
+      var list = byId('karteDiagList');
+      if (data.diagnoses && data.diagnoses.length) {
+        list.innerHTML = data.diagnoses.map(diagCard).join('');
+      } else {
+        list.innerHTML = '<div class="neo-panel"><p class="sr-note" style="text-align:center;">まだ診断がありません。<br><a href="#" id="emptyToDiag" style="color:var(--sr-accent-ink);">診断タブ</a>からはじめましょう。</p></div>';
+        var e = byId('emptyToDiag');
+        if (e) {
+          e.addEventListener('click', function (ev) {
+            ev.preventDefault();
+            var n = document.querySelector('.mini-nav [data-tab="tabDiag"]'); if (n) { n.click(); }
+          });
         }
-      }).catch(function(){ var pl=byId('kartePlan'); if(pl) pl.textContent='カルテを読み込めませんでした'; });
-  }
-  if(typeof liff==='undefined'){ var pl0=byId('kartePlan'); if(pl0) pl0.textContent='LINEから開くとカルテが表示されます'; return; }
-  liff.init({liffId:LIFF_ID}).then(function(){
-    if(!liff.isLoggedIn()){ liff.login({redirectUri:location.href}); return; }
-    document.body.classList.add('in-liff');
-    return liff.getProfile().then(function(p){
-      var name=(p&&p.displayName)?p.displayName:'ゲスト';
-      var v=document.querySelector('.liff-verified'); if(v) v.textContent=name;
-      var nm=byId('karteName'); if(nm) nm.textContent=name+' さん';
-      loadKarte(p.userId);
+      }
+    }).catch(function () {
+      var pl = byId('kartePlan'); if (pl) { pl.textContent = 'カルテを読み込めませんでした'; }
+      var list = byId('karteDiagList');
+      if (list) { list.innerHTML = '<div class="neo-panel"><p class="sr-note" style="text-align:center;">通信環境を確認して、開き直してください。</p></div>'; }
     });
-  }).catch(function(){ var pl1=byId('kartePlan'); if(pl1) pl1.textContent='LINEから開くとカルテが表示されます'; });
+  }
+
+  // ════════════ アプリ起動 ════════════
+  function enterApp() {
+    var p = S.profile || {};
+    var name = p.display_name || S.lineName || 'ゲスト';
+    var nm = byId('karteName'); if (nm) { nm.textContent = name + ' さん'; }
+    var v = document.querySelector('.liff-verified'); if (v) { v.textContent = name; }
+    renderMyPage();
+    stage('stageApp');
+    loadKarte();
+  }
+
+  // ════════════ 登録の保存 ════════════
+  function submitProfile() {
+    var btn = byId('regSubmit');
+    var d = formRead();
+    regError('');
+    if (!d.display_name) { regError('お名前・ニックネームを入力してください。'); return; }
+    if (!S.uid) { regError('LINEの情報を取得できませんでした。アプリを開き直してください。'); return; }
+
+    var label = btn.textContent;
+    btn.disabled = true; btn.textContent = '保存中…';
+
+    fetch(UPSERT, {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(d)
+    }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        btn.disabled = false; btn.textContent = label;
+        if (!res.ok || !res.j || res.j.error) {
+          regError('保存に失敗しました。通信環境を確認して、もう一度お試しください。');
+          track('profile_save_fail', {});
+          return;
+        }
+        S.profile = res.j.profile || d;
+        if (res.j.warnings && res.j.warnings.indexOf('birth_ignored') >= 0) {
+          toast('生年月日は保存されませんでした');
+        } else {
+          toast(S.editing ? '保存しました' : 'ようこそ！');
+        }
+        track(S.editing ? 'profile_updated' : 'profile_created', {});
+        S.editing = false;
+        enterApp();
+      }).catch(function () {
+        btn.disabled = false; btn.textContent = label;
+        regError('保存に失敗しました。通信環境を確認して、もう一度お試しください。');
+      });
+  }
+
+  // ════════════ イベント配線 ════════════
+  byId('regStart').addEventListener('click', function () { regScreen('regProfile'); track('reg_start', {}); });
+  byId('regBack').addEventListener('click', function () {
+    if (S.editing) { S.editing = false; enterApp(); }
+    else { regScreen('regWelcome'); }
+  });
+  byId('regSubmit').addEventListener('click', submitProfile);
+  byId('regPrivacy').addEventListener('click', function (e) { e.preventDefault(); openExternal(URL_PRIVACY); });
+
+  byId('mpEdit').addEventListener('click', function () {
+    S.editing = true;
+    formFill(S.profile);
+    regError('');
+    stage('stageReg');
+    regScreen('regProfile');
+    byId('regSubmit').textContent = 'この内容で保存する';
+    track('profile_edit_open', {});
+  });
+
+  byId('mpContact').addEventListener('click', function (e) { e.preventDefault(); track('tap_contact', {}); openExternal(MAIL_TO); });
+  byId('mpTerms').addEventListener('click', function (e) { e.preventDefault(); track('tap_terms', {}); openExternal(URL_TERMS); });
+  byId('mpPrivacy').addEventListener('click', function (e) { e.preventDefault(); track('tap_privacy', {}); openExternal(URL_PRIVACY); });
+  byId('mpTokusho').addEventListener('click', function (e) { e.preventDefault(); track('tap_tokusho', {}); openExternal(URL_TOKUSHO); });
+
+  // ════════════ ブート ════════════
+  function bootFail(msg) {
+    var m = byId('bootMsg'); if (m) { m.textContent = msg; }
+  }
+
+  function boot() {
+    if (typeof liff === 'undefined') { bootFail('LINEから開くとカルテが表示されます'); return; }
+
+    liff.init({ liffId: LIFF_ID }).then(function () {
+      if (!liff.isLoggedIn()) { liff.login({ redirectUri: location.href }); return; }
+      document.body.classList.add('in-liff');
+
+      return liff.getProfile().then(function (p) {
+        S.uid = p.userId;
+        S.lineName = (p && p.displayName) ? p.displayName : '';
+
+        return fetch(GET_PROFILE, {
+          method: 'POST', headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ line_user_id: S.uid })
+        }).then(function (r) { return r.json(); }).then(function (j) {
+          if (j && j.ok && j.exists && j.profile) {
+            // ── 自動ログイン: 登録済みならホーム直行 ──
+            S.profile = j.profile;
+            track('auto_login', {});
+            enterApp();
+          } else {
+            // ── 初回: 登録フローへ ──
+            S.profile = null;
+            formFill(null);
+            stage('stageReg');
+            regScreen('regWelcome');
+            track('reg_shown', {});
+          }
+        }).catch(function () {
+          // プロフィール取得に失敗しても登録画面は出す（詰まらせない）
+          S.profile = null;
+          formFill(null);
+          stage('stageReg');
+          regScreen('regWelcome');
+        });
+      });
+    }).catch(function () {
+      bootFail('LINEから開くとカルテが表示されます');
+    });
+  }
+
+  boot();
 })();
 </script>
 </body>
