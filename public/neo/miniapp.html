@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0816-F -->
+<!-- build 0816-G -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -164,54 +164,69 @@
 
   <!-- ═══ HOME ═══ -->
   <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
-  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.15) 0%, rgba(246,241,232,.78) 11%, #F6F1E8 22%, #F6F1E8 100%), url('assets/home-hero2.png') center top / cover no-repeat; position:relative; z-index:10;">
-    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 8px 24px;">
+  <div data-screen-label="ホーム" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; background:linear-gradient(180deg, rgba(246,241,232,.12) 0%, rgba(246,241,232,.75) 12%, #F6F1E8 24%, #F6F1E8 100%), url('assets/home-hero2.png') center top / cover no-repeat; position:relative; z-index:10;">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 20px 8px 24px;">
       <div>
         <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; letter-spacing:.08em;">{{ salonName }}</div>
-        <div style="font-size:8px; letter-spacing:.38em; color:#B08654; margin-top:2px;">CONCIERGE</div>
-      </div>
-      <div style="display:flex; align-items:center; border:1px solid #DED5C5; border-radius:999px; overflow:hidden; background:#fff;">
-        <div style="padding:5px 12px; font-size:13px; color:#6B655C; border-right:1px solid #DED5C5;">…</div>
-        <div style="padding:5px 12px; font-size:13px; color:#6B655C;">×</div>
+        <div style="font-size:8px; letter-spacing:.38em; color:#B08654; margin-top:2px;">MY BEAUTY RECORD</div>
       </div>
     </div>
-    <div style="flex:1; overflow-y:auto; padding:130px 20px 110px;">
-      <div style="font-family:'Shippori Mincho',serif; font-size:30px; font-weight:600; line-height:1.35; margin-bottom:6px; text-shadow:0 1px 12px rgba(246,241,232,.9);">こんにちは、<br>{{ userName }}さん</div>
+    <div style="flex:1; overflow-y:auto; padding:96px 20px 110px;">
+      <div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; line-height:1.4; text-shadow:0 1px 12px rgba(246,241,232,.9);">こんにちは、<br>{{ userName }}さん</div>
+      <div style="font-size:12px; color:#8C857A; margin:6px 0 18px;">今日のわたしを知ることから、キレイは始まります。</div>
 
-
-      <div style="display:flex; align-items:baseline; justify-content:space-between; margin:36px 0 14px;">
-        <div style="font-family:'Shippori Mincho',serif; font-size:18px; font-weight:600; letter-spacing:.04em;">AIカメラ診断</div>
-        <div style="font-size:11px; color:#B08654; letter-spacing:.06em;">カメラで30秒</div>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
-        <sc-for list="{{ menuItems }}" as="mi" hint-placeholder-count="4">
-          <div onClick="{{ mi.onSelect }}" style="background:#fff; border-radius:22px; overflow:hidden; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5); position:relative;" style-hover="border-color:#B08654;">
-            <div style="height:84px; background: {{ mi.grad }};"></div>
-            <div style="padding:13px 14px 15px;">
-              <div style="font-size:14px; font-weight:700; margin-bottom:4px;">{{ mi.title }}</div>
-              <div style="font-size:11px; color:#8C857A; line-height:1.55; border-top:1px solid #F0EAE0; padding-top:7px;">{{ mi.desc }}</div>
+      <div style="background:rgba(255,255,255,.94); border-radius:26px; padding:20px; box-shadow:0 14px 36px rgba(43,39,36,.10); border:1px solid rgba(227,218,203,.6); margin-bottom:18px;">
+        <div style="display:flex; align-items:center; gap:18px;">
+          <div style="width:104px; height:104px; border-radius:999px; background:conic-gradient(#B08654 calc({{ homeScore }} * 1%), #EFE7DA 0); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <div style="width:86px; height:86px; border-radius:999px; background:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+              <div style="font-size:8.5px; letter-spacing:.18em; color:#B08654; font-weight:700;">{{ homeScoreLabel }}</div>
+              <div style="font-family:'Shippori Mincho',serif; font-size:31px; font-weight:600; line-height:1.05;">{{ homeScoreText }}</div>
+              <div style="font-size:8px; color:#A39B8D; letter-spacing:.06em;">{{ homeScoreDate }}</div>
             </div>
-            <sc-if condition="{{ mi.badge }}">
-              <div style="position:absolute; top:10px; right:10px; background:#B08654; color:#fff; border-radius:4px; padding:3px 8px; font-size:9.5px; font-weight:700; white-space:nowrap;">{{ mi.badge }}</div>
-            </sc-if>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:12.5px; color:#584F42; line-height:1.75; margin-bottom:12px;">{{ homeScoreNote }}</div>
+            <div onClick="{{ openSheet }}" style="background:#B08654; color:#fff; border-radius:999px; padding:13px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(176,134,84,.35);" style-hover="background:#9A7344;">診断する<span style="font-size:10px; font-weight:500; opacity:.85;"> カメラで30秒</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px 4px; margin-bottom:18px;">
+        <sc-for list="{{ diagCircles }}" as="dc" hint-placeholder-count="8">
+          <div onClick="{{ dc.onTap }}" style="text-align:center; cursor:pointer;">
+            <div style="width:56px; height:56px; border-radius:999px; margin:0 auto 6px; background: {{ dc.bg }}; box-shadow:0 6px 16px rgba(43,39,36,.12); border:2px solid #fff;"></div>
+            <div style="font-size:10px; font-weight:700; color:#584F42; letter-spacing:.02em;">{{ dc.label }}</div>
           </div>
         </sc-for>
-
-        </div>
-
-        <div onClick="{{ goConsult }}" style="margin-top:14px; background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.18);" style-hover="background:#403A34;">美容師に相談する</div>
-
-        <div style="display:flex; gap:10px; margin-top:12px; padding-bottom:96px;">
-          <div onClick="{{ goFortune }}" style="flex:1; background:#fff; border-radius:18px; padding:14px 16px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);">
-            <div style="font-size:12.5px; font-weight:700; margin-bottom:3px;">ビューティー占い</div>
-            <div style="font-size:10.5px; color:#8C857A;">四柱推命×今日の美容運</div>
-          </div>
-          <div onClick="{{ goStore }}" style="flex:1; background:#fff; border-radius:18px; padding:14px 16px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);">
-            <div style="font-size:12.5px; font-weight:700; margin-bottom:3px;">オンラインストア</div>
-            <div style="font-size:10.5px; color:#8C857A;">診断結果からのおすすめ</div>
-          </div>
-        </div>
       </div>
+
+      <div onClick="{{ goConsult }}" style="background:#fff; border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; border:1px solid rgba(227,218,203,.6); box-shadow:0 8px 22px rgba(43,39,36,.06); margin-bottom:12px;" style-hover="border-color:#06C755;">
+        <div style="width:42px; height:42px; border-radius:12px; background:#06C755; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; flex-shrink:0;">LINE</div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700; margin-bottom:2px;">美容師に相談する</div>
+          <div style="font-size:11px; color:#8C857A;">LINEでつながり、最適なケアへ</div>
+        </div>
+        <div style="color:#C9C1B4;">›</div>
+      </div>
+
+      <div onClick="{{ goStore }}" style="background:#fff; border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; border:1px solid rgba(227,218,203,.6); box-shadow:0 8px 22px rgba(43,39,36,.06); margin-bottom:12px;" style-hover="border-color:#B08654;">
+        <div style="width:42px; height:42px; border-radius:12px; background:linear-gradient(150deg,#C89B67,#B08654); color:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0;">🛍</div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700; margin-bottom:2px;">オンラインストア</div>
+          <div style="font-size:11px; color:#8C857A;">サロン厳選アイテムをチェック</div>
+        </div>
+        <div style="color:#C9C1B4;">›</div>
+      </div>
+
+      <div onClick="{{ goFortune }}" style="background:#2B2724; color:#F5EFE5; border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.16); margin-bottom:8px;" style-hover="opacity:.92;">
+        <div style="width:42px; height:42px; border-radius:12px; background:url('assets/diag-fortune.png') center / cover no-repeat; flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:14px; font-weight:700; margin-bottom:2px;">ビューティー占い</div>
+          <div style="font-size:11px; color:#B5AC9E;">四柱推命×今日の美容運のヒント</div>
+        </div>
+        <div style="opacity:.6;">›</div>
+      </div>
+    </div>
   </div>
   </sc-if>
 
@@ -939,6 +954,22 @@
     </div>
     <div style="flex:1; overflow-y:auto; padding:16px 20px 110px;">
 
+      <div style="background:#fff; border-radius:22px; padding:18px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5); margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:14px;">
+          <div style="width:54px; height:54px; border-radius:999px; background:linear-gradient(150deg,#C89B67,#B08654); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho',serif; font-size:21px; font-weight:600; flex-shrink:0; overflow:hidden;">{{ myAvatarEl }}<sc-if value="{{ noAvatar }}">{{ userInitial }}</sc-if></div>
+          <div style="flex:1;">
+            <div style="font-family:'Shippori Mincho',serif; font-size:18px; font-weight:600;">{{ userName }}さん</div>
+            <div style="font-size:10.5px; color: {{ myPlanColor }}; font-weight:700; letter-spacing:.04em;">{{ myPlanLabel }}</div>
+          </div>
+          <div onClick="{{ editProfile }}" style="border:1px solid #DED5C5; border-radius:999px; padding:8px 14px; font-size:11px; font-weight:700; color:#584F42; cursor:pointer; background:#fff;" style-hover="border-color:#B08654;">プロフィールを編集</div>
+        </div>
+        <div style="display:flex; border-top:1px solid #F0EAE0; padding-top:12px;">
+          <div style="flex:1; text-align:center;"><div style="font-family:'Shippori Mincho',serif; font-size:19px; font-weight:600;">{{ myDiagCount }}<span style="font-size:10px; font-weight:500; color:#8C857A;"> 回</span></div><div style="font-size:9.5px; color:#8C857A; margin-top:2px;">診断回数</div></div>
+          <div style="flex:1; text-align:center; border-left:1px solid #F0EAE0;"><div style="font-family:'Shippori Mincho',serif; font-size:19px; font-weight:600;">{{ myPhotoCount }}<span style="font-size:10px; font-weight:500; color:#8C857A;"> 枚</span></div><div style="font-size:9.5px; color:#8C857A; margin-top:2px;">保存写真</div></div>
+          <div style="flex:1; text-align:center; border-left:1px solid #F0EAE0;"><div style="font-family:'Shippori Mincho',serif; font-size:19px; font-weight:600;">{{ myLastDiag }}</div><div style="font-size:9.5px; color:#8C857A; margin-top:2px;">最終診断</div></div>
+        </div>
+      </div>
+
       <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
 
 
@@ -1198,11 +1229,15 @@
         <sc-if value="{{ hasTimeline }}" hint-placeholder-val="{{ false }}">
         <div style="display:flex; flex-direction:column; gap:12px;">
           <sc-for list="{{ timelineItems }}" as="tl" hint-placeholder-count="3">
-            <div style="background:#fff; border-radius:18px; padding:14px 16px; box-shadow:0 8px 22px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5); display:flex; align-items:center; gap:12px;">
-              <div style="width:44px; text-align:center;"><div style="font-family:'Shippori Mincho',serif; font-size:22px; font-weight:600; color:#B08654;">{{ tl.score }}</div><div style="font-size:9px; color:#A39B8D;">整い度</div></div>
-              <div style="flex:1;"><div style="font-size:13.5px; font-weight:700;">{{ tl.title }}</div><div style="font-size:10.5px; color:#8C857A;">{{ tl.date }}<sc-if value="{{ tl.type }}"> ・ {{ tl.type }}</sc-if></div></div>
+            <div style="background:#fff; border-radius:22px; overflow:hidden; box-shadow:0 10px 26px rgba(43,39,36,.07); border:1px solid rgba(227,218,203,.5); display:flex; align-items:stretch;">
+              <div style="width:96px; background: {{ tl.img }}; flex-shrink:0;"></div>
+              <div style="flex:1; padding:14px 16px; display:flex; align-items:center; gap:12px;">
+                <div style="flex:1;"><div style="font-size:14px; font-weight:700; margin-bottom:3px;">{{ tl.title }}</div><div style="font-size:10.5px; color:#8C857A;">{{ tl.date }}<sc-if value="{{ tl.type }}"> ・ {{ tl.type }}</sc-if></div></div>
+                <div style="text-align:center;"><div style="font-family:'Shippori Mincho',serif; font-size:28px; font-weight:600; color:#B08654; line-height:1;">{{ tl.score }}</div><div style="font-size:8.5px; color:#A39B8D; margin-top:2px;">整い度</div></div>
+              </div>
             </div>
           </sc-for>
+          <div onClick="{{ openSheet }}" style="background:#B08654; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 8px 20px rgba(176,134,84,.35);" style-hover="background:#9A7344;">＋ 新しい診断を記録する</div>
         </div>
         </sc-if>
         <sc-if value="{{ noTimeline }}" hint-placeholder-val="{{ false }}">
@@ -2199,6 +2234,38 @@ class Component extends DCLogic {
       navHomeBg: s.screen === 'home' ? '#B08654' : 'transparent',
       goKarte: () => { this.go('karte'); this.loadPhotos(); },
       goConsult: () => { this.setState({ karteSeg: 'send' }); this.go('karte'); this.loadPhotos(); },
+      myAvatarEl: s.avatar ? React.createElement('img', { src: s.avatar, alt: '', style: { width: 54, height: 54, objectFit: 'cover' } }) : null,
+      myPlanLabel: (s.subscribed || s.fortuneAccess === 'premium') ? 'プレミアム会員' : '無料会員',
+      myPlanColor: (s.subscribed || s.fortuneAccess === 'premium') ? '#B08654' : '#8C857A',
+      ...((() => {
+        const dgsM = (s.mycarteData && Array.isArray(s.mycarteData.diagnoses)) ? s.mycarteData.diagnoses : [];
+        const lastM = dgsM[0];
+        const fdM = (d) => { try { const t=new Date(d); return (t.getMonth()+1)+'/'+t.getDate(); } catch(e){ return '–'; } };
+        return { myDiagCount: (s.mycarteData && (s.mycarteData.month_count != null ? dgsM.length : dgsM.length)) || dgsM.length || 0, myPhotoCount: s.photoUsed ?? 0, myLastDiag: lastM ? fdM(lastM.created_at || lastM.saved_at) : '–' };
+      })()),
+      ...((() => {
+        const dgs2 = (s.mycarteData && Array.isArray(s.mycarteData.diagnoses)) ? s.mycarteData.diagnoses : [];
+        const avg2 = (sc) => { const v = Object.values(sc||{}).filter(x=>typeof x==='number'); return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : null; };
+        const latestD = dgs2[0] || null;
+        const latestScore = latestD ? avg2((latestD.result||{}).scores) : null;
+        const kindLabel2 = { photo:'HAIR', gray:'GRAY', scalp:'SCALP', nail:'NAIL', lash:'LASH', personal_color:'COLOR', hand:'HAND' };
+        const fd2 = (d) => { try { const t=new Date(d); return (t.getMonth()+1)+'/'+t.getDate()+' UPDATE'; } catch(e){ return ''; } };
+        const dmeta = this.getDiags();
+        const circles = ['hair','gray','scalp','nail','lash','color'].map(id => ({
+          label: (dmeta[id]||{}).short || id,
+          bg: (dmeta[id]||{}).grad || '#D9D2C6',
+          onTap: () => { if (!window.LINE_UID) { this.showToast('LINEアプリ内での利用が必要です。もう一度お試しください。'); return; } track('diag_open',{kind:id}); this.setState({ diag:id, screen:'intro', sheetOpen:false, surveyAns:{} }); },
+        }));
+        circles.push({ label: '占い', bg: "url('assets/diag-fortune.png') center / cover no-repeat", onTap: async () => { track('fortune_view'); const res = await fortune_status(); if(res.status===200&&res.data){ const a=res.data.access||'none'; if(a==='none'){track('fortune_paywall_view');this.setState({fortuneAccess:'none'});} else if(a==='day'){this.setState({fortuneAccess:'day',dayPass:true});} else if(a==='premium'){this.setState({fortuneAccess:'premium',subscribed:true});} } this.go('fortune'); } });
+        return {
+          homeScore: latestScore ?? 0,
+          homeScoreText: latestScore != null ? String(latestScore) : '–',
+          homeScoreLabel: latestD ? (kindLabel2[(latestD.result||{}).kind || 'photo'] || 'SCORE') : 'SCORE',
+          homeScoreDate: latestD ? fd2(latestD.created_at || latestD.saved_at) : '未診断',
+          homeScoreNote: latestD ? 'この調子で記録を続けましょう。変化がカルテに残ります。' : 'まずは1回、AIカメラ診断で今の状態を記録しましょう。',
+          diagCircles: circles,
+        };
+      })()),
       karteSegTL: (s.karteSeg || 'timeline') === 'timeline',
       karteSegAL: s.karteSeg === 'album',
       karteSegRS: s.karteSeg === 'results',
@@ -2220,9 +2287,10 @@ class Component extends DCLogic {
         const kindMeta = { photo:{t:'髪質診断',k:'髪',c:'#B08654'}, gray:{t:'白髪診断',k:'白',c:'#8B8B9E'}, scalp:{t:'頭皮診断',k:'頭',c:'#7E8B74'}, nail:{t:'ネイル診断',k:'爪',c:'#C08A8A'}, lash:{t:'アイラッシュ診断',k:'睫',c:'#7A6A8C'}, personal_color:{t:'パーソナルカラー',k:'彩',c:'#B98A5E'}, hand:{t:'手肌診断',k:'手',c:'#BE9B7B'} };
         const avg = (sc) => { const v = Object.values(sc||{}).filter(x=>typeof x==='number'); return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : null; };
         const fdate = (d) => { try { const t=new Date(d); return (t.getMonth()+1)+'/'+t.getDate(); } catch(e){ return ''; } };
+        const kindImg = { photo:"url('assets/diag-hair.png') center 32% / cover no-repeat", gray:"url('assets/diag-gray.png') center / cover no-repeat", scalp:"url('assets/diag-scalp.png') center / cover no-repeat", nail:"url('assets/diag-nail.png') center / cover no-repeat", lash:"url('assets/diag-lash.png') center 40% / cover no-repeat", personal_color:"url('assets/diag-color.png') center / cover no-repeat", hand:'linear-gradient(150deg,#E6D8C8,#BE9B7B)' };
         const tl = dgs.slice(0, 20).map(d => {
           const r = d.result || {}; const meta = kindMeta[r.kind || 'photo'] || kindMeta.photo;
-          return { score: avg(r.scores) ?? '–', title: meta.t + (r.type ? ' ・ ' + r.type : ''), date: fdate(d.created_at || d.saved_at), type: r.kind === 'scalp' && r.survey_answers ? '問診あり' : '' };
+          return { score: avg(r.scores) ?? '–', title: meta.t, img: kindImg[r.kind || 'photo'] || kindImg.photo, date: fdate(d.created_at || d.saved_at), type: (r.type || (r.kind === 'scalp' && r.survey_answers ? '問診あり' : '')) };
         });
         const latest = {};
         for (const d of dgs) { const k = (d.result||{}).kind || 'photo'; if (!latest[k]) latest[k] = d; }
@@ -2643,7 +2711,7 @@ class Component extends DCLogic {
         }
         this.go('fortune');
       },
-      goMyPage: () => this.go('mypage'),
+      goMyPage: () => { this.go('mypage'); if (this.state.photos == null) this.loadPhotos(); else this.loadMycarte(); },
       goShare: () => {
         const head = dr ? (d.title + '診断: ' + (dr.type || '') + '（目安 ' + drOverall + '/100）') : (d.title + '診断: スコア ' + d.score + '/100');
         const footer = '\nSalonRink | AIビューティーコンシェルジュ https://miniapp.line.me/2010387325-N1TlMFzx';
@@ -2807,6 +2875,7 @@ class Component extends DCLogic {
       // 自動ログイン: サーバーのプロフィールで state を復元し、ホームへ直行
       this.restoreFromServer(this._serverProfile);
       this.setState({ screen: 'home' });
+        this.loadPhotos(); // ホームの直近スコア/わたし統計のため初回ロード
       track('auto_login');
     } else {
       this.setState({ screen: 'welcome' });
