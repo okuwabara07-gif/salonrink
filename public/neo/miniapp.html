@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0816-E -->
+<!-- build 0816-F -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -196,10 +196,22 @@
             </sc-if>
           </div>
         </sc-for>
-        
-      </div>
 
-    </div>
+        </div>
+
+        <div onClick="{{ goConsult }}" style="margin-top:14px; background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 10px 26px rgba(43,39,36,.18);" style-hover="background:#403A34;">美容師に相談する</div>
+
+        <div style="display:flex; gap:10px; margin-top:12px; padding-bottom:96px;">
+          <div onClick="{{ goFortune }}" style="flex:1; background:#fff; border-radius:18px; padding:14px 16px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);">
+            <div style="font-size:12.5px; font-weight:700; margin-bottom:3px;">ビューティー占い</div>
+            <div style="font-size:10.5px; color:#8C857A;">四柱推命×今日の美容運</div>
+          </div>
+          <div onClick="{{ goStore }}" style="flex:1; background:#fff; border-radius:18px; padding:14px 16px; cursor:pointer; border:1px solid rgba(227,218,203,.5); box-shadow:0 6px 18px rgba(43,39,36,.05);">
+            <div style="font-size:12.5px; font-weight:700; margin-bottom:3px;">オンラインストア</div>
+            <div style="font-size:10.5px; color:#8C857A;">診断結果からのおすすめ</div>
+          </div>
+        </div>
+      </div>
   </div>
   </sc-if>
 
@@ -920,10 +932,10 @@
 
   <!-- ═══ マイページ ═══ -->
   <sc-if value="{{ isMyPage }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="マイページ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
+  <div data-screen-label="わたし" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
-      <div style="font-size:15px; font-weight:700;">マイページ</div>
+      <div style="font-size:15px; font-weight:700;">わたし</div>
     </div>
     <div style="flex:1; overflow-y:auto; padding:16px 20px 110px;">
 
@@ -1172,9 +1184,70 @@
   <div data-screen-label="事前カルテ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
-      <div style="font-size:15px; font-weight:700;">事前カルテ</div>
+      <div style="font-size:15px; font-weight:700;">カルテ</div>
+    </div>
+    <div style="display:flex; gap:6px; padding:0 16px 10px;">
+      <div onClick="{{ segTimeline }}" style="flex:1; text-align:center; font-size:11.5px; font-weight:700; padding:9px 0; border-radius:999px; cursor:pointer; color: {{ segTLColor }}; background: {{ segTLBg }};">タイムライン</div>
+      <div onClick="{{ segAlbum }}" style="flex:1; text-align:center; font-size:11.5px; font-weight:700; padding:9px 0; border-radius:999px; cursor:pointer; color: {{ segALColor }}; background: {{ segALBg }};">アルバム</div>
+      <div onClick="{{ segResults }}" style="flex:1; text-align:center; font-size:11.5px; font-weight:700; padding:9px 0; border-radius:999px; cursor:pointer; color: {{ segRSColor }}; background: {{ segRSBg }};">診断結果</div>
+      <div onClick="{{ segSend }}" style="flex:1; text-align:center; font-size:11.5px; font-weight:700; padding:9px 0; border-radius:999px; cursor:pointer; color: {{ segSDColor }}; background: {{ segSDBg }};">送信</div>
     </div>
     <div style="flex:1; overflow-y:auto; padding:16px 20px 110px;">
+      <!-- ═ タイムライン ═ -->
+      <sc-if value="{{ karteSegTL }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ hasTimeline }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <sc-for list="{{ timelineItems }}" as="tl" hint-placeholder-count="3">
+            <div style="background:#fff; border-radius:18px; padding:14px 16px; box-shadow:0 8px 22px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5); display:flex; align-items:center; gap:12px;">
+              <div style="width:44px; text-align:center;"><div style="font-family:'Shippori Mincho',serif; font-size:22px; font-weight:600; color:#B08654;">{{ tl.score }}</div><div style="font-size:9px; color:#A39B8D;">整い度</div></div>
+              <div style="flex:1;"><div style="font-size:13.5px; font-weight:700;">{{ tl.title }}</div><div style="font-size:10.5px; color:#8C857A;">{{ tl.date }}<sc-if value="{{ tl.type }}"> ・ {{ tl.type }}</sc-if></div></div>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noTimeline }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff; border-radius:18px; padding:22px 18px; text-align:center; font-size:12.5px; color:#8C857A; line-height:1.8;">まだ診断がありません。<br>ホームの「診断する」からはじめましょう。</div>
+        </sc-if>
+      </sc-if>
+
+      <!-- ═ アルバム ═ -->
+      <sc-if value="{{ karteSegAL }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:12px; color:#8C857A;">保存枠 <b style="color:#584F42;">{{ photoUsed }}/{{ photoLimit }}</b> 枚</div>
+          <label style="background:#B08654; color:#fff; border-radius:999px; padding:9px 16px; font-size:12px; font-weight:700; cursor:pointer;">＋ 写真を追加<input type="file" accept="image/*" onChange="{{ onAlbumPick }}" style="display:none;"></label>
+        </div>
+        <sc-if value="{{ photoUploading }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px; color:#B08654; margin-bottom:10px;">アップロード中…</div></sc-if>
+        <sc-if value="{{ hasPhotos }}" hint-placeholder-val="{{ false }}">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+          <sc-for list="{{ photoItems }}" as="ph" hint-placeholder-count="6">
+            <div style="position:relative; border-radius:14px; overflow:hidden; aspect-ratio:1; background:#EFE9DE;">
+              <img src="{{ ph.url }}" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover;">
+              <sc-if value="{{ ph.badge }}"><div style="position:absolute; left:6px; bottom:6px; background:rgba(43,39,36,.75); color:#fff; font-size:9px; padding:2px 7px; border-radius:99px;">{{ ph.badge }}</div></sc-if>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noPhotos }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff; border-radius:18px; padding:22px 18px; text-align:center; font-size:12.5px; color:#8C857A; line-height:1.8;">まだ写真がありません。<br>施術前後の記録を残すと、変化がひと目でわかります。</div>
+        </sc-if>
+        <div style="font-size:10.5px; color:#A39B8D; margin-top:12px; line-height:1.7;">無料10枚・プレミアム50枚まで保存できます。追加20枚パック（¥110）で枠を増やせます。</div>
+      </sc-if>
+
+      <!-- ═ 診断結果一覧 ═ -->
+      <sc-if value="{{ karteSegRS }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <sc-for list="{{ resultItems }}" as="ri" hint-placeholder-count="6">
+            <div style="background:#fff; border-radius:16px; padding:13px 16px; box-shadow:0 6px 18px rgba(43,39,36,.05); border:1px solid rgba(227,218,203,.5); display:flex; align-items:center; gap:12px;">
+              <div style="width:38px; height:38px; border-radius:999px; background: {{ ri.tint }}; color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Shippori Mincho',serif; font-weight:600;">{{ ri.kanji }}</div>
+              <div style="flex:1;"><div style="font-size:13px; font-weight:700;">{{ ri.title }}</div><div style="font-size:10.5px; color:#8C857A;">{{ ri.sub }}</div></div>
+              <div style="text-align:right;"><div style="font-family:'Shippori Mincho',serif; font-size:19px; font-weight:600; color: {{ ri.scoreColor }};">{{ ri.score }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ═ 送信(事前カルテ) ═ -->
+      <sc-if value="{{ karteSegSD }}" hint-placeholder-val="{{ false }}">
       <div style="font-size:12.5px; color:#8C857A; line-height:1.7; margin-bottom:16px;">来店前に美容師さんへ送るカルテです。診断結果は自動で入ります。</div>
 
       <div style="background:#fff; border-radius:22px; overflow:hidden; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
@@ -1248,6 +1321,7 @@
       </div>
       <div onClick="{{ sendKarte }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで事前カルテを送る</div>
       <div style="font-size:10.5px; color:#A39B8D; text-align:center; margin-top:10px;">美容室の公式LINEや、友だちの美容師さんにも送れます</div>
+      </sc-if>
     </div>
   </div>
   </sc-if>
@@ -1331,16 +1405,10 @@
 
   <!-- ═══ ボトムナビ ═══ -->
   <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
-  <div onClick="{{ goStore }}" style="position:absolute; bottom:14px; left:72px; right:72px; background: {{ storeBarBg }}; color: {{ storeBarColor }}; border-radius:999px; padding:7px; text-align:center; font-size:10.5px; font-weight:700; letter-spacing:.08em; cursor:pointer; z-index:10; box-shadow:0 8px 20px rgba(43,39,36,.18);" style-hover="opacity:.9;">オンラインストア ›</div>
-  <div style="position:absolute; bottom:50px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:8px 10px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
-    <div onClick="{{ goFortune }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; color: {{ navFortuneColor }}; background: {{ navFortuneBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">占い</div>
-    <div onClick="{{ goAlbum }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; color: {{ navAlbumColor }}; background: {{ navAlbumBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">アルバム</div>
-    <div onClick="{{ openSheet }}" style="width:54px; height:54px; border-radius:999px; background:linear-gradient(150deg,#C89B67,#B08654); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; cursor:pointer; margin:0 6px; box-shadow:0 8px 20px rgba(176,134,84,.45); flex-shrink:0;" style-hover="background:#9A7344;">
-      <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; line-height:1;">診</div>
-      <div style="font-size:8px; margin-top:3px; letter-spacing:.05em;">診断する</div>
-    </div>
-    <div onClick="{{ goKarte }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; color: {{ navKarteColor }}; background: {{ navKarteBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">カルテ</div>
-    <div onClick="{{ goMyPage }}" style="flex:1; text-align:center; cursor:pointer; font-size:10.5px; font-weight:700; white-space:nowrap; letter-spacing:-.02em; color: {{ navMyColor }}; background: {{ navMyBg }}; padding:9px 0; border-radius:999px; margin:0 2px;">マイページ</div>
+  <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:8px 10px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
+    <div onClick="{{ goHome }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navHomeColor }}; background: {{ navHomeBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">ホーム</div>
+    <div onClick="{{ goKarte }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navKarteColor }}; background: {{ navKarteBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">カルテ</div>
+    <div onClick="{{ goMyPage }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navMyColor }}; background: {{ navMyBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">わたし</div>
   </div>
   </sc-if>
 
@@ -1373,6 +1441,9 @@ const hair_diagnose=(dataUrl)=>{
   console.log('[hair-diagnose POST]',{sid,uid,payload});
   return fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
 };
+const photo_list=(uid)=>fetch(API+'/photo-list',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid})}).then(r=>r.json()).catch(()=>null);
+const photo_upload=(uid,dataUrl,kind)=>fetch(API+'/photo-upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid,image:dataUrl,kind:kind||undefined})}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)}));
+const get_mycarte=(uid)=>fetch(API+'/get-mycarte',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid})}).then(r=>r.json()).catch(()=>null);
 const photo_diagnose=(kind,dataUrl,surveyAns)=>{
   const sid=window.SESSION_ID, uid=window.LINE_UID||null;
   const payload={kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:uid||undefined,session_id:sid,consent_stats:true,consent_photo:false};
@@ -1639,6 +1710,66 @@ class Component extends DCLogic {
       if (md < signs[i][0]) return signs[i][1];
     }
     return 'やぎ座';
+  }
+
+  async loadPhotos() {
+    if (!window.LINE_UID) { this.setState({ photos: [], photoUsed: 0, photoLimit: 10 }); return; }
+    try {
+      const j = await photo_list(window.LINE_UID);
+      if (j && j.ok) this.setState({ photos: j.photos || [], photoUsed: j.used || 0, photoLimit: j.limit || 10 });
+      else this.setState({ photos: [], photoUsed: 0, photoLimit: 10 });
+    } catch (e) { this.setState({ photos: [], photoUsed: 0, photoLimit: 10 }); }
+    this.loadMycarte();
+  }
+
+  async loadMycarte() {
+    if (!window.LINE_UID || this.state.mycarteData) return;
+    try {
+      const j = await get_mycarte(window.LINE_UID);
+      if (j && (j.diagnoses || j.ok)) this.setState({ mycarteData: j });
+    } catch (e) { /* skip */ }
+  }
+
+  uploadAlbumPhoto(file) {
+    if (!file || this.state.photoBusy) return;
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    this.setState({ photoBusy: true });
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        // canvasで長辺1280pxに縮小(通信量と5MB制限対策)
+        const img = new Image();
+        img.onload = async () => {
+          try {
+            const max = 1280;
+            const sc = Math.min(1, max / Math.max(img.width, img.height));
+            const cv = document.createElement('canvas');
+            cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc);
+            cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+            const dataUrl = cv.toDataURL('image/jpeg', 0.82);
+            const res = await photo_upload(window.LINE_UID, dataUrl, this.state.albumKind || null);
+            if (res.status === 200 && res.data && res.data.ok) {
+              track('album_photo_saved');
+              this.showToast('写真を保存しました（残り' + res.data.remaining + '枚）');
+              this.setState({ photoBusy: false, photos: null });
+              this.loadPhotos();
+            } else if (res.status === 402 && res.data) {
+              this.setState({ photoBusy: false });
+              track('album_quota_hit');
+              const go = confirm((res.data.message || '保存枠がいっぱいです。') + '\n\n追加20枚パック（¥110）を購入しますか？');
+              if (go) { const c = await checkout('photo_pack'); if (c && c.data && c.data.url) location.href = c.data.url; }
+            } else {
+              this.setState({ photoBusy: false });
+              this.showToast((res.data && res.data.message) || '保存に失敗しました。もう一度お試しください');
+            }
+          } catch (e) { this.setState({ photoBusy: false }); this.showToast('保存に失敗しました'); }
+        };
+        img.onerror = () => { this.setState({ photoBusy: false }); this.showToast('画像を読み込めませんでした'); };
+        img.src = reader.result;
+      } catch (e) { this.setState({ photoBusy: false }); this.showToast('保存に失敗しました'); }
+    };
+    reader.onerror = () => { this.setState({ photoBusy: false }); this.showToast('画像を読み込めませんでした'); };
+    reader.readAsDataURL(file);
   }
 
   getStylists() {
@@ -2064,7 +2195,51 @@ class Component extends DCLogic {
       showNav: ['home', 'album', 'fortune', 'mypage', 'store', 'karte'].includes(s.screen),
       isStore: s.screen === 'store',
       isKarte: s.screen === 'karte',
-      goKarte: () => this.go('karte'),
+      navHomeColor: s.screen === 'home' ? '#fff' : off,
+      navHomeBg: s.screen === 'home' ? '#B08654' : 'transparent',
+      goKarte: () => { this.go('karte'); this.loadPhotos(); },
+      goConsult: () => { this.setState({ karteSeg: 'send' }); this.go('karte'); this.loadPhotos(); },
+      karteSegTL: (s.karteSeg || 'timeline') === 'timeline',
+      karteSegAL: s.karteSeg === 'album',
+      karteSegRS: s.karteSeg === 'results',
+      karteSegSD: s.karteSeg === 'send',
+      segTimeline: () => this.setState({ karteSeg: 'timeline' }),
+      segAlbum: () => { this.setState({ karteSeg: 'album' }); if (this.state.photos == null) this.loadPhotos(); },
+      segResults: () => this.setState({ karteSeg: 'results' }),
+      segSend: () => this.setState({ karteSeg: 'send' }),
+      segTLColor: (s.karteSeg || 'timeline') === 'timeline' ? '#fff' : '#8C857A',
+      segTLBg: (s.karteSeg || 'timeline') === 'timeline' ? '#2B2724' : 'rgba(255,255,255,.8)',
+      segALColor: s.karteSeg === 'album' ? '#fff' : '#8C857A',
+      segALBg: s.karteSeg === 'album' ? '#2B2724' : 'rgba(255,255,255,.8)',
+      segRSColor: s.karteSeg === 'results' ? '#fff' : '#8C857A',
+      segRSBg: s.karteSeg === 'results' ? '#2B2724' : 'rgba(255,255,255,.8)',
+      segSDColor: s.karteSeg === 'send' ? '#fff' : '#8C857A',
+      segSDBg: s.karteSeg === 'send' ? '#2B2724' : 'rgba(255,255,255,.8)',
+      ...((() => {
+        const dgs = (s.mycarteData && Array.isArray(s.mycarteData.diagnoses)) ? s.mycarteData.diagnoses : [];
+        const kindMeta = { photo:{t:'髪質診断',k:'髪',c:'#B08654'}, gray:{t:'白髪診断',k:'白',c:'#8B8B9E'}, scalp:{t:'頭皮診断',k:'頭',c:'#7E8B74'}, nail:{t:'ネイル診断',k:'爪',c:'#C08A8A'}, lash:{t:'アイラッシュ診断',k:'睫',c:'#7A6A8C'}, personal_color:{t:'パーソナルカラー',k:'彩',c:'#B98A5E'}, hand:{t:'手肌診断',k:'手',c:'#BE9B7B'} };
+        const avg = (sc) => { const v = Object.values(sc||{}).filter(x=>typeof x==='number'); return v.length ? Math.round(v.reduce((a,b)=>a+b,0)/v.length) : null; };
+        const fdate = (d) => { try { const t=new Date(d); return (t.getMonth()+1)+'/'+t.getDate(); } catch(e){ return ''; } };
+        const tl = dgs.slice(0, 20).map(d => {
+          const r = d.result || {}; const meta = kindMeta[r.kind || 'photo'] || kindMeta.photo;
+          return { score: avg(r.scores) ?? '–', title: meta.t + (r.type ? ' ・ ' + r.type : ''), date: fdate(d.created_at || d.saved_at), type: r.kind === 'scalp' && r.survey_answers ? '問診あり' : '' };
+        });
+        const latest = {};
+        for (const d of dgs) { const k = (d.result||{}).kind || 'photo'; if (!latest[k]) latest[k] = d; }
+        const ri = Object.keys(kindMeta).filter(k => latest[k]).map(k => {
+          const d = latest[k]; const r = d.result || {}; const meta = kindMeta[k]; const sc = avg(r.scores);
+          return { tint: meta.c, kanji: meta.k, title: meta.t, sub: fdate(d.created_at || d.saved_at) + (r.type ? ' ・ ' + r.type : ''), score: sc ?? '–', scoreColor: (sc ?? 0) >= 70 ? '#B08654' : '#8C857A' };
+        });
+        const ph = (s.photos || []).map(p => ({ url: p.url, badge: p.kind === 'before' ? 'Before' : (p.kind === 'after' ? 'After' : '') }));
+        return {
+          hasTimeline: tl.length > 0, noTimeline: tl.length === 0, timelineItems: tl,
+          resultItems: ri.length ? ri : [{ tint:'#D9D2C6', kanji:'…', title:'まだ診断結果がありません', sub:'ホームの「診断する」から', score:'–', scoreColor:'#C9C1B4' }],
+          photoItems: ph, hasPhotos: ph.length > 0, noPhotos: ph.length === 0 && !s.photoBusy,
+          photoUsed: s.photoUsed ?? 0, photoLimit: s.photoLimit ?? 10,
+          photoUploading: !!s.photoBusy,
+          onAlbumPick: (e) => { const f = e.target && e.target.files && e.target.files[0]; if (f) this.uploadAlbumPhoto(f); if (e.target) e.target.value = ''; },
+        };
+      })()),
       navKarteColor: s.screen === 'karte' ? '#fff' : off,
       navKarteBg: s.screen === 'karte' ? '#B08654' : 'transparent',
       karteConcerns: (s.pConcerns && s.pConcerns.length) ? s.pConcerns.join(' ・ ') : '未登録',
