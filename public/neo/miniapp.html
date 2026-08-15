@@ -39,6 +39,9 @@
     display: flex; align-items: center; justify-content: center; font-family: inherit;
   }
 
+  /* LINEミニアプリ内ではLINE本体がヘッダーを描くため、モックを隠す */
+  body.in-liff .liff-chrome { display: none; }
+
   /* ============ タブ画面 ============ */
   .mini-screen { display: none; padding-bottom: 8px; }
   .mini-screen.on { display: block; }
@@ -299,6 +302,7 @@
   if(typeof liff==='undefined'){ var pl0=byId('kartePlan'); if(pl0) pl0.textContent='LINEから開くとカルテが表示されます'; return; }
   liff.init({liffId:LIFF_ID}).then(function(){
     if(!liff.isLoggedIn()){ liff.login({redirectUri:location.href}); return; }
+    document.body.classList.add('in-liff');
     return liff.getProfile().then(function(p){
       var name=(p&&p.displayName)?p.displayName:'ゲスト';
       var v=document.querySelector('.liff-verified'); if(v) v.textContent=name;
