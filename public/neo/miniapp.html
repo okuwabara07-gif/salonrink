@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- build 0816-C -->
+<!-- Microsoft Clarity -->
+<script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0CTL6RQ2X5"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-0CTL6RQ2X5");</script>
+<script src="/neo/sr-funnel.js"></script>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script src="./support.js"></script>
 </head>
@@ -1527,11 +1534,34 @@ class Component extends DCLogic {
       });
       if (!res.ok) return false;
       const j = await res.json();
-      return j?.ok === true && j?.exists === true;
+      if (j?.ok === true && j?.exists === true) {
+        this._serverProfile = j.profile || null;
+        return true;
+      }
+      return false;
     } catch (e) {
       console.error('[checkRegistered]', e);
       return false;
     }
+  }
+
+  // get-profile の応答から state を復元（登録済みユーザーの自動ログイン用）
+  restoreFromServer(p) {
+    if (!p || typeof p !== 'object') return;
+    const patch = {};
+    if (p.display_name) patch.pName = p.display_name;
+    if (p.birth) patch.pBirth = p.birth;
+    if (p.gender != null) patch.pGender = p.gender;
+    if (Array.isArray(p.concerns) && p.concerns.length) patch.pConcerns = p.concerns;
+    if (typeof p.notify === 'boolean') patch.pNotify = p.notify;
+    if (p.stylist_name != null) patch.pStylistName = p.stylist_name;
+    if (p.top_concern != null) patch.pTopConcern = p.top_concern;
+    if (p.visit_frequency != null) patch.pVisitFrequency = p.visit_frequency;
+    if (p.care_time != null) patch.pCareTime = p.care_time;
+    if (p.beauty_budget != null) patch.pBeautyBudget = p.beauty_budget;
+    if (p.cover_style != null) patch.coverStyle = p.cover_style;
+    if (typeof p.avatar_pos_y === 'number') patch.avatarPosY = p.avatar_pos_y;
+    if (Object.keys(patch).length) this.setState(patch);
   }
 
   submitDeepAdvice = async (q) => {
@@ -2564,7 +2594,12 @@ class Component extends DCLogic {
 
     // Server truth: 登録済み判定
     const registered = await this.checkRegistered();
-    if (!registered) {
+    if (registered) {
+      // 自動ログイン: サーバーのプロフィールで state を復元し、ホームへ直行
+      this.restoreFromServer(this._serverProfile);
+      this.setState({ screen: 'home' });
+      track('auto_login');
+    } else {
       this.setState({ screen: 'welcome' });
     }
 
