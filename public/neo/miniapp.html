@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0816-G -->
+<!-- build 0816-H -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -947,10 +947,10 @@
 
   <!-- ═══ マイページ ═══ -->
   <sc-if value="{{ isMyPage }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="わたし" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
+  <div data-screen-label="設定" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
-      <div style="font-size:15px; font-weight:700;">わたし</div>
+      <div style="font-size:15px; font-weight:700;">設定</div>
     </div>
     <div style="flex:1; overflow-y:auto; padding:16px 20px 110px;">
 
@@ -1215,7 +1215,7 @@
   <div data-screen-label="事前カルテ" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="display:flex; align-items:center; gap:12px; padding:12px 16px;">
       <div onClick="{{ goHome }}" style="cursor:pointer; font-size:20px; color:#6B655C; padding:2px 6px;">‹</div>
-      <div style="font-size:15px; font-weight:700;">カルテ</div>
+      <div style="font-size:15px; font-weight:700;">マイカルテ</div>
     </div>
     <div style="display:flex; gap:6px; padding:0 16px 10px;">
       <div onClick="{{ segTimeline }}" style="flex:1; text-align:center; font-size:11.5px; font-weight:700; padding:9px 0; border-radius:999px; cursor:pointer; color: {{ segTLColor }}; background: {{ segTLBg }};">タイムライン</div>
@@ -1440,10 +1440,10 @@
 
   <!-- ═══ ボトムナビ ═══ -->
   <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
-  <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:8px 10px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
-    <div onClick="{{ goHome }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navHomeColor }}; background: {{ navHomeBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">ホーム</div>
-    <div onClick="{{ goKarte }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navKarteColor }}; background: {{ navKarteBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">カルテ</div>
-    <div onClick="{{ goMyPage }}" style="flex:1; text-align:center; cursor:pointer; font-size:11px; font-weight:700; white-space:nowrap; color: {{ navMyColor }}; background: {{ navMyBg }}; padding:11px 0; border-radius:999px; margin:0 2px;">わたし</div>
+  <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:6px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
+    <div onClick="{{ goHome }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navHomeBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navHomeColor }};">ホーム</span></div>
+    <div onClick="{{ goKarte }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navKarteBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navKarteColor }};">マイカルテ</span></div>
+    <div onClick="{{ goMyPage }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navMyBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navMyColor }};">設定</span></div>
   </div>
   </sc-if>
 
