@@ -203,6 +203,14 @@
         <div onClick="{{ goKarteSend }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:13px; text-align:center; font-size:13px; font-weight:700; cursor:pointer;" style-hover="background:#403A34;">事前カルテを仕上げる</div>
       </div>
 
+      <div onClick="{{ goKiroku }}" style="background:#fff; border-radius:20px; padding:15px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6); display:flex; align-items:center; gap:13px; cursor:pointer;">
+        <div style="flex:1; min-width:0;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:3px;">きろく</div>
+          <div style="font-size:11px; color:#8C857A; line-height:1.7;">{{ kirokuCountRecords }}件 ・ スコアの推移や使っている製品もここに</div>
+        </div>
+        <div style="color:#C2B49F; font-size:16px;">›</div>
+      </div>
+
       <sc-if value="{{ featStoragePlan }}" hint-placeholder-val="{{ false }}">
       <div style="background:#EDE5D6; border-radius:20px; padding:16px 18px; margin-bottom:14px;">
         <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:8px;">髪のアルバムを残す</div>
@@ -1450,6 +1458,37 @@
       <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>
       <div style="font-size:11.5px; color:#8C857A; line-height:1.7; margin-bottom:16px;">ためた記録が、そのまま来店前のカルテになります。</div>
 
+      <sc-if value="{{ kirokuHasScore }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
+          <div style="font-size:12px; font-weight:700;">髪質スコア</div>
+          <div style="font-size:10px; color:#A08F82;">{{ kirokuScoreDate }}</div>
+        </div>
+        <div style="display:flex; align-items:flex-end; gap:10px; margin-bottom:12px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:700; color:#8A6A44; line-height:1;">{{ kirokuScoreMain }}</div>
+          <div style="font-size:10.5px; color:#8C857A; padding-bottom:4px;">{{ kirokuScoreDiff }}</div>
+        </div>
+        <div style="display:flex; gap:5px; height:66px; margin-bottom:12px;">
+          <sc-for list="{{ kirokuScoreBars }}" as="bar" hint-placeholder-count="5">
+            <div style="flex:1; display:flex; flex-direction:column; gap:4px; align-items:center;">
+              <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+                <div style="width:100%; height: {{ bar.h }}; background: {{ bar.bg }}; border-radius:5px 5px 0 0;"></div>
+              </div>
+              <div style="font-size:9px; color:#A08F82;">{{ bar.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <sc-for list="{{ kirokuSubScores }}" as="sub" hint-placeholder-count="2">
+            <div style="flex:1; background:#FBF7F1; border-radius:11px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:11px; color:#8C857A;">{{ sub.name }}</div>
+              <div style="font-size:14px; font-weight:700; color:#8A6A44;">{{ sub.score }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
       <div style="background:#F1E7DA; border-radius:16px; padding:15px; margin-bottom:12px;">
         <div style="font-size:12px; font-weight:700; color:#8A6A44; margin-bottom:9px;">{{ kirokuSinceVisitLabel }}</div>
         <div style="height:6px; border-radius:99px; background:#fff; position:relative; margin-bottom:7px;">
@@ -2612,6 +2651,35 @@ class Component extends DCLogic {
         const rL = { full: 'たっぷり', half: '半分', low: '残り少', empty: 'なくなった' };
         const rC = { full: '#7E8B74', half: '#8C857A', low: '#A8705C', empty: '#A8705C' };
         return {
+          ...((() => {
+            const ss = md.score_series || {};
+            const pick = ['photo', 'scalp', 'gray'];
+            const jpName = { photo: '髪質', scalp: '頭皮', gray: '白髪' };
+            const main = ss.photo || [];
+            const latest = main.length ? main[main.length - 1] : null;
+            const prev = main.length > 1 ? main[main.length - 2] : null;
+            const diff = (latest && prev) ? (latest.score - prev.score) : null;
+            const mLabel = (at) => { try { const t = new Date(at); return (t.getMonth() + 1) + '月'; } catch (e) { return ''; } };
+            const bars = main.slice(-5);
+            const maxS = bars.length ? Math.max(...bars.map((b) => b.score), 1) : 1;
+            const shade = (i, n) => (i >= n - 2 ? '#A9855C' : i === n - 3 ? '#D6BE9B' : '#EDE0CC');
+            return {
+              kirokuHasScore: !!latest,
+              kirokuScoreMain: latest ? String(latest.score) : '–',
+              kirokuScoreDate: latest ? (() => { try { const t = new Date(latest.at); return t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate() + ' 診断'; } catch (e) { return ''; } })() : '',
+              kirokuScoreDiff: diff == null ? '記録を続けると変化が見えます' : (diff > 0 ? '前回 +' + diff : diff < 0 ? '前回 ' + diff : '前回と同じ'),
+              kirokuScoreBars: bars.map((b, i) => ({
+                h: Math.max(12, Math.round((b.score / maxS) * 100)) + '%',
+                bg: shade(i, bars.length),
+                label: mLabel(b.at),
+              })),
+              kirokuSubScores: pick.filter((k) => k !== 'photo').map((k) => {
+                const arr = ss[k] || [];
+                const l = arr.length ? arr[arr.length - 1] : null;
+                return { name: jpName[k], score: l ? String(l.score) : '–' };
+              }),
+            };
+          })()),
           kirokuCountRecords: cnt.records || 0,
           kirokuCountVisits: cnt.visits || 0,
           kirokuCountProducts: cnt.products || 0,
