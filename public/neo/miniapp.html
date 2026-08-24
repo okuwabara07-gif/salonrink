@@ -2140,11 +2140,24 @@ class Component extends DCLogic {
       onShare: () => { this.go('share'); }
     }));
 
-    const history = [
-      { id: 'hair', title: '髪質診断', score: 74, date: '2026/6/28', status: '共有済み', statusColor: gold },
-      { id: 'scalp', title: '頭皮診断', score: 61, date: '2026/6/10', status: '未共有', statusColor: '#C9C1B4' },
-      { id: 'gray', title: '白髪診断', score: 90, date: '2026/5/22', status: '共有済み', statusColor: gold }
-    ].map((h) => ({ ...h, kanji: diags[h.id].kanji, tint: diags[h.id].tint, onOpen: () => this.setState({ diag: h.id, screen: 'result' }) }));
+    const history = (() => {
+      const dgs = (s.mycarteData && Array.isArray(s.mycarteData.diagnoses)) ? s.mycarteData.diagnoses : [];
+      const avg = (sc) => { const v = Object.values(sc || {}).filter((x) => typeof x === 'number'); return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null; };
+      const titleOf = { photo: '髪質診断', gray: '白髪診断', scalp: '頭皮診断', nail: 'ネイル診断', lash: 'まつげ診断', personal_color: 'パーソナルカラー診断', hand: 'ハンド診断' };
+      const idOf = { photo: 'hair', gray: 'gray', scalp: 'scalp' };
+      const fd = (d) => { try { const t = new Date(d); return t.getFullYear() + '/' + (t.getMonth() + 1) + '/' + t.getDate(); } catch (e) { return ''; } };
+      const seen = {};
+      const rows = [];
+      dgs.forEach((d) => {
+        const kind = d.kind || 'photo';
+        if (seen[kind]) return;
+        const sc = avg((d.result || {}).scores);
+        if (sc == null) return;
+        seen[kind] = 1;
+        rows.push({ id: idOf[kind] || 'hair', kind, title: titleOf[kind] || 'AI診断', score: sc, date: fd(d.created_at || d.saved_at), status: '共有前', statusColor: '#C9C1B4' });
+      });
+      return rows.map((h) => ({ ...h, kanji: (diags[h.id] || diags.hair).kanji, tint: (diags[h.id] || diags.hair).tint, onOpen: () => this.setState({ diag: h.id, screen: 'result' }) }));
+    })();
 
     const bioBars = [
       { day: '月', h: 45 }, { day: '火', h: 60 }, { day: '水', h: 88 }, { day: '木', h: 72 },
