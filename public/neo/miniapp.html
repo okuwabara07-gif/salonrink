@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0824-C -->
+<!-- build 0824-D -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -911,20 +911,27 @@
 
       <div style="background:#fff; border-radius:22px; padding:18px; margin-top:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
         <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:6px;">わたしの情報</div>
-        <div style="font-size:10.5px; color:#A39B8D; line-height:1.7; margin-bottom:12px;">ここに保存した内容は、毎回の事前カルテに自動で添付されます。</div>
+        <div style="font-size:10.5px; color:#A39B8D; line-height:1.7; margin-bottom:12px;">ここに保存した内容は、毎回のカルテに自動で添付されます。変更があったときだけ更新してください。</div>
         <div style="font-size:11.5px; font-weight:700; margin-bottom:8px;">アレルギー・注意事項</div>
         <div style="display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px;">
-          <sc-for list="{{ profAllergyChips }}" as="c" hint-placeholder-count="4">
+          <sc-for list="{{ profAllergyChips }}" as="c" hint-placeholder-count="3">
             <div onClick="{{ c.onToggle }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:7px 12px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
           </sc-for>
         </div>
         <input value="{{ profAllergyNote }}" onChange="{{ onProfAllergyNote }}" placeholder="その他（自由記入）" style="width:100%; box-sizing:border-box; background:#FBF8F2; border:1px solid #E3DACB; border-radius:12px; padding:11px 13px; font-size:12.5px; font-family:inherit; color:#2B2724; margin-bottom:14px;">
-        <div style="font-size:11.5px; font-weight:700; margin-bottom:8px;">過去の施術履歴</div>
-        <div style="display:flex; flex-wrap:wrap; gap:7px;">
-          <sc-for list="{{ profHistChips }}" as="c" hint-placeholder-count="4">
-            <div onClick="{{ c.onToggle }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:7px 12px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+          <div style="font-size:11.5px; font-weight:700;">過去の施術履歴</div>
+          <div style="font-size:10px; color:#A39B8D;">自動＋手入力</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:7px;">
+          <sc-for list="{{ profHistRowList }}" as="r" hint-placeholder-count="5">
+            <div style="display:flex; align-items:center; gap:10px; background:#FBF8F2; border:1px solid #E3DACB; border-radius:12px; padding:10px 13px;">
+              <div style="width:78px; font-size:11.5px; font-weight:700; color:#584F42; flex-shrink:0;">{{ r.k }}</div>
+              <input value="{{ r.v }}" onChange="{{ r.onEdit }}" placeholder="{{ r.ph }}" style="flex:1; min-width:0; background:transparent; border:none; font-size:11.5px; font-family:inherit; color:#2B2724; padding:0;">
+            </div>
           </sc-for>
         </div>
+        <div onClick="{{ addHistRow }}" style="margin-top:9px; text-align:center; border:1px dashed #DED5C5; border-radius:12px; padding:10px; font-size:11.5px; font-weight:700; color:#8F6A3E; cursor:pointer;">施術を追加する</div>
       </div>
 
       <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
