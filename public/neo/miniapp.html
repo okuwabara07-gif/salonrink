@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0824-A -->
+<!-- build 0824-B -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -1241,21 +1241,17 @@
       </div>
 
       <div style="background:#fff; border-radius:18px; padding:15px 16px; margin-bottom:14px; border:1px solid rgba(227,218,203,.5);">
-        <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:9px;">送信先を選ぶ</div>
-        <div style="display:flex; flex-direction:column; gap:7px;">
-          <sc-for list="{{ karteTargets }}" as="kt" hint-placeholder-count="3">
-            <div onClick="{{ kt.onSel }}" style="display:flex; align-items:center; gap:10px; border:1.5px solid {{ kt.bd }}; border-radius:12px; padding:10px 13px; cursor:pointer;">
-              <div style="flex:1;">
-                <div style="font-size:12.5px; font-weight:700;">{{ kt.label }}</div>
-                <div style="font-size:10.5px; color:#8C857A;">{{ kt.desc }}</div>
-              </div>
-              <div style="width:18px; height:18px; border-radius:99px; border:1.5px solid {{ kt.bd }}; background: {{ kt.checkBg }}; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center;">{{ kt.check }}</div>
-            </div>
-          </sc-for>
+        <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:9px;">送信先</div>
+        <div style="display:flex; align-items:center; gap:10px; border:1.5px solid #B08654; border-radius:12px; padding:10px 13px;">
+          <div style="flex:1;">
+            <div style="font-size:12.5px; font-weight:700;">LINEの友だちから選ぶ</div>
+            <div style="font-size:10.5px; color:#8C857A;">担当の美容師さん・サロンの公式LINEなど、送信先は次の画面で選択します</div>
+          </div>
+          <div style="width:18px; height:18px; border-radius:99px; border:1.5px solid #B08654; background:#B08654; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center;">✓</div>
         </div>
       </div>
-      <div onClick="{{ sendKarte }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEで事前カルテを送る</div>
-      <div style="font-size:10.5px; color:#A39B8D; text-align:center; margin-top:10px;">美容室の公式LINEや、友だちの美容師さんにも送れます</div>
+      <div onClick="{{ sendKarte }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEの友だちを選んで送る</div>
+      <div style="font-size:10.5px; color:#A39B8D; text-align:center; margin-top:10px;">タップするとLINEの友だち一覧が開きます ※写真はカルテ本文に含まれません</div>
       </sc-if>
     </div>
   </div>
@@ -2241,22 +2237,25 @@ class Component extends DCLogic {
       },
       karteMemo: s.karteMemo || '',
       onKarteMemo: (e) => this.setState({ karteMemo: e.target.value }),
-      karteTargets: (() => {
-        const list = [];
-        if (s.pStylist) list.push({ key: 'stylist', label: '担当の美容師さん', desc: '登録済みの担当スタイリストのLINEへ' });
-        list.push({ key: 'salon', label: 'ヘアサロン公式LINE', desc: '来店予定のサロンのトークへ' });
-        list.push({ key: 'friend', label: 'LINEの友だちから選ぶ', desc: '友だちの美容師さんなどに送る' });
-        const cur = s.karteTarget || (s.pStylist ? 'stylist' : 'salon');
-        return list.map((t) => {
-          const sel = t.key === cur;
-          return { ...t, bd: sel ? '#B08654' : '#E3DACB', checkBg: sel ? '#B08654' : '#fff', check: sel ? '✓' : '', onSel: () => this.setState({ karteTarget: t.key }) };
-        });
-      })(),
-      sendKarte: () => {
-        const cur = s.karteTarget || (s.pStylist ? 'stylist' : 'salon');
-        const label = cur === 'stylist' ? '担当の美容師さん' : (cur === 'salon' ? 'ヘアサロン公式LINE' : 'LINEの友だち');
-        this.go('home');
-        this.showToast(label + 'に事前カルテを送信しました');
+      sendKarte: async () => {
+        const parts = ['【事前カルテ】' + (userName ? userName + 'さん' : '')];
+        const hist = (history || []).map((h) => '・' + h.title + '（' + h.date + '）スコア' + h.score);
+        if (hist.length) { parts.push('■最近のAI診断'); parts.push(hist.join('\n')); }
+        const wishes = (s.karteWish || []).join('・');
+        if (wishes) { parts.push('■今回の希望'); parts.push(wishes); }
+        const memo = (s.karteMemo || '').trim();
+        if (memo) { parts.push('■伝えておきたいこと'); parts.push(memo); }
+        parts.push('—\nSalonRink｜AIビューティーコンシェルジュ\nhttps://miniapp.line.me/2010387325-N1TlMFzx');
+        const text = parts.join('\n');
+        try {
+          if (window.liff && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
+            const r = await liff.shareTargetPicker([{ type: 'text', text }]);
+            if (r) { track('karte_sent'); this.go('home'); this.showToast('事前カルテをLINEで送信しました'); }
+            else { this.showToast('送信をキャンセルしました'); }
+          } else {
+            this.showToast('カルテ送信はLINEアプリ内でご利用いただけます');
+          }
+        } catch (e) { this.showToast('送信に失敗しました。もう一度お試しください'); }
       },
       exCardLabel: this.computeMeishiki(s.pBirth) ? userName + 'さんの結果プレビュー' : '占い結果の例',
       exWho: (() => {
