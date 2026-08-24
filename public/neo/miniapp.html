@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0818-C -->
+<!-- build 0824-A -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -1390,7 +1390,7 @@ const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'
 const fortune_select=(t)=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'select_topic',topic:t});
 const upsert_profile=(p)=>apiCall('/upsert-profile',{...p,line_user_id:window.LINE_UID||null,session_id:window.SESSION_ID},true);
 /* ═══ 機能フラグ ═══ true→表示 / false→完全非表示（導線・画面・外部遷移すべて）═══ */
-var SR_FEATURES = { fortune: true, store: false };
+var SR_FEATURES = { fortune: true, store: true };
 const list_base_items=()=>apiCall('/list-base-items',{},true);
 const list_products=(kind)=>fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/list-products?kind='+encodeURIComponent(kind)+'&limit=6').then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))})).catch(e=>({status:0,data:null}));
 
