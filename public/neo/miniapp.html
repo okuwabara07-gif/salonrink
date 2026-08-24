@@ -2320,7 +2320,7 @@ class Component extends DCLogic {
       navKarteColor: s.screen === 'karte' ? '#fff' : off,
       navKarteBg: s.screen === 'karte' ? '#B08654' : 'transparent',
       karteConcerns: (s.pConcerns && s.pConcerns.length) ? s.pConcerns.join(' ・ ') : '未登録',
-      karteWishes: ['カット', 'カラー', 'パーマ', 'トリートメント', '白髪ぼかし', 'ヘッドスパ', 'ネイル', '相談だけ'].map((label) => {
+      karteWishes: ['カラー', 'トリートメント', 'カット', 'パーマ', '白髪ぼかし', 'ヘッドスパ', 'ネイル', '相談だけ'].map((label) => {
         const sel = (s.karteWish || []).includes(label);
         return {
           label, bd: sel ? '#B08654' : '#E3DACB', bg: sel ? '#B08654' : '#fff', c: sel ? '#fff' : '#584F42',
@@ -2358,12 +2358,12 @@ class Component extends DCLogic {
       karteNextLabel: (s.karteStep || 1) === 3 ? '確認へ' : '次へ',
       karteNext: () => this.setState({ karteStep: Math.min(4, (s.karteStep || 1) + 1) }),
       karteBack: () => this.setState({ karteStep: Math.max(1, (s.karteStep || 1) - 1) }),
-      karteConcernChips: ['うねり・広がり', '乾燥・パサつき', '白髪', 'ボリューム不足', '頭皮の乾燥', 'かゆみ・フケ', 'ダメージ', 'その他'].map((label) => {
+      karteConcernChips: ['広がりやすい', 'うねり・くせ', 'パサつき・乾燥', 'ぺたんこ', '頭皮のかゆみ', 'ニオイ', '白髪が増えた'].map((label) => {
         const sel = (s.karteConcernsSel || []).includes(label);
         return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
           onToggle: () => this.setState({ karteConcernsSel: sel ? (s.karteConcernsSel || []).filter((x) => x !== label) : [...(s.karteConcernsSel || []), label] }) };
       }),
-      karteAvoidChips: ['短くしすぎない', '前髪は切らない', '明るくしすぎない', '赤みを出したくない', '派手な色は避けたい', '香りの強い製品が苦手'].map((label) => {
+      karteAvoidChips: ['赤みを出したくない', '前髪は切らない', '短くしすぎない', '明るくしすぎない'].concat(s.karteAvoidExtra || []).map((label) => {
         const sel = (s.karteAvoid || []).includes(label);
         return { label, bd: sel ? '#DDB5A8' : '#E4D8C7', bg: sel ? '#FBF1ED' : '#fff', color: sel ? '#A8705C' : '#6E6257',
           onToggle: () => this.setState({ karteAvoid: sel ? (s.karteAvoid || []).filter((x) => x !== label) : [...(s.karteAvoid || []), label] }) };
@@ -2372,16 +2372,6 @@ class Component extends DCLogic {
         const sel = s.kartePurpose === label;
         return { label, bg: sel ? '#F1E7DA' : '#FBF7F1', bd: sel ? '#A9855C' : '#EDE4D8', dotBd: sel ? '#A9855C' : '#C9BFAF', dotBg: sel ? '#A9855C' : '#fff',
           onSel: () => this.setState({ kartePurpose: label }) };
-      }),
-      karteBudgetChips: ['〜¥5,000', '¥5,000〜10,000', '¥10,000〜15,000', '¥15,000〜', '決めていない'].map((label) => {
-        const sel = s.karteBudget === label;
-        return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
-          onToggle: () => this.setState({ karteBudget: sel ? null : label }) };
-      }),
-      karteTimeChips: ['〜1時間', '1〜2時間', '2時間〜', 'こだわらない'].map((label) => {
-        const sel = s.karteTime === label;
-        return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
-          onToggle: () => this.setState({ karteTime: sel ? null : label }) };
       }),
       karteReplyRows: ['事前に相談したい', '当日でOK'].map((label) => {
         const sel = (s.karteReply || '当日でOK') === label;
