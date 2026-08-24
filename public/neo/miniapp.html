@@ -1183,76 +1183,7 @@
 
       <!-- ═ 送信(事前カルテ) ═ -->
       <sc-if value="{{ karteSegSD }}" hint-placeholder-val="{{ false }}">
-      <div style="font-size:12.5px; color:#8C857A; line-height:1.7; margin-bottom:16px;">来店前に美容師さんへ送るカルテです。診断結果は自動で入ります。</div>
-
-      <div style="background:#fff; border-radius:22px; overflow:hidden; margin-bottom:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
-        <div style="padding:14px 18px; border-bottom:1px solid #F0EAE0; display:flex; justify-content:space-between; align-items:baseline;">
-          <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600;">{{ userName }}さんの事前カルテ</div>
-          <div style="font-size:10px; color:#A39B8D;">2026/7/15 作成</div>
-        </div>
-        <div style="padding:16px 18px; display:flex; flex-direction:column; gap:14px;">
-          <div>
-            <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:6px;">プロフィール</div>
-            <div style="font-size:12.5px; color:#584F42; line-height:1.9;">{{ userName }} ・ {{ pBirthDisplay }}<br>気になること：{{ karteConcerns }}</div>
-          </div>
-          <div>
-            <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:6px;">最近のAI診断</div>
-            <div style="display:flex; flex-direction:column; gap:5px;">
-              <sc-for list="{{ history }}" as="h" hint-placeholder-count="3">
-                <div style="display:flex; justify-content:space-between; font-size:12px; color:#584F42;">
-                  <div>{{ h.title }}（{{ h.date }}）</div>
-                  <div style="font-weight:700;">スコア {{ h.score }}</div>
-                </div>
-              </sc-for>
-              <div style="font-size:11px; color:#8C857A;">白髪率12% ・ 頭皮は乾燥ぎみ（問診より）</div>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:8px;">今の状態の写真</div>
-            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:9px;">
-              <sc-for list="{{ kartePhotoList }}" as="kp" hint-placeholder-count="0">
-                <div style="width:72px; height:72px; border-radius:12px; overflow:hidden; position:relative; background:#EDE6D9;">
-                  {{ kp.el }}
-                  <div onClick="{{ kp.onRemove }}" style="position:absolute; right:3px; top:3px; width:18px; height:18px; border-radius:99px; background:rgba(43,39,36,.6); color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; cursor:pointer;">×</div>
-                </div>
-              </sc-for>
-            </div>
-            <div style="display:flex; gap:8px;">
-              <div onClick="{{ kartePickPhoto }}" style="flex:1; border:1px solid #E3DACB; background:#FBF8F2; border-radius:12px; padding:11px; text-align:center; font-size:12px; font-weight:700; color:#584F42; cursor:pointer;" style-hover="border-color:#B08654;">写真を選ぶ</div>
-              <div onClick="{{ karteTakePhoto }}" style="flex:1; border:1px solid #E3DACB; background:#FBF8F2; border-radius:12px; padding:11px; text-align:center; font-size:12px; font-weight:700; color:#584F42; cursor:pointer;" style-hover="border-color:#B08654;">カメラで撮る</div>
-            </div>
-            <input type="file" accept="image/*" onChange="{{ onKartePhoto }}" ref="{{ karteFileRef }}" style="display:none;">
-            <input type="file" accept="image/*" capture="environment" onChange="{{ onKartePhoto }}" ref="{{ karteCamRef }}" style="display:none;">
-            <div style="font-size:10px; color:#A39B8D; margin-top:6px;">髪全体・気になる箇所など、いまの状態がわかる写真を添付できます</div>
-          </div>
-          <div>
-            <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:8px;">今回の希望（タップで選択）</div>
-            <div style="display:flex; flex-wrap:wrap; gap:7px;">
-              <sc-for list="{{ karteWishes }}" as="w" hint-placeholder-count="6">
-                <div onClick="{{ w.onToggle }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:7px 13px; cursor:pointer; border:1px solid {{ w.bd }}; background: {{ w.bg }}; color: {{ w.c }};">{{ w.label }}</div>
-              </sc-for>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:8px;">伝えておきたいこと</div>
-            <textarea value="{{ karteMemo }}" onChange="{{ onKarteMemo }}" placeholder="例）前回すこし明るすぎたので、今回は落ち着いた色に。肩につかない長さで。" style="width:100%; box-sizing:border-box; background:#FBF8F2; border:1px solid #E3DACB; border-radius:12px; padding:12px 14px; font-size:12.5px; font-family:inherit; color:#2B2724; line-height:1.8; min-height:76px; resize:none;"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div style="background:#fff; border-radius:18px; padding:15px 16px; margin-bottom:14px; border:1px solid rgba(227,218,203,.5);">
-        <div style="font-size:10.5px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:9px;">送信先</div>
-        <div style="display:flex; align-items:center; gap:10px; border:1.5px solid #B08654; border-radius:12px; padding:10px 13px;">
-          <div style="flex:1;">
-            <div style="font-size:12.5px; font-weight:700;">LINEの友だちから選ぶ</div>
-            <div style="font-size:10.5px; color:#8C857A;">担当の美容師さん・サロンの公式LINEなど、送信先は次の画面で選択します</div>
-          </div>
-          <div style="width:18px; height:18px; border-radius:99px; border:1.5px solid #B08654; background:#B08654; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center;">✓</div>
-        </div>
-      </div>
-      <div onClick="{{ sendKarte }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer;" style-hover="background:#05B34C;">LINEの友だちを選んで送る</div>
-      <div style="font-size:10.5px; color:#A39B8D; text-align:center; margin-top:10px;">タップするとLINEの友だち一覧が開きます ※写真はカルテ本文に含まれません</div>
-      </sc-if>
+@@HDR@@@@S1@@@@S2@@@@S3@@@@S4@@@@NAV@@      </sc-if>
     </div>
   </div>
   </sc-if>
