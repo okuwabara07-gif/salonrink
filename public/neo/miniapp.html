@@ -196,7 +196,7 @@
           <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">来店前のご相談</div>
           <div style="font-size:10.5px; font-weight:700; color: {{ karteSentColor }};">{{ karteSentLabel }}</div>
         </div>
-        <div style="height:6px; background:#EFE8DA; border-radius:99px; overflow:hidden; margin-bottom:8px;">
+        <div style="height:6px; background:#F5F1E8; border:1px solid #E8DFD0; box-sizing:border-box; border-radius:99px; overflow:hidden; margin-bottom:8px;">
           <div style="height:100%; width: {{ karteFillPct }}%; background:#B08654; border-radius:99px;"></div>
         </div>
         <div style="font-size:11px; color:#8C857A; line-height:1.7; margin-bottom:12px;">カルテの充実度 {{ karteFillPct }}%。診断スコアとわたしの情報は自動で入ります。</div>
@@ -2526,7 +2526,7 @@ class Component extends DCLogic {
       navFortuneBg: s.screen === 'fortune' ? '#B08654' : 'transparent',
       navMyBg: s.screen === 'mypage' ? '#B08654' : 'transparent',
       sheetOpen: !!s.sheetOpen,
-      navHomeColor: s.screen === 'home' ? gold : off,
+      navHomeColor: s.screen === 'home' ? '#fff' : off,
       navAlbumColor: s.screen === 'album' ? '#fff' : off,
       navFortuneColor: s.screen === 'fortune' ? '#fff' : off,
       navMyColor: s.screen === 'mypage' ? '#fff' : off,
