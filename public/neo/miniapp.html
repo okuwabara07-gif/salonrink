@@ -2322,7 +2322,85 @@ class Component extends DCLogic {
       karteNextLabel: (s.karteStep || 1) === 3 ? '確認へ' : '次へ',
       karteNext: () => this.setState({ karteStep: Math.min(4, (s.karteStep || 1) + 1) }),
       karteBack: () => this.setState({ karteStep: Math.max(1, (s.karteStep || 1) - 1) }),
-@@JSB@@@@JSC@@@@JSD@@      exCardLabel: this.computeMeishiki(s.pBirth) ? userName + 'さんの結果プレビュー' : '占い結果の例',
+      karteConcernChips: ['うねり・広がり', '乾燥・パサつき', '白髪', 'ボリューム不足', '頭皮の乾燥', 'かゆみ・フケ', 'ダメージ', 'その他'].map((label) => {
+        const sel = (s.karteConcernsSel || []).includes(label);
+        return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
+          onToggle: () => this.setState({ karteConcernsSel: sel ? (s.karteConcernsSel || []).filter((x) => x !== label) : [...(s.karteConcernsSel || []), label] }) };
+      }),
+      karteAvoidChips: ['短くしすぎない', '前髪は切らない', '明るくしすぎない', '赤みを出したくない', '派手な色は避けたい', '香りの強い製品が苦手'].map((label) => {
+        const sel = (s.karteAvoid || []).includes(label);
+        return { label, bd: sel ? '#DDB5A8' : '#E4D8C7', bg: sel ? '#FBF1ED' : '#fff', color: sel ? '#A8705C' : '#6E6257',
+          onToggle: () => this.setState({ karteAvoid: sel ? (s.karteAvoid || []).filter((x) => x !== label) : [...(s.karteAvoid || []), label] }) };
+      }),
+      kartePurposeRows: ['相談して決めたい', 'メニューは決めている', 'おまかせしたい'].map((label) => {
+        const sel = s.kartePurpose === label;
+        return { label, bg: sel ? '#F1E7DA' : '#FBF7F1', bd: sel ? '#A9855C' : '#EDE4D8', dotBd: sel ? '#A9855C' : '#C9BFAF', dotBg: sel ? '#A9855C' : '#fff',
+          onSel: () => this.setState({ kartePurpose: label }) };
+      }),
+      karteBudgetChips: ['〜¥5,000', '¥5,000〜10,000', '¥10,000〜15,000', '¥15,000〜', '決めていない'].map((label) => {
+        const sel = s.karteBudget === label;
+        return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
+          onToggle: () => this.setState({ karteBudget: sel ? null : label }) };
+      }),
+      karteTimeChips: ['〜1時間', '1〜2時間', '2時間〜', 'こだわらない'].map((label) => {
+        const sel = s.karteTime === label;
+        return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
+          onToggle: () => this.setState({ karteTime: sel ? null : label }) };
+      }),
+      karteReplyRows: ['事前に相談したい', '当日でOK'].map((label) => {
+        const sel = (s.karteReply || '当日でOK') === label;
+        return { label, bg: sel ? '#F1E7DA' : '#FBF7F1', bd: sel ? '#A9855C' : '#EDE4D8', onSel: () => this.setState({ karteReply: label }) };
+      }),
+      karteImageNote: s.karteImageNote || '',
+      onKarteImageNote: (e) => this.setState({ karteImageNote: e.target.value }),
+      karteAutoNote: (() => {
+        const sc = (history || []).map((h) => h.title.replace('診断', '') + h.score).join('・');
+        return sc ? sc + ' のスコアが自動で添付されます。撮り直しは不要です。' : '診断スコアは記録があれば自動で添付されます。';
+      })(),
+      karteProfSummary: (() => {
+        const al = [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('・');
+        const th = (s.profHist || []).join('・');
+        return 'アレルギー・注意：' + (al || '未登録') + '\n過去の施術：' + (th || '未登録');
+      })(),
+      goMyInfo: () => this.go('mypage'),
+      kartePreviewText: this.buildKarteText(s, userName, history),
+      karteFillPct: (() => {
+        let p = 0;
+        if ((s.kartePhotos || []).length) p += 20;
+        if ((s.karteConcernsSel || []).length) p += 20;
+        if ((s.karteImageNote || '').trim() || (s.karteAvoid || []).length) p += 20;
+        if ((s.karteWish || []).length) p += 20;
+        if (s.kartePurpose) p += 20;
+        return p;
+      })(),
+      karteSentLabel: s.karteSentAt ? '送信済み' : '未送信',
+      karteSentColor: s.karteSentAt ? '#7E8B74' : '#A8705C',
+      goKarteSend: () => { this.setState({ karteSeg: 'send' }); this.go('karte'); this.loadPhotos(); },
+      profAllergyChips: ['頭皮がしみやすい', '金属アレルギー', '肌が敏感', '香料が苦手'].map((label) => {
+        const sel = (s.profAllergy || []).includes(label);
+        return { label, bd: sel ? '#DDB5A8' : '#E3DACB', bg: sel ? '#FBF1ED' : '#fff', color: sel ? '#A8705C' : '#6B655C',
+          onToggle: () => this.setState({ profAllergy: sel ? (s.profAllergy || []).filter((x) => x !== label) : [...(s.profAllergy || []), label] }) };
+      }),
+      profHistChips: ['カラー', '縮毛矯正', 'ブリーチ', 'パーマ'].map((label) => {
+        const sel = (s.profHist || []).includes(label);
+        return { label, bd: sel ? '#B08654' : '#E3DACB', bg: sel ? 'rgba(176,134,84,.14)' : '#fff', color: sel ? '#8F6A3E' : '#6B655C',
+          onToggle: () => this.setState({ profHist: sel ? (s.profHist || []).filter((x) => x !== label) : [...(s.profHist || []), label] }) };
+      }),
+      profAllergyNote: s.profAllergyNote || '',
+      onProfAllergyNote: (e) => this.setState({ profAllergyNote: e.target.value }),
+      sendKarte: async () => {
+        const text = this.buildKarteText(this.state, userName, history);
+        try {
+          if (window.liff && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
+            const r = await liff.shareTargetPicker([{ type: 'text', text }]);
+            if (r) { track('karte_sent'); this.setState({ karteSentAt: Date.now() }); this.go('home'); this.showToast('事前カルテをLINEで送信しました'); }
+            else { this.showToast('送信をキャンセルしました'); }
+          } else {
+            this.showToast('カルテ送信はLINEアプリ内でご利用いただけます');
+          }
+        } catch (e) { this.showToast('送信に失敗しました。もう一度お試しください'); }
+      },
+      exCardLabel: this.computeMeishiki(s.pBirth) ? userName + 'さんの結果プレビュー' : '占い結果の例',
       exWho: (() => {
         const m = this.computeMeishiki(s.pBirth);
         const z = this.computeZodiac(s.pBirth);
