@@ -2965,33 +2965,37 @@ class Component extends DCLogic {
   }
 
   buildKarteText(s, userName, history) {
-    const parts = ['【事前カルテ】' + (userName ? userName + 'さん' : '')];
-    const hist = (history || []).map((h) => '・' + h.title + '（' + h.date + '）スコア' + h.score);
-    if (hist.length) { parts.push('■最近のAI診断'); parts.push(hist.join('\n')); }
-    const cc = (s.karteConcernsSel || []).join('・');
-    if (cc) { parts.push('■髪・頭皮の悩み'); parts.push(cc); }
+    const L = [];
+    const put = (k, v) => { if (v) L.push('【' + k + '】' + v); };
+    put('希望', (s.karteWish || []).join('／'));
     const img = (s.karteImageNote || '').trim();
-    if (img) { parts.push('■なりたいイメージ'); parts.push(img); }
-    const av = (s.karteAvoid || []).join('・');
-    if (av) { parts.push('■避けたいこと'); parts.push(av); }
-    const wishes = (s.karteWish || []).join('・');
-    if (wishes) { parts.push('■今回の希望'); parts.push(wishes); }
-    const meta = [s.kartePurpose, s.karteBudget ? '予算 ' + s.karteBudget : null, s.karteTime ? '滞在 ' + s.karteTime : null].filter(Boolean).join(' ／ ');
-    if (meta) { parts.push('■目的・予算・時間'); parts.push(meta); }
+    put('イメージ', img);
+    put('悩み', (s.karteConcernsSel || []).join('／'));
+    put('避けたい', [...(s.karteAvoid || []), ...(s.karteAvoidExtra || [])].join('／'));
+    const sc = (history || []).map((h) => h.title.replace('診断', '') + h.score).join('／');
+    const days = this.daysSinceLast(history);
+    put('現状', [sc, days ? '前回から' + days + '日' : null].filter(Boolean).join('・'));
+    put('履歴', (s.profHistRows || []).filter((r) => r.v).map((r) => r.k + ' ' + r.v).join('／'));
+    put('注意', [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('／'));
+    put('目的', s.kartePurpose);
     const memo = (s.karteMemo || '').trim();
-    if (memo) { parts.push('■伝えておきたいこと'); parts.push(memo); }
-    const al = [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('・');
-    const th = (s.profHist || []).join('・');
-    if (al || th) { parts.push('■わたしの情報（自動添付）'); parts.push([al ? 'アレルギー・注意: ' + al : null, th ? '施術履歴: ' + th : null].filter(Boolean).join('\n')); }
-    parts.push('■事前の返信');
-    parts.push(s.karteReply || '当日でOK');
-    parts.push('—\nSalonRink｜AIビューティーコンシェルジュ\nhttps://miniapp.line.me/2010387325-N1TlMFzx');
-    return parts.join('\n');
+    put('伝えたいこと', memo);
+    const head = '【事前カルテ】' + (userName ? userName + 'さん' : '');
+    const foot = '事前の返信：' + (s.karteReply || '当日でOK') + '\n—\nSalonRink｜AIビューティーコンシェルジュ\nhttps://miniapp.line.me/2010387325-N1TlMFzx';
+    return [head, L.join('\n'), foot].filter(Boolean).join('\n');
+  }
+
+  daysSinceLast(history) {
+    try {
+      const d = (history || []).map((h) => new Date(h.date)).filter((x) => !isNaN(x)).sort((a, b) => b - a)[0];
+      if (!d) return null;
+      return Math.max(0, Math.round((Date.now() - d.getTime()) / 86400000));
+    } catch (e) { return null; }
   }
 
   componentDidUpdate() {
-    const { avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHist } = this.state;
-    const data = JSON.stringify({ avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHist });
+    const { avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHistRows, profHistExtra, karteAvoidExtra } = this.state;
+    const data = JSON.stringify({ avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHistRows, profHistExtra, karteAvoidExtra });
     if (data !== this._lastSaved) {
       this._lastSaved = data;
       try { localStorage.setItem('salonrink_profile', data); } catch (e) {}
