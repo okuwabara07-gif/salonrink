@@ -2381,12 +2381,14 @@ class Component extends DCLogic {
       onKarteImageNote: (e) => this.setState({ karteImageNote: e.target.value }),
       karteAutoNote: (() => {
         const sc = (history || []).map((h) => h.title.replace('診断', '') + h.score).join('・');
-        return sc ? sc + ' のスコアが自動で添付されます。撮り直しは不要です。' : '診断スコアは記録があれば自動で添付されます。';
+        const d = this.daysSinceLast(history);
+        const tail = d ? 'と、前回から' + d + '日' : '';
+        return sc ? sc + '（診断結果）' + tail + 'が自動で添付されます。' : '診断結果は記録があれば自動で添付されます。';
       })(),
       karteProfSummary: (() => {
         const al = [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('・');
-        const th = (s.profHist || []).join('・');
-        return 'アレルギー・注意：' + (al || '未登録') + '\n過去の施術：' + (th || '未登録');
+        const th = (s.profHistRows || []).filter((r) => r.v).map((r) => r.k + (r.v ? '（' + r.v + '）' : '')).join('・');
+        return [al || 'アレルギー未登録', th || '施術履歴未登録'].join(' ／ ');
       })(),
       goMyInfo: () => this.go('mypage'),
       kartePreviewText: this.buildKarteText(s, userName, history),
@@ -2402,16 +2404,48 @@ class Component extends DCLogic {
       karteSentLabel: s.karteSentAt ? '送信済み' : '未送信',
       karteSentColor: s.karteSentAt ? '#7E8B74' : '#A8705C',
       goKarteSend: () => { this.setState({ karteSeg: 'send' }); this.go('karte'); this.loadPhotos(); },
-      profAllergyChips: ['頭皮がしみやすい', '金属アレルギー', '肌が敏感', '香料が苦手'].map((label) => {
+      profAllergyChips: ['ヘアカラーでしみやすい', '金属アレルギーあり', '肌が敏感・荒れやすい'].map((label) => {
         const sel = (s.profAllergy || []).includes(label);
         return { label, bd: sel ? '#DDB5A8' : '#E3DACB', bg: sel ? '#FBF1ED' : '#fff', color: sel ? '#A8705C' : '#6B655C',
           onToggle: () => this.setState({ profAllergy: sel ? (s.profAllergy || []).filter((x) => x !== label) : [...(s.profAllergy || []), label] }) };
       }),
-      profHistChips: ['カラー', '縮毛矯正', 'ブリーチ', 'パーマ'].map((label) => {
-        const sel = (s.profHist || []).includes(label);
-        return { label, bd: sel ? '#B08654' : '#E3DACB', bg: sel ? 'rgba(176,134,84,.14)' : '#fff', color: sel ? '#8F6A3E' : '#6B655C',
-          onToggle: () => this.setState({ profHist: sel ? (s.profHist || []).filter((x) => x !== label) : [...(s.profHist || []), label] }) };
-      }),
+      profHistRowList: (() => {
+        const base = [
+          { k: 'カラー', ph: '例）2026/5/10（9レベル）' },
+          { k: '縮毛矯正', ph: '例）2025/11/20' },
+          { k: 'ブリーチ', ph: '例）1回あり（2024/8）' },
+          { k: 'パーマ', ph: '例）していない' },
+          { k: 'その他', ph: '例）髪質改善（2026/2）' },
+        ];
+        const extra = (s.profHistExtra || []).map((k) => ({ k, ph: '内容を入力' }));
+        const rows = (s.profHistRows && s.profHistRows.length) ? s.profHistRows : base.map((b) => ({ k: b.k, v: '' }));
+        return [...base, ...extra].map((b, i) => {
+          const cur = rows.find((r) => r.k === b.k) || { k: b.k, v: '' };
+          return { k: b.k, v: cur.v || '', ph: b.ph,
+            onEdit: (e) => {
+              const nv = e.target.value;
+              const next = [...base, ...extra].map((x) => {
+                const old = rows.find((r) => r.k === x.k) || { k: x.k, v: '' };
+                return { k: x.k, v: x.k === b.k ? nv : (old.v || '') };
+              });
+              this.setState({ profHistRows: next });
+            } };
+        });
+      })(),
+      addHistRow: () => {
+        const name = (window.prompt && window.prompt('施術名を入力')) || '';
+        const t = name.trim();
+        if (t) this.setState({ profHistExtra: [...(s.profHistExtra || []), t] });
+      },
+      avoidInputOpen: !!s.avoidInputOpen,
+      avoidDraft: s.avoidDraft || '',
+      onAvoidDraft: (e) => this.setState({ avoidDraft: e.target.value }),
+      addAvoid: () => this.setState({ avoidInputOpen: !s.avoidInputOpen }),
+      commitAvoid: () => {
+        const t = (s.avoidDraft || '').trim();
+        if (!t) { this.setState({ avoidInputOpen: false }); return; }
+        this.setState({ karteAvoidExtra: [...(s.karteAvoidExtra || []), t], avoidDraft: '', avoidInputOpen: false });
+      },
       profAllergyNote: s.profAllergyNote || '',
       onProfAllergyNote: (e) => this.setState({ profAllergyNote: e.target.value }),
       sendKarte: async () => {
