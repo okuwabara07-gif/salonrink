@@ -2411,6 +2411,49 @@ class Component extends DCLogic {
       })(),
       goMyInfo: () => this.go('mypage'),
       kartePreviewText: this.buildKarteText(s, userName, history),
+      ...((() => {
+        const md = s.mycarteData || {};
+        const cnt = md.counts || {};
+        const rec = Array.isArray(md.records) ? md.records : [];
+        const shf = Array.isArray(md.shelf) ? md.shelf : [];
+        const insp = Array.isArray(md.inspirations) ? md.inspirations : [];
+        const fdM = (d) => { try { const t = new Date(d); return (t.getMonth() + 1) + '/' + t.getDate(); } catch (e) { return ''; } };
+        const lv = md.last_visit ? new Date(md.last_visit.datetime) : null;
+        const sv = lv ? Math.max(0, Math.round((Date.now() - lv.getTime()) / 86400000)) : null;
+        const nr = md.next_reservation || null;
+        const nrD = nr ? new Date(nr.datetime) : null;
+        const rL = { full: 'たっぷり', half: '半分', low: '残り少', empty: 'なくなった' };
+        const rC = { full: '#7E8B74', half: '#8C857A', low: '#A8705C', empty: '#A8705C' };
+        return {
+          kirokuCountRecords: cnt.records || 0,
+          kirokuCountVisits: cnt.visits || 0,
+          kirokuCountProducts: cnt.products || 0,
+          kirokuEmpty: rec.length === 0,
+          kirokuSinceVisitLabel: sv == null ? '来店の記録はまだありません' : ('前回の施術から ' + sv + '日目'),
+          kirokuPhasePct: sv == null ? 0 : Math.min(100, Math.round((sv / 90) * 100)),
+          kirokuPhaseNote: sv == null ? '来店が記録されると、色の変化の目安が出ます。' : (sv < 30 ? '施術直後の色が続いています。' : sv < 60 ? '色落ちが進む頃です。' : '根元が気になる頃です。次の来店を検討しましょう。'),
+          kirokuHasNext: !!nr,
+          kirokuNextMonth: nrD ? (nrD.getMonth() + 1) + '月' : '',
+          kirokuNextDay: nrD ? String(nrD.getDate()) : '',
+          kirokuNextTime: nrD ? (String(nrD.getHours()).padStart(2, '0') + ':' + String(nrD.getMinutes()).padStart(2, '0') + '〜') : '',
+          kirokuNextMenu: nr ? (nr.menu || 'ご予約') : '',
+          kirokuShelfEmpty: shf.length === 0,
+          kirokuShelfRows: shf.slice(0, 6).map((it) => ({ id: it.id, name: it.name, remLabel: rL[it.remaining] || '半分', remColor: rC[it.remaining] || '#8C857A' })),
+          kirokuInspCount: insp.length,
+          kirokuInspTiles: insp.slice(0, 3).map((p) => ({ url: p.signed_url })),
+          kirokuFeed: rec.slice(0, 8).map((r) => ({
+            id: r.id,
+            title: r.kind === 'product' ? '製品を登録' : r.kind === 'visit' ? '来店の記録' : 'わたしの髪',
+            meta: fdM(r.observed_on) + (sv != null ? ' ・ 前回から' + sv + '日' : ''),
+            body: r.body || '',
+            tags: (Array.isArray(r.tags) ? r.tags : []).map((t) => ({ label: '#' + t })),
+            url: r.signed_url, hasPhoto: !!r.signed_url,
+            hasComment: !!r.stylist_comment,
+            stylist: (r.stylist_name || '担当美容師') + 'さん',
+            comment: r.stylist_comment || '',
+          })),
+        };
+      })()),
       karteFillPct: (() => {
         let p = 0;
         if ((s.kartePhotos || []).length) p += 20;
