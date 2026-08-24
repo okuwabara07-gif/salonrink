@@ -1260,7 +1260,7 @@
           <input type="file" accept="image/*" capture="environment" onChange="{{ onKartePhoto }}" ref="{{ karteCamRef }}" style="display:none;">
         </div>
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
-          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">髪・頭皮の悩み（タップで選択）</div>
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">気になる悩み（複数選択）</div>
           <div style="display:flex; flex-wrap:wrap; gap:7px;">
             <sc-for list="{{ karteConcernChips }}" as="c" hint-placeholder-count="8">
               <div onClick="{{ c.onToggle }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:8px 13px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
@@ -1278,17 +1278,21 @@
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
           <div style="font-size:10.5px; font-weight:700; color:#A8705C; letter-spacing:.1em; margin-bottom:9px;">絶対に避けたいこと</div>
           <div style="display:flex; flex-wrap:wrap; gap:7px;">
-            <sc-for list="{{ karteAvoidChips }}" as="c" hint-placeholder-count="6">
+            <sc-for list="{{ karteAvoidChips }}" as="c" hint-placeholder-count="4">
               <div onClick="{{ c.onToggle }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:8px 13px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
             </sc-for>
+            <div onClick="{{ addAvoid }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:8px 13px; cursor:pointer; border:1px dashed #DDB5A8; background:#fff; color:#A8705C;">＋ 追加</div>
           </div>
-          <div style="font-size:10px; color:#B0A69B; margin-top:9px; line-height:1.6;">言いにくい条件ほど、文字で先に伝えておくと当日がスムーズです。</div>
+          <sc-if value="{{ avoidInputOpen }}" hint-placeholder-val="{{ false }}">
+            <input value="{{ avoidDraft }}" onChange="{{ onAvoidDraft }}" placeholder="避けたいことを入力" style="width:100%; box-sizing:border-box; background:#FBF7F1; border:1px solid #E4D8C7; border-radius:12px; padding:11px 13px; font-size:12.5px; font-family:inherit; color:#3D342C; margin-top:9px;">
+            <div onClick="{{ commitAvoid }}" style="margin-top:8px; text-align:center; background:#A8705C; color:#fff; border-radius:12px; padding:10px; font-size:12px; font-weight:700; cursor:pointer;">この条件を追加</div>
+          </sc-if>
         </div>
       </sc-if>
 
       <sc-if value="{{ karteStepIs3 }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
-          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">今回の希望（タップで選択）</div>
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">今回の希望</div>
           <div style="display:flex; flex-wrap:wrap; gap:7px;">
             <sc-for list="{{ karteWishes }}" as="w" hint-placeholder-count="6">
               <div onClick="{{ w.onToggle }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:8px 13px; cursor:pointer; border:1px solid {{ w.bd }}; background: {{ w.bg }}; color: {{ w.color }};">{{ w.label }}</div>
