@@ -1532,7 +1532,57 @@
         </div>
       </div>
 
-@@K3@@@@SL@@<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+        <div style="font-size:12px; font-weight:700;">最近の記録</div>
+        <div style="font-size:10.5px; color:#8C857A;">投稿は非公開です</div>
+      </div>
+
+      <sc-if value="{{ kirokuEmpty }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#fff; border:1px dashed #E3DACB; border-radius:16px; padding:26px 18px; text-align:center;">
+          <div style="font-size:13px; font-weight:700; margin-bottom:7px;">まだ記録がありません</div>
+          <div style="font-size:11px; color:#8C857A; line-height:1.9;">写真や気づいたことを残しておくと、<br>来店前のカルテが自動で埋まります。</div>
+        </div>
+      </sc-if>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <sc-for list="{{ kirokuFeed }}" as="f" hint-placeholder-count="0">
+          <div style="border:1px solid #EDE4D8; border-radius:14px; overflow:hidden; background:#fff;">
+            <div style="display:flex; gap:9px; align-items:center; padding:10px 12px;">
+              <div style="width:28px; height:28px; border-radius:50%; background:#F1E7DA; flex:none;"></div>
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:11.5px; font-weight:700;">{{ f.title }}</div>
+                <div style="font-size:9.5px; color:#A08F82;">{{ f.meta }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ f.hasPhoto }}" hint-placeholder-val="{{ false }}">
+              <img src="{{ f.url }}" alt="" style="width:100%; height:180px; object-fit:cover; display:block;">
+            </sc-if>
+            <div style="padding:10px 12px; display:flex; flex-direction:column; gap:7px;">
+              <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <sc-for list="{{ f.tags }}" as="tg" hint-placeholder-count="0">
+                  <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:3px 8px; font-weight:700;">{{ tg.label }}</div>
+                </sc-for>
+              </div>
+              <div style="font-size:11.5px; color:#584F42; line-height:1.8;">{{ f.body }}</div>
+              <sc-if value="{{ f.hasComment }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:9px; align-items:flex-start; background:#FBF7F1; border-radius:10px; padding:9px 11px;">
+                  <div style="width:22px; height:22px; border-radius:50%; background:#EDE0CC; flex:none;"></div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:10px; font-weight:700; color:#8A6A44;">{{ f.stylist }}</div>
+                    <div style="font-size:11px; color:#584F42; line-height:1.7;">{{ f.comment }}</div>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+
+    </div>
+  </div>
+  </sc-if>
+
+  @@SL@@<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
   <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:6px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
     <div onClick="{{ goHome }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navHomeBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navHomeColor }};">ホーム</span></div>
     <div onClick="{{ goKarte }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navKarteBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navKarteColor }};">マイカルテ</span></div>
