@@ -191,6 +191,26 @@
         </div>
       </div>
 
+      <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6); box-shadow:0 8px 22px rgba(43,39,36,.06);">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">来店前のご相談</div>
+          <div style="font-size:10.5px; font-weight:700; color: {{ karteSentColor }};">{{ karteSentLabel }}</div>
+        </div>
+        <div style="height:6px; background:#EFE8DA; border-radius:99px; overflow:hidden; margin-bottom:8px;">
+          <div style="height:100%; width: {{ karteFillPct }}%; background:#B08654; border-radius:99px;"></div>
+        </div>
+        <div style="font-size:11px; color:#8C857A; line-height:1.7; margin-bottom:12px;">カルテの充実度 {{ karteFillPct }}%。診断スコアとわたしの情報は自動で入ります。</div>
+        <div onClick="{{ goKarteSend }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:13px; text-align:center; font-size:13px; font-weight:700; cursor:pointer;" style-hover="background:#403A34;">事前カルテを仕上げる</div>
+      </div>
+
+      <sc-if value="{{ featStoragePlan }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#EDE5D6; border-radius:20px; padding:16px 18px; margin-bottom:14px;">
+        <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:8px;">髪のアルバムを残す</div>
+        <div style="font-size:11.5px; color:#5F584E; line-height:1.9; margin-bottom:12px;">・写真を無期限で保存<br>・年単位の比較ビュー<br>・来店ごとのアルバム共有</div>
+        <div style="background:#1B1815; color:#fff; border-radius:999px; padding:12px; text-align:center; font-size:12.5px; font-weight:700;">プランを見る</div>
+      </div>
+      </sc-if>
+
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:6px 4px; margin-bottom:18px;">
         <sc-for list="{{ diagCircles }}" as="dc" hint-placeholder-count="8">
           <div onClick="{{ dc.onTap }}" style="text-align:center; cursor:pointer;">
@@ -889,10 +909,17 @@
         </div>
       </div>
 
-      <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
-
-
-      <!-- 案1: マガジン帯（文字と写真が完全分離） -->
+      <div style="background:#fff; border-radius:22px; padding:18px; margin-top:14px; box-shadow:0 10px 26px rgba(43,39,36,.06); border:1px solid rgba(227,218,203,.5);">
+        <div style="font-size:12px; font-weight:700; color:#B08654; letter-spacing:.1em; margin-bottom:6px;">わたしの情報</div>
+        <div style="font-size:10.5px; color:#A39B8D; line-height:1.7; margin-bottom:12px;">ここに保存した内容は、毎回の事前カルテに自動で添付されます。</div>
+        <div style="font-size:11.5px; font-weight:700; margin-bottom:8px;">アレルギー・注意事項</div>
+        <div style="display:flex; flex-wrap:wrap; gap:7px; margin-bottom:9px;">
+          <sc-for list="{{ profAllergyChips }}" as="c" hint-placeholder-count="4">
+            <div onClick="{{ c.onToggle }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:7px 12px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
+          </sc-for>
+        </div>
+        <input value="{{ profAllergyNote }}" onChange="{{ onProfAllergyNote }}" placeholder="その他（自由記入）" style="width:100%; box-sizing:border-box; background:#FBF8F2; border:1px solid #E3DACB; border-radius:12px; padding:11px 13px; font-size:12.5px; font-family:inherit; color:#2B2724; margin-bottom:14px;">
+@@MYB@@
       <sc-if value="{{ isCoverBand }}" hint-placeholder-val="{{ true }}">
       <div style="border-radius:22px; overflow:hidden; margin-bottom:14px; background:#FBF8F2; border:1px solid rgba(227,218,203,.6); box-shadow:0 14px 34px rgba(43,39,36,.10);">
         <div style="padding:14px 16px 12px; display:flex; align-items:flex-end; justify-content:space-between; border-bottom:1px solid #E3DACB;">
@@ -2904,9 +2931,34 @@ class Component extends DCLogic {
     this.loadStore();
   }
 
+  buildKarteText(s, userName, history) {
+    const parts = ['【事前カルテ】' + (userName ? userName + 'さん' : '')];
+    const hist = (history || []).map((h) => '・' + h.title + '（' + h.date + '）スコア' + h.score);
+    if (hist.length) { parts.push('■最近のAI診断'); parts.push(hist.join('\n')); }
+    const cc = (s.karteConcernsSel || []).join('・');
+    if (cc) { parts.push('■髪・頭皮の悩み'); parts.push(cc); }
+    const img = (s.karteImageNote || '').trim();
+    if (img) { parts.push('■なりたいイメージ'); parts.push(img); }
+    const av = (s.karteAvoid || []).join('・');
+    if (av) { parts.push('■避けたいこと'); parts.push(av); }
+    const wishes = (s.karteWish || []).join('・');
+    if (wishes) { parts.push('■今回の希望'); parts.push(wishes); }
+    const meta = [s.kartePurpose, s.karteBudget ? '予算 ' + s.karteBudget : null, s.karteTime ? '滞在 ' + s.karteTime : null].filter(Boolean).join(' ／ ');
+    if (meta) { parts.push('■目的・予算・時間'); parts.push(meta); }
+    const memo = (s.karteMemo || '').trim();
+    if (memo) { parts.push('■伝えておきたいこと'); parts.push(memo); }
+    const al = [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('・');
+    const th = (s.profHist || []).join('・');
+    if (al || th) { parts.push('■わたしの情報（自動添付）'); parts.push([al ? 'アレルギー・注意: ' + al : null, th ? '施術履歴: ' + th : null].filter(Boolean).join('\n')); }
+    parts.push('■事前の返信');
+    parts.push(s.karteReply || '当日でOK');
+    parts.push('—\nSalonRink｜AIビューティーコンシェルジュ\nhttps://miniapp.line.me/2010387325-N1TlMFzx');
+    return parts.join('\n');
+  }
+
   componentDidUpdate() {
-    const { avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY } = this.state;
-    const data = JSON.stringify({ avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY });
+    const { avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHist } = this.state;
+    const data = JSON.stringify({ avatar, pName, pBirth, pGender, pConcerns, pStylist, pNotify, subscribed, coverStyle, avatarPosY, karteStep, karteConcernsSel, karteImageNote, karteAvoid, kartePurpose, karteBudget, karteTime, karteReply, karteWish, karteMemo, karteSentAt, profAllergy, profAllergyNote, profHist });
     if (data !== this._lastSaved) {
       this._lastSaved = data;
       try { localStorage.setItem('salonrink_profile', data); } catch (e) {}
