@@ -1477,7 +1477,62 @@
       </div>
       </sc-if>
 
-@@K2@@@@K3@@@@SL@@<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
+          <div style="font-size:12px; font-weight:700;">使っている製品</div>
+          <div onClick="{{ goKarteSend }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">撮って登録</div>
+        </div>
+        <sc-if value="{{ kirokuShelfEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:11px; color:#B0A69B; line-height:1.8;">ボトルを撮るだけで登録できます。減った頃にお知らせします。</div>
+        </sc-if>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <sc-for list="{{ kirokuShelfRows }}" as="it" hint-placeholder-count="2">
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#FBF7F1; border-radius:10px; padding:9px 12px;">
+              <div style="font-size:11.5px; font-weight:600;">{{ it.name }}</div>
+              <div style="font-size:10.5px; font-weight:700; color: {{ it.remColor }};">{{ it.remLabel }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
+          <div style="font-size:12px; font-weight:700;">なりたいイメージの保存箱</div>
+          <div style="font-size:10.5px; color:#8C857A;">{{ kirokuInspCount }}枚</div>
+        </div>
+        <div style="display:flex; gap:7px;">
+          <sc-for list="{{ kirokuInspTiles }}" as="t" hint-placeholder-count="3">
+            <div style="flex:1; height:74px; border-radius:12px; overflow:hidden; background:#F1E7DA;">
+              <img src="{{ t.url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
+            </div>
+          </sc-for>
+          <div onClick="{{ kartePickPhoto }}" style="flex:1; height:74px; border:1px dashed #DCCFBD; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; color:#C2B49F; cursor:pointer;">＋</div>
+        </div>
+        <div style="font-size:10px; color:#B0A69B; margin-top:8px; line-height:1.6;">気になった髪型を保存。来店前は選び直すだけです。</div>
+      </div>
+
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:12px; font-weight:700;">髪のタイムライン</div>
+          <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:4px 9px; font-weight:700;">自分だけに表示</div>
+        </div>
+        <div style="display:flex; gap:16px;">
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="font-size:16px; font-weight:700; color:#8A6A44;">{{ kirokuCountRecords }}</div>
+            <div style="font-size:9.5px; color:#A08F82;">記録</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="font-size:16px; font-weight:700; color:#8A6A44;">{{ kirokuCountVisits }}</div>
+            <div style="font-size:9.5px; color:#A08F82;">来店</div>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center;">
+            <div style="font-size:16px; font-weight:700; color:#8A6A44;">{{ kirokuCountProducts }}</div>
+            <div style="font-size:9.5px; color:#A08F82;">製品</div>
+          </div>
+        </div>
+      </div>
+
+@@K3@@@@SL@@<sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
   <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:6px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
     <div onClick="{{ goHome }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navHomeBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navHomeColor }};">ホーム</span></div>
     <div onClick="{{ goKarte }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navKarteBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navKarteColor }};">マイカルテ</span></div>
