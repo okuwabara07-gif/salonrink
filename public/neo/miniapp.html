@@ -1631,9 +1631,10 @@
 
   <sc-if value="{{ showNav }}" hint-placeholder-val="{{ true }}">
   <div style="position:absolute; bottom:16px; left:16px; right:16px; background:rgba(255,255,255,.96); border-radius:999px; display:flex; align-items:center; padding:6px; box-shadow:0 14px 36px rgba(43,39,36,.16); border:1px solid rgba(227,218,203,.6); backdrop-filter:blur(8px); z-index:10;">
-    <div onClick="{{ goHome }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navHomeBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navHomeColor }};">ホーム</span></div>
-    <div onClick="{{ goKarte }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navKarteBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navKarteColor }};">マイカルテ</span></div>
-    <div onClick="{{ goMyPage }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navMyBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.04em; color: {{ navMyColor }};">設定</span></div>
+    <div onClick="{{ goHome }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navHomeBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.02em; color: {{ navHomeColor }};">ホーム</span></div>
+    <div onClick="{{ goKarte }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navKarteBg }};"><span style="font-size:12px; font-weight:700; line-height:1; letter-spacing:.02em; color: {{ navKarteColor }}; white-space:nowrap;">マイカルテ</span></div>
+    <div onClick="{{ goSalon }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navSalonBg }};"><span style="font-size:11.5px; font-weight:700; line-height:1; letter-spacing:.02em; color: {{ navSalonColor }};">サロン</span></div>
+    <div onClick="{{ goMyPage }}" style="flex:1; height:42px; display:flex; align-items:center; justify-content:center; cursor:pointer; border-radius:999px; background: {{ navMyBg }};"><span style="font-size:11.5px; font-weight:700; line-height:1; letter-spacing:.02em; color: {{ navMyColor }};">設定</span></div>
   </div>
   </sc-if>
 
