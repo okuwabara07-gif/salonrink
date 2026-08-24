@@ -1281,7 +1281,50 @@
         </div>
       </sc-if>
 
-@@S4@@@@NAV@@      </sc-if>
+      <sc-if value="{{ karteStepIs4 }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+            <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em;">わたしの情報から自動で添付</div>
+            <div onClick="{{ goMyInfo }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">編集 ›</div>
+          </div>
+          <div style="font-size:12px; color:#6E6257; line-height:1.8;">{{ karteProfSummary }}</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">送信プレビュー</div>
+          <div style="background:#F1E7DA; border-radius:12px; padding:13px 15px; font-size:11.5px; color:#3D342C; line-height:1.8; white-space:pre-wrap; word-break:break-word;">{{ kartePreviewText }}</div>
+          <div style="font-size:10px; color:#B0A69B; margin-top:8px;">※写真はカルテ本文に含まれません</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">事前の返信</div>
+          <div style="display:flex; gap:8px;">
+            <sc-for list="{{ karteReplyRows }}" as="rr" hint-placeholder-count="2">
+              <div onClick="{{ rr.onSel }}" style="flex:1; text-align:center; border-radius:12px; padding:11px; cursor:pointer; font-size:12px; font-weight:600; background: {{ rr.bg }}; border:1px solid {{ rr.bd }}; color:#3D342C;">{{ rr.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:15px 16px; margin-bottom:14px; border:1px solid #EDE4D8;">
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">送信先</div>
+          <div style="display:flex; align-items:center; gap:10px; border:1.5px solid #A9855C; border-radius:12px; padding:10px 13px;">
+            <div style="flex:1;">
+              <div style="font-size:12.5px; font-weight:700;">LINEの友だちから選ぶ</div>
+              <div style="font-size:10.5px; color:#8B8178;">担当の美容師さん・サロンの公式LINEなど、送信先は次の画面で選択します</div>
+            </div>
+            <div style="width:18px; height:18px; border-radius:99px; background:#A9855C; color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center;">✓</div>
+          </div>
+        </div>
+        <div onClick="{{ sendKarte }}" style="background:#06C755; color:#fff; border-radius:999px; padding:15px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; margin-bottom:10px;" style-hover="background:#05B34C;">LINEで事前カルテを送る</div>
+        <div style="font-size:10px; color:#B0A69B; text-align:center; margin-bottom:14px; line-height:1.6;">送信内容はSalonRiniが管理し、あなたが選んだ相手にのみ共有されます</div>
+      </sc-if>
+
+      <sc-if value="{{ karteNavShow }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; gap:10px; margin-bottom:8px;">
+        <sc-if value="{{ karteBackShow }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ karteBack }}" style="width:88px; text-align:center; border:1px solid #E4D8C7; background:#fff; border-radius:14px; padding:13px; font-size:13px; font-weight:700; color:#6E6257; cursor:pointer;">戻る</div>
+        </sc-if>
+        <div onClick="{{ karteNext }}" style="flex:1; text-align:center; background:#A9855C; color:#fff; border-radius:14px; padding:13px; font-size:13.5px; font-weight:700; cursor:pointer;" style-hover="background:#8A6A44;">{{ karteNextLabel }}</div>
+      </div>
+      </sc-if>
+      </sc-if>
     </div>
   </div>
   </sc-if>
@@ -2266,27 +2309,20 @@ class Component extends DCLogic {
       },
       karteMemo: s.karteMemo || '',
       onKarteMemo: (e) => this.setState({ karteMemo: e.target.value }),
-      sendKarte: async () => {
-        const parts = ['【事前カルテ】' + (userName ? userName + 'さん' : '')];
-        const hist = (history || []).map((h) => '・' + h.title + '（' + h.date + '）スコア' + h.score);
-        if (hist.length) { parts.push('■最近のAI診断'); parts.push(hist.join('\n')); }
-        const wishes = (s.karteWish || []).join('・');
-        if (wishes) { parts.push('■今回の希望'); parts.push(wishes); }
-        const memo = (s.karteMemo || '').trim();
-        if (memo) { parts.push('■伝えておきたいこと'); parts.push(memo); }
-        parts.push('—\nSalonRink｜AIビューティーコンシェルジュ\nhttps://miniapp.line.me/2010387325-N1TlMFzx');
-        const text = parts.join('\n');
-        try {
-          if (window.liff && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
-            const r = await liff.shareTargetPicker([{ type: 'text', text }]);
-            if (r) { track('karte_sent'); this.go('home'); this.showToast('事前カルテをLINEで送信しました'); }
-            else { this.showToast('送信をキャンセルしました'); }
-          } else {
-            this.showToast('カルテ送信はLINEアプリ内でご利用いただけます');
-          }
-        } catch (e) { this.showToast('送信に失敗しました。もう一度お試しください'); }
-      },
-      exCardLabel: this.computeMeishiki(s.pBirth) ? userName + 'さんの結果プレビュー' : '占い結果の例',
+      featStoragePlan: SR_FEATURES.storage_plan,
+      karteStepN: s.karteStep || 1,
+      karteStepIs1: (s.karteStep || 1) === 1,
+      karteStepIs2: s.karteStep === 2,
+      karteStepIs3: s.karteStep === 3,
+      karteStepIs4: s.karteStep === 4,
+      karteStepTitle: ['いまの髪', 'なりたいイメージ', '希望と目的', '確認して送信'][(s.karteStep || 1) - 1],
+      karteStepBars: [1, 2, 3, 4].map((n) => ({ bg: n <= (s.karteStep || 1) ? '#A9855C' : '#EDE4D8' })),
+      karteNavShow: (s.karteStep || 1) < 4,
+      karteBackShow: (s.karteStep || 1) > 1,
+      karteNextLabel: (s.karteStep || 1) === 3 ? '確認へ' : '次へ',
+      karteNext: () => this.setState({ karteStep: Math.min(4, (s.karteStep || 1) + 1) }),
+      karteBack: () => this.setState({ karteStep: Math.max(1, (s.karteStep || 1) - 1) }),
+@@JSB@@@@JSC@@@@JSD@@      exCardLabel: this.computeMeishiki(s.pBirth) ? userName + 'さんの結果プレビュー' : '占い結果の例',
       exWho: (() => {
         const m = this.computeMeishiki(s.pBirth);
         const z = this.computeZodiac(s.pBirth);
