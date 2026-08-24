@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<!-- build 0824-B -->
+<!-- build 0824-C -->
 <!-- Microsoft Clarity -->
 <script type="text/javascript">(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","x67u9pxyd3");</script>
 <!-- Google tag (gtag.js) -->
@@ -919,7 +919,18 @@
           </sc-for>
         </div>
         <input value="{{ profAllergyNote }}" onChange="{{ onProfAllergyNote }}" placeholder="その他（自由記入）" style="width:100%; box-sizing:border-box; background:#FBF8F2; border:1px solid #E3DACB; border-radius:12px; padding:11px 13px; font-size:12.5px; font-family:inherit; color:#2B2724; margin-bottom:14px;">
-@@MYB@@
+        <div style="font-size:11.5px; font-weight:700; margin-bottom:8px;">過去の施術履歴</div>
+        <div style="display:flex; flex-wrap:wrap; gap:7px;">
+          <sc-for list="{{ profHistChips }}" as="c" hint-placeholder-count="4">
+            <div onClick="{{ c.onToggle }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:7px 12px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
+
+
+      <!-- 案1: マガジン帯（文字と写真が完全分離） -->
       <sc-if value="{{ isCoverBand }}" hint-placeholder-val="{{ true }}">
       <div style="border-radius:22px; overflow:hidden; margin-bottom:14px; background:#FBF8F2; border:1px solid rgba(227,218,203,.6); box-shadow:0 14px 34px rgba(43,39,36,.10);">
         <div style="padding:14px 16px 12px; display:flex; align-items:flex-end; justify-content:space-between; border-bottom:1px solid #E3DACB;">
