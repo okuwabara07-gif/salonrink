@@ -271,7 +271,7 @@
       <sc-if value="{{ homeNoticeShow }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
-          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">お知らせ</div>
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">サロンからのお知らせ</div>
           <div style="font-size:10.5px; color:#A8705C; font-weight:700;">{{ homeNoticeCount }}件</div>
         </div>
         <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:11px;">
@@ -1027,6 +1027,22 @@
           </sc-for>
         </div>
         <div onClick="{{ addHistRow }}" style="margin-top:9px; text-align:center; border:1px dashed #DED5C5; border-radius:12px; padding:10px; font-size:11.5px; font-weight:700; color:#8F6A3E; cursor:pointer;">施術を追加する</div>
+      </div>
+
+      <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
+        <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:12px;">その他の設定</div>
+        <div onClick="{{ showWip }}" style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid #F0EAE0; cursor:pointer;">
+          <div style="font-size:12.5px;">通知（来店目安・製品の残量）</div>
+          <div style="color:#C2B49F; font-size:15px;">›</div>
+        </div>
+        <div onClick="{{ showWip }}" style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid #F0EAE0; cursor:pointer;">
+          <div style="font-size:12.5px;">共有できる美容師</div>
+          <div style="color:#C2B49F; font-size:15px;">›</div>
+        </div>
+        <div onClick="{{ showWip }}" style="display:flex; justify-content:space-between; align-items:center; padding:11px 0; cursor:pointer;">
+          <div style="font-size:12.5px;">写真の保存とプライバシー</div>
+          <div style="color:#C2B49F; font-size:15px;">›</div>
+        </div>
       </div>
 
       <sc-if value="{{ hasAvatar }}" hint-placeholder-val="{{ false }}">
