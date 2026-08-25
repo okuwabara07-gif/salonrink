@@ -364,7 +364,17 @@
       <div style="font-size:11px; color:#A39B8D; line-height:1.7; margin-top:14px;">撮影した写真は診断のためだけに使用されます。ご自身で共有しない限り、他の人に見られることはありません。</div>
     </div>
     <div style="padding:16px 24px 26px;">
-      <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
+      <sc-if value="{{ diagLimitShow }}" hint-placeholder-val="{{ false }}">
+        <div style="background:#fff; border:1px solid #E4D8C7; border-radius:18px; padding:18px; margin-bottom:14px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:16px; font-weight:600; margin-bottom:8px;">{{ diagLimitTitle }}</div>
+          <div style="font-size:12px; color:#6B655C; line-height:1.9; margin-bottom:10px;">{{ diagLimitBody }}</div>
+          <div style="font-size:11.5px; color:#8A6A44; background:#F1E7DA; border-radius:12px; padding:11px 13px; line-height:1.8; margin-bottom:13px;">{{ diagLimitNote }}</div>
+          <div onClick="{{ goPremiumMonth }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:14px; text-align:center; font-size:13.5px; font-weight:700; cursor:pointer; margin-bottom:9px;">{{ payBusyLabel }}</div>
+          <div onClick="{{ goPremiumYear }}" style="border:1px solid #E4D8C7; border-radius:999px; padding:12px; text-align:center; font-size:12px; font-weight:700; color:#8A6A44; cursor:pointer; margin-bottom:9px;">年額なら¥3,980（2か月分お得）</div>
+          <div onClick="{{ diagLimitClose }}" style="text-align:center; font-size:11.5px; color:#A39B8D; cursor:pointer; padding:4px;">あとで</div>
+        </div>
+        </sc-if>
+        <div onClick="{{ startCamera }}" style="background:#2B2724; color:#fff; border-radius:999px; padding:16px; text-align:center; font-size:15px; font-weight:700; cursor:pointer; letter-spacing:.04em;" style-hover="background:#403A34;">カメラで診断をはじめる</div>
     </div>
   </div>
   </sc-if>
@@ -2802,6 +2812,21 @@ class Component extends DCLogic {
       isProfile: s.screen === 'profile',
       isHome: s.screen === 'home',
       isIntro: s.screen === 'intro',
+      ...((() => {
+        const dl = s.diagLimit || null;
+        const nx = new Date(); nx.setMonth(nx.getMonth() + 1); nx.setDate(1);
+        return {
+          diagLimitShow: !!dl,
+          diagLimitTitle: '今月の診断を使い切りました',
+          diagLimitBody: '無料プランは月' + ((dl && dl.limit) || 2) + '回まで診断できます。'
+            + (nx.getMonth() + 1) + '月1日にまたご利用いただけます。',
+          diagLimitNote: 'プレミアムなら月5回まで診断でき、写真も50枚まで期限なしで保存できます。',
+          goPremiumMonth: () => this.openCheckout('premium_month'),
+          goPremiumYear: () => this.openCheckout('premium_year'),
+          diagLimitClose: () => this.setState({ diagLimit: null }),
+          payBusyLabel: s.payBusy ? '準備中…' : 'プレミアムにする（月¥480）',
+        };
+      })()),
       isHairDiag: s.diag === 'hair',
       notHairDiag: s.diag !== 'hair',
       isAnalyzing: s.screen === 'analyzing',
@@ -3722,9 +3747,16 @@ class Component extends DCLogic {
               const data = await res.data;
               if (data && data.result) {
                 window.__lastDiagId = data.id || data.share_code || null;
-                this.setState({ diagResult: data.result, diagResultId: data.id || data.share_code || null, screen: 'result', diagCount: this.state.diagCount + 1 });
+                this.setState({ diagResult: data.result, diagResultId: data.id || data.share_code || null, screen: 'result', diagLimit: null, diagCount: this.state.diagCount + 1 });
               } else { this.showToast(data?.message || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); }
-            } else { this.showToast('診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); }
+            } else if (res.status === 402 && res.data) {
+              // 今月の回数を使い切った。理由と次の手を必ず出す（「失敗しました」で終わらせない）
+              track('diag_limit_hit');
+              this.setState({ screen: 'intro', diagLimit: { used: res.data.used, limit: res.data.limit } });
+            } else if (res.status === 0) {
+              this.showToast('通信できませんでした。電波の良い場所でお試しください');
+              this.setState({ screen: 'intro' });
+            } else { this.showToast((res.data && res.data.message) || '診断に失敗しました。もう一度お試しください'); this.setState({ screen: 'intro' }); }
           }, 2700);
         };
         reader.readAsDataURL(f);
