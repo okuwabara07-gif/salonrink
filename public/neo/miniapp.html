@@ -1856,7 +1856,7 @@ const hair_diagnose=(dataUrl)=>{
   const sid=window.SESSION_ID, uid=window.LINE_UID||null;
   const payload={image:dataUrl,line_user_id:uid||undefined,session_id:sid,consent_stats:true,consent_photo:false};
   console.log('[hair-diagnose POST]',{sid,uid,payload});
-  return fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+  return fetch('https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)})).catch(()=>({status:0,data:null}));
 };
 const photo_list=(uid)=>fetch(API+'/photo-list',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid})}).then(r=>r.json()).catch(()=>null);
 const photo_upload=(uid,dataUrl,kind)=>fetch(API+'/photo-upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid,image:dataUrl,kind:kind||undefined})}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)}));
@@ -1866,7 +1866,7 @@ const photo_diagnose=(kind,dataUrl,surveyAns)=>{
   const sid=window.SESSION_ID, uid=window.LINE_UID||null;
   const payload={kind,image:dataUrl,survey_answers:surveyAns||undefined,line_user_id:uid||undefined,session_id:sid,consent_stats:true,consent_photo:false};
   console.log('[photo-diagnose POST]',{sid,uid,payload});
-  return fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(r=>({status:r.status,data:r.ok?r.json():Promise.reject(new Error(r.statusText))}));
+  return fetch(API+'/hair-diagnose',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(payload)}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)})).catch(()=>({status:0,data:null}));
 };
 const deep_advice=(id,q)=>apiCall('/deep-advice',{diagnosis_id:id,line_user_id:window.LINE_UID||null,session_id:window.SESSION_ID,question:q});
 const fortune_status=()=>apiCall('/fortune-gate',{line_user_id:LINE_UID,action:'status'});
@@ -2170,6 +2170,30 @@ class Component extends DCLogic {
       this.showToast('保存できませんでした。時間をおいてお試しください');
     }
     this.setState({ shelfBusy: false });
+  }
+
+  // Stripe Checkout を開く（プレミアム）
+  async openCheckout(kind) {
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    if (this.state.payBusy) return;
+    this.setState({ payBusy: true });
+    try {
+      const r = await fetch(API + '/create-checkout', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ line_user_id: window.LINE_UID, kind }),
+      });
+      const j = await r.json().catch(() => null);
+      if (r.ok && j && j.url) {
+        track('checkout_open', { kind });
+        if (window.liff && liff.openWindow) liff.openWindow({ url: j.url, external: true });
+        else window.location.href = j.url;
+      } else {
+        this.showToast((j && j.message) || 'ただいま手続きを開始できませんでした');
+      }
+    } catch (e) {
+      this.showToast('ただいま手続きを開始できませんでした');
+    }
+    this.setState({ payBusy: false });
   }
 
   // 【返る】美容師の返信をクリップボードから取り込む
