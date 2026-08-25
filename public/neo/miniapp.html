@@ -1341,7 +1341,24 @@
           <div style="background:#F1E7DA; border-radius:12px; padding:11px 14px; font-size:11px; color:#8A6A44; line-height:1.7; margin-bottom:14px;">{{ karteAutoFilledNote }}</div>
         </sc-if>
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
-          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:8px;">今の状態の写真</div>
+          <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+            <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em;">今の状態の写真</div>
+            <sc-if value="{{ karteKirokuHas }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:10px; color:#8B8178;">{{ karteKirokuLabel }}</div>
+            </sc-if>
+          </div>
+          <sc-if value="{{ karteKirokuHas }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px;">
+              <sc-for list="{{ karteKirokuPhotos }}" as="kp" hint-placeholder-count="3">
+                <div onClick="{{ kp.onTap }}" style="position:relative; width:62px; height:62px; border-radius:10px; overflow:hidden; cursor:pointer; border: {{ kp.bd }}; box-sizing:border-box;">
+                  <img src="{{ kp.url }}" alt="" style="width:100%; height:100%; object-fit:cover; display:block;">
+                  <sc-if value="{{ kp.on }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; right:4px; top:4px; width:16px; height:16px; border-radius:50%; background:#A9855C; color:#fff; font-size:9px; display:flex; align-items:center; justify-content:center;">✓</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:9px;">
             <sc-for list="{{ kartePhotoList }}" as="kp" hint-placeholder-count="0">
               <div style="width:72px; height:72px; border-radius:12px; overflow:hidden; position:relative; background:#F1E7DA;">
@@ -1370,6 +1387,22 @@
 
       <sc-if value="{{ karteStepIs2 }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
+          <sc-if value="{{ karteInspHas }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px;">
+              <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em;">保存箱から選ぶ</div>
+              <div style="font-size:10px; color:#8B8178;">{{ karteInspLabel }}</div>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px;">
+              <sc-for list="{{ karteInspPhotos }}" as="ip" hint-placeholder-count="3">
+                <div onClick="{{ ip.onTap }}" style="position:relative; width:62px; height:62px; border-radius:10px; overflow:hidden; cursor:pointer; border: {{ ip.bd }}; box-sizing:border-box;">
+                  <img src="{{ ip.url }}" alt="" style="width:100%; height:100%; object-fit:cover; display:block;">
+                  <sc-if value="{{ ip.on }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; right:4px; top:4px; width:16px; height:16px; border-radius:50%; background:#A9855C; color:#fff; font-size:9px; display:flex; align-items:center; justify-content:center;">✓</div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
           <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">イメージのポイント</div>
           <textarea value="{{ karteImageNote }}" onChange="{{ onKarteImageNote }}" placeholder="例）鎖骨くらいの長さで、乾かすだけでまとまる感じに。" style="width:100%; box-sizing:border-box; background:#FBF7F1; border:1px solid #E4D8C7; border-radius:12px; padding:12px 14px; font-size:13px; font-family:inherit; color:#3D342C; min-height:84px; resize:none;"></textarea>
         </div>
@@ -3086,6 +3119,43 @@ class Component extends DCLogic {
         return [al || 'アレルギー未登録', th || '施術履歴未登録'].join(' ／ ');
       })(),
       goMyInfo: () => this.go('mypage'),
+      ...((() => {
+        const md = s.mycarteData || {};
+        const recs = Array.isArray(md.records) ? md.records : [];
+        const insp = Array.isArray(md.inspirations) ? md.inspirations : [];
+        const pickedK = s.karteFromKiroku || [];
+        const pickedI = s.karteFromInsp || [];
+        // Step1: きろくに溜まった写真から選ぶ（撮り直さない）
+        const kPhotos = recs.filter((r) => r.signed_url).slice(0, 6).map((r) => {
+          const on = pickedK.includes(r.id);
+          return {
+            url: r.signed_url, on,
+            bd: on ? '2px solid #A9855C' : '1px solid #E4D8C7',
+            onTap: () => this.setState({
+              karteFromKiroku: on ? pickedK.filter((x) => x !== r.id) : [...pickedK, r.id],
+            }),
+          };
+        });
+        // Step2: なりたいイメージの保存箱から選ぶ
+        const iPhotos = insp.filter((p) => p.signed_url).slice(0, 12).map((p) => {
+          const on = pickedI.includes(p.id);
+          return {
+            url: p.signed_url, on,
+            bd: on ? '2px solid #A9855C' : '1px solid #E4D8C7',
+            onTap: () => this.setState({
+              karteFromInsp: on ? pickedI.filter((x) => x !== p.id) : [...pickedI, p.id],
+            }),
+          };
+        });
+        return {
+          karteKirokuPhotos: kPhotos,
+          karteKirokuHas: kPhotos.length > 0,
+          karteKirokuLabel: 'きろくから' + kPhotos.length + '枚',
+          karteInspPhotos: iPhotos,
+          karteInspHas: iPhotos.length > 0,
+          karteInspLabel: insp.length + '枚保存中',
+        };
+      })()),
       kartePreviewText: this.buildKarteText(this._karteCtx || s, userName, history),
       ...((() => {
         const md = s.mycarteData || {};
