@@ -1519,19 +1519,31 @@
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
           <div style="font-size:12px; font-weight:700;">使っている製品</div>
-          <div onClick="{{ goKarteSend }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">撮って登録</div>
+          <div onClick="{{ shelfToggleForm }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">＋ 登録する</div>
         </div>
         <sc-if value="{{ kirokuShelfEmpty }}" hint-placeholder-val="{{ true }}">
           <div style="font-size:11px; color:#B0A69B; line-height:1.8;">ボトルを撮るだけで登録できます。減った頃にお知らせします。</div>
         </sc-if>
         <div style="display:flex; flex-direction:column; gap:6px;">
           <sc-for list="{{ kirokuShelfRows }}" as="it" hint-placeholder-count="2">
-            <div style="display:flex; justify-content:space-between; align-items:center; background:#FBF7F1; border-radius:10px; padding:9px 12px;">
-              <div style="font-size:11.5px; font-weight:600;">{{ it.name }}</div>
-              <div style="font-size:10.5px; font-weight:700; color: {{ it.remColor }};">{{ it.remLabel }}</div>
+            <div style="display:flex; align-items:center; gap:10px; background:#FBF7F1; border-radius:10px; padding:9px 12px;">
+              <div style="flex:1; min-width:0; font-size:11.5px; font-weight:600;">{{ it.name }}</div>
+              <div onClick="{{ it.onCycle }}" style="font-size:10.5px; font-weight:700; color: {{ it.remColor }}; cursor:pointer; padding:2px 8px; border:1px solid #E8DFD0; border-radius:99px; background:#fff;">{{ it.remLabel }}</div>
+              <div onClick="{{ it.onDelete }}" style="font-size:13px; color:#C2B49F; cursor:pointer; padding:0 2px;">×</div>
             </div>
           </sc-for>
         </div>
+        <sc-if value="{{ shelfFormOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:10px; border-top:1px solid #F0EAE0; padding-top:11px;">
+            <input value="{{ shelfDraftName }}" onChange="{{ onShelfDraftName }}" placeholder="製品名（例：補修シャンプー）" style="width:100%; box-sizing:border-box; background:#FBF7F1; border:1px solid #E4D8C7; border-radius:10px; padding:10px 12px; font-size:12px; font-family:inherit; color:#3D342C; margin-bottom:9px;">
+            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+              <sc-for list="{{ shelfRemainChips }}" as="rc" hint-placeholder-count="4">
+                <div onClick="{{ rc.onSel }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:6px 11px; cursor:pointer; border:1px solid {{ rc.bd }}; background: {{ rc.bg }}; color: {{ rc.color }};">{{ rc.label }}</div>
+              </sc-for>
+            </div>
+            <div onClick="{{ shelfSubmit }}" style="background:#A9855C; color:#fff; border-radius:10px; padding:10px; text-align:center; font-size:12px; font-weight:700; cursor:pointer;">この製品を登録</div>
+          </div>
+        </sc-if>
       </div>
 
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
