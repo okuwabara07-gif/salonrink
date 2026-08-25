@@ -1597,6 +1597,25 @@
       <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>
       <div style="font-size:11.5px; color:#8C857A; line-height:1.7; margin-bottom:16px;">ためた記録が、そのまま来店前のカルテになります。</div>
 
+      <sc-if value="{{ fuAsk }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#F1E7DA; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="font-size:12.5px; font-weight:700; color:#8A6A44; margin-bottom:6px;">色落ちどうですか？</div>
+        <div style="font-size:11px; color:#8A6A44; line-height:1.8; margin-bottom:11px;">{{ fuAskNote }}お答えいただくと、次回のカルテの「前回の仕上がり」になります。</div>
+        <div style="display:flex; flex-direction:column; gap:7px;">
+          <sc-for list="{{ fuChips }}" as="fc" hint-placeholder-count="3">
+            <div onClick="{{ fc.onSel }}" style="background:#fff; border:1px solid #E4D8C7; border-radius:12px; padding:11px 13px; font-size:12px; font-weight:700; color:#584F42; text-align:center; cursor:pointer;">{{ fc.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ fuHasLast }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:13px 16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:11.5px; color:#584F42;">{{ fuLastText }}</div>
+        <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:3px 9px; font-weight:700;">前回の仕上がり</div>
+      </div>
+      </sc-if>
+
       <sc-if value="{{ kirokuHasScore }}" hint-placeholder-val="{{ true }}">
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
@@ -3123,7 +3142,8 @@ class Component extends DCLogic {
         const effMemo = memoTouched ? s.karteMemo : latestBody;
         const shelfCtx = shf.map((it) => ({ name: it.name, remLabel: rL[it.remaining] || '半分' }));
         // 送信・プレビュー用の合成文脈を保持(sendKarte から参照)
-        this._karteCtx = { ...s, karteConcernsSel: effConcerns, karteMemo: effMemo, _shelf: shelfCtx };
+        const fuL = (md.followup_last && md.followup_last.answer_label) ? md.followup_last.answer_label : '';
+        this._karteCtx = { ...s, karteConcernsSel: effConcerns, karteMemo: effMemo, _shelf: shelfCtx, _fuLast: fuL };
         const autoCount = (touched ? 0 : auto.length) + (memoTouched || !latestBody ? 0 : 1) + shelfCtx.length;
         return {
           _effConcerns: effConcerns,
