@@ -254,6 +254,26 @@
         <div style="font-size:10.5px; color:#8C857A; line-height:1.7;">{{ kirokuStoreNote }}</div>
       </div>
 
+      <sc-if value="{{ homeNoticeShow }}" hint-placeholder-val="{{ false }}">
+      <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">お知らせ</div>
+          <div style="font-size:10.5px; color:#A8705C; font-weight:700;">{{ homeNoticeCount }}件</div>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:11px;">
+          <sc-for list="{{ homeNoticeRows }}" as="nt" hint-placeholder-count="1">
+            <div style="display:flex; align-items:center; gap:10px; background:#FBF7F1; border-radius:12px; padding:10px 12px;">
+              <div style="flex:1; min-width:0;">
+                <div style="font-size:12px; font-weight:700;">{{ nt.name }}</div>
+                <div style="font-size:10.5px; color:#8C857A;">{{ nt.state }}です</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div onClick="{{ goStoreFromNotice }}" style="border:1px solid #E4D8C7; border-radius:999px; padding:11px; text-align:center; font-size:12px; font-weight:700; color:#8A6A44; cursor:pointer;">同じものを見る</div>
+      </div>
+      </sc-if>
+
       <sc-if value="{{ featStoragePlan }}" hint-placeholder-val="{{ false }}">
       <div style="background:#EDE5D6; border-radius:20px; padding:16px 18px; margin-bottom:14px;">
         <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:8px;">髪のアルバムを残す</div>
@@ -3079,6 +3099,19 @@ class Component extends DCLogic {
           kirokuNextTime: nrD ? (String(nrD.getHours()).padStart(2, '0') + ':' + String(nrD.getMinutes()).padStart(2, '0') + '〜') : '',
           kirokuNextMenu: nr ? (nr.menu || 'ご予約') : '',
           kirokuShelfEmpty: shf.length === 0,
+          ...((() => {
+            // ホームのお知らせ: 残量が少ない製品を拾う（サロン側の入力なしで成立する唯一のお知らせ）
+            const low = shf.filter((it) => it.remaining === 'low' || it.remaining === 'empty');
+            return {
+              homeNoticeShow: low.length > 0,
+              homeNoticeCount: String(low.length),
+              homeNoticeRows: low.slice(0, 3).map((it) => ({
+                name: it.name,
+                state: it.remaining === 'empty' ? 'なくなりそう' : '残り少なめ',
+              })),
+              goStoreFromNotice: () => this.go('store'),
+            };
+          })()),
           kirokuShelfRows: shf.slice(0, 8).map((it) => {
             const order = ['full', 'half', 'low', 'empty'];
             const cur = order.indexOf(it.remaining) >= 0 ? it.remaining : 'half';
