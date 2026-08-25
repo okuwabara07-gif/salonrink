@@ -1808,7 +1808,10 @@
             </sc-for>
           </div>
         </sc-if>
-        <div style="height:4px;"></div>
+        <div style="display:flex; gap:10px; padding:4px 16px 14px;">
+          <div onClick="{{ recPhotoQuick }}" style="flex:1; border:1px solid #E4D8C7; background:#fff; border-radius:999px; padding:11px; text-align:center; font-size:12px; font-weight:600; color:#584F42; cursor:pointer;">写真を記録する</div>
+          <div onClick="{{ shelfToggleForm }}" style="flex:1; border:1px solid #E4D8C7; background:#fff; border-radius:999px; padding:11px; text-align:center; font-size:12px; font-weight:600; color:#584F42; cursor:pointer;">製品を登録</div>
+        </div>
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:4px;">
@@ -1906,6 +1909,8 @@
         </sc-for>
       </div>
       </sc-if>
+
+      <div style="font-size:10.5px; color:#B0A69B; text-align:center; line-height:1.8; margin-top:14px;">記録は非公開です。来店前にまとめて美容師に共有できます。</div>
 
     </div>
   </div>
@@ -3222,7 +3227,7 @@ class Component extends DCLogic {
           karteKirokuLabel: 'きろくから' + kPhotos.length + '枚',
           karteInspPhotos: iPhotos,
           karteInspHas: iPhotos.length > 0,
-          karteInspLabel: insp.length + '枚保存中',
+          karteInspLabel: insp.length + '枚保存中' + (pickedI.length ? ' ／ ' + pickedI.length + '枚選択' : ''),
         };
       })()),
       kartePreviewText: this.buildKarteText(this._karteCtx || s, userName, history),
@@ -3389,6 +3394,10 @@ class Component extends DCLogic {
             onRemove: () => this.setState({ recDraftTags: (s.recDraftTags || []).filter((x) => x !== t) }),
           })),
           recPickPhoto: () => { const r = this._recRef; if (r && r.current) r.current.click(); },
+          recPhotoQuick: () => {
+            this.setState({ recFormOpen: true });
+            setTimeout(() => { const r = this._recRef; if (r && r.current) r.current.click(); }, 120);
+          },
           recFileRef: this._recRef || (this._recRef = React.createRef()),
           onRecFile: (e) => {
             const f = e && e.target && e.target.files && e.target.files[0];
