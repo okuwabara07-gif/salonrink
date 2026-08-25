@@ -2122,6 +2122,57 @@ class Component extends DCLogic {
     this.setState({ shelfBusy: false });
   }
 
+  // 【返る】美容師の返信をクリップボードから取り込む
+  // 個人LINEの内容はAPIで取得できないため、顧客が貼り付ける経路が唯一の手段
+  async pasteStylistReply() {
+    try {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        const t = await navigator.clipboard.readText();
+        if (t && t.trim()) {
+          this.setState({ replyDraft: t.trim().slice(0, 1000), replyManual: false });
+          this.showToast('貼り付けました。内容を確認して保存してください');
+          return;
+        }
+        this.showToast('クリップボードが空でした');
+        this.setState({ replyManual: true });
+        return;
+      }
+      this.setState({ replyManual: true });
+      this.showToast('入力欄に長押しで貼り付けてください');
+    } catch (e) {
+      // 権限拒否やWebView非対応。手入力に切り替える
+      this.setState({ replyManual: true });
+      this.showToast('入力欄に長押しで貼り付けてください');
+    }
+  }
+
+  async submitStylistReply() {
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    if (this.state.replyBusy) return;
+    const c = (this.state.replyDraft || '').trim();
+    if (!c) { this.showToast('返信の内容を貼り付けてください'); return; }
+    this.setState({ replyBusy: true });
+    try {
+      const r = await save_record({
+        line_user_id: window.LINE_UID,
+        action: 'stylist_reply_create',
+        comment: c,
+        stylist_name: (this.state.replyStylist || '').trim() || null,
+      });
+      if (r.status === 200 && r.data && r.data.ok) {
+        track('stylist_reply_saved');
+        await this.loadMycarte(true);
+        this.setState({ replyFormOpen: false, replyDraft: '', replyStylist: '', replyManual: false });
+        this.showToast('美容師さんの返信をきろくに残しました');
+      } else {
+        this.showToast('保存できませんでした。時間をおいてお試しください');
+      }
+    } catch (e) {
+      this.showToast('保存できませんでした。時間をおいてお試しください');
+    }
+    this.setState({ replyBusy: false });
+  }
+
   // きろくの投稿。写真がある場合は先に photo-upload して path を渡す
   async submitRecord() {
     if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
@@ -2955,6 +3006,17 @@ class Component extends DCLogic {
           kirokuCountVisits: cnt.visits || 0,
           kirokuCountProducts: cnt.products || 0,
           kirokuEmpty: rec.length === 0,
+          replyFormOpen: !!s.replyFormOpen,
+          replyToggleForm: () => this.setState({ replyFormOpen: !s.replyFormOpen, replyDraft: '', replyStylist: '', replyManual: false }),
+          replyDraft: s.replyDraft || '',
+          onReplyDraft: (e) => this.setState({ replyDraft: e.target.value }),
+          replyStylist: s.replyStylist || '',
+          onReplyStylist: (e) => this.setState({ replyStylist: e.target.value }),
+          replyPaste: () => this.pasteStylistReply(),
+          replyHasDraft: !!(s.replyDraft || '').trim(),
+          replyShowManual: !!s.replyManual || !!(s.replyDraft || '').trim(),
+          replySubmit: () => this.submitStylistReply(),
+          replySubmitLabel: s.replyBusy ? '保存中…' : 'きろくに残す',
           recFormOpen: !!s.recFormOpen,
           recToggleForm: () => this.setState({ recFormOpen: !s.recFormOpen, recDraftBody: '', recDraftTags: [], recDraftFile: null, recDraftPreview: null, recTagInput: '' }),
           recDraftBody: s.recDraftBody || '',
@@ -3039,7 +3101,7 @@ class Component extends DCLogic {
           kirokuInspTiles: insp.slice(0, 3).map((p) => ({ url: p.signed_url })),
           kirokuFeed: rec.slice(0, 8).map((r) => ({
             id: r.id,
-            title: r.kind === 'product' ? '製品を登録' : r.kind === 'visit' ? '来店の記録' : 'わたしの髪',
+            title: r.kind === 'stylist_reply' ? '美容師さんからの返信' : r.kind === 'product' ? '製品を登録' : r.kind === 'visit' ? '来店の記録' : 'わたしの髪',
             meta: fdM(r.observed_on) + (sv != null ? ' ・ 前回から' + sv + '日' : ''),
             body: r.body || '',
             tags: (Array.isArray(r.tags) ? r.tags : []).map((t) => ({ label: '#' + t })),
