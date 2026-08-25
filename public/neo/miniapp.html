@@ -1423,7 +1423,8 @@
           <textarea value="{{ karteImageNote }}" onChange="{{ onKarteImageNote }}" placeholder="例）鎖骨くらいの長さで、乾かすだけでまとまる感じに。" style="width:100%; box-sizing:border-box; background:#FBF7F1; border:1px solid #E4D8C7; border-radius:12px; padding:12px 14px; font-size:13px; font-family:inherit; color:#3D342C; min-height:84px; resize:none;"></textarea>
         </div>
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
-          <div style="font-size:10.5px; font-weight:700; color:#A8705C; letter-spacing:.1em; margin-bottom:9px;">絶対に避けたいこと</div>
+          <div style="font-size:10.5px; font-weight:700; color:#A8705C; letter-spacing:.1em; margin-bottom:4px;">絶対に避けたいこと</div>
+          <div style="font-size:10.5px; color:#B0A69B; line-height:1.7; margin-bottom:9px;">言いにくい条件も、ここで先に伝えられます</div>
           <div style="display:flex; flex-wrap:wrap; gap:7px;">
             <sc-for list="{{ karteAvoidChips }}" as="c" hint-placeholder-count="4">
               <div onClick="{{ c.onToggle }}" style="font-size:11.5px; font-weight:500; border-radius:999px; padding:8px 13px; cursor:pointer; border:1px solid {{ c.bd }}; background: {{ c.bg }}; color: {{ c.color }};">{{ c.label }}</div>
@@ -1478,12 +1479,13 @@
           <div style="font-size:10px; color:#B0A69B; margin-top:8px;">※写真はカルテ本文に含まれません</div>
         </div>
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
-          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">事前の返信</div>
-          <div style="display:flex; gap:8px;">
+          <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">事前返信についで</div>
+          <div style="display:flex; gap:8px; margin-bottom:9px;">
             <sc-for list="{{ karteReplyRows }}" as="rr" hint-placeholder-count="2">
               <div onClick="{{ rr.onSel }}" style="flex:1; text-align:center; border-radius:12px; padding:11px; cursor:pointer; font-size:12px; font-weight:600; background: {{ rr.bg }}; border:1px solid {{ rr.bd }}; color:#3D342C;">{{ rr.label }}</div>
             </sc-for>
           </div>
+          <div style="font-size:10.5px; color:#B0A69B; line-height:1.7;">返信は担当美容師の都合により、当日のご相談になる場合があります</div>
         </div>
         <div style="background:#fff; border-radius:16px; padding:15px 16px; margin-bottom:14px; border:1px solid #EDE4D8;">
           <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:9px;">送信先</div>
