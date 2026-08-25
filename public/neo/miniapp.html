@@ -2778,14 +2778,14 @@ class Component extends DCLogic {
           ...((() => {
             const st = md.storage || {};
             const used = Number(st.used) || 0;
-            const lim = st.limit;
-            const unl = !!st.unlimited;
+            const lim = Number(st.limit) || 0;
+            const unl = !!(st.retention_unlimited != null ? st.retention_unlimited : st.unlimited);
             const dl = st.next_expiry_in_days;
             return {
               kirokuStoreUsed: String(used),
-              kirokuStoreLimit: unl ? '無制限' : String(lim == null ? '–' : lim),
-              kirokuStoreLabel: unl ? (used + '枚を保存中') : (used + ' / ' + (lim == null ? '–' : lim) + '枚'),
-              kirokuStorePct: (unl || !lim) ? 0 : Math.min(100, Math.round((used / lim) * 100)),
+              kirokuStoreLimit: lim ? String(lim) : '–',
+              kirokuStoreLabel: used + ' / ' + (lim ? lim : '–') + '枚',
+              kirokuStorePct: lim ? Math.min(100, Math.round((used / lim) * 100)) : 0,
               kirokuStorePlan: unl ? 'プレミアム（無期限保存）' : '無料プラン（90日保存）',
               kirokuStoreNote: unl
                 ? '写真は期限なく保存されます。'
