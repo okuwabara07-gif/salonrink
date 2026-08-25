@@ -2313,6 +2313,30 @@ class Component extends DCLogic {
     this.setState({ payBusy: false });
   }
 
+  // 【ZIP 14】施術後1週間の質問に1タップで答える
+  async answerFollowup(ans) {
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    if (this.state.fuBusy) return;
+    this.setState({ fuBusy: true });
+    try {
+      const r = await fetch(API + '/visit-followup', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ action: 'answer', line_user_id: window.LINE_UID, answer: ans }),
+      });
+      const j = await r.json().catch(() => null);
+      if (r.ok && j && j.ok) {
+        track('followup_answered', { answer: ans });
+        await this.loadMycarte(true);
+        this.showToast('ありがとうございます。次回のカルテに反映します');
+      } else {
+        this.showToast('保存できませんでした。時間をおいてお試しください');
+      }
+    } catch (e) {
+      this.showToast('保存できませんでした。時間をおいてお試しください');
+    }
+    this.setState({ fuBusy: false });
+  }
+
   // 【返る】美容師の返信をクリップボードから取り込む
   // 個人LINEの内容はAPIで取得できないため、顧客が貼り付ける経路が唯一の手段
   async pasteStylistReply() {
@@ -3293,6 +3317,22 @@ class Component extends DCLogic {
               tlStoryAdd: () => this.setState({ recFormOpen: true }),
             };
           })()),
+          ...((() => {
+            const fp = md.followup_pending || null;
+            const fl = md.followup_last || null;
+            const fd2 = (d) => { try { const t = new Date(d); return (t.getMonth() + 1) + '/' + t.getDate(); } catch (e) { return ''; } };
+            return {
+              fuAsk: !!fp,
+              fuAskNote: fp ? (fd2(fp.visited_on) + ' の施術から一週間がたちました。') : '',
+              fuChips: [['good', '気に入っている'], ['ok', 'ふつう'], ['bad', '気になるところがある']].map(([v, label]) => ({
+                label, onSel: () => this.answerFollowup(v),
+              })),
+              fuBusyLabel: s.fuBusy ? '保存中…' : '',
+              fuHasLast: !!fl,
+              fuLastText: fl ? (fd2(fl.visited_on) + ' の仕上がり：' + (fl.answer_label || '')) : '',
+              _fuLastLabel: fl ? (fl.answer_label || '') : '',
+            };
+          })()),
           kirokuCountRecords: cnt.records || 0,
           kirokuCountVisits: cnt.visits || 0,
           kirokuCountProducts: cnt.products || 0,
@@ -4044,6 +4084,7 @@ class Component extends DCLogic {
     const days = this.daysSinceLast(history);
     put('現状', [sc, days ? '前回から' + days + '日' : null].filter(Boolean).join('・'));
     put('履歴', (s.profHistRows || []).filter((r) => r.v).map((r) => r.k + ' ' + r.v).join('／'));
+    put('前回の仕上がり', s._fuLast || '');
     put('使用中', (s._shelf || []).map((it) => it.name + (it.remLabel ? '（' + it.remLabel + '）' : '')).join('／'));
     put('注意', [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('／'));
     put('目的', s.kartePurpose);
