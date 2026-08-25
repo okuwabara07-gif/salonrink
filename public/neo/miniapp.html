@@ -211,6 +211,20 @@
         <div style="color:#C2B49F; font-size:16px;">›</div>
       </div>
 
+      <sc-if value="{{ homeThumbsShow }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ goKiroku }}" style="display:grid; grid-template-columns:repeat(3,1fr); gap:2px; border-radius:16px; overflow:hidden; margin-bottom:14px; cursor:pointer;">
+        <sc-for list="{{ homeThumbs }}" as="th" hint-placeholder-count="3">
+          <div style="position:relative; aspect-ratio:1; background:#EFE8DA;">
+            <img src="{{ th.url }}" alt="" style="width:100%; height:100%; object-fit:cover; display:block;">
+            <div style="position:absolute; left:5px; bottom:5px; font-size:8px; background:rgba(255,255,255,.88); color:#8A7A5F; border-radius:99px; padding:2px 6px; font-weight:700;">{{ th.label }}</div>
+            <sc-if value="{{ th.hasWarn }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; right:5px; top:5px; font-size:8px; background:rgba(27,24,21,.72); color:#fff; border-radius:99px; padding:2px 6px; font-weight:700;">{{ th.warn }}</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
       <sc-if value="{{ kirokuHasScore }}" hint-placeholder-val="{{ true }}">
       <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
         <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
@@ -3138,6 +3152,30 @@ class Component extends DCLogic {
             this.shelfAction({ action: 'shelf_create', name: nm, remaining: s.shelfDraftRemain || 'half' }, '登録しました');
             this.setState({ shelfFormOpen: false, shelfDraftName: '', shelfDraftRemain: 'half' });
           },
+          ...((() => {
+            // ホームのきろくカード用サムネイル。記録の写真と保存写真を新しい順に3枚
+            const KL = { inspiration: 'イメージ', album: '記録', before: 'before', after: 'after' };
+            const fromRec = rec.filter((r) => r.signed_url).map((r) => ({
+              url: r.signed_url,
+              label: r.kind === 'product' ? '製品' : r.kind === 'visit' ? '来店' : r.kind === 'stylist_reply' ? '返信' : '記録',
+              at: r.created_at, exp: null,
+            }));
+            const fromPh = (Array.isArray(md.photos) ? md.photos : []).filter((p) => p.signed_url).map((p) => ({
+              url: p.signed_url, label: KL[p.kind] || '写真', at: p.created_at, exp: p.expires_at,
+            }));
+            const all = [...fromRec, ...fromPh]
+              .sort((a, b) => new Date(b.at || 0).getTime() - new Date(a.at || 0).getTime())
+              .slice(0, 3)
+              .map((t) => {
+                let warn = '';
+                if (t.exp) {
+                  const d = Math.ceil((new Date(t.exp).getTime() - Date.now()) / 86400000);
+                  if (d >= 0 && d <= 14) warn = 'あと' + d + '日';
+                }
+                return { url: t.url, label: t.label, warn, hasWarn: !!warn };
+              });
+            return { homeThumbs: all, homeThumbsShow: all.length > 0 };
+          })()),
           kirokuInspCount: insp.length,
           inspPick: () => { if (this._inspFile) this._inspFile.click(); },
           onInspFile: (e) => {
