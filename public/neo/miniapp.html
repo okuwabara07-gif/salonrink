@@ -1551,6 +1551,18 @@
       </div>
 
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
+          <div style="font-size:12px; font-weight:700;">保存中の写真</div>
+          <div style="font-size:11px; font-weight:700; color:#8A6A44;">{{ kirokuStoreLabel }}</div>
+        </div>
+        <div style="height:6px; background:#F5F1E8; border:1px solid #E8DFD0; box-sizing:border-box; border-radius:99px; overflow:hidden; margin-bottom:9px;">
+          <div style="height:100%; width: {{ kirokuStorePct }}%; background:#B08654;"></div>
+        </div>
+        <div style="font-size:10.5px; color:#8C857A; margin-bottom:4px;">{{ kirokuStorePlan }}</div>
+        <div style="font-size:10.5px; color:#8C857A; line-height:1.7;">{{ kirokuStoreNote }}</div>
+      </div>
+
+      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <div style="font-size:12px; font-weight:700;">髪のタイムライン</div>
           <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:4px 9px; font-weight:700;">自分だけに表示</div>
@@ -2678,6 +2690,28 @@ class Component extends DCLogic {
                 const l = arr.length ? arr[arr.length - 1] : null;
                 return { name: jpName[k], score: l ? String(l.score) : '–' };
               }),
+            };
+          })()),
+          ...((() => {
+            const st = md.storage || {};
+            const used = Number(st.used) || 0;
+            const lim = st.limit;
+            const unl = !!st.unlimited;
+            const dl = st.next_expiry_in_days;
+            return {
+              kirokuStoreUsed: String(used),
+              kirokuStoreLimit: unl ? '無制限' : String(lim == null ? '–' : lim),
+              kirokuStoreLabel: unl ? (used + '枚を保存中') : (used + ' / ' + (lim == null ? '–' : lim) + '枚'),
+              kirokuStorePct: (unl || !lim) ? 0 : Math.min(100, Math.round((used / lim) * 100)),
+              kirokuStorePlan: unl ? 'プレミアム（無期限保存）' : '無料プラン（90日保存）',
+              kirokuStoreNote: unl
+                ? '写真は期限なく保存されます。'
+                : (dl == null
+                    ? '保存した写真は90日で自動的に削除されます。'
+                    : (dl <= 7
+                        ? 'あと' + dl + '日で最初の写真が削除されます。'
+                        : '次の削除まであと' + dl + '日です。')),
+              kirokuStoreWarn: (!unl && dl != null && dl <= 7),
             };
           })()),
           kirokuCountRecords: cnt.records || 0,
