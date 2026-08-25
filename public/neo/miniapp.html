@@ -1641,8 +1641,11 @@
 
       <sc-if value="{{ kirokuHasNext }}" hint-placeholder-val="{{ false }}">
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="font-size:12px; font-weight:700; margin-bottom:11px;">次回のご予約</div>
-        <div style="display:flex; gap:11px; align-items:center;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
+          <div style="font-size:12px; font-weight:700;">次回のご予約</div>
+          <div onClick="{{ goConsult }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">変更する</div>
+        </div>
+        <div style="display:flex; gap:11px; align-items:center; margin-bottom:11px;">
           <div style="width:52px; height:52px; border-radius:14px; background:#F1E7DA; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0;">
             <div style="font-size:9.5px; color:#8A6A44;">{{ kirokuNextMonth }}</div>
             <div style="font-size:19px; font-weight:700; color:#8A6A44; line-height:1;">{{ kirokuNextDay }}</div>
@@ -1652,16 +1655,20 @@
             <div style="font-size:11px; color:#8C857A;">{{ kirokuNextMenu }}</div>
           </div>
         </div>
+        <div style="background:#FBF7F1; border-radius:10px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:11px; color:#8C857A;">事前カルテ {{ karteSentLabel }}</div>
+          <div onClick="{{ goKarteSend }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">いま送る</div>
+        </div>
       </div>
       </sc-if>
 
       <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
           <div style="font-size:12px; font-weight:700;">使っている製品</div>
-          <div onClick="{{ shelfToggleForm }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">＋ 登録する</div>
+          <div onClick="{{ shelfToggleForm }}" style="font-size:11px; color:#A9855C; font-weight:700; cursor:pointer;">撮って登録</div>
         </div>
         <sc-if value="{{ kirokuShelfEmpty }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:11px; color:#B0A69B; line-height:1.8;">ボトルを撮るだけで登録できます。減った頃にお知らせします。</div>
+          <div style="font-size:11px; color:#B0A69B; line-height:1.8;">ボトルを撮るだけで登録。減った頃にお知らせします</div>
         </sc-if>
         <div style="display:flex; flex-direction:column; gap:6px;">
           <sc-for list="{{ kirokuShelfRows }}" as="it" hint-placeholder-count="2">
