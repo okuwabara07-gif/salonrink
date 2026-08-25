@@ -2754,7 +2754,7 @@ class Component extends DCLogic {
         reader.readAsDataURL(f);
         e.target.value = '';
       },
-      karteMemo: s.karteMemo || '',
+      karteMemo: (this._karteCtx ? this._karteCtx.karteMemo : s.karteMemo) || '',
       onKarteMemo: (e) => this.setState({ karteMemo: e.target.value }),
       featStoragePlan: SR_FEATURES.storage_plan,
       karteStepN: s.karteStep || 1,
@@ -2769,10 +2769,47 @@ class Component extends DCLogic {
       karteNextLabel: (s.karteStep || 1) === 3 ? '確認へ' : '次へ',
       karteNext: () => this.setState({ karteStep: Math.min(4, (s.karteStep || 1) + 1) }),
       karteBack: () => this.setState({ karteStep: Math.max(1, (s.karteStep || 1) - 1) }),
+      ...((() => {
+        // 「まとまる」: きろくの記録から、カルテの下書きを自動生成する
+        // ユーザーが一度でも触った項目(値が存在する)には介入しない＝上書きしない
+        const md = s.mycarteData || {};
+        const recs = Array.isArray(md.records) ? md.records : [];
+        const shf = Array.isArray(md.shelf) ? md.shelf : [];
+        const rL = { full: 'たっぷり', half: '半分', low: '残り少', empty: 'なくなった' };
+        const LABELS = ['広がりやすい', 'うねり・くせ', 'パサつき・乾燥', 'ぺたんこ', '頭皮のかゆみ', 'ニオイ', '白髪が増えた'];
+        // 直近5件のタグ・本文から悩みチップを推定
+        const hay = recs.slice(0, 5).map((r) => [...(r.tags || []), r.body || ''].join(' ')).join(' ');
+        const KEY = {
+          '広がりやすい': ['広がり', 'ひろがり', 'ボリューム出'],
+          'うねり・くせ': ['うねり', 'くせ', 'クセ'],
+          'パサつき・乾燥': ['パサ', 'ぱさ', '乾燥', 'ダメージ', '毛先'],
+          'ぺたんこ': ['ぺたん', 'ペタン', 'ボリューム不足', 'へたる'],
+          '頭皮のかゆみ': ['かゆ', 'カユ', '頭皮'],
+          'ニオイ': ['におい', 'ニオイ', '匂い', '臭'],
+          '白髪が増えた': ['白髪', 'しらが', '根元', '黄み'],
+        };
+        const auto = LABELS.filter((l) => (KEY[l] || []).some((k) => hay.indexOf(k) >= 0));
+        const touched = Array.isArray(s.karteConcernsSel);
+        const effConcerns = touched ? s.karteConcernsSel : auto;
+        const latestBody = (recs[0] && recs[0].body) ? recs[0].body : '';
+        const memoTouched = typeof s.karteMemo === 'string';
+        const effMemo = memoTouched ? s.karteMemo : latestBody;
+        const shelfCtx = shf.map((it) => ({ name: it.name, remLabel: rL[it.remaining] || '半分' }));
+        // 送信・プレビュー用の合成文脈を保持(sendKarte から参照)
+        this._karteCtx = { ...s, karteConcernsSel: effConcerns, karteMemo: effMemo, _shelf: shelfCtx };
+        const autoCount = (touched ? 0 : auto.length) + (memoTouched || !latestBody ? 0 : 1) + shelfCtx.length;
+        return {
+          _effConcerns: effConcerns,
+          _effMemo: effMemo,
+          karteAutoFilled: autoCount > 0,
+          karteAutoFilledNote: 'きろくから' + autoCount + '項目を反映しました。違うところだけ直してください。',
+        };
+      })()),
       karteConcernChips: ['広がりやすい', 'うねり・くせ', 'パサつき・乾燥', 'ぺたんこ', '頭皮のかゆみ', 'ニオイ', '白髪が増えた'].map((label) => {
-        const sel = (s.karteConcernsSel || []).includes(label);
+        const cur = this._karteCtx ? this._karteCtx.karteConcernsSel : (s.karteConcernsSel || []);
+        const sel = (cur || []).includes(label);
         return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
-          onToggle: () => this.setState({ karteConcernsSel: sel ? (s.karteConcernsSel || []).filter((x) => x !== label) : [...(s.karteConcernsSel || []), label] }) };
+          onToggle: () => { const base = (this._karteCtx && this._karteCtx.karteConcernsSel) || []; this.setState({ karteConcernsSel: sel ? base.filter((x) => x !== label) : [...base, label] }); } };
       }),
       karteAvoidChips: ['赤みを出したくない', '前髪は切らない', '短くしすぎない', '明るくしすぎない'].concat(s.karteAvoidExtra || []).map((label) => {
         const sel = (s.karteAvoid || []).includes(label);
@@ -2802,7 +2839,7 @@ class Component extends DCLogic {
         return [al || 'アレルギー未登録', th || '施術履歴未登録'].join(' ／ ');
       })(),
       goMyInfo: () => this.go('mypage'),
-      kartePreviewText: this.buildKarteText(s, userName, history),
+      kartePreviewText: this.buildKarteText(this._karteCtx || s, userName, history),
       ...((() => {
         const md = s.mycarteData || {};
         const cnt = md.counts || {};
