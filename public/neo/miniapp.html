@@ -1250,6 +1250,9 @@
       </div>
 
       <sc-if value="{{ karteStepIs1 }}" hint-placeholder-val="{{ true }}">
+        <sc-if value="{{ karteAutoFilled }}" hint-placeholder-val="{{ false }}">
+          <div style="background:#F1E7DA; border-radius:12px; padding:11px 14px; font-size:11px; color:#8A6A44; line-height:1.7; margin-bottom:14px;">{{ karteAutoFilledNote }}</div>
+        </sc-if>
         <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; border:1px solid #EDE4D8;">
           <div style="font-size:10.5px; font-weight:700; color:#A9855C; letter-spacing:.1em; margin-bottom:8px;">今の状態の写真</div>
           <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:9px;">
@@ -3005,12 +3008,13 @@ class Component extends DCLogic {
         };
       })()),
       karteFillPct: (() => {
+        const ctx = this._karteCtx || s;
         let p = 0;
         if ((s.kartePhotos || []).length) p += 20;
-        if ((s.karteConcernsSel || []).length) p += 20;
+        if ((ctx.karteConcernsSel || []).length) p += 20;
         if ((s.karteImageNote || '').trim() || (s.karteAvoid || []).length) p += 20;
         if ((s.karteWish || []).length) p += 20;
-        if (s.kartePurpose) p += 20;
+        if (s.kartePurpose || (ctx.karteMemo || '').trim()) p += 20;
         return p;
       })(),
       karteSentLabel: s.karteSentAt ? '送信済み' : '未送信',
@@ -3061,7 +3065,7 @@ class Component extends DCLogic {
       profAllergyNote: s.profAllergyNote || '',
       onProfAllergyNote: (e) => this.setState({ profAllergyNote: e.target.value }),
       sendKarte: async () => {
-        const text = this.buildKarteText(this.state, userName, history);
+        const text = this.buildKarteText(this._karteCtx || this.state, userName, history);
         try {
           if (window.liff && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
             const r = await liff.shareTargetPicker([{ type: 'text', text }]);
@@ -3588,6 +3592,7 @@ class Component extends DCLogic {
     const days = this.daysSinceLast(history);
     put('現状', [sc, days ? '前回から' + days + '日' : null].filter(Boolean).join('・'));
     put('履歴', (s.profHistRows || []).filter((r) => r.v).map((r) => r.k + ' ' + r.v).join('／'));
+    put('使用中', (s._shelf || []).map((it) => it.name + (it.remLabel ? '（' + it.remLabel + '）' : '')).join('／'));
     put('注意', [...(s.profAllergy || []), (s.profAllergyNote || '').trim()].filter(Boolean).join('／'));
     put('目的', s.kartePurpose);
     const memo = (s.karteMemo || '').trim();
