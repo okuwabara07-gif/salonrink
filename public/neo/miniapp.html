@@ -3101,6 +3101,54 @@ class Component extends DCLogic {
               kirokuStoreWarn: (!unl && dl != null && dl <= 7),
             };
           })()),
+          ...((() => {
+            const tab = s.tlTab || 'highlight';
+            const md2 = ph => ph;
+            const fd = (d) => { try { const t = new Date(d); return (t.getMonth() + 1) + '/' + t.getDate(); } catch (e) { return ''; } };
+            const isToday = (d) => { try { return new Date(d).toDateString() === new Date().toDateString(); } catch (e) { return false; } };
+            const kindLabel = (k) => k === 'product' ? '製品' : k === 'visit' ? '来店' : k === 'stylist_reply' ? '返信' : '記録';
+            // ストーリーズ: 記録のある日を新しい順に最大5日
+            const days = [];
+            for (const r of rec) {
+              const d = r.observed_on || r.created_at;
+              const key = String(d).slice(0, 10);
+              if (!days.some((x) => x.key === key)) {
+                days.push({ key, label: isToday(d) ? '今日' : fd(d), url: r.signed_url || null, latest: days.length === 0 });
+              }
+              if (days.length >= 5) break;
+            }
+            const stories = days.map((d) => ({
+              label: d.label,
+              url: d.url,
+              hasUrl: !!d.url,
+              ring: d.latest ? '0 0 0 2px #fff, 0 0 0 3.5px #A9855C' : '0 0 0 2px #fff, 0 0 0 3.5px #DCCFBD',
+              bg: d.latest ? '#F1E7DA' : '#EDE0CC',
+            }));
+            const mkTab = (id, label) => ({
+              label,
+              color: tab === id ? '#A9855C' : '#B0A69B',
+              weight: tab === id ? '700' : '500',
+              bd: tab === id ? '2px solid #A9855C' : '2px solid transparent',
+              onSel: () => this.setState({ tlTab: id }),
+            });
+            const filtered = tab === 'visit' ? rec.filter((r) => r.kind === 'visit') : rec;
+            const gridTiles = filtered.filter((r) => r.signed_url).slice(0, 9).map((r) => ({
+              url: r.signed_url, label: isToday(r.observed_on || r.created_at) ? '今日' : kindLabel(r.kind),
+            }));
+            return {
+              tlTabs: [mkTab('highlight', 'ハイライト'), mkTab('grid', 'グリッド'), mkTab('visit', '来店だけ')],
+              tlStories: stories,
+              tlHasStories: stories.length > 0,
+              tlShowGrid: tab === 'grid' && gridTiles.length > 0,
+              tlShowFeed: tab !== 'grid',
+              tlGridTiles: gridTiles,
+              tlAllLabel: 'すべて見る（' + (cnt.records || 0) + '件）',
+              tlAvatarUrl: (stories[0] && stories[0].url) || '',
+              tlHasAvatar: !!(stories[0] && stories[0].url),
+              tlFeedNote: tab === 'visit' ? '来店の記録だけを表示中' : '写真・製品・来店をまとめて',
+              tlStoryAdd: () => this.setState({ recFormOpen: true }),
+            };
+          })()),
           kirokuCountRecords: cnt.records || 0,
           kirokuCountVisits: cnt.visits || 0,
           kirokuCountProducts: cnt.products || 0,
@@ -3235,7 +3283,7 @@ class Component extends DCLogic {
           inspFileRef: (el) => { this._inspFile = el; },
           inspBusyLabel: s.inspBusy ? '保存中…' : '＋',
           kirokuInspTiles: insp.slice(0, 3).map((p) => ({ url: p.signed_url })),
-          kirokuFeed: rec.slice(0, 8).map((r) => ({
+          kirokuFeed: ((s.tlTab === 'visit') ? rec.filter((r) => r.kind === 'visit') : rec).slice(0, 8).map((r) => ({
             id: r.id,
             title: r.kind === 'stylist_reply' ? '美容師さんからの返信' : r.kind === 'product' ? '製品を登録' : r.kind === 'visit' ? '来店の記録' : 'わたしの髪',
             meta: fdM(r.observed_on) + (sv != null ? ' ・ 前回から' + sv + '日' : ''),
