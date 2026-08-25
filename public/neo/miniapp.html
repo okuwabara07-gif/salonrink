@@ -1794,6 +1794,7 @@
         </div>
       </sc-if>
 
+      <sc-if value="{{ tlShowFeed }}" hint-placeholder-val="{{ true }}">
       <div style="display:flex; flex-direction:column; gap:12px;">
         <sc-for list="{{ kirokuFeed }}" as="f" hint-placeholder-count="0">
           <div style="border:1px solid #EDE4D8; border-radius:14px; overflow:hidden; background:#fff;">
@@ -1827,6 +1828,7 @@
           </div>
         </sc-for>
       </div>
+      </sc-if>
 
     </div>
   </div>
