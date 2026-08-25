@@ -3088,10 +3088,10 @@ class Component extends DCLogic {
         el: React.createElement('img', { src, alt: '状態写真', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' } }),
         onRemove: () => this.setState({ kartePhotos: (s.kartePhotos || []).filter((_, j) => j !== i) })
       })),
-      karteFileRef: (el) => { this._karteFile = el; },
-      karteCamRef: (el) => { this._karteCam = el; },
-      kartePickPhoto: () => this._karteFile && this._karteFile.click(),
-      karteTakePhoto: () => this._karteCam && this._karteCam.click(),
+      karteFileRef: this._karteFileRef || (this._karteFileRef = React.createRef()),
+      karteCamRef: this._karteCamRef || (this._karteCamRef = React.createRef()),
+      kartePickPhoto: () => { const r = this._karteFileRef; if (r && r.current) r.current.click(); },
+      karteTakePhoto: () => { const r = this._karteCamRef; if (r && r.current) r.current.click(); },
       onKartePhoto: (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
@@ -3386,8 +3386,8 @@ class Component extends DCLogic {
             label: '#' + t,
             onRemove: () => this.setState({ recDraftTags: (s.recDraftTags || []).filter((x) => x !== t) }),
           })),
-          recPickPhoto: () => { if (this._recFile) this._recFile.click(); },
-          recFileRef: (el) => { this._recFile = el; },
+          recPickPhoto: () => { const r = this._recRef; if (r && r.current) r.current.click(); },
+          recFileRef: this._recRef || (this._recRef = React.createRef()),
           onRecFile: (e) => {
             const f = e && e.target && e.target.files && e.target.files[0];
             if (f) {
@@ -3478,13 +3478,13 @@ class Component extends DCLogic {
             return { homeThumbs: all, homeThumbsShow: all.length > 0 };
           })()),
           kirokuInspCount: insp.length,
-          inspPick: () => { if (this._inspFile) this._inspFile.click(); },
+          inspPick: () => { const r = this._inspRef; if (r && r.current) r.current.click(); },
           onInspFile: (e) => {
             const f = e && e.target && e.target.files && e.target.files[0];
             if (f) this.uploadInspiration(f);
             if (e && e.target) e.target.value = '';
           },
-          inspFileRef: (el) => { this._inspFile = el; },
+          inspFileRef: this._inspRef || (this._inspRef = React.createRef()),
           inspBusyLabel: s.inspBusy ? '保存中…' : '＋',
           kirokuInspTiles: insp.slice(0, 3).map((p) => ({ url: p.signed_url })),
           kirokuFeed: ((s.tlTab === 'visit') ? rec.filter((r) => r.kind === 'visit') : rec).slice(0, 8).map((r) => ({
