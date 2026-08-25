@@ -3015,7 +3015,19 @@ class Component extends DCLogic {
         if ((s.karteImageNote || '').trim() || (s.karteAvoid || []).length) p += 20;
         if ((s.karteWish || []).length) p += 20;
         if (s.kartePurpose || (ctx.karteMemo || '').trim()) p += 20;
+        this._karteFill = p;
         return p;
+      })(),
+      homeKarteNote: (() => {
+        const ctx = this._karteCtx || s;
+        const md = s.mycarteData || {};
+        const recs = Array.isArray(md.records) ? md.records : [];
+        const shf = Array.isArray(md.shelf) ? md.shelf : [];
+        const n = (Array.isArray(s.karteConcernsSel) ? 0 : (ctx.karteConcernsSel || []).length)
+                + ((typeof s.karteMemo === 'string' || !(recs[0] && recs[0].body)) ? 0 : 1)
+                + shf.length;
+        if (n > 0) return 'きろくから' + n + '項目を反映しました。あとは今回の希望を選ぶだけです。';
+        return 'カルテの充実度 ' + (this._karteFill || 0) + '%。診断スコアとわたしの情報は自動で入ります。';
       })(),
       karteSentLabel: s.karteSentAt ? '送信済み' : '未送信',
       karteSentColor: s.karteSentAt ? '#7E8B74' : '#A8705C',
