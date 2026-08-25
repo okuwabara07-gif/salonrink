@@ -1720,6 +1720,7 @@ const hair_diagnose=(dataUrl)=>{
 };
 const photo_list=(uid)=>fetch(API+'/photo-list',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid})}).then(r=>r.json()).catch(()=>null);
 const photo_upload=(uid,dataUrl,kind)=>fetch(API+'/photo-upload',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid,image:dataUrl,kind:kind||undefined})}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)}));
+const save_record=(body)=>fetch(API+'/save-record',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}).then(async r=>({status:r.status,data:await r.json().catch(()=>null)})).catch(()=>({status:0,data:null}));
 const get_mycarte=(uid)=>fetch(API+'/get-mycarte',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({line_user_id:uid})}).then(r=>r.json()).catch(()=>null);
 const photo_diagnose=(kind,dataUrl,surveyAns)=>{
   const sid=window.SESSION_ID, uid=window.LINE_UID||null;
@@ -2003,12 +2004,32 @@ class Component extends DCLogic {
     this.loadMycarte();
   }
 
-  async loadMycarte() {
-    if (!window.LINE_UID || this.state.mycarteData) return;
+  async loadMycarte(force) {
+    if (!window.LINE_UID) return;
+    if (!force && this.state.mycarteData) return;
     try {
       const j = await get_mycarte(window.LINE_UID);
       if (j && (j.diagnoses || j.ok)) this.setState({ mycarteData: j });
     } catch (e) { /* skip */ }
+  }
+
+  // ケア棚: 登録 / 残量変更 / 削除。書き込み後は必ず force リロードして表示を合わせる
+  async shelfAction(payload, okMsg) {
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    if (this.state.shelfBusy) return;
+    this.setState({ shelfBusy: true });
+    try {
+      const r = await save_record({ line_user_id: window.LINE_UID, ...payload });
+      if (r.status === 200 && r.data && r.data.ok) {
+        await this.loadMycarte(true);
+        if (okMsg) this.showToast(okMsg);
+      } else {
+        this.showToast('保存できませんでした。時間をおいてお試しください');
+      }
+    } catch (e) {
+      this.showToast('保存できませんでした。時間をおいてお試しください');
+    }
+    this.setState({ shelfBusy: false });
   }
 
   uploadAlbumPhoto(file) {
@@ -2727,7 +2748,32 @@ class Component extends DCLogic {
           kirokuNextTime: nrD ? (String(nrD.getHours()).padStart(2, '0') + ':' + String(nrD.getMinutes()).padStart(2, '0') + '〜') : '',
           kirokuNextMenu: nr ? (nr.menu || 'ご予約') : '',
           kirokuShelfEmpty: shf.length === 0,
-          kirokuShelfRows: shf.slice(0, 6).map((it) => ({ id: it.id, name: it.name, remLabel: rL[it.remaining] || '半分', remColor: rC[it.remaining] || '#8C857A' })),
+          kirokuShelfRows: shf.slice(0, 8).map((it) => {
+            const order = ['full', 'half', 'low', 'empty'];
+            const cur = order.indexOf(it.remaining) >= 0 ? it.remaining : 'half';
+            const next = order[(order.indexOf(cur) + 1) % order.length];
+            return {
+              id: it.id, name: it.name,
+              remLabel: rL[cur], remColor: rC[cur],
+              onCycle: () => this.shelfAction({ action: 'shelf_update', id: it.id, remaining: next }, '残量を「' + rL[next] + '」にしました'),
+              onDelete: () => this.shelfAction({ action: 'shelf_delete', id: it.id }, '削除しました'),
+            };
+          }),
+          shelfFormOpen: !!s.shelfFormOpen,
+          shelfDraftName: s.shelfDraftName || '',
+          onShelfDraftName: (e) => this.setState({ shelfDraftName: e.target.value }),
+          shelfToggleForm: () => this.setState({ shelfFormOpen: !s.shelfFormOpen, shelfDraftName: '' }),
+          shelfRemainChips: [['full', 'たっぷり'], ['half', '半分'], ['low', '残り少'], ['empty', 'なくなった']].map(([v, label]) => {
+            const sel = (s.shelfDraftRemain || 'half') === v;
+            return { label, bd: sel ? '#A9855C' : '#E4D8C7', bg: sel ? '#F1E7DA' : '#fff', color: sel ? '#8A6A44' : '#6E6257',
+              onSel: () => this.setState({ shelfDraftRemain: v }) };
+          }),
+          shelfSubmit: () => {
+            const nm = (s.shelfDraftName || '').trim();
+            if (!nm) { this.showToast('製品名を入力してください'); return; }
+            this.shelfAction({ action: 'shelf_create', name: nm, remaining: s.shelfDraftRemain || 'half' }, '登録しました');
+            this.setState({ shelfFormOpen: false, shelfDraftName: '', shelfDraftRemain: 'half' });
+          },
           kirokuInspCount: insp.length,
           kirokuInspTiles: insp.slice(0, 3).map((p) => ({ url: p.signed_url })),
           kirokuFeed: rec.slice(0, 8).map((r) => ({
