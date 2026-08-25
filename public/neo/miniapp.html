@@ -211,6 +211,49 @@
         <div style="color:#C2B49F; font-size:16px;">›</div>
       </div>
 
+      <sc-if value="{{ kirokuHasScore }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">診断スコア</div>
+          <div style="font-size:10px; color:#A39B8D;">{{ kirokuScoreDate }}</div>
+        </div>
+        <div style="display:flex; align-items:flex-end; gap:10px; margin-bottom:12px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:30px; font-weight:700; color:#8A6A44; line-height:1;">{{ kirokuScoreMain }}</div>
+          <div style="font-size:10.5px; color:#8C857A; padding-bottom:3px;">髪質 ／ {{ kirokuScoreDiff }}</div>
+        </div>
+        <div style="display:flex; gap:5px; height:56px; margin-bottom:12px;">
+          <sc-for list="{{ kirokuScoreBars }}" as="hb" hint-placeholder-count="5">
+            <div style="flex:1; display:flex; flex-direction:column; gap:4px; align-items:center;">
+              <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
+                <div style="width:100%; height: {{ hb.h }}; background: {{ hb.bg }}; border-radius:4px 4px 0 0;"></div>
+              </div>
+              <div style="font-size:9px; color:#A08F82;">{{ hb.label }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <sc-for list="{{ kirokuSubScores }}" as="hs" hint-placeholder-count="2">
+            <div style="flex:1; background:#FBF8F2; border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:11px; color:#8C857A;">{{ hs.name }}</div>
+              <div style="font-size:14px; font-weight:700; color:#8A6A44;">{{ hs.score }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <div style="background:#fff; border-radius:20px; padding:16px 18px; margin-bottom:14px; border:1px solid rgba(227,218,203,.6);">
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
+          <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600;">保存中の写真</div>
+          <div style="font-size:11px; font-weight:700; color:#8A6A44;">{{ kirokuStoreLabel }}</div>
+        </div>
+        <div style="height:6px; background:#F5F1E8; border:1px solid #E8DFD0; box-sizing:border-box; border-radius:99px; overflow:hidden; margin-bottom:9px;">
+          <div style="height:100%; width: {{ kirokuStorePct }}%; background:#B08654;"></div>
+        </div>
+        <div style="font-size:10.5px; color:#8C857A; margin-bottom:3px;">{{ kirokuStorePlan }}</div>
+        <div style="font-size:10.5px; color:#8C857A; line-height:1.7;">{{ kirokuStoreNote }}</div>
+      </div>
+
       <sc-if value="{{ featStoragePlan }}" hint-placeholder-val="{{ false }}">
       <div style="background:#EDE5D6; border-radius:20px; padding:16px 18px; margin-bottom:14px;">
         <div style="font-family:'Shippori Mincho',serif; font-size:15px; font-weight:600; margin-bottom:8px;">髪のアルバムを残す</div>
