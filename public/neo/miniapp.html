@@ -2045,6 +2045,46 @@ class Component extends DCLogic {
     this.setState({ shelfBusy: false });
   }
 
+  // きろくの投稿。写真がある場合は先に photo-upload して path を渡す
+  async submitRecord() {
+    if (!window.LINE_UID) { this.showToast('LINEログインが必要です'); return; }
+    if (this.state.recBusy) return;
+    const bodyText = (this.state.recDraftBody || '').trim();
+    const file = this.state.recDraftFile || null;
+    if (!bodyText && !file) { this.showToast('ひとことか写真を入れてください'); return; }
+    this.setState({ recBusy: true });
+    try {
+      let photoPath = null;
+      if (file) {
+        const dataUrl = await this.shrinkImage(file);
+        const up = await photo_upload(window.LINE_UID, dataUrl, 'album');
+        if (up.status === 402) { this.showToast('保存枠の上限に達しました'); this.setState({ recBusy: false }); return; }
+        if (!(up.status === 200 && up.data && up.data.ok)) { this.showToast('写真を保存できませんでした'); this.setState({ recBusy: false }); return; }
+        photoPath = up.data.path || null;
+      }
+      const tags = (this.state.recDraftTags || []).slice(0, 6);
+      const r = await save_record({
+        line_user_id: window.LINE_UID,
+        action: 'record_create',
+        kind: 'record',
+        body: bodyText || null,
+        tags,
+        photo_path: photoPath,
+      });
+      if (r.status === 200 && r.data && r.data.ok) {
+        track('kiroku_record_created');
+        await this.loadMycarte(true);
+        this.setState({ recFormOpen: false, recDraftBody: '', recDraftTags: [], recDraftFile: null, recDraftPreview: null, recTagInput: '' });
+        this.showToast('きろくに追加しました');
+      } else {
+        this.showToast('保存できませんでした。時間をおいてお試しください');
+      }
+    } catch (e) {
+      this.showToast('保存できませんでした。時間をおいてお試しください');
+    }
+    this.setState({ recBusy: false });
+  }
+
   // 画像を長辺1280pxのJPEG dataURL に縮小する共通処理
   shrinkImage(file) {
     return new Promise((resolve, reject) => {
@@ -2801,6 +2841,43 @@ class Component extends DCLogic {
           kirokuCountVisits: cnt.visits || 0,
           kirokuCountProducts: cnt.products || 0,
           kirokuEmpty: rec.length === 0,
+          recFormOpen: !!s.recFormOpen,
+          recToggleForm: () => this.setState({ recFormOpen: !s.recFormOpen, recDraftBody: '', recDraftTags: [], recDraftFile: null, recDraftPreview: null, recTagInput: '' }),
+          recDraftBody: s.recDraftBody || '',
+          onRecDraftBody: (e) => this.setState({ recDraftBody: e.target.value }),
+          recTagInput: s.recTagInput || '',
+          onRecTagInput: (e) => this.setState({ recTagInput: e.target.value }),
+          recAddTag: () => {
+            const t = (s.recTagInput || '').trim().replace(/^#/, '').slice(0, 24);
+            const cur = s.recDraftTags || [];
+            if (!t) return;
+            if (cur.length >= 6) { this.showToast('タグは6つまでです'); return; }
+            if (cur.includes(t)) { this.setState({ recTagInput: '' }); return; }
+            this.setState({ recDraftTags: [...cur, t], recTagInput: '' });
+          },
+          recDraftTagChips: (s.recDraftTags || []).map((t) => ({
+            label: '#' + t,
+            onRemove: () => this.setState({ recDraftTags: (s.recDraftTags || []).filter((x) => x !== t) }),
+          })),
+          recPickPhoto: () => { if (this._recFile) this._recFile.click(); },
+          recFileRef: (el) => { this._recFile = el; },
+          onRecFile: (e) => {
+            const f = e && e.target && e.target.files && e.target.files[0];
+            if (f) {
+              this.setState({ recDraftFile: f });
+              try {
+                const rd = new FileReader();
+                rd.onload = () => this.setState({ recDraftPreview: rd.result });
+                rd.readAsDataURL(f);
+              } catch (err) { /* preview省略 */ }
+            }
+            if (e && e.target) e.target.value = '';
+          },
+          recHasPhoto: !!s.recDraftPreview,
+          recPreviewUrl: s.recDraftPreview || '',
+          recClearPhoto: () => this.setState({ recDraftFile: null, recDraftPreview: null }),
+          recSubmit: () => this.submitRecord(),
+          recSubmitLabel: s.recBusy ? '保存中…' : 'きろくに追加',
           kirokuSinceVisitLabel: sv == null ? '来店の記録はまだありません' : ('前回の施術から ' + sv + '日目'),
           kirokuPhasePct: sv == null ? 0 : Math.min(100, Math.round((sv / 90) * 100)),
           kirokuPhaseNote: sv == null ? '来店が記録されると、色の変化の目安が出ます。' : (sv < 30 ? '施術直後の色が続いています。' : sv < 60 ? '色落ちが進む頃です。' : '根元が気になる頃です。次の来店を検討しましょう。'),
