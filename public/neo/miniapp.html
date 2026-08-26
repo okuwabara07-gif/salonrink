@@ -2863,13 +2863,14 @@ class Component extends DCLogic {
       isAlbum: s.screen === 'album',
       isFortune: SR_FEATURES.fortune && s.screen === 'fortune',
       isMyPage: s.screen === 'mypage',
-      showNav: ['home', 'album', 'fortune', 'mypage', 'store', 'karte', 'kiroku', 'salon'].includes(s.screen),
+      showNav: ['home', 'album', 'fortune', 'mypage', 'store', 'karte', 'kiroku', 'salon', 'sent'].includes(s.screen),
       featStore: SR_FEATURES.store,
       featFortune: SR_FEATURES.fortune,
       isStore: SR_FEATURES.store && s.screen === 'store',
       isKarte: s.screen === 'karte',
       isKiroku: s.screen === 'kiroku',
       isSalon: s.screen === 'salon',
+      isSent: s.screen === 'sent',
       navSalonColor: s.screen === 'salon' ? '#fff' : off,
       navSalonBg: s.screen === 'salon' ? '#B08654' : 'transparent',
       goSalon: () => this.go('salon'),
@@ -3413,6 +3414,17 @@ class Component extends DCLogic {
         if (n > 0) return 'きろくから' + n + '項目を反映しました。あとは今回の希望を選ぶだけです。';
         return 'カルテの充実度 ' + (this._karteFill || 0) + '%。診断スコアとわたしの情報は自動で入ります。';
       })(),
+      sentDest: 'LINEの友だち',
+      sentVisit: (() => {
+        const nr = (s.mycarteData || {}).next_reservation;
+        if (!nr) return '未定';
+        try {
+          const t = new Date(nr.datetime);
+          const w = ['日','月','火','水','木','金','土'][t.getDay()];
+          return (t.getMonth()+1) + '/' + t.getDate() + '（' + w + '）' + String(t.getHours()).padStart(2,'0') + ':' + String(t.getMinutes()).padStart(2,'0');
+        } catch (e) { return '未定'; }
+      })(),
+      goHomeFromSent: () => this.go('home'),
       karteSentLabel: s.karteSentAt ? '送信済み' : '未送信',
       karteSentColor: s.karteSentAt ? '#7E8B74' : '#A8705C',
       goKarteSend: () => { this.setState({ karteSeg: 'send' }); this.go('karte'); this.loadPhotos(); },
@@ -3465,7 +3477,7 @@ class Component extends DCLogic {
         try {
           if (window.liff && liff.isApiAvailable && liff.isApiAvailable('shareTargetPicker')) {
             const r = await liff.shareTargetPicker([{ type: 'text', text }]);
-            if (r) { track('karte_sent'); this.setState({ karteSentAt: Date.now() }); this.go('home'); this.showToast('事前カルテをLINEで送信しました'); }
+            if (r) { track('karte_sent'); this.setState({ karteSentAt: Date.now() }); this.go('sent'); }
             else { this.showToast('送信をキャンセルしました'); }
           } else {
             this.showToast('カルテ送信はLINEアプリ内でご利用いただけます');
