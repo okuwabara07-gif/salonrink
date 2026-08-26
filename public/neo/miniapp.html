@@ -1596,61 +1596,7 @@
   <div data-screen-label="きろく" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="flex:1; overflow-y:auto; padding:20px 16px 120px;">
 
-      <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>
-      <div style="font-size:11.5px; color:#8C857A; line-height:1.7; margin-bottom:16px;">ためた記録が、そのまま来店前のカルテになります。</div>
-
-      <sc-if value="{{ fuAsk }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#F1E7DA; border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="font-size:12.5px; font-weight:700; color:#8A6A44; margin-bottom:6px;">色落ちどうですか？</div>
-        <div style="font-size:11px; color:#8A6A44; line-height:1.8; margin-bottom:11px;">{{ fuAskNote }}お答えいただくと、次回のカルテの「前回の仕上がり」になります。</div>
-        <div style="display:flex; flex-direction:column; gap:7px;">
-          <sc-for list="{{ fuChips }}" as="fc" hint-placeholder-count="3">
-            <div onClick="{{ fc.onSel }}" style="background:#fff; border:1px solid #E4D8C7; border-radius:12px; padding:11px 13px; font-size:12px; font-weight:700; color:#584F42; text-align:center; cursor:pointer;">{{ fc.label }}</div>
-          </sc-for>
-        </div>
-      </div>
-      </sc-if>
-
-      <sc-if value="{{ fuHasLast }}" hint-placeholder-val="{{ false }}">
-      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:13px 16px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="font-size:11.5px; color:#584F42;">{{ fuLastText }}</div>
-        <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:3px 9px; font-weight:700;">前回の仕上がり</div>
-      </div>
-      </sc-if>
-
-      <sc-if value="{{ kirokuHasScore }}" hint-placeholder-val="{{ true }}">
-      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
-          <div style="font-size:12px; font-weight:700;">髪質スコア</div>
-          <div style="font-size:10px; color:#A08F82;">{{ kirokuScoreDate }}</div>
-        </div>
-        <div style="display:flex; align-items:flex-end; gap:10px; margin-bottom:12px;">
-          <div style="font-family:'Shippori Mincho',serif; font-size:34px; font-weight:700; color:#8A6A44; line-height:1;">{{ kirokuScoreMain }}</div>
-          <div style="font-size:10.5px; color:#8C857A; padding-bottom:4px;">{{ kirokuScoreDiff }}</div>
-        </div>
-        <div style="display:flex; gap:5px; height:66px; margin-bottom:12px;">
-          <sc-for list="{{ kirokuScoreBars }}" as="bar" hint-placeholder-count="5">
-            <div style="flex:1; display:flex; flex-direction:column; gap:4px; align-items:center;">
-              <div style="flex:1; width:100%; display:flex; align-items:flex-end;">
-                <div style="width:100%; height: {{ bar.h }}; background: {{ bar.bg }}; border-radius:5px 5px 0 0;"></div>
-              </div>
-              <div style="font-size:9px; color:#A08F82;">{{ bar.label }}</div>
-            </div>
-          </sc-for>
-        </div>
-        <div style="display:flex; gap:8px;">
-          <sc-for list="{{ kirokuSubScores }}" as="sub" hint-placeholder-count="2">
-            <div style="flex:1; background:#FBF7F1; border-radius:11px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center;">
-              <div style="font-size:11px; color:#8C857A;">{{ sub.name }}</div>
-              <div style="font-size:14px; font-weight:700; color:#8A6A44;">{{ sub.score }}</div>
-            </div>
-          </sc-for>
-        </div>
-      </div>
-      </sc-if>
-
-      <div style="background:#F1E7DA; border-radius:16px; padding:15px; margin-bottom:12px;">
-        <div style="font-size:12px; font-weight:700; color:#8A6A44; margin-bottom:9px;">{{ kirokuSinceVisitLabel }}</div>
+      <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>        <div style="font-size:12px; font-weight:700; color:#8A6A44; margin-bottom:9px;">{{ kirokuSinceVisitLabel }}</div>
         <div style="height:6px; border-radius:99px; background:#fff; position:relative; margin-bottom:7px;">
           <div style="position:absolute; left:0; top:0; bottom:0; width: {{ kirokuPhasePct }}%; border-radius:99px; background:#A9855C;"></div>
         </div>
