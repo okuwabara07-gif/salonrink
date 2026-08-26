@@ -1596,50 +1596,7 @@
   <div data-screen-label="きろく" style="flex:1; display:flex; flex-direction:column; overflow:hidden; animation:fadein .3s ease; position:relative; z-index:10;">
     <div style="flex:1; overflow-y:auto; padding:20px 16px 120px;">
 
-      <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>        </div>
-        <sc-if value="{{ shelfFormOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="margin-top:10px; border-top:1px solid #F0EAE0; padding-top:11px;">
-            <input value="{{ shelfDraftName }}" onChange="{{ onShelfDraftName }}" placeholder="製品名（例：補修シャンプー）" style="width:100%; box-sizing:border-box; background:#FBF7F1; border:1px solid #E4D8C7; border-radius:10px; padding:10px 12px; font-size:12px; font-family:inherit; color:#3D342C; margin-bottom:9px;">
-            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-              <sc-for list="{{ shelfRemainChips }}" as="rc" hint-placeholder-count="4">
-                <div onClick="{{ rc.onSel }}" style="font-size:11px; font-weight:500; border-radius:999px; padding:6px 11px; cursor:pointer; border:1px solid {{ rc.bd }}; background: {{ rc.bg }}; color: {{ rc.color }};">{{ rc.label }}</div>
-              </sc-for>
-            </div>
-            <div onClick="{{ shelfSubmit }}" style="background:#A9855C; color:#fff; border-radius:10px; padding:10px; text-align:center; font-size:12px; font-weight:700; cursor:pointer;">この製品を登録</div>
-          </div>
-        </sc-if>
-      </div>
-
-      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:11px;">
-          <div style="font-size:12px; font-weight:700;">なりたいイメージの保存箱</div>
-          <div style="font-size:10.5px; color:#8C857A;">{{ kirokuInspCount }}枚</div>
-        </div>
-        <div style="display:flex; gap:7px;">
-          <sc-for list="{{ kirokuInspTiles }}" as="t" hint-placeholder-count="3">
-            <div style="flex:1; height:74px; border-radius:12px; overflow:hidden; background:#F1E7DA;">
-              <img src="{{ t.url }}" alt="" style="width:100%; height:100%; object-fit:cover;">
-            </div>
-          </sc-for>
-          <div onClick="{{ inspPick }}" style="flex:1; height:74px; border:1px dashed #DCCFBD; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:14px; color:#C2B49F; cursor:pointer;">{{ inspBusyLabel }}</div>
-        </div>
-        <input type="file" accept="image/*" onChange="{{ onInspFile }}" ref="{{ inspFileRef }}" style="display:none;">
-        <div style="font-size:10px; color:#B0A69B; margin-top:8px; line-height:1.6;">気になった髪型を保存。来店前は選び直すだけです。</div>
-      </div>
-
-      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px; margin-bottom:12px;">
-        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:9px;">
-          <div style="font-size:12px; font-weight:700;">保存中の写真</div>
-          <div style="font-size:11px; font-weight:700; color:#8A6A44;">{{ kirokuStoreLabel }}</div>
-        </div>
-        <div style="height:6px; background:#F5F1E8; border:1px solid #E8DFD0; box-sizing:border-box; border-radius:99px; overflow:hidden; margin-bottom:9px;">
-          <div style="height:100%; width: {{ kirokuStorePct }}%; background:#B08654;"></div>
-        </div>
-        <div style="font-size:10.5px; color:#8C857A; margin-bottom:4px;">{{ kirokuStorePlan }}</div>
-        <div style="font-size:10.5px; color:#8C857A; line-height:1.7;">{{ kirokuStoreNote }}</div>
-      </div>
-
-      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px 0 0; margin-bottom:12px; display:flex; flex-direction:column; gap:12px;">
+      <div style="font-family:'Shippori Mincho',serif; font-size:20px; font-weight:600; margin-bottom:4px;">きろく</div>      <div style="background:#fff; border:1px solid #EDE4D8; border-radius:16px; padding:16px 0 0; margin-bottom:12px; display:flex; flex-direction:column; gap:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center; padding:0 16px;">
           <div style="font-size:12.5px; font-weight:700;">髪のタイムライン</div>
           <div style="font-size:9.5px; background:#F1E7DA; color:#8A6A44; border-radius:99px; padding:4px 9px; font-weight:700;">自分だけに表示</div>
