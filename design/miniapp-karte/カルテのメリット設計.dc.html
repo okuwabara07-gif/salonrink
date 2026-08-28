@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FAF6F1;font-family:"Zen Kaku Gothic New",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#C98B96;text-decoration:none}a:hover{color:#B0737E}
+</style>
+</helmet>
+<section style="padding:52px 56px 72px;color:#4A3F38;display:flex;flex-direction:column;gap:34px">
+  <div style="display:flex;flex-direction:column;gap:10px;max-width:820px">
+    <span style="font-size:12px;letter-spacing:.14em;font-weight:700;color:#C98B96">MY KARTE ／ 記入する人のメリット再設計</span>
+    <h1 style="margin:0;font-size:32px;line-height:1.4;font-weight:700">カルテは「送るため」だけだと書かれない。</h1>
+    <p style="margin:0;font-size:15px;line-height:1.9;color:#7A6C63;text-wrap:pretty">来店前の1回だけの入力フォームにすると、書く手間が丸ごと負担になります。普段から髪を記録する場所にしておくと、来店前の送信は「すでに溜まっているものを送るだけ」になる。普段使いのメリットと、送るメリットを分けて設計します。</p>
+  </div>
+
+  <div style="display:flex;gap:22px;align-items:stretch;flex-wrap:wrap">
+    <div style="flex:1 1 460px;background:#fff;border:1px solid #F0E4DE;border-radius:20px;padding:26px 26px 28px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C98B96">A ／ 普段使いのメリット</span>
+        <h2 style="margin:0;font-size:20px;font-weight:700">美容室に行かない日も開く理由をつくる</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">髪の定点観測（1タップ記録）</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">同じ角度の写真を月1で撮るだけ。根元の伸び・色落ち・白髪の変化が並んで見える。撮った写真がそのまま送信用の素材になる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">色落ちタイムライン</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">前回施術日から「いま何日目」「そろそろ根元が気になる頃」を表示。次の来店目安が自分で判断できる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">わたしのケア棚</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">使っているシャンプー・オイルを登録しておく置き場所。残量が減る頃に通知、そのままEC購入へ。登録内容は美容師への共有情報にもなる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">うまくいった日のスタイリングメモ</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">再現できた日の手順と写真を残す。逆に決まらない日の傾向も見えるので、相談内容が具体的になる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">診断スコアの推移</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">髪質・頭皮・白髪のスコアを時系列で。ケアを続けた結果が数字で残るので、記録する動機になる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">なりたいイメージの保存箱</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">気になった髪型を見つけたときに入れておくフォルダ。来店前に選び直す手間がなくなる。</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1 1 460px;background:#fff;border:1px solid #F0E4DE;border-radius:20px;padding:26px 26px 28px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C98B96">B ／ 美容師に送るメリット</span>
+        <h2 style="margin:0;font-size:20px;font-weight:700">当日の不安をゼロにして席に座る</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">言いにくいことを、言わずに伝えられる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">予算の上限、退店したい時間、避けたい仕上がり。対面では切り出しにくい条件を、事前に文字で渡せる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">来店前に返信がもらえる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">「その色なら8レベルからが安心です」と先に聞ける。行ってから相談するより、期待値がそろった状態で座れる。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">カウンセリングが短くなる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">確認から始まらないので、その分の時間が施術と仕上げに回る。滞在時間の見通しも立つ。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">前回の反省が引き継がれる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">「やや明るすぎた」を毎回言い直さなくていい。履歴が残るので、同じ後悔を繰り返しにくい。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">担当が変わっても伝わる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">はじめての美容師さん、別店舗、引っ越し後でも、自分の髪の履歴を持ち歩ける。</span>
+        </div>
+        <div style="background:#FDF8F6;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:5px">
+          <span style="font-size:14px;font-weight:700">写真で言葉の齟齬が消える</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">「暗めのベージュ」の解釈違いを、参考写真と現状写真の2点で埋められる。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding:0 56px 72px;color:#4A3F38;display:flex;flex-direction:column;gap:20px">
+  <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:stretch">
+    <div style="flex:1 1 620px;background:#F6EDE9;border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;gap:16px">
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C98B96">C ／ つながり方</span>
+        <h2 style="margin:0;font-size:20px;font-weight:700">普段の記録が、そのまま送るものになる</h2>
+      </div>
+      <div style="display:flex;gap:10px;align-items:stretch;flex-wrap:wrap">
+        <div style="flex:1 1 130px;background:#fff;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;font-weight:700;color:#C98B96">01 ためる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">月1の写真、ケア用品、気になった髪型。日常のなかで少しずつ。</span>
+        </div>
+        <div style="flex:1 1 130px;background:#fff;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;font-weight:700;color:#C98B96">02 まとまる</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">溜まった記録が自動でカルテの下書きになる。入力は差分だけ。</span>
+        </div>
+        <div style="flex:1 1 130px;background:#fff;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;font-weight:700;color:#C98B96">03 送る</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">来店前に確認して送信。書く作業ではなく、選ぶ作業になる。</span>
+        </div>
+        <div style="flex:1 1 130px;background:#fff;border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:6px">
+          <span style="font-size:11px;font-weight:700;color:#C98B96">04 返る</span>
+          <span style="font-size:12.5px;line-height:1.8;color:#7A6C63">施術結果と美容師のコメントが記録に戻り、次の記録の起点になる。</span>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1 1 300px;background:#fff;border:1px solid #F0E4DE;border-radius:20px;padding:26px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.1em;color:#C98B96">検討したいこと</span>
+      <div style="display:flex;flex-direction:column;gap:11px;font-size:12.5px;line-height:1.8;color:#7A6C63">
+        <div>入力の必須項目は3つまで。残りは任意にして、充実度メーターで埋めたくさせる。</div>
+        <div>送信のインセンティブ（初回のみのポイント・優先枠など）は、日常機能が回り始めてから。先に付けると送信だけの一発利用で終わる。</div>
+        <div>返信は美容師の負担になる。定型文の候補をサロン側に用意して、返す前提を成立させる。</div>
+      </div>
+    </div>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

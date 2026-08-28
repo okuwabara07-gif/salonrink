@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F7F2EA;font-family:"Zen Kaku Gothic New",sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#A9855C;text-decoration:none}a:hover{color:#8A6A44}
+</style>
+</helmet>
+<section style="padding:52px 56px 26px;color:#3D342C;display:flex;flex-direction:column;gap:14px;max-width:900px">
+  <span style="font-size:12px;letter-spacing:.14em;font-weight:700;color:#A9855C">SALONRINK ／ マイカルテ 機能チェックリスト</span>
+  <h1 style="margin:0;font-size:31px;line-height:1.45;font-weight:700">入れる機能を選ぶ</h1>
+  <p style="margin:0;font-size:14.5px;line-height:1.9;color:#6E6257;text-wrap:pretty">項目をタップするとチェックが入ります。難易度は 軽 = フォーム追加のみ、中 = テーブル追加が必要、重 = 別機能・運用が必要。選び終えたら「07・15・19」のように番号で教えてください。</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <div style="background:#fff;border:1px solid #EDE4D8;border-radius:12px;padding:12px 16px;display:flex;gap:14px;align-items:baseline">
+      <span style="font-size:11px;color:#8B8178">選択中</span>
+      <span style="font-size:20px;font-weight:700;color:#A9855C">{{ checkedCount }}</span>
+      <span style="font-size:11px;color:#8B8178">／ 22項目</span>
+    </div>
+    <div style="background:#fff;border:1px solid #EDE4D8;border-radius:12px;padding:12px 16px;font-size:11.5px;color:#6E6257;white-space:nowrap">軽 {{ lightCount }}　中 {{ midCount }}　重 {{ heavyCount }}</div>
+    <div onClick="{{ selectPhase1 }}" style="background:#F1E7DA;border-radius:12px;padding:12px 16px;font-size:11.5px;font-weight:700;color:#8A6A44;cursor:pointer" style-hover="background:#EADCC8">第1弾の推奨をまとめて選ぶ</div>
+    <div onClick="{{ clearAll }}" style="border:1px solid #E4D8C7;border-radius:12px;padding:12px 16px;font-size:11.5px;color:#8B8178;cursor:pointer" style-hover="background:#fff">すべて解除</div>
+  </div>
+</section>
+
+<section style="padding:0 56px 26px;color:#3D342C;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h2 style="margin:0;font-size:17px;font-weight:700">1 ／ 現行にあるもの</h2>
+    <span style="height:1px;flex:1;background:#E4D8C7"></span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px">
+    <sc-for list="{{ groupCurrent }}" as="it" hint-placeholder-count="6">
+      <div onClick="{{ it.toggle }}" style="background:{{ it.bg }};border:1px solid {{ it.border }};border-radius:14px;padding:15px;display:flex;gap:12px;cursor:pointer">
+        <span style="width:20px;height:20px;border-radius:6px;border:1px solid {{ it.boxBorder }};background:{{ it.boxBg }};color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px">{{ it.mark }}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;gap:8px;align-items:baseline">
+            <span style="font-size:11px;font-weight:700;color:#A9855C">{{ it.no }}</span>
+            <span style="font-size:13.5px;font-weight:700;flex:1">{{ it.name }}</span>
+            <span style="font-size:9.5px;font-weight:700;color:{{ it.tierColor }};background:{{ it.tierBg }};border-radius:99px;padding:3px 8px">{{ it.tier }}</span>
+          </div>
+          <span style="font-size:12px;line-height:1.75;color:#6E6257">{{ it.desc }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="padding:0 56px 26px;color:#3D342C;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h2 style="margin:0;font-size:17px;font-weight:700">2 ／ 追加候補：普段使いの機能（A）</h2>
+    <span style="height:1px;flex:1;background:#E4D8C7"></span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px">
+    <sc-for list="{{ groupA }}" as="it" hint-placeholder-count="8">
+      <div onClick="{{ it.toggle }}" style="background:{{ it.bg }};border:1px solid {{ it.border }};border-radius:14px;padding:15px;display:flex;gap:12px;cursor:pointer">
+        <span style="width:20px;height:20px;border-radius:6px;border:1px solid {{ it.boxBorder }};background:{{ it.boxBg }};color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px">{{ it.mark }}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;gap:8px;align-items:baseline">
+            <span style="font-size:11px;font-weight:700;color:#A9855C">{{ it.no }}</span>
+            <span style="font-size:13.5px;font-weight:700;flex:1">{{ it.name }}</span>
+            <span style="font-size:9.5px;font-weight:700;color:{{ it.tierColor }};background:{{ it.tierBg }};border-radius:99px;padding:3px 8px">{{ it.tier }}</span>
+          </div>
+          <span style="font-size:12px;line-height:1.75;color:#6E6257">{{ it.desc }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="padding:0 56px 26px;color:#3D342C;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h2 style="margin:0;font-size:17px;font-weight:700">3 ／ 追加候補：送信時の項目（B）</h2>
+    <span style="height:1px;flex:1;background:#E4D8C7"></span>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:10px">
+    <sc-for list="{{ groupB }}" as="it" hint-placeholder-count="8">
+      <div onClick="{{ it.toggle }}" style="background:{{ it.bg }};border:1px solid {{ it.border }};border-radius:14px;padding:15px;display:flex;gap:12px;cursor:pointer">
+        <span style="width:20px;height:20px;border-radius:6px;border:1px solid {{ it.boxBorder }};background:{{ it.boxBg }};color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px">{{ it.mark }}</span>
+        <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;gap:8px;align-items:baseline">
+            <span style="font-size:11px;font-weight:700;color:#A9855C">{{ it.no }}</span>
+            <span style="font-size:13.5px;font-weight:700;flex:1">{{ it.name }}</span>
+            <span style="font-size:9.5px;font-weight:700;color:{{ it.tierColor }};background:{{ it.tierBg }};border-radius:99px;padding:3px 8px">{{ it.tier }}</span>
+          </div>
+          <span style="font-size:12px;line-height:1.75;color:#6E6257">{{ it.desc }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section style="padding:0 56px 80px;color:#3D342C;display:flex;flex-direction:column;gap:12px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <h2 style="margin:0;font-size:17px;font-weight:700">4 ／ つながり方（C）</h2>
+    <span style="height:1px;flex:1;background:#E4D8C7"></span>
+  </div>
+  <div style="background:#fff;border:1px solid #EDE4D8;border-radius:16px;padding:22px 24px;display:flex;gap:10px;flex-wrap:wrap">
+    <div style="flex:1 1 150px;background:#FBF7F1;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;font-weight:700;color:#A9855C">ためる</span><span style="font-size:12px;line-height:1.75;color:#6E6257">07・09・10・11 が日常に溜まる</span></div>
+    <div style="flex:1 1 150px;background:#FBF7F1;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;font-weight:700;color:#A9855C">まとまる</span><span style="font-size:12px;line-height:1.75;color:#6E6257">02・15・17・18 が自動で埋まる</span></div>
+    <div style="flex:1 1 150px;background:#FBF7F1;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;font-weight:700;color:#A9855C">送る</span><span style="font-size:12px;line-height:1.75;color:#6E6257">新規入力は 03・16・19 の3つだけ</span></div>
+    <div style="flex:1 1 150px;background:#FBF7F1;border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:5px"><span style="font-size:11px;font-weight:700;color:#A9855C">返る</span><span style="font-size:12px;line-height:1.75;color:#6E6257">22 の返信と 14 の感想が記録に戻る</span></div>
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ITEMS = [
+  {no:"01",g:"cur",tier:"軽",name:"3つの診断スコア",desc:"髪質・頭皮・白髪のスコアと診断日。白髪率・頭皮状態のひとこと付き。"},
+  {no:"02",g:"cur",tier:"軽",name:"今の状態の写真",desc:"アルバムから選ぶ／カメラで撮る。髪全体・気になる箇所を添付。"},
+  {no:"03",g:"cur",tier:"軽",name:"今回の希望（タップ選択）",desc:"カット／カラー／パーマ／トリートメント／白髪ぼかし／ヘッドスパ／ネイル／相談だけ。"},
+  {no:"04",g:"cur",tier:"軽",name:"伝えておきたいこと（自由入力）",desc:"前回の反省や長さの希望を文章で。"},
+  {no:"05",g:"cur",tier:"軽",name:"送信先を選ぶ",desc:"サロン公式LINE／LINEの友だちから選ぶ（担当の美容師さん）。"},
+  {no:"06",g:"cur",tier:"軽",name:"LINEで事前カルテを送る",desc:"グリーンの送信ボタン。下部タブは ホーム／マイカルテ／設定。"},
+  {no:"07",g:"a",tier:"中",name:"定点観測アルバム",desc:"正面・後ろ・根元を同じ角度で月1記録。02の写真がここから自動で入る。"},
+  {no:"08",g:"a",tier:"軽",name:"色落ちタイムライン",desc:"前回施術からの経過日数と「そろそろ気になる時期」の表示。次の来店目安。"},
+  {no:"09",g:"a",tier:"重",name:"使った製品の登録（写真蓄積）",desc:"ボトルを撮って登録。使用履歴が写真で残り、残量が減る頃に通知＋EC購入へ。"},
+  {no:"10",g:"a",tier:"重",name:"髪タイムライン（SNS型・非公開）",desc:"写真・製品・施術・美容師コメントが時系列で流れる。来店前にまとめて共有。"},
+  {no:"11",g:"a",tier:"中",name:"スタイリングメモ",desc:"まとまった／広がった の1タップ記録。湿度と手順を残して再現性を上げる。"},
+  {no:"12",g:"a",tier:"中",name:"スコアの推移グラフ",desc:"01のスコアを時系列に。ケアの成果が数字で見えるので記録が続く。"},
+  {no:"13",g:"a",tier:"重",name:"なりたいイメージの保存箱",desc:"見つけた髪型を随時ストック。来店前は選び直すだけ。"},
+  {no:"14",g:"a",tier:"中",name:"施術後1週間の質問",desc:"「色落ちどうですか？」に1タップ回答。次回カルテの「前回の仕上がり」になる。"},
+  {no:"15",g:"b",tier:"軽",name:"髪・頭皮の悩み（複数選択）",desc:"広がる／うねり／パサつき／ぺたんこ／かゆみ／ニオイ／白髪が増えた。"},
+  {no:"16",g:"b",tier:"軽",name:"絶対に避けたいこと（NG）",desc:"赤みを出したくない／前髪は切らない／短くしすぎない。言いにくい条件を文字で。"},
+  {no:"17",g:"b",tier:"軽",name:"過去の施術履歴",desc:"カラー・パーマ・縮毛矯正・ブリーチの時期。薬剤選定の精度に直結。"},
+  {no:"18",g:"b",tier:"軽",name:"アレルギー・注意事項",desc:"しみやすい／金属アレルギー／肌が敏感／その他自由記入。"},
+  {no:"19",g:"b",tier:"軽",name:"予算の目安・滞在できる時間",desc:"4段階の予算と退店希望時刻。当日の施術範囲を先に調整できる。"},
+  {no:"20",g:"b",tier:"軽",name:"来店の目的・相談スタイル",desc:"相談して決めたい／メニューは決めている／おまかせ。提案の強さを指定。"},
+  {no:"21",g:"b",tier:"軽",name:"送信プレビュー",desc:"美容師に届く形を送信前に確認。何が伝わるかが見えると送信の不安が減る。"},
+  {no:"22",g:"b",tier:"重",name:"事前返信のリクエスト",desc:"「事前に相談したい／当日でOK」を選べる。返信は定型文候補でサロン側の負担を抑える。"}
+];
+const PHASE1 = ["03","04","08","15","16","17","18","19","20","21"];
+const TIER_STYLE = {"軽":{c:"#5C8A5F",bg:"#EAF2E9"},"中":{c:"#8A6A44",bg:"#F1E7DA"},"重":{c:"#A8705C",bg:"#FBF1ED"}};
+
+class Component extends DCLogic {
+  state = { checked: {} };
+  toggle(no){ this.setState(s => ({ checked: { ...s.checked, [no]: !s.checked[no] } })); }
+  decorate(it){
+    const on = !!this.state.checked[it.no];
+    const t = TIER_STYLE[it.tier];
+    return {
+      no: it.no, name: it.name, desc: it.desc, tier: it.tier,
+      tierColor: t.c, tierBg: t.bg,
+      bg: on ? "#F1E7DA" : "#ffffff",
+      border: on ? "#A9855C" : "#EDE4D8",
+      boxBg: on ? "#A9855C" : "#ffffff",
+      boxBorder: on ? "#A9855C" : "#DCCFBD",
+      mark: on ? "✓" : "",
+      toggle: () => this.toggle(it.no)
+    };
+  }
+  renderVals(){
+    const chk = this.state.checked;
+    const on = ITEMS.filter(i => chk[i.no]);
+    return {
+      groupCurrent: ITEMS.filter(i => i.g === "cur").map(i => this.decorate(i)),
+      groupA: ITEMS.filter(i => i.g === "a").map(i => this.decorate(i)),
+      groupB: ITEMS.filter(i => i.g === "b").map(i => this.decorate(i)),
+      checkedCount: on.length,
+      lightCount: on.filter(i => i.tier === "軽").length,
+      midCount: on.filter(i => i.tier === "中").length,
+      heavyCount: on.filter(i => i.tier === "重").length,
+      selectPhase1: () => { const c = {}; PHASE1.forEach(n => c[n] = true); this.setState({ checked: c }); },
+      clearAll: () => this.setState({ checked: {} })
+    };
+  }
+}
+</script>
+</body>
+</html>
