@@ -1,6 +1,28 @@
 'use client'
 
+import LiffTabBar from '../_components/LiffTabBar'
+import { useMycarte } from '../_lib/useMycarte'
+import { longDateTime } from '../_lib/format'
+
 export default function SalonPage() {
+  const { data: carte } = useMycarte()
+
+  // salons テーブルに営業時間・定休日のカラムが無く、顧客向けに salons を返す
+  // Edge Function も未実装のため、ここでは get-mycarte が返す予約情報だけを出す。
+  const salonRows = [
+    carte?.next_reservation
+      ? { label: '次回のご予約', value: longDateTime(carte.next_reservation.datetime) }
+      : null,
+    carte?.next_reservation?.menu ? { label: 'メニュー', value: carte.next_reservation.menu } : null,
+    carte?.last_visit
+      ? { label: '前回のご来店', value: longDateTime(carte.last_visit.datetime) }
+      : null,
+  ].filter(Boolean) as { label: string; value: string }[]
+
+  // お知らせ専用テーブルが無いため、未回答の施術後アンケートのみを出す。
+  const newsItems: { title: string; subtitle: string }[] = carte?.followup_pending
+    ? [{ title: '施術後の感想を教えてください', subtitle: 'アンケートへ' }]
+    : []
   return (
     <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#F3EEE5' }}>
       {/* Header */}
@@ -72,11 +94,7 @@ export default function SalonPage() {
             style={{ backgroundColor: '#EFE8DA' }}
           />
           <div className="flex flex-col gap-[7px] text-[11.5px]">
-            {[
-              { label: '営業時間', value: '10:00 - 19:00' },
-              { label: '定休日', value: '火曜' },
-              { label: '担当', value: '山田さん' },
-            ].map((item) => (
+            {salonRows.map((item) => (
               <div
                 key={item.label}
                 className="flex justify-between rounded-[11px] p-[10px_12px]"
@@ -113,13 +131,10 @@ export default function SalonPage() {
               お知らせ
             </h2>
             <span className="text-[10.5px]" style={{ color: '#A2988A' }}>
-              2件
+              {newsItems.length}件
             </span>
           </div>
-          {[
-            { title: '夏のトリートメントキャンペーン', subtitle: '7/31まで ／ 山田さんより' },
-            { title: '8月の営業日のご案内', subtitle: '7/20 更新' },
-          ].map((news, idx) => (
+          {newsItems.map((news, idx) => (
             <div key={idx} className="flex gap-[11px] items-center">
               <div
                 className="w-[50px] h-[50px] rounded-[12px] flex-none"
@@ -214,29 +229,7 @@ export default function SalonPage() {
         </div>
       </div>
 
-      {/* Tab Bar */}
-      <div
-        className="flex border-t"
-        style={{ borderColor: '#E5DDCF', backgroundColor: '#fff', padding: '10px 0 16px' }}
-      >
-        {[
-          { label: 'ホーム', active: false },
-          { label: 'きろく', active: false },
-          { label: 'マイカルテ', active: false },
-          { label: 'サロン', active: true },
-        ].map((tab, idx) => (
-          <div
-            key={idx}
-            className="flex-1 text-center text-[10px]"
-            style={{
-              fontWeight: tab.active ? '700' : 'normal',
-              color: tab.active ? '#8A7A5F' : '#A2988A',
-            }}
-          >
-            {tab.label}
-          </div>
-        ))}
-      </div>
+      <LiffTabBar active="salon" />
     </div>
   )
 }
