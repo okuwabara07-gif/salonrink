@@ -23,6 +23,16 @@ export default function SalonPage() {
   const newsItems: { title: string; subtitle: string }[] = carte?.followup_pending
     ? [{ title: '施術後の感想を教えてください', subtitle: 'アンケートへ' }]
     : []
+
+  const nextDate = carte?.next_reservation ? new Date(carte.next_reservation.datetime) : null
+  const nextMonthLabel = nextDate ? `${nextDate.getMonth() + 1}月` : '—'
+  const nextDayLabel = nextDate ? String(nextDate.getDate()) : '—'
+  const nextTimeLabel = nextDate
+    ? `${String(nextDate.getHours()).padStart(2, '0')}:${String(nextDate.getMinutes()).padStart(2, '0')}～`
+    : '次回のご予約は未定です'
+
+  // 美容師コメントは karte_records の stylist_comment が入っている最新行から取る。
+  const latestStylist = (carte?.records ?? []).find((r) => r.stylist_comment)
   return (
     <div className="flex flex-col min-h-screen" style={{ backgroundColor: '#F3EEE5' }}>
       {/* Header */}
@@ -53,18 +63,18 @@ export default function SalonPage() {
               style={{ backgroundColor: '#EFE8DA' }}
             >
               <span className="text-[9.5px]" style={{ color: '#8A7A5F' }}>
-                6月
+                {nextMonthLabel}
               </span>
               <span className="font-serif text-[19px] leading-none" style={{ color: '#8A7A5F' }}>
-                15
+                {nextDayLabel}
               </span>
             </div>
             <div className="flex-1 flex flex-col gap-[3px]">
               <span className="text-[12.5px] font-bold" style={{ color: '#2E2A24' }}>
-                14:00～ ／ 山田さん
+                {nextTimeLabel}
               </span>
               <span className="text-[10.5px]" style={{ color: '#7A7266' }}>
-                カラー＋トリートメント（予定・約2時間）
+                {carte?.next_reservation?.menu ?? 'ご予約はまだありません'}
               </span>
             </div>
           </div>
@@ -213,10 +223,11 @@ export default function SalonPage() {
             />
             <div className="flex-1 flex flex-col gap-[3px]">
               <span className="text-[10.5px] font-bold" style={{ color: '#8A7A5F' }}>
-                山田さん
+                {latestStylist?.stylist_name ?? '担当美容師'}
               </span>
               <span className="text-[11px] leading-[1.75]" style={{ color: '#5F584E' }}>
-                カルテを拝見しました。ご希望の色味なら8レベルからのご提案が安心です。当日ご相談させてください。
+                {latestStylist?.stylist_comment ??
+                  '美容師からのコメントはまだありません。カルテを送ると、ここに返信が並びます。'}
               </span>
             </div>
           </div>
