@@ -1,9 +1,24 @@
 'use client'
 
 import { useState } from 'react'
+import LiffTabBar from '../_components/LiffTabBar'
+import { useMycarte } from '../_lib/useMycarte'
 
 export default function SettingsPage() {
-  const [allergies, setAllergies] = useState<Set<string>>(new Set(['金属アレルギーあり']))
+  const { data: carte } = useMycarte()
+  // アレルギーは profiles.concerns に入るが、書き戻す action が save-record 側に
+  // 未実装のため、いまは端末内の選択状態のみを保持する。
+  const [allergies, setAllergies] = useState<Set<string>>(new Set())
+
+  const storage = carte?.storage ?? null
+  const photosUsed = storage?.used ?? 0
+  const photosLimit = storage?.limit ?? 0
+  const storagePercent = photosLimit > 0 ? Math.min(100, (photosUsed / photosLimit) * 100) : 0
+  const retentionLabel = storage
+    ? storage.retention_days == null
+      ? '期限なし'
+      : `${storage.retention_days}日`
+    : '—'
   const [notificationPrefs, setNotificationPrefs] = useState({
     nextVisit: true,
     productReminder: true,
@@ -109,13 +124,8 @@ export default function SettingsPage() {
             </span>
           </div>
           <div className="flex flex-col gap-[7px] text-[11.5px]">
-            {[
-              { label: 'カラー', value: '2026/5/10（9レベル）' },
-              { label: '縮毛矯正', value: '2025/11/20' },
-              { label: 'ブリーチ', value: '1回あり（2024/8）' },
-              { label: 'パーマ', value: 'していない' },
-              { label: 'その他', value: '髪質改善（2026/2）' },
-            ].map((item) => (
+            {/* 施術履歴を保存するカラムが未定義のため、確定するまで空で描画する。 */}
+            {([] as { label: string; value: string }[]).map((item) => (
               <div
                 key={item.label}
                 className="flex justify-between rounded-[11px] p-[11px_12px]"
@@ -148,7 +158,7 @@ export default function SettingsPage() {
           <div className="flex flex-col gap-[6px]">
             <div className="flex justify-between items-baseline">
               <span className="text-[11.5px]" style={{ color: '#5F584E' }}>
-                保存中の写真 9 / 12枚
+                保存中の写真 {photosUsed} / {photosLimit}枚
               </span>
               <span className="text-[10.5px]" style={{ color: '#A2988A' }}>
                 無料プラン（90日保存）
@@ -157,21 +167,20 @@ export default function SettingsPage() {
             <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#EFE8DA' }}>
               <div
                 className="h-full rounded-full"
-                style={{ width: '75%', backgroundColor: '#C9B27C' }}
+                style={{ width: `${storagePercent}%`, backgroundColor: '#C9B27C' }}
               />
             </div>
           </div>
           <div className="flex flex-col gap-[8px] text-[11.5px]">
             {[
-              { label: '共有できる美容師', value: '2人 ›' },
-              { label: '保存期間の設定', value: '90日 ›' },
+              { label: '保存期間', value: `${retentionLabel} ›` },
               { label: '写真をまとめて削除', value: '›' },
             ].map((item) => (
               <div
                 key={item.label}
                 className="flex justify-between items-center py-[10px] px-0.5"
                 style={{
-                  borderTop: item.label !== '共有できる美容師' ? '1px solid #EFE8DA' : 'none',
+                  borderTop: item.label !== '保存期間' ? '1px solid #EFE8DA' : 'none',
                 }}
               >
                 <span style={{ color: '#5F584E' }}>{item.label}</span>
@@ -275,29 +284,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Tab Bar (no tab is active for settings) */}
-      <div
-        className="flex border-t"
-        style={{ borderColor: '#E5DDCF', backgroundColor: '#fff', padding: '10px 0 16px' }}
-      >
-        {[
-          { label: 'ホーム', active: false },
-          { label: 'きろく', active: false },
-          { label: 'マイカルテ', active: false },
-          { label: 'サロン', active: false },
-        ].map((tab, idx) => (
-          <div
-            key={idx}
-            className="flex-1 text-center text-[10px]"
-            style={{
-              fontWeight: tab.active ? '700' : 'normal',
-              color: tab.active ? '#8A7A5F' : '#A2988A',
-            }}
-          >
-            {tab.label}
-          </div>
-        ))}
-      </div>
+      <LiffTabBar active="home" />
     </div>
   )
 }
