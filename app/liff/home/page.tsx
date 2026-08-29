@@ -49,6 +49,9 @@ export default function HomePage() {
     diagnostics,
     barChartData,
     newsItems,
+    openCheckout,
+    checkoutBusy,
+    checkoutError,
   } = useHomeData({
     placeholder: TOKENS.bg.placeholder,
     gold: TOKENS.accent.gold,
@@ -641,7 +644,21 @@ export default function HomePage() {
             <div>年単位で並べて比較できるビュー</div>
             <div>来店ごとのアルバムを美容師に共有</div>
           </div>
-          <div
+          {checkoutError && (
+            <div
+              style={{
+                color: TOKENS.warning.text,
+                fontSize: '10.5px',
+                textAlign: 'center',
+                paddingBottom: '6px',
+              }}
+            >
+              {checkoutError}
+            </div>
+          )}
+          <button
+            disabled={checkoutBusy}
+            onClick={() => void openCheckout('premium_month')}
             style={{
               background: TOKENS.button.dark,
               color: '#fff',
@@ -650,9 +667,12 @@ export default function HomePage() {
               padding: '13px',
               fontSize: '12.5px',
               fontWeight: '700',
+              width: '100%',
+              border: 'none',
+              opacity: checkoutBusy ? 0.6 : 1,
             }}
           >
-            プランを見る
+            {checkoutBusy ? '準備中…' : 'プランを見る'}
           </div>
           <span
             style={{
