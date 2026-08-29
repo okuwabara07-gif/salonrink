@@ -48,6 +48,8 @@ export function useHomeData(palette: HomePalette) {
 
   const counts = carte?.counts ?? { records: 0, visits: 0, products: 0, inspirations: 0 }
   const storage = carte?.storage ?? null
+  const [checkoutBusy, setCheckoutBusy] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
   const series = carte?.score_series ?? {}
 
   const hair = seriesTail(series.hair)
@@ -109,6 +111,35 @@ export function useHomeData(palette: HomePalette) {
     : storage.retention_unlimited
       ? 'プレミアム（保存期限なし）'
       : `無料プラン（${storage.retention_days ?? 90}日保存）`
+
+  /**
+   * プレミアム購入。miniapp.html の openCheckout と同一経路。
+   * create-checkout が返す Stripe URL を liff.openWindow で外部起動する。
+   */
+  const openCheckout = async (kind: 'premium_month' | 'premium_year' = 'premium_month') => {
+    if (!profile?.userId) {
+      setCheckoutError('LINEから開くと手続きできます。')
+      return
+    }
+    if (checkoutBusy) return
+    setCheckoutBusy(true)
+    setCheckoutError(null)
+    try {
+      const r = await fetch(`${SR_FUNCTIONS_BASE}/create-checkout`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ line_user_id: profile.userId, kind }),
+      })
+      const j = await r.json().catch(() => null)
+      if (!r.ok || !j?.url) throw new Error(j?.message ?? 'ただいま手続きを開始できませんでした')
+      if (liff.isApiAvailable('openWindow')) liff.openWindow({ url: j.url, external: true })
+      else window.location.href = j.url
+    } catch (e) {
+      setCheckoutError(e instanceof Error ? e.message : 'ただいま手続きを開始できませんでした')
+    } finally {
+      setCheckoutBusy(false)
+    }
+  }
 
   const tiles: TileData[] = (carte?.photos ?? []).slice(0, 3).map((p) => ({
     label: isToday(p.created_at) ? '今日' : photoKindLabel(p.kind),
