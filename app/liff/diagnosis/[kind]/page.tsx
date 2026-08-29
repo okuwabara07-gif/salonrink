@@ -9,9 +9,11 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { bootLiff, diagSessionId, liff } from '../../_lib/liffLite';
 
 const FN_DIAG = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/hair-diagnose';
+const FN_DEEP = 'https://fmpmgilgvvfezursmyic.supabase.co/functions/v1/deep-advice';
 
 type Meta = { title: string; introTitle: string; introBody: string; tips: string[]; axes: Record<string, string> };
 const META: Record<string, Meta> = {
@@ -91,6 +93,10 @@ export default function DiagnosisFlowPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [result, setResult] = useState<DiagResult | null>(null);
+  const [diagId, setDiagId] = useState<string | null>(null);
+  const [deep, setDeep] = useState<{ q: string; text: string } | null>(null);
+  const [deepBusy, setDeepBusy] = useState(false);
+  const [deepNote, setDeepNote] = useState('');
   const [err, setErr] = useState('');
   const [limitMsg, setLimitMsg] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
@@ -121,6 +127,8 @@ export default function DiagnosisFlowPage() {
       if (r.status === 429) { setErr(String(j?.message ?? '本日の診断枠が上限です。時間をおいてお試しください。')); setStep('intro'); return; }
       if (!j?.ok || !j?.result) throw new Error(String(j?.error ?? 'diagnose_failed'));
       setResult(j.result as DiagResult);
+      setDiagId(typeof j.id === 'string' ? j.id : null);
+      setDeep(null); setDeepNote('');
       setStep('result');
     } catch {
       setErr('解析に失敗しました。通信状況をご確認のうえ、もう一度お試しください。');
@@ -142,6 +150,24 @@ export default function DiagnosisFlowPage() {
         setErr('共有テキストをコピーしました。LINEに貼り付けて送れます。');
       }
     } catch { /* ユーザーキャンセル等は無視 */ }
+  };
+
+  const askDeep = async (q: string) => {
+    if (!diagId || deepBusy) return;
+    setDeepBusy(true); setDeepNote('');
+    try {
+      const r = await fetch(FN_DEEP, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ diagnosis_id: diagId, line_user_id: userId ?? undefined, session_id: diagSessionId(), question: q }),
+      });
+      const j = await r.json();
+      if (r.status === 402) { setDeepNote(String(j?.message ?? '2回目以降のAI深掘り相談は1回¥110です。')); return; }
+      if (!j?.ok || !j?.advice) throw new Error('deep_failed');
+      setDeep({ q, text: String(j.advice) });
+      if (j?.next_note) setDeepNote(String(j.next_note));
+    } catch {
+      setDeepNote('取得に失敗しました。時間をおいてお試しください。');
+    } finally { setDeepBusy(false); }
   };
 
   const overall = (res: DiagResult): number | null => {
@@ -252,6 +278,26 @@ export default function DiagnosisFlowPage() {
               {result.care_tips.map((t) => <span key={t} style={{ fontSize: 11.5, lineHeight: 1.8, color: '#5F584E' }}>◦ {t}</span>)}
             </div>
           )}
+          <div style={card}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+              <span style={h}>AIに深掘り相談する</span>
+              <span style={{ fontSize: 9.5, color: '#A2988A' }}>初回1回無料</span>
+            </div>
+            {!deep && ['毎日のケアの正しい手順', '自分に合う商品の選び方', 'サロンで何をお願いすべき？'].map((q) => (
+              <button key={q} type="button" disabled={deepBusy || !diagId} onClick={() => void askDeep(q)}
+                style={{ ...cta2, opacity: deepBusy || !diagId ? 0.6 : 1 }}>{deepBusy ? 'AIが考えています…' : q}</button>
+            ))}
+            {deep && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <span style={{ fontSize: 10.5, fontWeight: 700, color: '#8A7A5F' }}>Q. {deep.q}</span>
+                <span style={{ fontSize: 11.5, lineHeight: 1.95, color: '#5F584E', whiteSpace: 'pre-wrap' }}>{deep.text}</span>
+                <span style={{ fontSize: 9, color: '#A2988A' }}>この回答は美容師監修のAIによるものです。</span>
+              </div>
+            )}
+            {deepNote && (
+              <span style={{ fontSize: 10.5, lineHeight: 1.8, color: '#8A7A5F' }}>{deepNote} <Link href="/liff/plan" style={{ color: '#A98D4B', fontWeight: 700 }}>プランを見る</Link></span>
+            )}
+          </div>
           {err && <span style={{ fontSize: 11, color: '#A8705C', textAlign: 'center' }}>{err}</span>}
           <button type="button" style={{ ...cta, background: '#06C755' }} onClick={() => void share()}>LINEで美容師に共有する</button>
           <button type="button" style={cta2} onClick={() => { setResult(null); setStep('intro'); }}>もう一度診断する</button>
