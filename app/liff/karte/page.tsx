@@ -1,6 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import liff from '@line/liff'
+import LiffTabBar from '../_components/LiffTabBar'
+import { useMycarte } from '../_lib/useMycarte'
+import { longDateTime, photoKindLabel, shortDate } from '../_lib/format'
+import { SR_FUNCTIONS_BASE } from '../_lib/mycarteTypes'
 
 type KarteStep = 1 | 2 | 3 | 4 | 'complete'
 
@@ -12,11 +17,6 @@ const CONCERNS = [
   '頭皮のかゆみ',
   'ニオイ',
   '白髪が増えた',
-]
-
-const AVOID_CONCERNS = [
-  'やや明るすぎた',
-  '手触りは良い',
 ]
 
 const MENUS = [
@@ -32,11 +32,82 @@ const MENUS = [
 
 export default function KartePage() {
   const [step, setStep] = useState<KarteStep>(1)
-  const [selectedConcerns, setSelectedConcerns] = useState<Set<string>>(new Set(['広がりやすい', 'パサつき・乾燥', '白髪が増えた']))
-  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set(['正面', '後ろ', '根元']))
+  const { data: carte, profile } = useMycarte()
+  const [selectedConcerns, setSelectedConcerns] = useState<Set<string>>(new Set())
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
+  const [sentAt, setSentAt] = useState<string | null>(null)
+
+  const photos = useMemo(() => (carte?.photos ?? []).slice(0, 3), [carte])
+  const inspirations = useMemo(() => (carte?.inspirations ?? []).slice(0, 3), [carte])
+  const pickedPhotos = useMemo(
+    () => photos.filter((p) => selectedImages.has(p.id)),
+    [photos, selectedImages],
+  )
+
+  const handleImageToggle = (id: string) => {
+    const next = new Set(selectedImages)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    setSelectedImages(next)
+  }
   const [selectedAvoid, setSelectedAvoid] = useState<Set<string>>(new Set())
   const [selectedMenus, setSelectedMenus] = useState<Set<string>>(new Set())
   const [selectedPurpose, setSelectedPurpose] = useState<string>('')
+
+  /** 送信本文。プレビューと共有メッセージで同一の文字列を使う。 */
+  const summaryLines = [
+    selectedMenus.size > 0 ? `【希望】 ${[...selectedMenus].join('、')}` : null,
+    selectedPurpose ? `【イメージ】 ${selectedPurpose}` : null,
+    selectedConcerns.size > 0 ? `【悩み】 ${[...selectedConcerns].join('、')}` : null,
+    selectedAvoid.size > 0 ? `【避けたいこと】 ${[...selectedAvoid].join('、')}` : null,
+  ].filter(Boolean) as string[]
+
+  /**
+   * 送信＝(1) karte_records に記録を残す (2) LINEの共有ピッカーで本文を送る。
+   * save-record の deployed 版に karte_sent は存在しないため record_create を使う。
+   */
+  const handleSend = async () => {
+    if (!profile?.userId) {
+      setSendError('LINEから開くと送信できます。')
+      return
+    }
+    if (summaryLines.length === 0) {
+      setSendError('希望・悩みのいずれかを選んでください。')
+      return
+    }
+    setSending(true)
+    setSendError(null)
+    try {
+      const res = await fetch(`${SR_FUNCTIONS_BASE}/save-record`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          line_user_id: profile.userId,
+          action: 'record_create',
+          kind: 'record',
+          body: summaryLines.join('\\n'),
+          tags: [...selectedConcerns].slice(0, 6),
+          photo_path: pickedPhotos[0]?.storage_path ?? null,
+        }),
+      })
+      const j = await res.json().catch(() => null)
+      if (!res.ok || !j?.ok) throw new Error(j?.error ?? `save-record ${res.status}`)
+
+      if (liff.isApiAvailable('shareTargetPicker')) {
+        await liff
+          .shareTargetPicker([{ type: 'text', text: summaryLines.join('\\n') }])
+          .catch(() => null)
+      }
+      setSentAt(j.record?.created_at ?? new Date().toISOString())
+      setStep('complete')
+    } catch (e) {
+      setSendError(e instanceof Error ? e.message : '送信できませんでした。')
+    } finally {
+      setSending(false)
+    }
+  }
 
   const handleConcernToggle = (concern: string) => {
     const newSet = new Set(selectedConcerns)
