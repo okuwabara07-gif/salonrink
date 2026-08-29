@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import LiffTabBar from '../_components/LiffTabBar'
 import { useMycarte } from '../_lib/useMycarte'
+import ProfileInfoForm, { type ProfileInfoInitial } from '../_components/ProfileInfoForm'
 
 export default function SettingsPage() {
-  const { data: carte } = useMycarte()
+  const { data: carte, profile } = useMycarte()
   // アレルギーは profiles.concerns に入るが、書き戻す action が save-record 側に
   // 未実装のため、いまは端末内の選択状態のみを保持する。
   const [allergies, setAllergies] = useState<Set<string>>(new Set())
@@ -65,6 +66,14 @@ export default function SettingsPage() {
           ここに保存した内容は、毎回のカルテに自動で添付されます。変更があったときだけ更新してください。
         </div>
 
+        {/* 17施術履歴/18アレルギー: ProfileInfoForm（upsert-profile v9 に自動保存）。旧カードは端末内stateのみで保存されないため非表示化 */}
+        {profile?.userId && (
+          <ProfileInfoForm
+            lineUserId={profile.userId}
+            initial={(carte as { profile?: ProfileInfoInitial } | null)?.profile ?? null}
+          />
+        )}
+        {false && (<>
         {/* Allergies Card */}
         <div
           className="bg-white rounded-[18px] p-[17px] flex flex-col gap-[12px]"
@@ -146,6 +155,8 @@ export default function SettingsPage() {
             履歴が揃うほど、薬剤選定の判断材料が増えます
           </span>
         </div>
+
+        </>)}
 
         {/* Photo Storage Card */}
         <div
