@@ -1,5 +1,8 @@
 'use client'
 
+import LiffTabBar from '../_components/LiffTabBar'
+import { useHomeData } from './homeData'
+
 // デザイントークン（ホーム系 クリーム／明朝トーン）
 const TOKENS = {
   bg: {
@@ -34,79 +37,24 @@ const TOKENS = {
   },
 }
 
-interface TileData {
-  label: string
-  color: string
-  badge: boolean
-  expiring: boolean
-}
-
-interface DiagnosticItem {
-  title: string
-  date: string
-  isUnread: boolean
-}
-
 export default function HomePage() {
-  // ダミーデータ（実装時はProps/APIから取得）
-  const data = {
-    userName: '花子',
-    lastVisitDaysAgo: 106,
-    nextAppointmentDate: '6/15（月）',
-    nextAppointmentTime: '14:00',
-    karteCompletionPercent: 80,
-    karteScore: 74,
-    karteScoreChange: 6,
-    scalpScore: 61,
-    grayScore: 90,
-    recordsCount: 36,
-    photosStored: 9,
-    photosLimit: 12,
-    storagePlanDays: 90,
-    diagnosticsLastDate: {
-      hair: '6/28',
-      scalp: '6/10',
-      gray: '5/22',
-    },
-  }
-
-  const tiles: TileData[] = [
-    { label: '今日', color: TOKENS.bg.placeholder, badge: true, expiring: false },
-    { label: '製品', color: TOKENS.accent.goldLighter, badge: false, expiring: false },
-    {
-      label: '来店',
-      color: TOKENS.bg.placeholder,
-      badge: true,
-      expiring: true,
-    },
-  ]
-
-  const diagnostics: DiagnosticItem[] = [
-    { title: '髪質診断', date: data.diagnosticsLastDate?.hair || '', isUnread: false },
-    { title: '頭皮診断', date: data.diagnosticsLastDate?.scalp || '', isUnread: false },
-    { title: '白髪診断', date: data.diagnosticsLastDate?.gray || '', isUnread: false },
-    { title: '今日の髪占い', date: '未読', isUnread: true },
-  ]
-
-  const barChartData = [
-    { month: '4月', percent: 56, color: TOKENS.accent.goldLighter },
-    { month: '5月', percent: 64, color: TOKENS.accent.goldLighter },
-    { month: '6月', percent: 78, color: TOKENS.accent.goldLight },
-    { month: '7月', percent: 94, color: TOKENS.accent.gold },
-  ]
-
-  const newsItems = [
-    {
-      title: '夏のトリートメントキャンペーン',
-      date: '7/31まで',
-      from: '山田さんより',
-    },
-    {
-      title: '補修シャンプーが残り少なめです',
-      date: '前回購入から2か月',
-      from: '再購入へ',
-    },
-  ]
+  const {
+    data,
+    greeting,
+    visitSummary,
+    scoreChangeLabel,
+    storagePercent,
+    storagePlanLabel,
+    tiles,
+    diagnostics,
+    barChartData,
+    newsItems,
+  } = useHomeData({
+    placeholder: TOKENS.bg.placeholder,
+    gold: TOKENS.accent.gold,
+    goldLight: TOKENS.accent.goldLight,
+    goldLighter: TOKENS.accent.goldLighter,
+  })
 
   return (
     <div
@@ -200,7 +148,7 @@ export default function HomePage() {
           >
             おかえりなさい、
             <br />
-            {data.userName}さんの髪のいま
+            {greeting}
           </h1>
           <span
             style={{
@@ -208,8 +156,7 @@ export default function HomePage() {
               color: TOKENS.text.tertiary,
             }}
           >
-            前回の施術から {data.lastVisitDaysAgo}日 ／ {data.nextAppointmentDate}{' '}
-            {data.nextAppointmentTime} にご来店予定
+            {visitSummary}
           </span>
         </div>
 
@@ -334,7 +281,7 @@ export default function HomePage() {
                 color: TOKENS.text.gold,
               }}
             >
-              {data.karteScore}
+              {data.karteScore ?? '–'}
             </span>
             <span
               style={{
@@ -343,7 +290,7 @@ export default function HomePage() {
                 paddingBottom: '5px',
               }}
             >
-              髪質 ／ 前回 +{data.karteScoreChange}
+              {scoreChangeLabel}
             </span>
           </div>
 
@@ -413,7 +360,7 @@ export default function HomePage() {
                   color: TOKENS.text.gold,
                 }}
               >
-                {data.scalpScore}
+                {data.scalpScore ?? '–'}
               </span>
             </div>
             <div
@@ -437,7 +384,7 @@ export default function HomePage() {
                   color: TOKENS.text.gold,
                 }}
               >
-                {data.grayScore}
+                {data.grayScore ?? '–'}
               </span>
             </div>
           </div>
@@ -498,8 +445,23 @@ export default function HomePage() {
                   aspectRatio: '1',
                   background: tile.color,
                   position: 'relative',
+                  overflow: 'hidden',
                 }}
               >
+                {tile.imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={tile.imageUrl}
+                    alt=""
+                    style={{
+                      position: 'absolute',
+                      inset: 0,
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                    }}
+                  />
+                )}
                 {tile.badge && (
                   <span
                     style={{
@@ -531,7 +493,7 @@ export default function HomePage() {
                       fontWeight: '700',
                     }}
                   >
-                    あと7日
+                    {tile.expiring}
                   </span>
                 )}
               </div>
@@ -568,7 +530,7 @@ export default function HomePage() {
                   color: TOKENS.text.quaternary,
                 }}
               >
-                無料プラン（{data.storagePlanDays}日保存）
+                {storagePlanLabel}
               </span>
             </div>
             <div
@@ -582,7 +544,7 @@ export default function HomePage() {
               <div
                 style={{
                   height: '100%',
-                  width: `${(data.photosStored / data.photosLimit) * 100}%`,
+                  width: `${storagePercent}%`,
                   background: TOKENS.accent.goldLight,
                   borderRadius: '99px',
                 }}
@@ -792,7 +754,7 @@ export default function HomePage() {
                 color: TOKENS.text.quaternary,
               }}
             >
-              2件
+              {newsItems.length}件
             </span>
           </div>
 
@@ -830,31 +792,15 @@ export default function HomePage() {
       {/* タブバー */}
       <div
         style={{
-          display: 'flex',
-          borderTop: `1px solid ${TOKENS.border}`,
-          background: TOKENS.bg.card,
-          padding: '10px 0 16px',
           position: 'fixed',
           bottom: 0,
           left: 0,
           right: 0,
           width: '100%',
+          background: TOKENS.bg.card,
         }}
       >
-        {['ホーム', 'きろく', 'マイカルテ', 'サロン'].map((tab, idx) => (
-          <div
-            key={idx}
-            style={{
-              flex: 1,
-              textAlign: 'center',
-              fontSize: '10px',
-              fontWeight: idx === 0 ? '700' : 'normal',
-              color: idx === 0 ? TOKENS.text.gold : TOKENS.text.quaternary,
-            }}
-          >
-            {tab}
-          </div>
-        ))}
+        <LiffTabBar active="home" />
       </div>
 
       {/* タブバー分のスペーサー */}
