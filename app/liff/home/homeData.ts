@@ -102,10 +102,13 @@ export function useHomeData(palette: HomePalette) {
   const storagePercent =
     data.photosLimit > 0 ? Math.min(100, (data.photosStored / data.photosLimit) * 100) : 0
 
-  const storagePlanLabel =
-    data.storagePlanDays == null
+  // storage が無い＝未取得／LINE外。これを「無制限」と混同しないこと。
+  // 無料は retention_days=90、プレミアムのみ retention_unlimited=true。
+  const storagePlanLabel = !storage
+    ? '—'
+    : storage.retention_unlimited
       ? 'プレミアム（保存期限なし）'
-      : `無料プラン（${data.storagePlanDays}日保存）`
+      : `無料プラン（${storage.retention_days ?? 90}日保存）`
 
   const tiles: TileData[] = (carte?.photos ?? []).slice(0, 3).map((p) => ({
     label: isToday(p.created_at) ? '今日' : photoKindLabel(p.kind),
