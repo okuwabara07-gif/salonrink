@@ -82,7 +82,7 @@ export default function StorePage() {
                   <div style={{ aspectRatio: '1', borderRadius: 12, background: '#EFE8DA', overflow: 'hidden' }}>
                     {p.image_url && <img src={p.image_url} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   </div>
-                  <b style={{ fontSize: 11, lineHeight: 1.5 }}>{p.name}</b>
+                  <Link href={`/liff/store/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}><b style={{ fontSize: 11, lineHeight: 1.5 }}>{p.name}</b></Link>
                   <span style={{ fontSize: 11.5, fontWeight: 700, color: '#8A7A5F' }}>{yen(p.price)}<span style={{ fontWeight: 400, fontSize: 9, color: '#A2988A' }}>（税込）</span></span>
                   {p.ec_url && <a href={p.ec_url} target="_blank" rel="noopener noreferrer" style={extBtn}>サロンECで購入</a>}
                 </div>
@@ -118,7 +118,7 @@ export default function StorePage() {
                   <span style={{ position: 'absolute', left: 6, top: 6, fontSize: 8, background: 'rgba(27,24,21,.72)', color: '#fff', borderRadius: 99, padding: '2px 7px', fontWeight: 700 }}>PR</span>
                 </div>
                 <span style={{ fontSize: 9.5, color: '#A2988A' }}>{p.brand_name}</span>
-                <b style={{ fontSize: 10.5, lineHeight: 1.5, minHeight: '2.9em' }}>{p.display_name}</b>
+                <Link href={`/liff/store/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}><b style={{ fontSize: 10.5, lineHeight: 1.5, minHeight: '2.9em' }}>{p.display_name}</b></Link>
                 <span style={{ fontSize: 11.5, fontWeight: 700, color: '#8A7A5F' }}>{yen(p.price)}</span>
                 <a href={p.ec_url} target="_blank" rel="noopener noreferrer sponsored" style={{ ...extBtn, borderColor: '#E5DDCF', color: '#7A7266', fontWeight: 500 }}>{p.mall_label}</a>
               </div>
