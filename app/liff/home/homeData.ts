@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+import liff from '@line/liff'
 import { useMycarte } from '../_lib/useMycarte'
 import {
   clockTime,
@@ -9,6 +11,7 @@ import {
   photoKindLabel,
   shortDate,
 } from '../_lib/format'
+import { SR_FUNCTIONS_BASE } from '../_lib/mycarteTypes'
 import type { MycarteScorePoint } from '../_lib/mycarteTypes'
 
 export interface TileData {
@@ -201,5 +204,8 @@ export function useHomeData(palette: HomePalette) {
     diagnostics,
     barChartData,
     newsItems,
+    openCheckout,
+    checkoutBusy,
+    checkoutError,
   }
 }
