@@ -186,22 +186,47 @@ export default function KartePage() {
                   今の状態の写真
                 </h2>
                 <span className="text-[10.5px]" style={{ color: '#8B8178' }}>
-                  きろくから3枚
+                  きろくから{photos.length}枚
                 </span>
               </div>
-              <div className="flex gap-[7px]">
-                {['正面', '後ろ', '根元'].map((label) => (
-                  <div key={label} className="flex-1 flex flex-col gap-[5px] items-center">
-                    <div
-                      className="w-full h-20 rounded-[12px]"
-                      style={{ backgroundColor: '#EFE8DA' }}
-                    />
-                    <span className="text-[9.5px]" style={{ color: '#8B8178' }}>
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              {photos.length > 0 ? (
+                <div className="flex gap-[7px]">
+                  {photos.map((p) => {
+                    const picked = selectedImages.has(p.id)
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => handleImageToggle(p.id)}
+                        className="flex-1 flex flex-col gap-[5px] items-center"
+                      >
+                        <div
+                          className="w-full h-20 rounded-[12px] overflow-hidden"
+                          style={{
+                            backgroundColor: '#EFE8DA',
+                            boxShadow: picked ? '0 0 0 2px #A98D4B' : 'none',
+                          }}
+                        >
+                          {p.signed_url && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={p.signed_url}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <span className="text-[9.5px]" style={{ color: '#8B8178' }}>
+                          {photoKindLabel(p.kind)} {shortDate(p.created_at)}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              ) : (
+                <span className="text-[11px] leading-[1.7]" style={{ color: '#8B8178' }}>
+                  きろくに写真がまだありません。撮影して登録すると、ここから選べます。
+                </span>
+              )}
               <div className="flex gap-[8px]">
                 <button
                   className="flex-1 text-center border rounded-full py-[11px] text-[12px]"
@@ -430,8 +455,8 @@ export default function KartePage() {
                 </a>
               </div>
               <div className="flex flex-col gap-[8px] text-[11.5px]" style={{ color: '#6E6257' }}>
-                <span>アレルギー：なし</span>
-                <span>施術履歴：カラー（3回）、パーマ（2回）</span>
+                {/* アレルギー・施術履歴は保存先のカラムが未定義。実装までは表示しない。 */}
+                <span>持病・アレルギー・施術履歴は、設定から登録すると添付されます。</span>
               </div>
             </div>
 
@@ -443,24 +468,28 @@ export default function KartePage() {
               <h2 className="font-serif text-[14px] font-medium" style={{ color: '#3D342C' }}>
                 送信プレビュー
               </h2>
-              <div className="flex gap-[7px] text-[9.5px]">
-                <div className="flex-1 aspect-video rounded-[12px]" style={{ backgroundColor: '#EFE8DA' }} />
-                <div className="flex-1 aspect-video rounded-[12px]" style={{ backgroundColor: '#E7DCC4' }} />
-                <div className="flex-1 aspect-video rounded-[12px]" style={{ backgroundColor: '#EFE8DA' }} />
-              </div>
+              {(pickedPhotos.length > 0 || inspirations.length > 0) && (
+                <div className="flex gap-[7px] text-[9.5px]">
+                  {[...pickedPhotos, ...inspirations].slice(0, 3).map((p) => (
+                    <div
+                      key={p.id}
+                      className="flex-1 aspect-video rounded-[12px] overflow-hidden"
+                      style={{ backgroundColor: '#EFE8DA' }}
+                    >
+                      {p.signed_url && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={p.signed_url} alt="" className="w-full h-full object-cover" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex flex-col gap-[8px] text-[11px]" style={{ color: '#3D342C' }}>
-                <div>
-                  <span className="font-bold">【希望】</span>
-                  <span> カット、カラー</span>
-                </div>
-                <div>
-                  <span className="font-bold">【イメージ】</span>
-                  <span> ツヤ感重視</span>
-                </div>
-                <div>
-                  <span className="font-bold">【悩み】</span>
-                  <span> 広がりやすい、パサつき・乾燥、白髪が増えた</span>
-                </div>
+                {summaryLines.length > 0 ? (
+                  summaryLines.map((line) => <div key={line}>{line}</div>)
+                ) : (
+                  <div>まだ何も選ばれていません。Step1〜3で選ぶとここに反映されます。</div>
+                )}
               </div>
             </div>
 
@@ -530,7 +559,7 @@ export default function KartePage() {
                   来店予定：2026年9月5日（木）14:00～
                 </div>
                 <div className="text-[11.5px]" style={{ color: '#3D342C' }}>
-                  送信日時：2026年8月29日 12:27
+                  送信日時：{longDateTime(sentAt)}
                 </div>
               </div>
               <button
@@ -609,18 +638,32 @@ export default function KartePage() {
               戻る
             </button>
           )}
-          <button
-            onClick={() => {
-              if (step === 1) setStep(2)
-              else if (step === 2) setStep(3)
-              else if (step === 3) setStep(4)
-              else if (step === 4) setStep('complete')
-            }}
-            className="flex-1 rounded-[14px] py-[14px] text-[12px] font-bold text-white"
-            style={{ backgroundColor: step === 3 ? '#A9855C' : '#A9855C' }}
-          >
-            {step === 4 ? 'LINEで事前カルテを送る' : step === 3 ? '確認へ' : '次へ'}
-          </button>
+          <div className="flex-1 flex flex-col gap-[6px]">
+            <button
+              disabled={sending}
+              onClick={() => {
+                if (step === 1) setStep(2)
+                else if (step === 2) setStep(3)
+                else if (step === 3) setStep(4)
+                else if (step === 4) void handleSend()
+              }}
+              className="rounded-[14px] py-[14px] text-[12px] font-bold text-white"
+              style={{ backgroundColor: '#A9855C', opacity: sending ? 0.6 : 1 }}
+            >
+              {step === 4
+                ? sending
+                  ? '送信中…'
+                  : 'LINEで事前カルテを送る'
+                : step === 3
+                  ? '確認へ'
+                  : '次へ'}
+            </button>
+            {sendError && (
+              <span className="text-[10.5px] text-center" style={{ color: '#A8705C' }}>
+                {sendError}
+              </span>
+            )}
+          </div>
         </div>
       )}
 
