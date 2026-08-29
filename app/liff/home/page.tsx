@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import LiffTabBar from '../_components/LiffTabBar'
 import { useHomeData } from './homeData'
 
@@ -715,9 +716,12 @@ export default function HomePage() {
             }}
           >
             {diagnostics.map((item, idx) => (
-              <div
+              <Link
                 key={idx}
+                href={item.title.includes('占') ? '/liff/fortune' : '/liff/diagnosis'}
                 style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
                   background: TOKENS.bg.surface,
                   borderRadius: '12px',
                   padding: '12px',
@@ -735,9 +739,16 @@ export default function HomePage() {
                 >
                   {item.isUnread ? item.date : `前回 ${item.date}`}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
+        </div>
+
+        {/* ストア・注文履歴・プラン導線 */}
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <Link href="/liff/store" style={{ flex: 1, textAlign: 'center', background: TOKENS.bg.card, borderRadius: '14px', padding: '13px 8px', fontSize: '11.5px', fontWeight: '700', color: TOKENS.text.primary, textDecoration: 'none', boxShadow: `0 1px 0 ${TOKENS.border}` }}>ストア</Link>
+          <Link href="/liff/orders" style={{ flex: 1, textAlign: 'center', background: TOKENS.bg.card, borderRadius: '14px', padding: '13px 8px', fontSize: '11.5px', fontWeight: '700', color: TOKENS.text.primary, textDecoration: 'none', boxShadow: `0 1px 0 ${TOKENS.border}` }}>注文履歴</Link>
+          <Link href="/liff/plan" style={{ flex: 1, textAlign: 'center', background: TOKENS.bg.card, borderRadius: '14px', padding: '13px 8px', fontSize: '11.5px', fontWeight: '700', color: TOKENS.text.primary, textDecoration: 'none', boxShadow: `0 1px 0 ${TOKENS.border}` }}>プラン</Link>
         </div>
 
         {/* サロンからのお知らせカード */}
