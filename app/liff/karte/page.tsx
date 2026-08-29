@@ -667,31 +667,7 @@ export default function KartePage() {
         </div>
       )}
 
-      {/* Tab Bar (for complete state) */}
-      {step === 'complete' && (
-        <div
-          className="flex border-t mt-[20px]"
-          style={{ borderColor: '#E5DDCF', backgroundColor: '#fff', padding: '10px 0 16px' }}
-        >
-          {[
-            { label: 'ホーム', active: false },
-            { label: 'きろく', active: false },
-            { label: 'マイカルテ', active: true },
-            { label: 'サロン', active: false },
-          ].map((tab, idx) => (
-            <div
-              key={idx}
-              className="flex-1 text-center text-[10px]"
-              style={{
-                fontWeight: tab.active ? '700' : 'normal',
-                color: tab.active ? '#8A7A5F' : '#A2988A',
-              }}
-            >
-              {tab.label}
-            </div>
-          ))}
-        </div>
-      )}
+      {step === 'complete' && <LiffTabBar active="karte" />}
     </div>
   )
 }
