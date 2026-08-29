@@ -673,7 +673,7 @@ export default function HomePage() {
             }}
           >
             {checkoutBusy ? '準備中…' : 'プランを見る'}
-          </div>
+          </button>
           <span
             style={{
               fontSize: '10px',
