@@ -7,43 +7,51 @@ import { withLiffEnv } from '../_lib/liffEnv'
 
 export type LiffTabKey = 'home' | 'records' | 'karte' | 'salon'
 
+const ICON_PROPS = {
+  width: 24,
+  height: 24,
+  viewBox: '0 0 24 24',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.9,
+  strokeLinecap: 'round' as const,
+  strokeLinejoin: 'round' as const,
+}
+
 const ICONS: Record<LiffTabKey, ReactNode> = {
   home: (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 11.2 12 3.5l9 7.7" />
-      <path d="M5.4 10v9.5a1 1 0 0 0 1 1h11.2a1 1 0 0 0 1-1V10" />
-      <path d="M9.8 20.5v-6h4.4v6" />
+    <svg {...ICON_PROPS}>
+      <path d="M3 10.8 12 3.5l9 7.3" />
+      <path d="M5.5 9.5V20a1 1 0 0 0 1 1H9.8v-5.6a2.2 2.2 0 0 1 4.4 0V21h3.3a1 1 0 0 0 1-1V9.5" />
     </svg>
   ),
   records: (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="5" width="18" height="14.5" rx="2.2" />
-      <circle cx="8.6" cy="10" r="1.5" />
-      <path d="M4.5 17.5l4.6-4.6 3.6 3.6 2.8-2.8 4 4" />
+    <svg {...ICON_PROPS}>
+      <rect x="3" y="6.5" width="18" height="14" rx="2.5" />
+      <path d="M8.5 6.5 10 4h4l1.5 2.5" />
+      <circle cx="12" cy="13.3" r="3.4" />
     </svg>
   ),
   karte: (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="5" y="4.5" width="14" height="16.5" rx="2.2" />
-      <path d="M9.2 3h5.6v3.4H9.2z" />
-      <path d="M8.8 11h6.4M8.8 14.4h6.4M8.8 17.8h4" />
+    <svg {...ICON_PROPS}>
+      <rect x="4.5" y="4" width="15" height="17" rx="2.5" />
+      <path d="M8.5 9h7M8.5 12.7h7M8.5 16.4h4.5" />
     </svg>
   ),
   salon: (
-    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="6.6" r="2.6" />
-      <circle cx="6" cy="17.4" r="2.6" />
-      <path d="M8.3 8.3 20.5 18.6" />
-      <path d="M8.3 15.7 20.5 5.4" />
+    <svg {...ICON_PROPS}>
+      <circle cx="6.3" cy="6.3" r="2.6" />
+      <circle cx="6.3" cy="17.7" r="2.6" />
+      <path d="M20.5 4 8.6 15.9M14.7 14.6l5.8 5.4M8.6 8.1l3.6 3.7" />
     </svg>
   ),
 }
 
 const TABS: { key: LiffTabKey; label: string; color: string; href: string }[] = [
-  { key: 'home', label: 'ホーム', color: '#A98D4B', href: '/liff/home' },
-  { key: 'records', label: 'きろく', color: '#B07A54', href: '/liff/records' },
-  { key: 'karte', label: 'マイカルテ', color: '#7E8C64', href: '/liff/karte' },
-  { key: 'salon', label: 'サロン', color: '#8A6E8C', href: '/liff/salon' },
+  { key: 'home', label: 'ホーム', color: '#B08654', href: '/liff/home' },
+  { key: 'records', label: 'きろく', color: '#7E9A6F', href: '/liff/records' },
+  { key: 'karte', label: 'マイカルテ', color: '#A8705C', href: '/liff/karte' },
+  { key: 'salon', label: 'サロン', color: '#6E86A8', href: '/liff/salon' },
 ]
 
 export default function LiffTabBar({ active }: { active: LiffTabKey }) {
@@ -67,7 +75,7 @@ export default function LiffTabBar({ active }: { active: LiffTabKey }) {
         borderColor: '#E5DDCF',
         backgroundColor: '#fff',
         paddingBottom: 'env(safe-area-inset-bottom)',
-        boxShadow: '0 -1px 8px rgba(46,42,36,.06)',
+        boxShadow: '0 -2px 8px rgba(46,42,36,.05)',
       }}
     >
       {TABS.map((tab) => {
@@ -89,7 +97,7 @@ export default function LiffTabBar({ active }: { active: LiffTabKey }) {
               padding: '9px 0 10px',
               textDecoration: 'none',
               position: 'relative',
-              color: isActive ? '#2E2A24' : '#A2988A',
+              color: isActive ? tab.color : '#B9B0A2',
             }}
           >
             {isActive && (
@@ -113,10 +121,7 @@ export default function LiffTabBar({ active }: { active: LiffTabKey }) {
                 width: '38px',
                 height: '30px',
                 borderRadius: '10px',
-                color: tab.color,
-                opacity: isActive ? 1 : 0.55,
                 background: isActive ? `${tab.color}1F` : 'transparent',
-                transition: 'opacity .15s',
               }}
             >
               {ICONS[tab.key]}
