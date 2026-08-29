@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import liff from '@line/liff'
 import LiffTabBar from '../_components/LiffTabBar'
+import VisitBudgetPicker from '../_components/VisitBudgetPicker'
 import { useMycarte } from '../_lib/useMycarte'
 import { longDateTime, photoKindLabel, shortDate } from '../_lib/format'
 import { SR_FUNCTIONS_BASE } from '../_lib/mycarteTypes'
@@ -421,6 +422,15 @@ export default function KartePage() {
                 </label>
               ))}
             </div>
+
+            {/* 予算の目安・滞在できる時間（06改・項目19） */}
+            {profile?.userId && (
+              <VisitBudgetPicker
+                lineUserId={profile.userId}
+                initialBudget={(carte as { profile?: { visit_budget?: string | null } } | null)?.profile?.visit_budget ?? null}
+                initialStayLimit={(carte as { profile?: { stay_limit?: string | null } } | null)?.profile?.stay_limit ?? null}
+              />
+            )}
 
             {/* Free Text */}
             <div
