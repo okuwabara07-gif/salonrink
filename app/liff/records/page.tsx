@@ -12,6 +12,7 @@ import {
   recordKindLabel,
   shortDate,
 } from '../_lib/format'
+import { SR_FUNCTIONS_BASE } from '../_lib/mycarteTypes'
 import type { MycartePhoto, MycarteRecord } from '../_lib/mycarteTypes'
 
 type TabKey = 'highlight' | 'grid' | 'visit'
@@ -20,7 +21,51 @@ const PLACEHOLDER_BG = '#EFE8DA'
 
 export default function RecordsPage() {
   const [activeTab, setActiveTab] = useState<TabKey>('highlight')
-  const { status, data, profile, message } = useMycarte()
+  const { status, data, profile, message, reload } = useMycarte()
+  const [replyText, setReplyText] = useState('')
+  const [replyName, setReplyName] = useState('')
+  const [replySaving, setReplySaving] = useState(false)
+  const [replyError, setReplyError] = useState<string | null>(null)
+
+  /**
+   * 美容師の返信を貼り付けて記録する。
+   * 美容師個人のLINEは Messaging API で取得できないため、
+   * save-record の stylist_reply_create がこのループを閉じる唯一の経路。
+   */
+  const handleReplySave = async () => {
+    if (!profile?.userId) {
+      setReplyError('LINEから開くと保存できます。')
+      return
+    }
+    const comment = replyText.trim()
+    if (!comment) {
+      setReplyError('返信の内容を貼り付けてください。')
+      return
+    }
+    setReplySaving(true)
+    setReplyError(null)
+    try {
+      const res = await fetch(`${SR_FUNCTIONS_BASE}/save-record`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          line_user_id: profile.userId,
+          action: 'stylist_reply_create',
+          comment,
+          stylist_name: replyName.trim() || undefined,
+        }),
+      })
+      const j = await res.json().catch(() => null)
+      if (!res.ok || !j?.ok) throw new Error(j?.error ?? `save-record ${res.status}`)
+      setReplyText('')
+      setReplyName('')
+      reload()
+    } catch (e) {
+      setReplyError(e instanceof Error ? e.message : '保存できませんでした。')
+    } finally {
+      setReplySaving(false)
+    }
+  }
 
   const photos = useMemo(() => data?.photos ?? [], [data])
   const records = useMemo(() => data?.records ?? [], [data])
@@ -282,6 +327,47 @@ export default function RecordsPage() {
             )}
           </>
         )}
+
+        {/* 美容師の返信を貼り付ける（「返る」ループ） */}
+        <div
+          className="bg-white rounded-[18px] p-[17px] flex flex-col gap-[10px]"
+          style={{ boxShadow: '0 1px 0 #E5DDCF' }}
+        >
+          <h2 className="font-serif text-[14px] font-medium" style={{ color: '#2E2A24' }}>
+            美容師からの返信を残す
+          </h2>
+          <span className="text-[10.5px] leading-[1.7]" style={{ color: '#A2988A' }}>
+            LINEで受け取った返信を貼り付けると、記録に残って次の来店の起点になります。
+          </span>
+          <input
+            value={replyName}
+            onChange={(e) => setReplyName(e.target.value)}
+            placeholder="美容師名（任意）"
+            className="rounded-[12px] border px-[12px] py-[10px] text-[11.5px]"
+            style={{ borderColor: '#E5DDCF', color: '#2E2A24' }}
+          />
+          <textarea
+            value={replyText}
+            onChange={(e) => setReplyText(e.target.value)}
+            placeholder="返信の内容を貼り付け"
+            rows={3}
+            className="rounded-[12px] border px-[12px] py-[10px] text-[11.5px] leading-[1.7]"
+            style={{ borderColor: '#E5DDCF', color: '#2E2A24' }}
+          />
+          {replyError && (
+            <span className="text-[10.5px]" style={{ color: '#A8705C' }}>
+              {replyError}
+            </span>
+          )}
+          <button
+            disabled={replySaving}
+            onClick={() => void handleReplySave()}
+            className="rounded-full py-[11px] text-[12px] font-bold text-white"
+            style={{ backgroundColor: '#8A7A5F', opacity: replySaving ? 0.6 : 1 }}
+          >
+            {replySaving ? '保存中…' : '記録に残す'}
+          </button>
+        </div>
 
         {/* Footer Note */}
         <span className="text-[10.5px] leading-[1.7] text-center" style={{ color: '#A2988A' }}>
