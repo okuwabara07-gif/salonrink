@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>カラーパレット比較 — SalonRink LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0; background: #e9ece9;
+    font-family: 'Noto Sans JP', system-ui, sans-serif;
+    color: #0f1614;
+  }
+  .page { padding: 48px 32px 80px; max-width: 1480px; margin: 0 auto; }
+  .page__head { text-align: center; margin-bottom: 40px; }
+  .page__eyebrow {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px;
+    color: #6b746f; letter-spacing: 0.18em; text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+  .page__title {
+    font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 40px;
+    margin: 0 0 14px; letter-spacing: 0.01em;
+  }
+  .page__sub {
+    font-size: 14px; line-height: 1.85; color: #3a4340;
+    max-width: 760px; margin: 0 auto;
+  }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    margin-top: 40px;
+  }
+
+  /* ─── Card ─── */
+  .card {
+    background: #fff; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 2px 6px rgba(15,22,20,0.05), 0 12px 32px rgba(15,22,20,0.06);
+    display: flex; flex-direction: column;
+  }
+  .card__hd {
+    padding: 22px 26px 18px; border-bottom: 1px solid rgba(0,0,0,0.06);
+    display: flex; align-items: baseline; justify-content: space-between;
+    background: #fafafa;
+  }
+  .card__hd-left { display: flex; align-items: baseline; gap: 12px; }
+  .card__hd-num {
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+    color: rgba(0,0,0,0.4); letter-spacing: 0.18em;
+  }
+  .card__hd-title {
+    font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 18px;
+  }
+  .card__hd-vibe {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: #6b746f; letter-spacing: 0.14em;
+  }
+
+  /* preview hero zone — uses palette vars */
+  .preview {
+    padding: 36px 32px 28px;
+    background: var(--p-bg);
+    position: relative; overflow: hidden;
+    min-height: 320px;
+    display: flex; gap: 24px; align-items: center;
+  }
+  .preview::before {
+    content: ""; position: absolute; top: 30px; right: 30%;
+    width: 90px; height: 90px;
+    background-image: radial-gradient(var(--p-accent-soft) 1.2px, transparent 1.2px);
+    background-size: 12px 12px; opacity: 0.7;
+  }
+  .preview::after {
+    content: ""; position: absolute; right: -50px; top: 40px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: radial-gradient(circle, var(--p-accent-soft) 0%, transparent 70%);
+    opacity: 0.6; pointer-events: none;
+  }
+
+  .preview__body {
+    position: relative; z-index: 1; flex: 1;
+  }
+  .preview__badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+  .preview__badge .pill {
+    background: var(--p-accent); color: var(--p-on-accent);
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; font-weight: 700;
+    padding: 3px 9px; border-radius: 999px; letter-spacing: 0.14em;
+  }
+  .preview__badge .text {
+    font-size: 10.5px; color: var(--p-ink-2);
+  }
+  .preview__title {
+    font-family: 'Noto Serif JP', serif; font-weight: 700;
+    font-size: 22px; line-height: 1.4; color: var(--p-ink);
+    margin: 0 0 12px; letter-spacing: 0.01em;
+  }
+  .preview__title .accent { color: var(--p-accent); }
+  .preview__sub {
+    font-size: 11.5px; line-height: 1.7; color: var(--p-ink-2);
+    margin: 0 0 16px;
+  }
+  .preview__stats {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .preview__stat {
+    flex: 1; background: var(--p-card); border: 1px solid var(--p-line);
+    border-radius: 10px; padding: 10px 8px; text-align: center;
+  }
+  .preview__stat-num {
+    font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 22px;
+    color: var(--p-accent); line-height: 1;
+  }
+  .preview__stat-num .small { font-size: 12px; }
+  .preview__stat-label {
+    font-family: 'JetBrains Mono', monospace; font-size: 8px;
+    color: var(--p-ink-3); letter-spacing: 0.08em;
+    margin-top: 5px; text-transform: uppercase;
+  }
+  .preview__cta {
+    display: flex; gap: 8px;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 16px; border-radius: 999px;
+    font-family: 'Noto Sans JP', sans-serif; font-weight: 600; font-size: 11px;
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+  }
+  .btn--primary { background: var(--p-accent); color: var(--p-on-accent); }
+  .btn--outline { background: var(--p-card); color: var(--p-ink); border-color: var(--p-line); }
+
+  /* mini phone */
+  .preview__phone {
+    width: 140px; height: 260px;
+    background: #1a1a1a; border-radius: 22px; padding: 6px;
+    box-shadow: 0 10px 24px rgba(15,22,20,0.18);
+    flex-shrink: 0; position: relative; z-index: 1;
+  }
+  .preview__phone-screen {
+    width: 100%; height: 100%; background: #f7f7f7; border-radius: 17px;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .pp-head {
+    background: #fff; padding: 8px 8px 6px;
+    border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .pp-head .av {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--p-accent); color: var(--p-on-accent);
+    font-family: 'Noto Serif JP', serif; font-size: 9px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pp-head .name {
+    font-size: 8px; font-weight: 600; color: #0f1614;
+  }
+  .pp-body { flex: 1; padding: 8px 6px; }
+  .pp-msg {
+    background: #fff; padding: 6px 8px; border-radius: 8px;
+    font-size: 8.5px; line-height: 1.4; margin-bottom: 6px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.03);
+    max-width: 88%;
+  }
+  .pp-msg--user {
+    background: var(--p-accent-soft); color: var(--p-ink);
+    margin-left: auto;
+  }
+
+  /* swatches */
+  .swatches {
+    padding: 16px 26px 22px;
+    background: #fafafa;
+    border-top: 1px solid rgba(0,0,0,0.05);
+  }
+  .swatches__row {
+    display: flex; gap: 8px; align-items: stretch;
+  }
+  .sw {
+    flex: 1; display: flex; flex-direction: column; gap: 6px;
+    align-items: stretch;
+  }
+  .sw__chip {
+    height: 36px; border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .sw__meta {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  }
+  .sw__name { color: #3a4340; font-weight: 600; letter-spacing: 0.06em; }
+  .sw__hex { color: #6b746f; letter-spacing: 0.04em; }
+
+  .notes {
+    padding: 16px 26px 24px;
+    border-top: 1px solid rgba(0,0,0,0.05);
+    font-size: 12px; line-height: 1.75; color: #3a4340;
+  }
+  .notes__title {
+    font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: #6b746f; letter-spacing: 0.14em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .notes b { color: #0f1614; }
+
+  /* ════ PALETTES ════ */
+
+  /* 01 — CURRENT: LINE Green + White (現行) */
+  .palette-01 {
+    --p-bg: #ffffff;
+    --p-ink: #0f1614; --p-ink-2: #3a4340; --p-ink-3: #6b746f;
+    --p-line: #e6ebe7;
+    --p-accent: #06C755; --p-accent-soft: #e6f7ec;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  /* 02 — SAGE + IVORY (落ち着いたサロン感) */
+  .palette-02 {
+    --p-bg: #f7f5ee;
+    --p-ink: #1d2a22; --p-ink-2: #4a5a4f; --p-ink-3: #7e8a82;
+    --p-line: #e3ddc9;
+    --p-accent: #5b8f6e; --p-accent-soft: #e0ebd9;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  /* 03 — INK + GOLD (高単価サロン / 上品) */
+  .palette-03 {
+    --p-bg: #f8f6f2;
+    --p-ink: #14110d; --p-ink-2: #3d342a; --p-ink-3: #877e72;
+    --p-line: #e8e1d3;
+    --p-accent: #b69457; --p-accent-soft: #f1e8d2;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  /* 04 — TERRACOTTA + CREAM (温かみのある美容) */
+  .palette-04 {
+    --p-bg: #faf4ee;
+    --p-ink: #2a1c14; --p-ink-2: #5a4538; --p-ink-3: #948072;
+    --p-line: #ebdfd0;
+    --p-accent: #c4602b; --p-accent-soft: #f9e2d2;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  /* 05 — NAVY + MUSTARD (B2B / 信頼感 / 編集的) */
+  .palette-05 {
+    --p-bg: #f4f6f9;
+    --p-ink: #0e1733; --p-ink-2: #2f3a5b; --p-ink-3: #6e7799;
+    --p-line: #dee3ee;
+    --p-accent: #1f3a8a; --p-accent-soft: #dde4f5;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  /* 06 — FOREST + IVORY (深緑 / 知的) */
+  .palette-06 {
+    --p-bg: #f6f4ec;
+    --p-ink: #0d1f15; --p-ink-2: #2f4438; --p-ink-3: #6e8278;
+    --p-line: #dee3d6;
+    --p-accent: #1f5d3b; --p-accent-soft: #d6e4d9;
+    --p-on-accent: #ffffff;
+    --p-card: #ffffff;
+  }
+
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: 1fr; }
+    .preview { flex-direction: column; align-items: stretch; min-height: auto; }
+    .preview__phone { width: 100%; max-width: 200px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="page__head">
+    <div class="page__eyebrow">COLOR EXPLORATION · 6 OPTIONS</div>
+    <h1 class="page__title">カラーパレット<span style="color:#06C755;">候補</span></h1>
+    <p class="page__sub">現行のLINEグリーンを軸にした案から、サロン業界に寄せた案、B2B感を強めた案まで6つご用意しました。<br>各カードは Hero セクションをそのパレットで再現したものです。気に入った番号をお知らせください。</p>
+  </div>
+
+  <div class="grid">
+
+    <!-- 01 CURRENT -->
+    <article class="card palette-01">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">01 / CURRENT</span>
+          <span class="card__hd-title">LINE Green &times; White</span>
+        </div>
+        <span class="card__hd-vibe">現行 · SaaSクリーン</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#06C755;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#06C755</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#e6f7ec;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#E6F7EC</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#ffffff; border-color:#e6ebe7;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#FFFFFF</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#0f1614;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#0F1614</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        LINE純正の色をそのまま採用。<b>「LINEで始める」</b>という主張と完全一致。フレッシュ・親しみ・SaaS感。<br><b>ベスト用途:</b> 現行ユーザーに自然に伝わる、ブランド継承重視。
+      </div>
+    </article>
+
+    <!-- 02 SAGE -->
+    <article class="card palette-02">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">02 / SAGE</span>
+          <span class="card__hd-title">Sage &times; Ivory</span>
+        </div>
+        <span class="card__hd-vibe">サロン寄り · ナチュラル</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#5b8f6e;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#5B8F6E</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#e0ebd9;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#E0EBD9</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f7f5ee; border-color:#e3ddc9;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#F7F5EE</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#1d2a22;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#1D2A22</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        セージグリーン × アイボリー。ボタニカル・<b>癒し</b>・上質。LINEの<b>"緑のDNA"</b>を残しつつ、サロン業界の世界観に寄せた案。<br><b>ベスト用途:</b> 高単価サロン狙い / ナチュラル系ブランド。
+      </div>
+    </article>
+
+    <!-- 03 GOLD -->
+    <article class="card palette-03">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">03 / GOLD</span>
+          <span class="card__hd-title">Ink &times; Soft Gold</span>
+        </div>
+        <span class="card__hd-vibe">高級サロン · プレミアム</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#b69457;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#B69457</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f1e8d2;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#F1E8D2</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f8f6f2; border-color:#e8e1d3;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#F8F6F2</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#14110d;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#14110D</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        ダークインク × ソフトゴールド。<b>上品・知性・上顧客</b>。ハイブランドサロン・銀座/表参道系の世界観。LINE色は無し。<br><b>ベスト用途:</b> 高単価戦略 / 老舗・名門サロン狙い。
+      </div>
+    </article>
+
+    <!-- 04 TERRACOTTA -->
+    <article class="card palette-04">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">04 / TERRACOTTA</span>
+          <span class="card__hd-title">Terracotta &times; Cream</span>
+        </div>
+        <span class="card__hd-vibe">温かみ · ビューティー</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#c4602b;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#C4602B</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f9e2d2;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#F9E2D2</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#faf4ee; border-color:#ebdfd0;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#FAF4EE</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#2a1c14;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#2A1C14</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        テラコッタ × クリーム。<b>温かみ・人間味・女性的</b>。ビューティー業界らしいウォーム配色。LINEらしさは失われるトレードオフ。<br><b>ベスト用途:</b> ヘア/エステ女性オーナー層 / 親近感重視。
+      </div>
+    </article>
+
+    <!-- 05 NAVY -->
+    <article class="card palette-05">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">05 / NAVY</span>
+          <span class="card__hd-title">Navy &times; Cool Gray</span>
+        </div>
+        <span class="card__hd-vibe">B2B · 信頼感</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#1f3a8a;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#1F3A8A</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#dde4f5;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#DDE4F5</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f4f6f9; border-color:#dee3ee;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#F4F6F9</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#0e1733;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#0E1733</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        ディープネイビー × クールグレー。<b>業務システム・信頼・編集的</b>。SaaSプロダクトらしい知的な印象。<br><b>ベスト用途:</b> 「業務効率化ツール」としての側面を強調したい場合。
+      </div>
+    </article>
+
+    <!-- 06 FOREST -->
+    <article class="card palette-06">
+      <div class="card__hd">
+        <div class="card__hd-left">
+          <span class="card__hd-num">06 / FOREST</span>
+          <span class="card__hd-title">Forest &times; Ivory</span>
+        </div>
+        <span class="card__hd-vibe">深緑 · 知性 · 信頼</span>
+      </div>
+      <div class="preview">
+        <div class="preview__body">
+          <div class="preview__badge"><span class="pill">NEW</span><span class="text">LINE公式拡張 · 2026.05</span></div>
+          <h2 class="preview__title">いまのLINEを、<br><span class="accent">業務システム</span>に。</h2>
+          <p class="preview__sub">予約・接客・記録・提案まで、LINEの中で完結。</p>
+          <div class="preview__stats">
+            <div class="preview__stat"><div class="preview__stat-num">−42<span class="small">%</span></div><div class="preview__stat-label">工数</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+28<span class="small">%</span></div><div class="preview__stat-label">再来</div></div>
+            <div class="preview__stat"><div class="preview__stat-num">+18<span class="small">%</span></div><div class="preview__stat-label">単価</div></div>
+          </div>
+          <div class="preview__cta">
+            <button class="btn btn--primary">LINEで始める</button>
+            <button class="btn btn--outline">資料請求</button>
+          </div>
+        </div>
+        <div class="preview__phone">
+          <div class="preview__phone-screen">
+            <div class="pp-head"><div class="av">A</div><div class="name">Atelier Lumière</div></div>
+            <div class="pp-body">
+              <div class="pp-msg">田中さま、<br>そろそろリタッチ時期ですね😊</div>
+              <div class="pp-msg pp-msg--user">覚えてくれてた！</div>
+              <div class="pp-msg">かしこまりました🌿</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swatches">
+        <div class="swatches__row">
+          <div class="sw"><div class="sw__chip" style="background:#1f5d3b;"></div><div class="sw__meta"><span class="sw__name">ACCENT</span><span class="sw__hex">#1F5D3B</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#d6e4d9;"></div><div class="sw__meta"><span class="sw__name">SOFT</span><span class="sw__hex">#D6E4D9</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#f6f4ec; border-color:#dee3d6;"></div><div class="sw__meta"><span class="sw__name">BG</span><span class="sw__hex">#F6F4EC</span></div></div>
+          <div class="sw"><div class="sw__chip" style="background:#0d1f15;"></div><div class="sw__meta"><span class="sw__name">INK</span><span class="sw__hex">#0D1F15</span></div></div>
+        </div>
+      </div>
+      <div class="notes">
+        <div class="notes__title">VIBE / 印象</div>
+        フォレストグリーン × アイボリー。<b>深い緑で知的・信頼・落ち着き</b>。LINEのDNAを残しつつ、より大人っぽく上質に。<br><b>ベスト用途:</b> LINE色を残したいが、明るすぎる印象を避けたい場合。<b>現行(01)と02の中間。</b>
+      </div>
+    </article>
+
+  </div>
+</div>
+
+</body>
+</html>

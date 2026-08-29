@@ -3,7 +3,7 @@ export default function PrivacyPage() {
     {
       title: '1. 事業者情報',
       body: [
-        '事業者名：AOKAE LLC',
+        '事業者名：AOKAE合同会社',
         '所在地：東京都',
         '連絡先：info@aokae.net',
       ],
@@ -14,6 +14,7 @@ export default function PrivacyPage() {
         '当社が運営するSalonRink（以下「本サービス」）では、以下の情報を取得します。',
         '・サロン事業者情報：サロン名、担当者名、電話番号、メールアドレス、ホットペッパービューティーのサロンページURL、サロンボードのiCal URL',
         '・顧客情報：氏名、来店日時、施術メニュー、施術履歴、LINE ID、ポイント残高',
+        '・LINEミニアプリ利用者情報：LINEユーザー識別子、LINE表示名、ご本人確認のための電話番号、施術・ヘアカラー履歴、予約情報',
         '・決済情報：Stripe社を通じた決済状況（カード番号は当社では保持しません）',
         '・利用情報：アクセスログ、Cookie、IPアドレス、ブラウザ種別、利用機能の履歴',
       ],
@@ -24,6 +25,7 @@ export default function PrivacyPage() {
         '・本サービスの提供、運営、改善',
         '・予約データの同期およびLINEを通じた自動メッセージ送信',
         '・顧客カルテ、ポイント、売上レポート等の生成',
+        '・LINEミニアプリにおけるご本人の識別、施術・ヘアカラー履歴の表示、予約の受付・変更・管理',
         '・料金の請求および決済処理',
         '・お問い合わせへの対応',
         '・サービス品質向上のための統計分析（個人を特定しない形で行います）',
@@ -92,7 +94,7 @@ export default function PrivacyPage() {
       title: '11. お問い合わせ',
       body: [
         '個人情報の取扱いに関するお問い合わせは、下記までご連絡ください。',
-        'AOKAE LLC',
+        'AOKAE合同会社',
         'メール：info@aokae.net',
         '電話：（非公開）（受付時間：平日10:00〜18:00）',
       ],
@@ -121,7 +123,7 @@ export default function PrivacyPage() {
       </h1>
 
       <p style={{ fontSize: 14, color: '#555', marginBottom: 40 }}>
-        AOKAE LLC（以下「当社」）は、本サービス「SalonRink」（SalonRink）におけるお客様の個人情報の取扱いについて、以下のとおりプライバシーポリシーを定めます。
+        AOKAE合同会社（以下「当社」）は、本サービス「SalonRink」（SalonRink）におけるお客様の個人情報の取扱いについて、以下のとおりプライバシーポリシーを定めます。
       </p>
 
       {sections.map(s => (

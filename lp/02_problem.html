@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>02 PROBLEM — SalonRink Concierge LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  body { background: var(--bg-tint); }
+  .problem { padding: 96px 0 80px; }
+  .problem__head { text-align: center; margin-bottom: 64px; }
+  .problem__head .sr-eyebrow { margin-bottom: 20px; }
+
+  .problem__grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    margin-bottom: 28px;
+  }
+  .pcard {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-xl); overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow-sm);
+  }
+  .pcard__top { padding: 28px 28px 22px; flex: 1; }
+  .pcard__num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    font-family: var(--mono); font-weight: 600; font-size: 13px;
+    margin-bottom: 18px;
+  }
+  .pcard__title {
+    font-family: var(--serif); font-weight: 700; font-size: 22px;
+    line-height: 1.5; color: var(--ink); margin: 0 0 14px;
+  }
+  .pcard__title .accent { color: var(--accent); }
+  .pcard__body {
+    font-size: 13px; line-height: 1.85; color: var(--ink-2); margin: 0 0 22px;
+  }
+  .pcard__demo {
+    background: var(--bg-tint); border-radius: 14px; padding: 14px 16px;
+    margin-top: auto;
+  }
+  .pcard__foot {
+    background: var(--bg-soft); padding: 22px 28px;
+    display: flex; align-items: center; gap: 14px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .pcard__foot-icon {
+    width: 36px; height: 36px; border-radius: 50%; background: #fff;
+    border: 1.5px solid var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .pcard__foot-text {
+    font-family: var(--serif); font-weight: 600; font-size: 14px;
+    color: var(--ink); line-height: 1.5;
+  }
+
+  /* Demo: chat */
+  .demo-chat-row { display: flex; align-items: flex-start; gap: 8px; }
+  .demo-chat-row + .demo-chat-row { margin-top: 6px; }
+  .demo-avatar {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(135deg, #f0c8a8, #d4a37a);
+    flex-shrink: 0;
+  }
+  .demo-time {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+  }
+  .demo-msg {
+    font-size: 11.5px; color: var(--ink); line-height: 1.55;
+  }
+  .demo-flag {
+    display: flex; align-items: center; gap: 6px;
+    margin-top: 8px; padding-top: 8px;
+    border-top: 1px dashed var(--line);
+    font-size: 11px; color: var(--coral); font-weight: 500;
+  }
+
+  /* Demo: list */
+  .demo-list { font-size: 12px; color: var(--ink-2); }
+  .demo-list li {
+    list-style: none; display: flex; align-items: center; gap: 8px;
+    padding: 6px 0;
+  }
+  .demo-list li::before {
+    content: ""; width: 16px; height: 16px; border-radius: 4px;
+    background: var(--bg-soft); flex-shrink: 0;
+  }
+
+  /* Footer band */
+  .pband {
+    background: #fff; border: 1px solid var(--accent-soft);
+    border-radius: var(--radius-lg);
+    padding: 22px 28px; display: flex; align-items: center; gap: 28px;
+    flex-wrap: wrap; box-shadow: var(--shadow-sm);
+  }
+  .pband__hd {
+    display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+  }
+  .pband__hd-icon {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pband__hd-text {
+    font-family: var(--serif); font-weight: 700; font-size: 15px;
+    line-height: 1.5; color: var(--ink);
+  }
+  .pband__items {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1;
+    border-left: 1px dashed var(--line); padding-left: 28px;
+  }
+  .pband__items li {
+    list-style: none; display: flex; align-items: flex-start; gap: 8px;
+    font-size: 11px; color: var(--ink-2); line-height: 1.55;
+  }
+
+  .problem__arrow {
+    text-align: center; margin: 56px 0 18px;
+    color: var(--accent);
+  }
+  .problem__solve {
+    text-align: center;
+    font-family: var(--serif); font-size: 22px; font-weight: 500;
+    color: var(--ink); letter-spacing: 0.01em;
+  }
+  .problem__solve b {
+    font-weight: 700;
+  }
+  .problem__solve .brand {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .problem__solve .brand-sub {
+    font-family: var(--mono); font-weight: 600; font-size: 14px;
+    letter-spacing: 0.18em; margin-left: 2px;
+  }
+
+  @media (max-width: 980px) {
+    .problem__grid { grid-template-columns: 1fr; }
+    .pband__items { grid-template-columns: repeat(2, 1fr); border-left: none; padding-left: 0; padding-top: 18px; border-top: 1px dashed var(--line); }
+  }
+</style>
+</head>
+<body>
+
+<section class="problem" id="problem">
+  <div class="sr-container">
+    <div class="problem__head">
+      <div class="sr-eyebrow">PROBLEM</div>
+      <h2 class="sr-h2">LINE公式アカウント、<br>本当に<span style="position:relative; padding: 0 4px;">"<span class="accent">使いこなせていますか？</span></span></h2>
+      <p class="sr-lead">多くのサロンがすでにLINEで予約も連絡も受けています。<br>でも、お客様1人ひとりの情報は、トーク履歴の海に埋もれていく…</p>
+    </div>
+
+    <div class="problem__grid">
+      <!-- 01 -->
+      <article class="pcard">
+        <div class="pcard__top">
+          <div class="pcard__num">01</div>
+          <h3 class="pcard__title">「いつもの田中さま」が、<br><span class="accent">誰の話かわからない</span></h3>
+          <p class="pcard__body">前回の仕上がり、避けたい色、肌の敏感さ…<br>覚えているのは担当者だけ。<br>担当が休みの日は、ゼロから聞き直しに。</p>
+          <div class="pcard__demo">
+            <div class="demo-chat-row">
+              <div class="demo-avatar"></div>
+              <div style="flex:1;">
+                <div style="display:flex; gap:8px; align-items:baseline;">
+                  <span class="demo-time">10:32</span>
+                  <span style="font-size:11px; color: var(--ink-2); font-weight: 600;">田中様　LINE</span>
+                </div>
+                <div class="demo-msg">「似合うベージュでお願いします！」</div>
+              </div>
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" style="opacity: 0.3; flex-shrink: 0;">
+                <circle cx="18" cy="18" r="14" stroke="currentColor" stroke-width="1"/>
+                <path d="M11 18c3-5 11-5 14 0M11 22c3-5 11-5 14 0" stroke="currentColor" stroke-width="0.8"/>
+              </svg>
+            </div>
+            <div class="demo-flag">▸ 誰って…いつ？何回目？</div>
+          </div>
+        </div>
+        <div class="pcard__foot">
+          <span class="pcard__foot-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3.5"/><path d="M4 20c0-3.5 3.5-6 8-6s8 2.5 8 6"/></svg>
+          </span>
+          <span class="pcard__foot-text">顧客体験の質が<br>安定しない</span>
+        </div>
+      </article>
+
+      <!-- 02 -->
+      <article class="pcard">
+        <div class="pcard__top">
+          <div class="pcard__num">02</div>
+          <h3 class="pcard__title">引き継ぎが、毎回<br><span class="accent">口頭と紙とLINEで</span></h3>
+          <p class="pcard__body">紙のカルテ、Googleドキュメント、口頭メモ、<br>LINEの個人トーク…情報が4ヶ所に散らばり、<br>見落としと聞き漏れが日常に。</p>
+          <div class="pcard__demo">
+            <ul class="demo-list">
+              <li>📄 紙カルテ（保管）</li>
+              <li>💬 個人LINE（スタッフ間）</li>
+              <li>📝 メモ帳（バックヤード）</li>
+            </ul>
+            <div class="demo-flag">▸ 転記ミスや漏れが発生</div>
+          </div>
+        </div>
+        <div class="pcard__foot">
+          <span class="pcard__foot-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+          </span>
+          <span class="pcard__foot-text">スタッフの負担が大きく、<br>引き継ぎが属人化</span>
+        </div>
+      </article>
+
+      <!-- 03 -->
+      <article class="pcard">
+        <div class="pcard__top">
+          <div class="pcard__num">03</div>
+          <h3 class="pcard__title">過去のトークが、<br><span class="accent">ただ流れていく</span></h3>
+          <p class="pcard__body">LINE公式アカウントには貴重な会話が日々蓄積。<br>でも検索もできず、構造化もされず、<br>ただスクロールして遡るだけ。<br>必要な情報が活用されていない。</p>
+          <div class="pcard__demo">
+            <ul class="demo-list">
+              <li>👥 友だち数　1,284 名（※のトーク）</li>
+              <li>💬 発信数　「投稿数」過去60件</li>
+            </ul>
+            <div class="demo-flag">▸ どこかに埋もれてしまう…</div>
+          </div>
+        </div>
+        <div class="pcard__foot">
+          <span class="pcard__foot-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" stroke-linecap="round"/></svg>
+          </span>
+          <span class="pcard__foot-text">データが活かせず、<br>売上機会を逃している</span>
+        </div>
+      </article>
+    </div>
+
+    <!-- Footer band -->
+    <div class="pband">
+      <div class="pband__hd">
+        <span class="pband__hd-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="9"/><path d="M6 11l3.5 3.5L16 8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="pband__hd-text">あなたのサロンにも、<br>こんなお悩みはありませんか？</span>
+      </div>
+      <ul class="pband__items">
+        <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>LINEの運用に時間がかかり、本来の接客に集中できない</li>
+        <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>リピートのきっかけづくりがうまくいかない</li>
+        <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様一人ひとりに合った提案ができていない</li>
+        <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>予約や問い合わせの対応漏れが発生してしまう</li>
+      </ul>
+    </div>
+
+    <div class="problem__arrow">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="currentColor">
+        <path d="M16 4v22M8 18l8 10 8-10" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="problem__solve">
+      <span class="brand">SalonRink<span class="brand-sub">CONCIERGE</span></span> <span style="color: var(--ink-3); font-weight: 400;">が、</span><b>その課題を解決します。</b>
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 02 / 10 · PROBLEM</span>
+    <span><a href="./01_hero.html">← 01 HERO</a> &nbsp;|&nbsp; <a href="./03_solution.html">03 SOLUTION →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

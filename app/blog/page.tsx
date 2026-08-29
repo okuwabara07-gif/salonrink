@@ -2,6 +2,8 @@ import { getAllPosts } from "@/lib/blog";
 import { getAllBlogPostsFromDb } from "@/lib/blog-db";
 import Link from "next/link";
 
+export const revalidate = 3600;
+
 export default async function BlogPage() {
   const filePosts = getAllPosts();
   const dbPosts = await getAllBlogPostsFromDb();

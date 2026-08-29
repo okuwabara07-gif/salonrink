@@ -19,12 +19,20 @@ type SettingsRow = {
   last_order_time: string;
   slot_minutes: number;
   closed_weekdays: number[];
+  closed_dates: string[];
+  daily_reservation_limit: number;
   close_on_holidays: boolean;
   notif_new_reservation: boolean;
   notif_cancel: boolean;
   notif_reminder: boolean;
   notif_dormant: boolean;
   notif_inventory: boolean;
+};
+type OwnerNotificationSettings = {
+  morning_enabled: boolean;
+  morning_send_hour_jst: number;
+  evening_enabled: boolean;
+  evening_send_hour_jst: number;
 };
 
 const DEFAULT_SETTINGS: SettingsRow = {
@@ -33,12 +41,21 @@ const DEFAULT_SETTINGS: SettingsRow = {
   last_order_time: '19:00',
   slot_minutes: 30,
   closed_weekdays: [],
+  closed_dates: [],
+  daily_reservation_limit: 0,
   close_on_holidays: false,
   notif_new_reservation: true,
   notif_cancel: true,
   notif_reminder: true,
   notif_dormant: true,
   notif_inventory: false,
+};
+
+const DEFAULT_OWNER_SETTINGS: OwnerNotificationSettings = {
+  morning_enabled: true,
+  morning_send_hour_jst: 7,
+  evening_enabled: true,
+  evening_send_hour_jst: 21,
 };
 
 const WEEKDAYS = ['月', '火', '水', '木', '金', '土', '日'];
@@ -57,6 +74,8 @@ export default function SettingsPage() {
   const [unmapped, setUnmapped] = useState<AliasCandidate[]>([]);
   const [aliasPick, setAliasPick] = useState<Record<string, string>>({});
   const [aliasBusy, setAliasBusy] = useState<string | null>(null);
+  const [ownerSettings, setOwnerSettings] = useState<OwnerNotificationSettings>(DEFAULT_OWNER_SETTINGS);
+  const [savingOwnerSettings, setSavingOwnerSettings] = useState(false);
 
   // ─── データ取得 ───────────────────────────────
   useEffect(() => {
@@ -82,6 +101,8 @@ export default function SettingsPage() {
             last_order_time: st.last_order_time ?? DEFAULT_SETTINGS.last_order_time,
             slot_minutes: st.slot_minutes ?? DEFAULT_SETTINGS.slot_minutes,
             closed_weekdays: Array.isArray(st.closed_weekdays) ? st.closed_weekdays : [],
+            closed_dates: Array.isArray(st.closed_dates) ? st.closed_dates : [],
+            daily_reservation_limit: typeof st.daily_reservation_limit === 'number' ? st.daily_reservation_limit : 0,
             close_on_holidays: !!st.close_on_holidays,
             notif_new_reservation: st.notif_new_reservation ?? true,
             notif_cancel: st.notif_cancel ?? true,
@@ -98,6 +119,12 @@ export default function SettingsPage() {
         const { data: mn } = await supabase
           .from('salon_menus').select('*').eq('salon_id', salon.id).order('sort_order');
         setMenus((mn || []).map((m) => ({ id: m.id, name: m.name, price: m.price, duration: m.duration })));
+
+        const ownerRes = await fetch('/api/owner-notification-settings');
+        if (ownerRes.ok) {
+          const ownerData = await ownerRes.json();
+          setOwnerSettings(ownerData);
+        }
       } catch (e) {
         console.error(e);
         setLoadError('予期しないエラーが発生しました');
@@ -158,6 +185,24 @@ export default function SettingsPage() {
       alert('保存に失敗しました');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function saveOwnerSettings() {
+    setSavingOwnerSettings(true);
+    try {
+      const res = await fetch('/api/owner-notification-settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ownerSettings),
+      });
+      if (!res.ok) throw new Error('Failed to save');
+      flashSaved();
+    } catch (e) {
+      console.error('save owner settings:', e);
+      alert('保存に失敗しました');
+    } finally {
+      setSavingOwnerSettings(false);
     }
   }
 
@@ -499,6 +544,68 @@ export default function SettingsPage() {
           <button type="button" className={styles.saveBtn} onClick={saveSettings} disabled={saving}>
             {saving ? '保存中...' : '保存する'}
           </button>
+
+          <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
+            <h2 className={styles.cardTitle}>LINE 通知配信</h2>
+            <p style={{ fontSize: 12, color: 'var(--muted)', margin: '4px 0 14px' }}>
+              朝・夜の施術サマリを自動配信する時刻を設定します。
+            </p>
+            <div className={styles.toggleList}>
+              <label className={styles.toggleRow}>
+                <div className={styles.toggleMain}>
+                  <div className={styles.toggleLabel}>朝サマリ配信</div>
+                  <div className={styles.toggleSub}>今日の予約、新規顧客、要注意顧客をお知らせ</div>
+                </div>
+                <input type="checkbox"
+                  checked={ownerSettings.morning_enabled}
+                  onChange={(e) => setOwnerSettings((s) => ({ ...s, morning_enabled: e.target.checked }))}
+                  className={styles.toggle} />
+              </label>
+              {ownerSettings.morning_enabled && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 14, paddingRight: 14 }}>
+                  <label style={{ fontSize: 12.5, color: '#4a3a28', fontWeight: 500 }}>配信時刻（JST）</label>
+                  <select
+                    value={String(ownerSettings.morning_send_hour_jst)}
+                    onChange={(e) => setOwnerSettings((s) => ({ ...s, morning_send_hour_jst: parseInt(e.target.value, 10) }))}
+                    className={styles.input}
+                    style={{ maxWidth: 120 }}
+                  >
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <label className={styles.toggleRow}>
+                <div className={styles.toggleMain}>
+                  <div className={styles.toggleLabel}>夜サマリ配信</div>
+                  <div className={styles.toggleSub}>本日の売上、来店数、口コミ対象者をお知らせ</div>
+                </div>
+                <input type="checkbox"
+                  checked={ownerSettings.evening_enabled}
+                  onChange={(e) => setOwnerSettings((s) => ({ ...s, evening_enabled: e.target.checked }))}
+                  className={styles.toggle} />
+              </label>
+              {ownerSettings.evening_enabled && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, paddingLeft: 14, paddingRight: 14 }}>
+                  <label style={{ fontSize: 12.5, color: '#4a3a28', fontWeight: 500 }}>配信時刻（JST）</label>
+                  <select
+                    value={String(ownerSettings.evening_send_hour_jst)}
+                    onChange={(e) => setOwnerSettings((s) => ({ ...s, evening_send_hour_jst: parseInt(e.target.value, 10) }))}
+                    className={styles.input}
+                    style={{ maxWidth: 120 }}
+                  >
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i}>{String(i).padStart(2, '0')}:00</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+            </div>
+            <button type="button" className={styles.saveBtn} onClick={saveOwnerSettings} disabled={savingOwnerSettings}>
+              {savingOwnerSettings ? '保存中...' : '保存する'}
+            </button>
+          </div>
         </section>
       )}
 
@@ -516,6 +623,33 @@ export default function SettingsPage() {
                 </label>
               ))}
             </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>個別の休業日(不定休)</label>
+            <div className={styles.toggleSub} style={{ marginBottom: 8 }}>カレンダーから休業する日を追加します</div>
+            <input type="date" className={styles.input}
+              onChange={(e) => {
+                const v = e.target.value;
+                if (!v) return;
+                setSettings((s) => s.closed_dates.includes(v) ? s : ({ ...s, closed_dates: [...s.closed_dates, v].sort() }));
+                e.target.value = '';
+              }} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 12 }}>
+              {settings.closed_dates.length === 0 && (<span className={styles.toggleSub}>個別休業日は未設定です</span>)}
+              {settings.closed_dates.map((d) => (
+                <span key={d} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 999, background: '#f3ece1', fontSize: 13 }}>
+                  {d}
+                  <button type="button" onClick={() => setSettings((s) => ({ ...s, closed_dates: s.closed_dates.filter((x) => x !== d) }))} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#c24e40', fontWeight: 700 }}>x</button>
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className={styles.field}>
+            <label className={styles.label}>1日の予約上限</label>
+            <div className={styles.toggleSub} style={{ marginBottom: 8 }}>0 にすると無制限です</div>
+            <input type="number" min={0} className={styles.input}
+              value={settings.daily_reservation_limit}
+              onChange={(e) => setSettings((s) => ({ ...s, daily_reservation_limit: Math.max(0, parseInt(e.target.value || '0', 10)) }))} />
           </div>
           <div className={styles.field}>
             <label className={styles.label}>祝日も休業</label>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  @keyframes smPulse{0%,100%{opacity:0.35;}50%{opacity:1;}}
+  @keyframes smFlow{from{stroke-dashoffset:24;}to{stroke-dashoffset:0;}}
+  @keyframes smRise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="background:#E4DCCF;min-height:100%;padding:48px 0 64px;font-family:'Zen Kaku Gothic New',sans-serif;display:flex;justify-content:center;">
+  <div style="width:920px;max-width:100%;">
+
+    <!-- ===== HEADER ===== -->
+    <div style="text-align:center;padding:0 40px 12px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:14px;letter-spacing:0.32em;color:#7E6240;">SALONRINK — CONNECTED CARTE</div>
+      <h1 style="font-family:'Shippori Mincho B1',serif;font-size:38px;font-weight:700;letter-spacing:0.03em;color:#2B2722;margin:14px 0 0;">1つのカルテを、両側から。</h1>
+      <p style="font-size:14px;line-height:1.9;color:#6E6256;margin:14px 0 0;">お客様と美容師が、同じカルテをリアルタイムに共有する。<br>記録は一度きりで終わらず、関係が続くほど深くなる。</p>
+    </div>
+
+    <!-- ===== CENTRAL SYNC DIAGRAM ===== -->
+    <div data-rev style="opacity:0;position:relative;margin:36px 24px 0;background:#FBF8F2;border-radius:24px;padding:38px 30px;box-shadow:0 30px 70px -40px rgba(58,51,43,0.5);">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:18px;">
+
+        <!-- GUEST phone -->
+        <div style="flex:1;max-width:230px;">
+          <div style="text-align:center;font-size:11px;letter-spacing:0.18em;color:#9C7E5C;margin-bottom:10px;">お客様（GUEST）</div>
+          <div style="background:#1C1C1E;border-radius:26px;padding:7px;box-shadow:0 22px 50px -28px rgba(40,34,28,0.7);">
+            <div style="background:#F3EFE7;border-radius:20px;overflow:hidden;">
+              <div style="position:relative;height:96px;"><img src="assets/guest-look2.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:50% 28%;"><div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(28,22,16,0.1),rgba(28,22,16,0.7));"></div><div style="position:absolute;left:11px;bottom:9px;color:#FBF8F2;"><div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;">my carte</div><div style="font-size:12px;font-weight:700;">EMIさん</div></div></div>
+              <div style="padding:11px 12px;">
+                <div style="font-size:9px;color:#8A7A68;">髪コンディション</div>
+                <div style="height:5px;border-radius:999px;background:#EFE7D9;margin-top:4px;overflow:hidden;"><div style="height:100%;width:82%;background:linear-gradient(90deg,#C2A878,#9C7E5C);"></div></div>
+                <div style="display:flex;gap:5px;margin-top:9px;">
+                  <img src="assets/guest-look4.png" style="width:33%;height:38px;object-fit:cover;border-radius:6px;">
+                  <img src="assets/guest-look3.png" style="width:33%;height:38px;object-fit:cover;border-radius:6px;">
+                  <img src="assets/guest-look6.png" style="width:33%;height:38px;object-fit:cover;border-radius:6px;">
+                </div>
+                <div style="margin-top:9px;background:#9C7E5C;color:#FBF8F2;border-radius:7px;text-align:center;font-size:9.5px;font-weight:700;padding:6px;">次回を予約</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CENTER cloud -->
+        <div style="flex-shrink:0;width:150px;text-align:center;position:relative;">
+          <svg viewBox="0 0 150 120" style="width:100%;height:120px;display:block;overflow:visible;">
+            <line x1="-6" y1="60" x2="58" y2="60" stroke="#C2A878" stroke-width="2.5" stroke-dasharray="6 5" style="animation:smFlow 1s linear infinite;"></line>
+            <line x1="92" y1="60" x2="156" y2="60" stroke="#C2A878" stroke-width="2.5" stroke-dasharray="6 5" style="animation:smFlow 1s linear infinite;"></line>
+            <polygon points="52,54 62,60 52,66" fill="#9C7E5C"></polygon>
+            <polygon points="98,54 88,60 98,66" fill="#9C7E5C"></polygon>
+          </svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,#9C7E5C,#7E6240);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FBF8F2;box-shadow:0 18px 40px -18px rgba(58,51,43,0.7);">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FBF8F2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.12em;margin-top:4px;">SALONRINK</div>
+            <div style="font-size:8px;color:rgba(251,248,242,0.8);">cloud carte</div>
+          </div>
+          <div style="font-size:9px;color:#A89478;margin-top:4px;letter-spacing:0.1em;">リアルタイム同期</div>
+        </div>
+
+        <!-- STYLIST phone -->
+        <div style="flex:1;max-width:230px;">
+          <div style="text-align:center;font-size:11px;letter-spacing:0.18em;color:#9C7E5C;margin-bottom:10px;">美容師（STYLIST）</div>
+          <div style="background:#1C1C1E;border-radius:26px;padding:7px;box-shadow:0 22px 50px -28px rgba(40,34,28,0.7);">
+            <div style="background:#EEF0F3;border-radius:20px;overflow:hidden;">
+              <div style="background:linear-gradient(135deg,#3A332B,#5A4B38);padding:11px 12px;color:#FBF8F2;display:flex;align-items:center;gap:9px;">
+                <img src="assets/stylist-av1.png" style="width:30px;height:30px;border-radius:50%;object-fit:cover;border:1.5px solid rgba(251,248,242,0.4);">
+                <div><div style="font-size:12px;font-weight:700;">EMIさん</div><div style="font-size:8px;color:rgba(251,248,242,0.75);">来店12回・LTV ¥184k</div></div>
+              </div>
+              <div style="padding:11px 12px;">
+                <div style="background:#FBEDEA;border:1px solid #EDC9C1;border-radius:7px;padding:6px 8px;font-size:8.5px;color:#A8554A;font-weight:700;">● 離脱リスク：62日経過</div>
+                <div style="display:flex;justify-content:space-between;background:#F8F4EC;border-radius:6px;padding:6px 8px;margin-top:7px;font-size:9px;color:#5C5247;"><span>前回処方</span><span style="color:#2B2722;">A9+Mt7</span></div>
+                <div style="margin-top:9px;background:#5DAE54;color:#fff;border-radius:7px;text-align:center;font-size:9.5px;font-weight:700;padding:6px;">LINEで送る</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- what syncs -->
+      <div style="display:flex;justify-content:center;gap:10px;margin-top:26px;flex-wrap:wrap;">
+        <sc-for list="{{ syncItems }}" as="it" hint-placeholder-count="5">
+          <span style="font-size:10.5px;color:#7E6240;background:#F2EADC;border:1px solid #E7D9BE;border-radius:999px;padding:6px 13px;">{{ it }}</span>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- ===== TWO RELATIONSHIPS ===== -->
+    <div style="display:flex;gap:18px;margin:22px 24px 0;flex-wrap:wrap;">
+
+      <!-- GUEST → many salons -->
+      <div data-rev style="opacity:0;flex:1;min-width:300px;background:#FBF8F2;border-radius:20px;padding:26px 24px;box-shadow:0 20px 50px -34px rgba(58,51,43,0.5);">
+        <div style="font-family:'Caveat',cursive;font-size:18px;color:#9C7E5C;">お客様の視点</div>
+        <div style="font-family:'Shippori Mincho B1',serif;font-size:19px;font-weight:700;color:#2B2722;margin-top:2px;">1人のカルテが、<br>どのサロンにも連れていける。</div>
+        <p style="font-size:12px;line-height:1.85;color:#6E6256;margin:12px 0 18px;">引っ越しても、担当が変わっても、別のサロンでも。「いつものわたし」を最初から分かってもらえる。</p>
+        <!-- one guest to many salons -->
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="text-align:center;flex-shrink:0;">
+            <img src="assets/stylist-av1.png" style="width:54px;height:54px;border-radius:50%;object-fit:cover;border:2px solid #9C7E5C;">
+            <div style="font-size:10px;color:#7E6240;margin-top:5px;font-weight:700;">EMIさん</div>
+            <div style="font-size:8.5px;color:#A89478;">1つのカルテ</div>
+          </div>
+          <svg width="40" height="80" viewBox="0 0 40 80" style="flex-shrink:0;"><path d="M2 40 H22 M22 40 C32 40 30 14 38 14 M22 40 C32 40 30 40 38 40 M22 40 C32 40 30 66 38 66" fill="none" stroke="#C2A878" stroke-width="2" stroke-linecap="round"></path></svg>
+          <div style="flex:1;display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;align-items:center;gap:9px;background:#F4EEE3;border-radius:9px;padding:8px 11px;"><span style="width:7px;height:7px;border-radius:50%;background:#9C7E5C;"></span><span style="font-size:11px;color:#3A332B;font-weight:600;">青山店 — KEI</span></div>
+            <div style="display:flex;align-items:center;gap:9px;background:#F4EEE3;border-radius:9px;padding:8px 11px;"><span style="width:7px;height:7px;border-radius:50%;background:#C2A878;"></span><span style="font-size:11px;color:#3A332B;font-weight:600;">横浜店 — AOI</span></div>
+            <div style="display:flex;align-items:center;gap:9px;background:#F4EEE3;border-radius:9px;padding:8px 11px;"><span style="width:7px;height:7px;border-radius:50%;background:#D8CDBA;"></span><span style="font-size:11px;color:#8A7A68;">出張先のサロンでも</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STYLIST → many guests -->
+      <div data-rev style="opacity:0;flex:1;min-width:300px;background:#2E2820;border-radius:20px;padding:26px 24px;box-shadow:0 20px 50px -34px rgba(58,51,43,0.5);color:#F6EFE2;">
+        <div style="font-family:'Caveat',cursive;font-size:18px;color:#E3C58B;">美容師の視点</div>
+        <div style="font-family:'Shippori Mincho B1',serif;font-size:19px;font-weight:700;margin-top:2px;">すべての顧客の記録が、<br>サロンの資産になる。</div>
+        <p style="font-size:12px;line-height:1.85;color:#BDB2A0;margin:12px 0 18px;">担当が休んでも、辞めても、履歴は残る。一人ひとりの好み・処方・周期が蓄積し、提案の精度が上がる。</p>
+        <!-- one stylist to many guests -->
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:7px;">
+            <div style="display:flex;align-items:center;gap:7px;background:rgba(251,248,242,0.08);border-radius:9px;padding:6px 9px;"><img src="assets/stylist-av1.png" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"><span style="font-size:10px;">EMI</span></div>
+            <div style="display:flex;align-items:center;gap:7px;background:rgba(251,248,242,0.08);border-radius:9px;padding:6px 9px;"><img src="assets/stylist-av2.png" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"><span style="font-size:10px;">AOI</span></div>
+            <div style="display:flex;align-items:center;gap:7px;background:rgba(251,248,242,0.08);border-radius:9px;padding:6px 9px;"><img src="assets/stylist-av3.png" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"><span style="font-size:10px;">RIN</span></div>
+            <div style="display:flex;align-items:center;gap:7px;background:rgba(251,248,242,0.08);border-radius:9px;padding:6px 9px;"><img src="assets/stylist-av4.png" style="width:24px;height:24px;border-radius:50%;object-fit:cover;"><span style="font-size:10px;">HARU</span></div>
+          </div>
+          <svg width="36" height="80" viewBox="0 0 36 80" style="flex-shrink:0;transform:scaleX(-1);"><path d="M2 40 H18 M18 40 C28 40 26 12 34 12 M18 40 C28 40 26 30 34 30 M18 40 C28 40 26 50 34 50 M18 40 C28 40 26 68 34 68" fill="none" stroke="#C2A878" stroke-width="2" stroke-linecap="round"></path></svg>
+          <div style="text-align:center;flex-shrink:0;">
+            <div style="width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#C2A878,#9C7E5C);display:flex;align-items:center;justify-content:center;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+            <div style="font-size:10px;color:#E3C58B;margin-top:5px;font-weight:700;">KEI</div>
+            <div style="font-size:8.5px;color:#BDB2A0;">担当顧客</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== BIDIRECTIONAL SYNC FLOW ===== -->
+    <div data-rev style="opacity:0;margin:22px 24px 0;background:#FBF8F2;border-radius:20px;padding:28px 26px;box-shadow:0 20px 50px -34px rgba(58,51,43,0.5);">
+      <div style="text-align:center;font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:0.24em;color:#B0996E;">TWO-WAY SYNC</div>
+      <div style="text-align:center;font-family:'Shippori Mincho B1',serif;font-size:18px;font-weight:700;color:#2B2722;margin-top:6px;">どちらが動いても、もう一方に届く。</div>
+      <div style="display:flex;gap:16px;margin-top:22px;flex-wrap:wrap;">
+        <div style="flex:1;min-width:260px;">
+          <div style="font-size:11px;font-weight:700;color:#9C7E5C;margin-bottom:10px;">お客様 → 美容師</div>
+          <sc-for list="{{ g2s }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span style="font-size:12px;line-height:1.6;color:#4A4238;">{{ r }}</span></div>
+          </sc-for>
+        </div>
+        <div style="width:1px;background:#ECE4D6;"></div>
+        <div style="flex:1;min-width:260px;">
+          <div style="font-size:11px;font-weight:700;color:#9C7E5C;margin-bottom:10px;">美容師 → お客様</div>
+          <sc-for list="{{ s2g }}" as="r" hint-placeholder-count="3">
+            <div style="display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;"><path d="M19 12H5M11 6l-6 6 6 6"/></svg><span style="font-size:12px;line-height:1.6;color:#4A4238;">{{ r }}</span></div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRIVACY NOTE ===== -->
+    <div data-rev style="opacity:0;margin:22px 24px 0;background:#F4EEE3;border-radius:16px;padding:20px 24px;display:flex;gap:14px;align-items:flex-start;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9C7E5C" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div>
+        <div style="font-size:12.5px;font-weight:700;color:#2B2722;">共有の主導権は、お客様に。</div>
+        <div style="font-size:11.5px;line-height:1.8;color:#6E6256;margin-top:4px;">カルテはお客様本人のもの。サロンへの共有はお客様の同意で行われ、いつでも停止できます。サロンが見られるのは、共有を許可された顧客の情報だけです。</div>
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:10.5px;color:#9A8B76;margin-top:24px;">※ デモ表示です。実在の人物・データではありません。</div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:920,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  renderVals() {
+    return {
+      syncItems: ['AI髪診断', '薬剤レシピ', '仕上がり写真', '来店履歴', '次回予約', 'ホームケア'],
+      g2s: [
+        '事前のAI診断・お悩みが、来店前に届く',
+        '「明るすぎは苦手」などの好みメモを共有',
+        'スタイルへの♡・保存が、次回提案のヒントに',
+      ],
+      s2g: [
+        '施術メモ・処方を、その場でカルテに記録',
+        '髪に合ったホームケアを提案・LINE送信',
+        '再来時期にあわせて、予約の声かけ',
+      ],
+    };
+  }
+  componentDidMount() {
+    const root = this.rootRef.current || document;
+    const io = new IntersectionObserver((es) => {
+      es.forEach((e) => { if (e.isIntersecting) { e.target.style.animation = 'smRise .8s cubic-bezier(.22,.61,.36,1) both'; io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    root.querySelectorAll('[data-rev]').forEach((el) => io.observe(el));
+  }
+}
+</script>
+</body>
+</html>

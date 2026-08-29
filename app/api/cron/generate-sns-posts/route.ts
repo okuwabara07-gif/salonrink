@@ -22,7 +22,11 @@ interface ThreadsPost {
 }
 
 interface InstagramPost {
+  pillar: string
+  hookText: string
   caption: string
+  hashtags: string[]
+  cardContents: string[]
 }
 
 interface GeneratedPosts {
@@ -43,21 +47,33 @@ interface CronResponse {
   error?: string
 }
 
-// ───── Themes by Day of Week ─────
+// ───── 5 Pillars for Instagram Rotation ─────
 
-const THEMES: Record<number, string> = {
-  0: '日: モチベーション系(美容師の仕事への思い)',
-  1: '月: 認知拡大(サービス紹介、Salon業界の課題)',
-  2: '火: 機能訴求(AI カルテで何が変わるか)',
-  3: '水: 美容師あるある(共感ネタ)',
-  4: '木: お客様目線(覚えてもらえる安心感)',
-  5: '金: 月25時間訴求(時間の価値)',
-  6: '土: 業界トレンド(美容業界の最新動向)',
+const PILLARS = [
+  '客離れの真実',
+  'AIカルテ活用',
+  'LINE配信テク',
+  '個人サロンあるある',
+  '数字で見せるビフォーアフター',
+]
+
+function getPillarByDayOfYear(date: Date): string {
+  const start = new Date(date.getFullYear(), 0, 0)
+  const diff = date.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  return PILLARS[dayOfYear % PILLARS.length]
 }
 
 // ───── Helper: 認証チェック ─────
 
 function validateCronSecret(request: NextRequest): boolean {
+  // Vercel cron uses X-Vercel-Cron header for internal authentication
+  const vercelCronHeader = request.headers.get('x-vercel-cron')
+  if (vercelCronHeader) {
+    return true
+  }
+
+  // For manual testing with Bearer token
   const authHeader = request.headers.get('authorization')
   const secret = process.env.CRON_SECRET
 
@@ -74,18 +90,34 @@ function validateCronSecret(request: NextRequest): boolean {
 async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
   const client = new Anthropic()
 
-  const systemPrompt = `あなたは SalonRink(美容師向け AI カルテ SaaS)のSNS担当です。
-美容師さんに刺さる、自然で押し付けがましくない投稿を作ります。
+  const systemPrompt = `あなたはフリーランス美容師・個人サロン経営者向けに SalonRink を訴求する SNS 担当です。
+ターゲット: LINE 公式アカウントで顧客管理しているが「客離れ」に悩んでいる層。
+
+Salon Rink のブランド世界観: "高級AIコンシェルジュ"
+- Apple / Aesop / Aman のような「静かな高級感」
+- 予約システムではなく「サロン経営を静かに支える存在」
+- 説明ではなく、体験と余韻を重視
 
 重要ルール:
 - 「SalonRink」のサービス名は商標問題があるので使わない
-- 「AIカルテ」「事前カウンセリング」「美容師向けSaaS」など機能名で訴求
-- 押し売り禁止、自然な「あるある」「気づき」スタイル
+- 「AIカルテ」「LINE配信」「顧客管理」「予約管理」など機能名で訴求
+- 押し売り禁止、共感型「あるある」「気づき」スタイル
+- 最後に CTA: 「→ 無料デモ salonrink.com/demo」を必ず入れる
 - 絵文字は適度に(過剰NG)
 - 月¥1,980 などの価格は出さない(認知拡大用)
-- 法令準拠(架空体験談NG、実在しない数値NG)`
+- 法令準拠(架空体験談NG、実在しない数値NG)
 
-  const userPrompt = `今日のテーマ: ${theme}
+【Instagram cardContents 新ルール】
+- 各カード 10-25字、最大3文以内、「ホテルラウンジに置けるか?」基準
+- 説明文・機能羅列は禁止、短く強い断言調
+- 良い例: 「再来店は、感覚では増えない。」「AIが、次回来店を設計する。」「予約対応から、再来店設計まで。」「施術に集中できるサロンへ。」「サロン経営を、次の時代へ。」
+- NG例: 「初回来店後の満足度は高いのに〜」（長文）「LINE公式アカウントと AIカルテで顧客情報を一元管理」（機能羅列）
+
+【Instagram hookText 新ルール】
+- 15-25字、断言調、短く強く
+- 同じ「静かな高級感」世界観`
+
+  const userPrompt = `今日の柱: ${theme}
 
 以下のSNS用に投稿案を考えてください。
 
@@ -99,8 +131,19 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
 - type2: 問いかけ + 解決提示
 - type3: データ訴求
 
-【Instagram】キャプション、400字程度
-- 美容師さんの感情に訴える物語形式
+【Instagram】 5枚カルーセル投稿用メタデータ
+- hookText(15-25字): 1枚目に大文字で焼き込む「掴み」テキスト。断言調、短く強く
+  例: 「再来店は、感覚では増えない。」「AIが、次回来店を設計する。」
+- caption(200-300字): 感情に訴える物語形式 + 末尾に CTA「→ 無料デモ salonrink.com/demo」
+- cardContents(4本): 2-5枚目に配置するテキスト。【重要】各 10-25字、最大3文以内、断言調
+  * 説明文・機能羅列は禁止
+  * 「ホテルラウンジに置けるか?」基準で判断
+  * 良い例: 「予約対応から、再来店設計まで。」「施術に集中できるサロンへ。」「サロン経営を、次の時代へ。」
+  * NG例: 「初回来店後の満足度は高いのに〜」（長文）「LINE公式アカウントと AIカルテで顧客情報を一元管理」（機能羅列）
+- hashtags(10本): 3層バランス
+  * 大: #美容師 #美容室 #サロン #ヘアサロン #フリーランス美容師 等から3個
+  * 中: #サロン経営 #美容師の悩み #客離れ防止 #LINE公式アカウント #予約管理 等から4個
+  * 小: #AIカルテ #サロンDX #美容師向けSaaS #顧客管理 #カウンセリング 等から3個
 
 以下のJSON形式で返してください(他の文章は含めない):
 {
@@ -115,7 +158,11 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
     { "type": "データ", "text": "投稿文" }
   ],
   "instagram": {
-    "caption": "キャプション本文"
+    "pillar": "柱名（客離れの真実 / AIカルテ活用 / LINE配信テク / 個人サロンあるある / 数字で見せるビフォーアフター）",
+    "hookText": "掴みテキスト15-25字、断言調",
+    "caption": "キャプション本文200-300字",
+    "hashtags": ["#フリーランス美容師", ...10本],
+    "cardContents": ["2枚目テキスト10-25字、断言調", "3枚目10-25字", "4枚目10-25字", "5枚目最終CTA10-25字"]
   }
 }`
 
@@ -145,6 +192,211 @@ async function generateSNSPosts(theme: string): Promise<GeneratedPosts> {
 
   const generatedPosts = JSON.parse(jsonText) as GeneratedPosts
   return generatedPosts
+}
+
+// ───── Helper: IGトークンをSupabaseから取得 ─────
+
+interface IgTokenRow {
+  access_token: string
+  ig_business_id: string
+}
+
+async function getIgToken(): Promise<IgTokenRow> {
+  const supaUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supaKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!supaUrl || !supaKey) {
+    throw new Error('Supabase env not configured (NEXT_PUBLIC_SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY)')
+  }
+  const res = await fetch(
+    `${supaUrl}/rest/v1/ig_tokens?id=eq.salonrink&select=access_token,ig_business_id`,
+    { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } }
+  )
+  if (!res.ok) {
+    throw new Error(`getIgToken: supabase fetch failed ${res.status}`)
+  }
+  const rows = (await res.json()) as IgTokenRow[]
+  if (!Array.isArray(rows) || rows.length === 0) {
+    throw new Error('getIgToken: ig_tokens row not found')
+  }
+  return rows[0]
+}
+
+// ───── Helper: 次に投稿すべき post_NNN フォルダを選定 ─────
+
+interface PostPackage {
+  postNumber: number
+  folderName: string         // 例: "post_001"
+  folderPath: string          // 絶対パス
+  imageFilenames: string[]    // 例: ["card1.png", ..., "card5.png"]
+  imageUrls: string[]         // 例: ["https://salonrink.com/ig/posts/post_001/card1.png", ...]
+  captionPath: string | null  // caption.txt の絶対パス（存在しない場合 null）
+  captionText: string | null  // caption.txt の中身（存在しない場合 null）
+}
+
+function pickNextPostPackage(): PostPackage | null {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const baseDir = path.join(process.cwd(), 'public', 'ig', 'posts')
+
+  if (!fs.existsSync(baseDir)) {
+    console.warn('[pickNextPostPackage] baseDir not found:', baseDir)
+    return null
+  }
+
+  const entries = fs.readdirSync(baseDir, { withFileTypes: true })
+  const postFolders = entries
+    .filter((e: any) => e.isDirectory() && /^post_\d{3,}$/.test(e.name))
+    .map((e: any) => e.name)
+    .sort() // post_001, post_002, ... の順
+
+  for (const folderName of postFolders) {
+    const folderPath = path.join(baseDir, folderName)
+    const files = fs.readdirSync(folderPath)
+    const cardFiles = ['card1.png', 'card2.png', 'card3.png', 'card4.png', 'card5.png']
+    const allCardsPresent = cardFiles.every((f: string) => files.includes(f))
+
+    if (!allCardsPresent) {
+      console.warn(`[pickNextPostPackage] skip ${folderName}: cards incomplete`)
+      continue
+    }
+
+    const m = folderName.match(/^post_(\d+)$/)
+    if (!m) continue
+    const postNumber = parseInt(m[1], 10)
+
+    const baseUrl = 'https://salonrink.com'
+    const imageUrls = cardFiles.map((f: string) => `${baseUrl}/ig/posts/${folderName}/${f}`)
+
+    const captionPath = path.join(folderPath, 'caption.txt')
+    let captionText: string | null = null
+    if (fs.existsSync(captionPath)) {
+      captionText = fs.readFileSync(captionPath, 'utf-8').trim()
+    }
+
+    return {
+      postNumber,
+      folderName,
+      folderPath,
+      imageFilenames: cardFiles,
+      imageUrls,
+      captionPath: fs.existsSync(captionPath) ? captionPath : null,
+      captionText,
+    }
+  }
+
+  console.warn('[pickNextPostPackage] no valid post folder found')
+  return null
+}
+
+// ───── Helper: 投稿成功後、フォルダを _posted/ に移動 ─────
+
+function markPostAsPosted(folderPath: string, folderName: string): void {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const postedDir = path.join(process.cwd(), 'public', 'ig', 'posts', '_posted')
+  if (!fs.existsSync(postedDir)) {
+    fs.mkdirSync(postedDir, { recursive: true })
+  }
+  const dstPath = path.join(postedDir, folderName)
+  fs.renameSync(folderPath, dstPath)
+  console.log(`[markPostAsPosted] moved ${folderName} → _posted/`)
+}
+
+// ───── DEPRECATED v1.1以降IG投稿には使われない。Slack通知やバックアップ用途のみ ─────
+
+function pickCarouselImageUrls(count: number = 3): string[] {
+  const fs = require('fs') as typeof import('fs')
+  const path = require('path') as typeof import('path')
+  const igDir = path.join(process.cwd(), 'public', 'ig')
+  let files: string[] = []
+  try {
+    files = fs
+      .readdirSync(igDir)
+      .filter((f: string) => /\.(png|jpe?g)$/i.test(f))
+      .sort()
+  } catch {
+    return []
+  }
+  if (files.length === 0) return []
+
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = now.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const base = (dayOfYear * count) % files.length
+
+  const baseUrl = 'https://salonrink.com/ig/'
+  const picks: string[] = []
+  for (let i = 0; i < count; i++) {
+    picks.push(baseUrl + files[(base + i) % files.length])
+  }
+  return picks
+}
+
+// ───── Helper: IGカルーセル投稿(3段階) ─────
+
+interface IgPostResult {
+  success: boolean
+  postId?: string
+  imageUrls: string[]
+  error?: string
+}
+
+async function postCarouselToInstagram(caption: string, imageUrls: string[]): Promise<IgPostResult> {
+  if (imageUrls.length === 0) {
+    return { success: false, imageUrls, error: 'no images available in public/ig/' }
+  }
+  let token: IgTokenRow
+  try {
+    token = await getIgToken()
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'unknown'
+    return { success: false, imageUrls, error: `token fetch failed: ${msg}` }
+  }
+  const { access_token: accessToken, ig_business_id: igId } = token
+  const api = `https://graph.facebook.com/v21.0/${igId}`
+
+  try {
+    const childIds: string[] = []
+    for (const url of imageUrls) {
+      const form = new URLSearchParams()
+      form.set('image_url', url)
+      form.set('is_carousel_item', 'true')
+      form.set('access_token', accessToken)
+      const r = await fetch(`${api}/media`, { method: 'POST', body: form })
+      const j = await r.json()
+      if (!j.id) {
+        throw new Error(`child container failed for ${url}: ${JSON.stringify(j).slice(0, 200)}`)
+      }
+      childIds.push(j.id as string)
+    }
+
+    const parentForm = new URLSearchParams()
+    parentForm.set('media_type', 'CAROUSEL')
+    parentForm.set('children', childIds.join(','))
+    parentForm.set('caption', caption)
+    parentForm.set('access_token', accessToken)
+    const pr = await fetch(`${api}/media`, { method: 'POST', body: parentForm })
+    const pj = await pr.json()
+    if (!pj.id) {
+      throw new Error(`parent container failed: ${JSON.stringify(pj).slice(0, 200)}`)
+    }
+    const parentId = pj.id as string
+
+    await new Promise((res) => setTimeout(res, 5000))
+    const pubForm = new URLSearchParams()
+    pubForm.set('creation_id', parentId)
+    pubForm.set('access_token', accessToken)
+    const ur = await fetch(`${api}/media_publish`, { method: 'POST', body: pubForm })
+    const uj = await ur.json()
+    if (!uj.id) {
+      throw new Error(`publish failed: ${JSON.stringify(uj).slice(0, 200)}`)
+    }
+    return { success: true, postId: uj.id as string, imageUrls }
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : 'unknown'
+    return { success: false, imageUrls, error: msg }
+  }
 }
 
 // ───── Helper: Slack に投稿案を送信 ─────
@@ -204,11 +456,23 @@ async function sendToSlack(theme: string, posts: GeneratedPosts): Promise<boolea
       // Instagram セクション
       {
         type: 'section',
-        text: { type: 'mrkdwn', text: '*📷 Instagram キャプション*' },
+        text: { type: 'mrkdwn', text: '*📷 Instagram 5枚カルーセル*' },
       },
       {
         type: 'section',
-        text: { type: 'mrkdwn', text: `\`\`\`${posts.instagram.caption}\`\`\`` },
+        text: { type: 'mrkdwn', text: `*柱:* ${posts.instagram.pillar}\n*フック:* ${posts.instagram.hookText}` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*キャプション*\n\`\`\`${posts.instagram.caption}\`\`\`` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*カード本文*\n\`\`\`1️⃣ ${posts.instagram.cardContents[0]}\n2️⃣ ${posts.instagram.cardContents[1]}\n3️⃣ ${posts.instagram.cardContents[2]}\n4️⃣ ${posts.instagram.cardContents[3]}\`\`\`` },
+      },
+      {
+        type: 'section',
+        text: { type: 'mrkdwn', text: `*ハッシュタグ*\n\`\`\`${posts.instagram.hashtags.join(' ')}\`\`\`` },
       },
 
       { type: 'divider' },
@@ -245,16 +509,6 @@ async function sendToSlack(theme: string, posts: GeneratedPosts): Promise<boolea
 
 async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
   // 認証チェック
-  if (!process.env.CRON_SECRET) {
-    return NextResponse.json(
-      {
-        error: 'CRON_SECRET not configured',
-        message: 'Environment variable CRON_SECRET is required',
-      },
-      { status: 500 }
-    )
-  }
-
   if (!validateCronSecret(request)) {
     console.warn('Unauthorized cron request: generate-sns-posts')
     return NextResponse.json(
@@ -271,21 +525,56 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
   }
 
   try {
-    // テーマ選択
+    // 柱選択（5柱を日次ローテーション）
     const today = new Date()
-    const dayOfWeek = today.getDay()
-    const theme = THEMES[dayOfWeek]
+    const pillar = getPillarByDayOfYear(today)
 
-    result.theme = theme
-    console.log(`[generate-sns-posts] Starting SNS post generation for theme: ${theme}`)
+    result.theme = pillar
+    console.log(`[generate-sns-posts] Starting SNS post generation for pillar: ${pillar}`)
 
     // Claude で投稿案生成
     console.log('[generate-sns-posts] Calling Claude Haiku API...')
-    const generatedPosts = await generateSNSPosts(theme)
+    const generatedPosts = await generateSNSPosts(pillar)
 
     result.generated.x = generatedPosts.x.length
     result.generated.threads = generatedPosts.threads.length
     result.generated.instagram = 1
+    // ─── IG実投稿 v1.1: post_NNN フォルダ + 5枚カルーセル ─── (patch)
+    let igPostStatus = '未実行'
+    try {
+      const postPackage = pickNextPostPackage()
+      if (!postPackage) {
+        igPostStatus = 'スキップ(public/ig/posts/にpost_NNNなし)'
+        console.warn('[generate-sns-posts] IG投稿スキップ: 投稿可能なpost_NNNが無い')
+      } else {
+        console.log(`[generate-sns-posts] IGカルーセル投稿開始: ${postPackage.folderName} (${postPackage.imageUrls.length}枚)`)
+
+        // caption.txt があればそれを優先、なければHaiku生成結果を使う
+        const finalCaption = postPackage.captionText ?? generatedPosts.instagram.caption
+
+        const igResult = await postCarouselToInstagram(finalCaption, postPackage.imageUrls)
+        if (igResult.success) {
+          igPostStatus = `成功(post_id=${igResult.postId}, folder=${postPackage.folderName})`
+          console.log(`[generate-sns-posts] IG投稿成功: ${igResult.postId}`)
+          // 投稿成功 → フォルダを _posted/ に移動（次回は post_002 が拾われる）
+          try {
+            markPostAsPosted(postPackage.folderPath, postPackage.folderName)
+          } catch (e) {
+            console.error(`[generate-sns-posts] _posted/移動失敗:`, e)
+            // 移動失敗しても投稿自体は成功しているのでスローしない
+          }
+        } else {
+          igPostStatus = `失敗(${igResult.error})`
+          console.error(`[generate-sns-posts] IG投稿失敗: ${igResult.error}`)
+        }
+      }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'unknown'
+      igPostStatus = `エラー(${msg})`
+      console.error(`[generate-sns-posts] IG投稿例外: ${msg}`)
+    }
+    // ─── IG実投稿 ここまで ───
+
 
     console.log(
       `[generate-sns-posts] Generated: X=${result.generated.x}, Threads=${result.generated.threads}, Instagram=1`
@@ -293,7 +582,7 @@ async function handleCronRequest(request: NextRequest): Promise<NextResponse> {
 
     // Slack に送信
     console.log('[generate-sns-posts] Sending to Slack...')
-    const slackSent = await sendToSlack(theme, generatedPosts)
+    const slackSent = await sendToSlack(pillar, generatedPosts)
     result.slackSent = slackSent
 
     result.success = true

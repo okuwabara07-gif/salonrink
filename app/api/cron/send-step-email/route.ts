@@ -13,7 +13,14 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let resendClient: Resend | null = null
+
+function getResend(): Resend {
+  if (!resendClient) {
+    resendClient = new Resend(process.env.RESEND_API_KEY)
+  }
+  return resendClient
+}
 
 interface Lead {
   id: string
@@ -372,7 +379,7 @@ async function sendStepEmail(
     const { subject, html } = buildEmailHtml(day, lead.contact_name)
 
     // Resend で送信
-    const result = await resend.emails.send({
+    const result = await getResend().emails.send({
       from: 'noreply@salonrink.com',
       to: lead.email,
       subject,

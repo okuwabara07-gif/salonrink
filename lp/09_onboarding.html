@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>09 ONBOARDING — SalonRink Concierge LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  body { background: var(--bg); }
+  .onb { padding: 96px 0 80px; position: relative; overflow: hidden; }
+  .onb::before {
+    content: ""; position: absolute; top: 60px; left: 6%;
+    width: 220px; height: 220px;
+    background-image: radial-gradient(rgba(6,199,85,0.18) 1.2px, transparent 1.2px);
+    background-size: 14px 14px; pointer-events: none;
+  }
+  .onb__head { text-align: center; margin-bottom: 56px; position: relative; }
+  .onb__head .sr-eyebrow { margin-bottom: 20px; }
+
+  .onb__steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    position: relative; margin-bottom: 48px;
+  }
+  .onb__steps::before {
+    content: ""; position: absolute; top: 38px; left: 12%; right: 12%;
+    height: 2px; background: var(--accent-soft);
+  }
+  .ostep {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-xl); padding: 28px 22px 22px;
+    box-shadow: var(--shadow-sm); position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+  }
+  .ostep:not(:last-child) { margin-right: 8px; }
+  .ostep__num {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 12px rgba(6,199,85,0.25);
+  }
+  .ostep__tag {
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    color: var(--accent); letter-spacing: 0.12em;
+    margin-bottom: 8px;
+  }
+  .ostep__title {
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    color: var(--ink); margin: 0 0 8px; line-height: 1.5;
+  }
+  .ostep__sub {
+    font-size: 12.5px; line-height: 1.85; color: var(--ink-2); margin: 0 0 16px;
+  }
+  .ostep__visual {
+    background: var(--bg-tint); border-radius: 12px;
+    padding: 14px; margin-top: auto;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .ostep__visual-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: #fff; color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .ostep__visual-text {
+    font-size: 11px; color: var(--ink-2); line-height: 1.5;
+  }
+  .ostep__visual-text b { font-family: var(--serif); color: var(--ink); font-weight: 700; }
+
+  /* CTA band */
+  .onb__cta {
+    background: linear-gradient(135deg, #ffffff 0%, var(--accent-soft) 100%);
+    border: 1.5px solid var(--accent); border-radius: var(--radius-xl);
+    padding: 36px; display: grid;
+    grid-template-columns: 1fr auto; gap: 32px; align-items: center;
+    box-shadow: 0 12px 36px rgba(6,199,85,0.12);
+  }
+  .onb__cta-head {
+    display: flex; gap: 18px; align-items: center;
+  }
+  .onb__cta-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; box-shadow: 0 6px 16px rgba(6,199,85,0.3);
+  }
+  .onb__cta-text h3 {
+    font-family: var(--serif); font-weight: 700; font-size: 22px;
+    color: var(--ink); margin: 0 0 8px; line-height: 1.5;
+  }
+  .onb__cta-text p {
+    font-size: 13px; color: var(--ink-2); margin: 0; line-height: 1.7;
+  }
+  .onb__cta-btns { display: flex; flex-direction: column; gap: 10px; }
+  .onb__cta-btns .sr-btn { padding: 16px 28px; font-size: 14px; }
+
+  @media (max-width: 980px) {
+    .onb__steps { grid-template-columns: 1fr; gap: 14px; }
+    .onb__steps::before { display: none; }
+    .ostep:not(:last-child) { margin-right: 0; }
+    .onb__cta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<section class="onb" id="onboarding">
+  <div class="sr-container">
+    <div class="onb__head">
+      <div class="sr-eyebrow">ONBOARDING · 導入の流れ</div>
+      <h2 class="sr-h2">最短<span class="accent">5分</span>で、<br>サロンが Concierge 化。</h2>
+      <p class="sr-lead">複雑な設定は不要。LINE公式アカウントをお持ちなら、<br>つないで終わり。すぐに活用がはじまります。</p>
+    </div>
+
+    <!-- 4 steps -->
+    <div class="onb__steps">
+      <div class="ostep">
+        <div class="ostep__num">1</div>
+        <div class="ostep__tag">STEP 01 · 30秒</div>
+        <h3 class="ostep__title">無料アカウント<br>を作成</h3>
+        <p class="ostep__sub">LINE公式アカウントでログイン。<br>追加情報の入力なしで始められます。</p>
+        <div class="ostep__visual">
+          <span class="ostep__visual-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1.5C5.4 1.5 2.5 4 2.5 7c0 1.7.9 3.2 2.4 4.2L4 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S12.6 1.5 9 1.5z"/></svg>
+          </span>
+          <span class="ostep__visual-text">LINEで<b>ログイン</b><br>パスワード設定なし</span>
+        </div>
+      </div>
+
+      <div class="ostep">
+        <div class="ostep__num">2</div>
+        <div class="ostep__tag">STEP 02 · 2分</div>
+        <h3 class="ostep__title">LINE公式と<br>連携</h3>
+        <p class="ostep__sub">タップ1つでLINEと接続。<br>サロン情報を簡単に登録できます。</p>
+        <div class="ostep__visual">
+          <span class="ostep__visual-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 9c0-2 1.6-3.5 3.5-3.5S12 7 12 9M5 13l-2 2M13 5l2-2"/><circle cx="8.5" cy="9" r="1.5"/></svg>
+          </span>
+          <span class="ostep__visual-text">公式アカウント<br><b>3クリック</b>で連携</span>
+        </div>
+      </div>
+
+      <div class="ostep">
+        <div class="ostep__num">3</div>
+        <div class="ostep__tag">STEP 03 · 約2分</div>
+        <h3 class="ostep__title">AIが過去履歴を<br>自動でカルテ化</h3>
+        <p class="ostep__sub">過去のLINEトークから、お客様情報・好み・履歴をAIが自動抽出。</p>
+        <div class="ostep__visual">
+          <span class="ostep__visual-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h11v9H7l-4 3V4z"/><path d="M6 7h5M6 10h3"/></svg>
+          </span>
+          <span class="ostep__visual-text">過去 <b>6ヶ月</b>を<br>自動構造化</span>
+        </div>
+      </div>
+
+      <div class="ostep">
+        <div class="ostep__num">4</div>
+        <div class="ostep__tag">STEP 04 · すぐに</div>
+        <h3 class="ostep__title">すぐに<br>運用スタート</h3>
+        <p class="ostep__sub">LINEのトーク画面から、Concierge が動き始めます。<br>追加アプリ不要。</p>
+        <div class="ostep__visual">
+          <span class="ostep__visual-icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="ostep__visual-text">本日から<br><b>すぐ利用可能</b></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA band -->
+    <div class="onb__cta">
+      <div class="onb__cta-head">
+        <span class="onb__cta-icon">
+          <svg width="30" height="30" viewBox="0 0 30 30" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="15" cy="15" r="11"/><path d="M10 15l3.5 3.5L20 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        <div class="onb__cta-text">
+          <h3>14日間、無料でお試しいただけます。</h3>
+          <p>クレジットカード登録不要 / 解約料0円 / いつでもキャンセル可</p>
+        </div>
+      </div>
+      <div class="onb__cta-btns">
+        <button class="sr-btn sr-btn--primary">
+          <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          LINEで無料ではじめる
+        </button>
+        <button class="sr-btn sr-btn--outline">資料をダウンロード</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 09 / 10 · ONBOARDING</span>
+    <span><a href="./08_case.html">← 08 CASE 01</a> &nbsp;|&nbsp; <a href="./10_compare.html">10 COMPARE →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

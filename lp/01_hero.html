@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>01 Hero — SalonRink Concierge LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  /* ── Top nav ──────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .nav__inner {
+    max-width: 1400px; margin: 0 auto; padding: 18px 32px;
+    display: flex; align-items: center; gap: 40px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo__mark {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+  }
+  .logo__text { display: flex; align-items: baseline; gap: 8px; }
+  .logo__name {
+    font-family: var(--serif); font-weight: 700; font-size: 22px;
+    letter-spacing: 0.01em; color: var(--ink);
+  }
+  .logo__sub {
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    color: var(--ink); letter-spacing: 0.22em;
+  }
+  .nav__menu {
+    display: flex; gap: 36px; flex: 1; justify-content: center;
+  }
+  .nav__menu a {
+    font-size: 15px; font-weight: 500; color: var(--ink);
+    transition: color 0.15s;
+  }
+  .nav__menu a:hover { color: var(--accent-dk); }
+  .nav__cta { display: flex; gap: 10px; }
+
+  /* ── Hero ─────────────────────────── */
+  .hero {
+    padding: 64px 0 96px; position: relative; overflow: hidden;
+  }
+  /* subtle dot grid decoration */
+  .hero::before {
+    content: ""; position: absolute;
+    top: 80px; right: 44%; width: 160px; height: 160px;
+    background-image: radial-gradient(rgba(6,199,85,0.18) 1.2px, transparent 1.2px);
+    background-size: 14px 14px;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: ""; position: absolute; right: -80px; top: 100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    opacity: 0.6; pointer-events: none;
+  }
+
+  .hero__inner {
+    max-width: 1400px; margin: 0 auto; padding: 0 32px;
+    display: grid; grid-template-columns: 1fr 480px; gap: 64px;
+    align-items: center; position: relative; z-index: 1;
+  }
+
+  .hero__badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    margin-bottom: 28px;
+  }
+  .hero__badge .pill {
+    background: var(--accent); color: #fff;
+    font-family: var(--mono); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.16em;
+    padding: 5px 12px; border-radius: 999px;
+  }
+  .hero__badge .text {
+    font-size: 13px; color: var(--ink-2); font-weight: 500;
+  }
+
+  .hero__title {
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(34px, 4.4vw, 56px);
+    line-height: 1.32; letter-spacing: 0.005em; color: var(--ink);
+    margin: 0 0 28px;
+  }
+  .hero__title .accent { color: var(--accent); }
+
+  .hero__sub {
+    font-size: 15px; line-height: 2; color: var(--ink-2);
+    margin: 0 0 32px;
+  }
+
+  .hero__stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 18px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat__row { display: flex; align-items: center; gap: 10px; }
+  .stat__icon {
+    width: 28px; height: 28px; flex-shrink: 0;
+    color: var(--accent);
+  }
+  .stat__label {
+    font-size: 12px; color: var(--ink-2); font-weight: 500; line-height: 1.3;
+  }
+  .stat__value {
+    font-family: var(--serif); font-weight: 700;
+    font-size: 28px; color: var(--accent);
+    line-height: 1; margin-top: 4px; letter-spacing: -0.02em;
+  }
+  .stat__note {
+    font-family: var(--mono); font-size: 9px; color: var(--ink-3);
+    letter-spacing: 0.08em; margin-top: 8px;
+    text-align: center; padding-top: 8px; border-top: 1px solid var(--line-soft);
+  }
+
+  .hero__bullets {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 32px;
+  }
+  .hero__bullets li {
+    list-style: none; display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--ink-2);
+  }
+
+  .hero__cta { display: flex; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .hero__cta .sr-btn { padding: 16px 26px; font-size: 15px; }
+  .hero__cta .sr-btn--primary {
+    box-shadow: 0 6px 16px rgba(6,199,85,0.28);
+  }
+
+  .hero__trust {
+    display: flex; flex-wrap: wrap; gap: 22px;
+    font-size: 12px; color: var(--ink-3);
+  }
+  .hero__trust span {
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .hero__trust svg { color: var(--accent); }
+
+  /* ── Phone column ─────────────────── */
+  .phone-area {
+    position: relative; height: 720px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Floating speech bubbles */
+  .bubble {
+    position: absolute; background: #fff;
+    border: 1px solid var(--line); border-radius: 22px;
+    padding: 14px 18px; box-shadow: var(--shadow-md);
+    display: flex; gap: 10px; align-items: center;
+    max-width: 220px; z-index: 2;
+  }
+  .bubble__icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .bubble__text {
+    font-size: 12px; line-height: 1.5; color: var(--ink-2);
+  }
+  .bubble--1 { top: 70px; right: -40px; }
+  .bubble--2 { top: 320px; right: -60px; }
+  .bubble--3 { bottom: 70px; right: -30px; }
+
+  /* iPhone frame */
+  .phone {
+    width: 320px; height: 660px; border-radius: 44px;
+    background: #1a1a1a;
+    box-shadow: 0 30px 60px rgba(15,22,20,0.18), 0 0 0 6px #2c2c2c;
+    padding: 14px;
+    position: relative; z-index: 1;
+  }
+  .phone__screen {
+    width: 100%; height: 100%; border-radius: 32px;
+    background: #f7f7f7; overflow: hidden;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  .phone__notch {
+    position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 28px; background: #1a1a1a; border-radius: 18px; z-index: 5;
+  }
+  .phone__statusbar {
+    height: 44px; display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 28px 0; font-family: -apple-system, system-ui;
+    font-weight: 600; font-size: 14px; color: var(--ink);
+  }
+  .phone__statusbar .icons { display: flex; gap: 4px; }
+  .phone__statusbar svg { width: 14px; height: 10px; }
+
+  /* LINE chat header */
+  .line-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 16px 12px; background: #fff;
+    border-bottom: 1px solid #eee;
+  }
+  .line-header .back {
+    color: #666; font-size: 20px; line-height: 1;
+  }
+  .line-header .avatar {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-weight: 600; color: var(--ink-2); font-size: 14px;
+  }
+  .line-header .name { font-weight: 600; font-size: 13px; color: var(--ink); }
+  .line-header .name__sub { font-size: 9px; color: var(--ink-3); margin-top: 1px; }
+  .line-header .actions { margin-left: auto; display: flex; gap: 12px; color: #666; }
+
+  /* Chat body */
+  .chat-body {
+    flex: 1; overflow: hidden; padding: 14px 12px;
+    display: flex; flex-direction: column; gap: 10px;
+    background: #f7f7f7;
+  }
+  .msg-row { display: flex; gap: 6px; align-items: flex-end; }
+  .msg-row--user { justify-content: flex-end; }
+  .msg-avatar {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .msg-avatar svg { width: 14px; height: 14px; color: var(--ink-4); }
+  .msg-bubble {
+    background: #fff; border-radius: 14px; padding: 9px 12px;
+    font-size: 11.5px; line-height: 1.55; color: var(--ink);
+    max-width: 78%; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .msg-bubble--user { background: #B2EBC8; }
+  .msg-time {
+    font-size: 9px; color: var(--ink-3);
+    align-self: flex-end; margin: 0 4px;
+  }
+  .msg-read {
+    font-size: 9px; color: var(--ink-3); writing-mode: vertical-rl;
+    align-self: flex-end; margin-right: 2px; letter-spacing: 0.1em;
+  }
+  /* Style card */
+  .style-card {
+    background: #fff; border-radius: 14px; overflow: hidden; max-width: 200px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .style-card__img {
+    height: 90px;
+    background: linear-gradient(135deg, #e3d2c0 0%, #c9a98a 100%);
+    position: relative;
+  }
+  .style-card__img::after {
+    content: "STYLE"; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,0.7);
+    letter-spacing: 0.2em;
+  }
+  .style-card__body { padding: 8px 10px 10px; }
+  .style-card__title { font-size: 10px; font-weight: 600; color: var(--ink); }
+  .style-card__sub { font-size: 9px; color: var(--ink-3); margin-top: 3px; }
+  .style-card__btn {
+    margin-top: 8px; background: var(--accent); color: #fff;
+    text-align: center; padding: 6px; border-radius: 999px;
+    font-size: 10px; font-weight: 600;
+  }
+
+  /* Chat input bar */
+  .chat-input {
+    height: 44px; background: #fff; border-top: 1px solid #eee;
+    display: flex; align-items: center; padding: 0 12px; gap: 8px;
+  }
+  .chat-input .plus { color: #999; font-size: 18px; }
+  .chat-input .field {
+    flex: 1; height: 26px; background: #f0f0f0; border-radius: 13px;
+    display: flex; align-items: center; padding: 0 10px;
+    font-size: 11px; color: var(--ink-4);
+  }
+  .chat-input .emoji { color: #999; font-size: 14px; }
+
+  /* ── Meta panel (for review) ──────── */
+  .meta {
+    background: var(--bg-tint); padding: 40px 32px;
+    border-top: 1px solid var(--line);
+  }
+  .meta__inner { max-width: 1240px; margin: 0 auto; }
+  .meta__title {
+    font-family: var(--mono); font-size: 11px; color: var(--ink-3);
+    letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px;
+  }
+  .meta__grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px;
+    margin-top: 16px;
+  }
+  .meta__h { font-family: var(--serif); font-weight: 600; font-size: 16px; margin: 0 0 10px; }
+  .meta__l { font-size: 12px; line-height: 1.85; color: var(--ink-2); margin: 0; padding-left: 16px; }
+  .meta__l li { margin-bottom: 4px; }
+  .meta__nav {
+    margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line);
+    display: flex; gap: 24px; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 11px;
+  }
+  .meta__nav a { color: var(--accent-ink); font-weight: 500; }
+
+  @media (max-width: 980px) {
+    .hero__inner { grid-template-columns: 1fr; gap: 32px; }
+    .phone-area { height: 600px; }
+    .nav__menu { display: none; }
+    .meta__grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ═════ NAV ═════ -->
+  <header class="nav">
+    <div class="nav__inner">
+      <a class="logo" href="#top">
+        <span class="logo__mark">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2C5.7 2 3 4.5 3 7.3c0 1.7.9 3.1 2.4 4L4 14l2.8-1.5c.7.2 1.5.3 2.2.3 3.3 0 6-2.3 6-5.5S12.3 2 9 2z" fill="#fff"/>
+          </svg>
+        </span>
+        <span class="logo__text">
+          <span class="logo__name">SalonRink</span>
+          <span class="logo__sub">CONCIERGE</span>
+        </span>
+      </a>
+      <nav class="nav__menu">
+        <a href="#problem">課題</a>
+        <a href="#features">機能</a>
+        <a href="#case">導入事例</a>
+        <a href="#plans">料金</a>
+        <a href="#compare">比較</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav__cta">
+        <button class="sr-btn sr-btn--primary" style="padding: 12px 18px;">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+          LINEで始める
+        </button>
+        <button class="sr-btn sr-btn--outline" style="padding: 12px 18px;">資料をダウンロード</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═════ HERO ═════ -->
+  <section class="hero" id="top">
+    <div class="hero__inner">
+      <div>
+        <div class="hero__badge">
+          <span class="pill">NEW</span>
+          <span class="text">LINE公式アカウント拡張ツール · 2026.05 リリース</span>
+        </div>
+        <h1 class="hero__title">いまのLINE公式アカウントを、<br><span class="accent">サロンの売上につながる</span><br>業務システムに。</h1>
+        <p class="hero__sub">予約・顧客対応・リピート施策まで、LINEの中で完結。<br>お客様との関係を深め、サロンの成長を加速させます。</p>
+
+        <div class="hero__stats">
+          <div class="stat">
+            <div class="stat__row">
+              <svg class="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="6" r="2.5"/><path d="M22 16c0-2.2-2-4-4.5-4"/>
+              </svg>
+              <span class="stat__label">顧客対応の工数</span>
+            </div>
+            <div class="stat__value" style="text-align: center; margin-top: 10px;">−42<span style="font-size: 18px;">%</span></div>
+            <div class="stat__note">※ 導入サロン平均</div>
+          </div>
+          <div class="stat">
+            <div class="stat__row">
+              <svg class="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 12a9 9 0 11-3-6.7L21 8"/><path d="M21 3v5h-5"/>
+              </svg>
+              <span class="stat__label">リピート率</span>
+            </div>
+            <div class="stat__value" style="text-align: center; margin-top: 10px;">+28<span style="font-size: 18px;">%</span></div>
+            <div class="stat__note">※ 導入サロン平均</div>
+          </div>
+          <div class="stat">
+            <div class="stat__row">
+              <svg class="stat__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M4 20h16M6 16V8m5 8V4m5 12v-6m5 6V12" stroke-linecap="round"/>
+              </svg>
+              <span class="stat__label">売上アップに貢献</span>
+            </div>
+            <div class="stat__value" style="text-align: center; margin-top: 10px;">+18<span style="font-size: 18px;">%</span></div>
+            <div class="stat__note">※ 導入サロン平均</div>
+          </div>
+        </div>
+
+        <ul class="hero__bullets">
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>お客様は使い慣れたLINEのまま、サロン体験がもっと便利に</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>スタッフは面倒な作業から解放され、接客に集中できる</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>データを活用して、一人ひとりに最適な提案を自動で</li>
+        </ul>
+
+        <div class="hero__cta">
+          <button class="sr-btn sr-btn--primary">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            LINEで無料ではじめる
+          </button>
+          <button class="sr-btn sr-btn--outline">
+            1日の動作を見る
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M3 1l7 5-7 5z"/></svg>
+          </button>
+        </div>
+
+        <div class="hero__trust">
+          <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="5.5"/><path d="M7 4v3l2 1.5" stroke-linecap="round"/></svg>5分で連携完了</span>
+          <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M7 1l5 2v4c0 3-2.2 5.5-5 6.5C4.2 12.5 2 10 2 7V3l5-2z"/></svg>初期費用0円*</span>
+          <span><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 2l7 5-7 5z" stroke-linejoin="round"/></svg>14日間無料トライアル</span>
+        </div>
+      </div>
+
+      <!-- ═════ Phone column ═════ -->
+      <div class="phone-area">
+        <!-- Speech bubbles -->
+        <div class="bubble bubble--1">
+          <div class="bubble__icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h12v8H7l-4 3V4z"/></svg>
+          </div>
+          <div class="bubble__text">お客様はLINEで予約・相談・情報収集まですべて完結</div>
+        </div>
+        <div class="bubble bubble--2">
+          <div class="bubble__icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15h12M5 13V9m4 4V5m4 8v-6" stroke-linecap="round"/></svg>
+          </div>
+          <div class="bubble__text">データを活用したパーソナライズ提案でリピート率アップ</div>
+        </div>
+        <div class="bubble bubble--3">
+          <div class="bubble__icon">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v4l3 2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="bubble__text">自動化で業務を効率化し、スタッフは接客に集中</div>
+        </div>
+
+        <!-- Phone -->
+        <div class="phone">
+          <div class="phone__notch"></div>
+          <div class="phone__screen">
+            <div class="phone__statusbar">
+              <span>9:41</span>
+              <span class="icons">
+                <svg viewBox="0 0 14 10" fill="currentColor"><rect x="0" y="6" width="2.4" height="3.5"/><rect x="3.6" y="4" width="2.4" height="5.5"/><rect x="7.2" y="2" width="2.4" height="7.5"/><rect x="10.8" y="0" width="2.4" height="9.5"/></svg>
+                <svg viewBox="0 0 16 10" fill="currentColor"><path d="M8 3c2 0 3.7.8 5 2L14 4c-1.5-1.6-3.7-2.6-6-2.6S3.5 2.4 2 4l1 1c1.3-1.2 3-2 5-2z"/><circle cx="8" cy="8" r="1.2"/></svg>
+                <svg viewBox="0 0 24 10" fill="none"><rect x="0.5" y="0.5" width="20" height="9" rx="2.5" stroke="currentColor"/><rect x="2" y="2" width="17" height="6" rx="1.2" fill="currentColor"/></svg>
+              </span>
+            </div>
+
+            <div class="line-header">
+              <span class="back">‹</span>
+              <div class="avatar">A</div>
+              <div>
+                <div class="name">Atelier Lumière</div>
+                <div class="name__sub">サロン公式アカウント</div>
+              </div>
+              <div class="actions">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14" stroke-linecap="round"/></svg>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M2 8h12M2 12h12" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+
+            <div class="chat-body">
+              <div class="msg-row">
+                <div class="msg-avatar">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="5" r="2.5"/><path d="M2 13c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/></svg>
+                </div>
+                <div class="msg-bubble">田中さま、こんにちは。<br>先日はご来店ありがとうございました。<br>前回からそろそろ3ヶ月半ですね。<br>次回のご提案はいかがですか？😊</div>
+                <div class="msg-time">14:02</div>
+              </div>
+
+              <div class="msg-row">
+                <div class="msg-avatar"></div>
+                <div class="style-card">
+                  <div class="style-card__img"></div>
+                  <div class="style-card__body">
+                    <div class="style-card__title">おすすめのスタイル</div>
+                    <div class="style-card__sub">前回のスタイル (3/29)<br>ピンクベージュ×レイヤー</div>
+                    <div class="style-card__btn">スタイルを確認する</div>
+                  </div>
+                </div>
+                <div class="msg-time">14:02</div>
+              </div>
+
+              <div class="msg-row msg-row--user">
+                <div class="msg-read">既読</div>
+                <div class="msg-bubble msg-bubble--user">覚えててくれて嬉しい😊<br>今回は少し落ち着いた色にしたくて...</div>
+                <div class="msg-time">14:03</div>
+              </div>
+
+              <div class="msg-row">
+                <div class="msg-avatar">
+                  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="7" cy="5" r="2.5"/><path d="M2 13c0-2.5 2.2-4.5 5-4.5s5 2 5 4.5"/></svg>
+                </div>
+                <div class="msg-bubble">かしこまりました。<br>前回の履歴や好みに合わせて、<br>ご提案しますね🌿</div>
+                <div class="msg-time">14:03</div>
+              </div>
+            </div>
+
+            <div class="chat-input">
+              <span class="plus">+</span>
+              <div class="field">Aa</div>
+              <span class="emoji">☻</span>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#999" stroke-width="1.6"><path d="M2 4h10M2 8h10M2 12h10" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════ META (for review) ═════ -->
+  <div class="meta">
+    <div class="meta__inner">
+      <div class="meta__title">SECTION 01 / 10 · HERO</div>
+      <h1 style="font-family: var(--serif); font-size: 26px; margin: 0; font-weight: 600;">ファーストビュー</h1>
+      <p style="font-size: 13px; line-height: 1.85; color: var(--ink-2); margin: 14px 0 0; max-width: 720px;">
+        現行 LP のヒーローを刷新。「専属コンシェルジュを」型の顧客向けコピーを廃し、<b>サロンオーナー向け</b>に再フォーカス。LINE公式アカウント拡張という立ち位置を最上段で明示し、定量効果（−42% / +28% / +18%）を即座に提示。
+      </p>
+
+      <div class="meta__grid">
+        <div>
+          <h3 class="meta__h">含まれる要素</h3>
+          <ul class="meta__l">
+            <li>固定ナビ（ロゴ / 6リンク / LINEで始める / 資料DL）</li>
+            <li>NEW バッジ + リリース表記</li>
+            <li>3行 Serif 見出し（中央行のみアクセント色）</li>
+            <li>ステータスカード × 3（−42% / +28% / +18%）</li>
+            <li>チェックリスト × 3（オーナー向け価値）</li>
+            <li>CTA × 2（LINEで無料ではじめる / 1日の動作を見る）</li>
+            <li>マイクロトラスト（5分 / 0円 / 14日無料）</li>
+            <li>LINE トーク モック（Atelier Lumière）</li>
+            <li>フローティング吹き出し × 3（機能ハイライト）</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="meta__h">変更点（旧 LP との差分）</h3>
+          <ul class="meta__l">
+            <li>旧コピー「サロンに、専属コンシェルジュを」を廃止</li>
+            <li>主語をオーナー / スタッフへ統一</li>
+            <li>定量効果を ファーストビュー内に圧縮配置</li>
+            <li>右カラムを LINE トーク実画面風に変更（旧: ロゴ画像）</li>
+            <li>機能ハイライトを吹き出しで近接配置</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="meta__h">実装メモ（Claude Code 向け）</h3>
+          <ul class="meta__l">
+            <li>ナビ: <code>position: sticky</code> + backdrop-filter</li>
+            <li>右カラム: モバイル時は順序入替（CSS grid order）</li>
+            <li>LINE モックは将来差替前提 <code>&lt;Image src="/hero/line-chat.png"&gt;</code> も可</li>
+            <li>統計値は CMS化候補（運用平均値の更新）</li>
+            <li>セクション内アンカー: <code>id="top"</code></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="meta__nav">
+        <span>← 前: なし</span>
+        <a href="./02_problem.html">次: 02 PROBLEM →</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

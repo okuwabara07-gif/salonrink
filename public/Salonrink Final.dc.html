@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Shippori+Mincho+B1:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Pinyon+Script&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  @keyframes f5rise{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes f5ken{0%{transform:translate(-50%,-50%) scale(1.05);}100%{transform:translate(-50%,-50%) scale(1.16);}}
+  .f5card{transition:transform .3s ease, box-shadow .3s ease;text-decoration:none;}
+  .f5card:hover{transform:translateY(-6px);}
+  .f5row{transition:background .2s ease;}
+  .f5row:hover{background:#F1E9DB;}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="background:#E4DCCF;min-height:100%;padding:40px 0 60px;font-family:'Zen Kaku Gothic New',sans-serif;display:flex;justify-content:center;">
+  <div style="width:412px;background:#F2ECDE;box-shadow:0 30px 80px -40px rgba(58,51,43,0.5);overflow:hidden;">
+
+    <!-- ============ HERO / ENTRY ============ -->
+    <div style="position:relative;height:600px;overflow:hidden;">
+      <img src="assets/final-hero.png" alt="SALONRINK" style="position:absolute;top:50%;left:50%;width:116%;height:116%;object-fit:cover;object-position:50% 30%;transform:translate(-50%,-50%);animation:f5ken 22s ease-in-out infinite alternate;">
+      <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,24,18,0.5) 0%,rgba(30,24,18,0.06) 26%,rgba(24,18,13,0.16) 52%,rgba(18,13,9,0.9) 100%);"></div>
+      <div style="position:absolute;inset:13px;border:1px solid rgba(251,248,242,0.3);pointer-events:none;"></div>
+      <div style="position:absolute;top:24px;left:0;right:0;text-align:center;color:#FBF8F2;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:15px;letter-spacing:0.34em;font-weight:600;">SALON<span style="color:#E3C58B;">RINK</span></div>
+        <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;letter-spacing:0.18em;opacity:0.82;margin-top:2px;">salon concierge</div>
+      </div>
+      <div style="position:absolute;left:26px;right:26px;bottom:120px;text-align:center;color:#FBF8F2;">
+        <div style="display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:18px;">
+          <span style="width:24px;height:1px;background:#E3C58B;"></span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:0.4em;">THE PROMISE</span>
+          <span style="width:24px;height:1px;background:#E3C58B;"></span>
+        </div>
+        <h1 style="font-family:'Shippori Mincho B1',serif;font-weight:700;font-size:42px;line-height:1.32;letter-spacing:0.04em;margin:0;text-shadow:0 2px 18px rgba(18,13,9,0.55);">髪を、<br>ひとりにしない。</h1>
+        <p style="font-family:'Shippori Mincho B1',serif;font-size:12.5px;line-height:1.95;letter-spacing:0.05em;margin:18px 0 0;text-shadow:0 1px 10px rgba(18,13,9,0.6);">来店前・当日・おかえり後。<br>サロンを出たあとも、LINEで共有するマイカルテが、<br>お客様と美容師をつなぎます。</p>
+      </div>
+      <div style="position:absolute;left:0;right:0;bottom:40px;text-align:center;color:#FBF8F2;">
+        <div style="font-family:'Pinyon Script',cursive;font-size:32px;line-height:1;text-shadow:0 2px 12px rgba(18,13,9,0.5);">Which story will you start?</div>
+      </div>
+    </div>
+
+    <!-- ============ 3 STORIES ============ -->
+    <div style="padding:42px 26px 16px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#B0996E;">CHOOSE YOUR STORY</div>
+      <p style="font-family:'Shippori Mincho B1',serif;font-size:16px;font-weight:600;color:#2F2A24;line-height:1.6;margin:12px 0 0;">ひとつの思想で、<br>お客様と美容師がつながる。</p>
+      <p style="font-size:11.5px;color:#7E6256;margin:10px 0 0;line-height:1.7;">カードを選ぶと、その物語が始まります。</p>
+    </div>
+
+    <div style="padding:18px 26px 34px;display:flex;flex-direction:column;gap:16px;">
+      <!-- GUEST -->
+      <a href="Salonrink Site.dc.html" class="f5card" style="display:block;border-radius:16px 16px 14px 14px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(58,51,43,0.5);">
+        <div style="position:relative;height:200px;">
+          <img src="assets/guest-card-emi.png" alt="Emi" style="width:100%;height:100%;object-fit:cover;object-position:50% 28%;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,24,18,0.2),rgba(20,15,11,0.72));"></div>
+          <div style="position:absolute;left:18px;bottom:14px;color:#FBF8F2;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1;">A day with</div>
+            <div style="font-family:'Pinyon Script',cursive;font-size:46px;line-height:0.9;">Emi</div>
+          </div>
+          <div style="position:absolute;right:14px;top:14px;background:rgba(184,146,60,0.92);color:#fff;font-size:9px;font-weight:700;letter-spacing:0.12em;border-radius:999px;padding:5px 11px;">お客様</div>
+        </div>
+        <div style="background:#B8923C;color:#FBF8F2;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.14em;">GUEST</div><div style="font-size:10px;opacity:0.92;margin-top:2px;">わたしらしさを、ひとりにしない</div></div>
+          <span style="font-size:18px;">→</span>
+        </div>
+      </a>
+
+      <!-- STYLIST -->
+      <a href="Stylist Page v5.dc.html" class="f5card" style="display:block;border-radius:16px 16px 14px 14px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(58,51,43,0.5);">
+        <div style="position:relative;height:200px;">
+          <img src="assets/stylist-04-cut.png" alt="Kei" style="width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,24,18,0.2),rgba(20,15,11,0.72));"></div>
+          <div style="position:absolute;left:18px;bottom:14px;color:#FBF8F2;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1;">A day with</div>
+            <div style="font-family:'Pinyon Script',cursive;font-size:46px;line-height:0.9;">Kei</div>
+          </div>
+          <div style="position:absolute;right:14px;top:14px;background:rgba(58,51,43,0.92);color:#fff;font-size:9px;font-weight:700;letter-spacing:0.12em;border-radius:999px;padding:5px 11px;">美容師・サロン</div>
+        </div>
+        <div style="background:#3A332B;color:#FBF8F2;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.14em;">STYLIST</div><div style="font-size:10px;opacity:0.92;margin-top:2px;">二度と外さない、おかえり後に売る</div></div>
+          <span style="font-size:18px;">→</span>
+        </div>
+      </a>
+
+      <!-- PARTNER -->
+      <a href="#partner" class="f5card" style="display:block;border-radius:16px 16px 14px 14px;overflow:hidden;box-shadow:0 18px 40px -22px rgba(58,51,43,0.5);">
+        <div style="position:relative;height:200px;">
+          <img src="assets/agent-hero.png" alt="Yuka" style="width:100%;height:100%;object-fit:cover;object-position:50% 28%;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(30,24,18,0.2),rgba(20,15,11,0.72));"></div>
+          <div style="position:absolute;left:18px;bottom:14px;color:#FBF8F2;">
+            <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1;">A day with</div>
+            <div style="font-family:'Pinyon Script',cursive;font-size:46px;line-height:0.9;">Yuka</div>
+          </div>
+          <div style="position:absolute;right:14px;top:14px;background:rgba(110,113,82,0.92);color:#fff;font-size:9px;font-weight:700;letter-spacing:0.12em;border-radius:999px;padding:5px 11px;">代理店・準備中</div>
+        </div>
+        <div style="background:#6E7152;color:#FBF8F2;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;">
+          <div><div style="font-family:'Cormorant Garamond',serif;font-size:20px;letter-spacing:0.14em;">PARTNER</div><div style="font-size:10px;opacity:0.92;margin-top:2px;">サロンの成長を、データで支える</div></div>
+          <span style="font-size:18px;">→</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- ============ ALL PAGES MAP ============ -->
+    <div style="background:#FBF8F2;padding:42px 26px 36px;">
+      <div style="text-align:center;margin-bottom:22px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#B0996E;">ALL PAGES</div>
+        <p style="font-family:'Shippori Mincho B1',serif;font-size:18px;font-weight:600;color:#2F2A24;margin:10px 0 0;">サイトの全体像</p>
+      </div>
+
+      <div data-rev style="opacity:0;display:flex;flex-direction:column;gap:18px;">
+
+        <!-- GUEST panel -->
+        <div style="border:1px solid #ECE4D6;border-radius:14px;overflow:hidden;background:#FBF8F2;">
+          <div style="display:flex;align-items:center;gap:9px;background:#B8923C;padding:11px 16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:0.14em;color:#FBF8F2;font-weight:600;">GUEST</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(251,248,242,0.85);">A day with Emi</span>
+          </div>
+          <a href="Salonrink Site.dc.html" class="f5row" style="display:flex;align-items:center;gap:13px;padding:13px 15px;text-decoration:none;">
+            <img src="assets/guest-09-carte.png" alt="" style="width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;">
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#2F2A24;">お客様LP（1日の物語）</div><div style="font-size:10px;color:#8A7A68;margin-top:2px;">AI診断・LINE相談・マイカルテ・Before/After</div></div>
+            <span style="color:#C2B097;font-size:16px;">›</span>
+          </a>
+        </div>
+
+        <!-- STYLIST panel -->
+        <div style="border:1px solid #ECE4D6;border-radius:14px;overflow:hidden;background:#FBF8F2;">
+          <div style="display:flex;align-items:center;gap:9px;background:#3A332B;padding:11px 16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:0.14em;color:#FBF8F2;font-weight:600;">STYLIST</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(251,248,242,0.8);">A day with Kei</span>
+          </div>
+          <a href="Stylist Page v5.dc.html" class="f5row" style="display:flex;align-items:center;gap:13px;padding:13px 15px;text-decoration:none;border-bottom:1px solid #F0E9DC;">
+            <img src="assets/stylist-04-cut.png" alt="" style="width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;">
+            <div style="flex:1;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;font-weight:700;color:#2F2A24;">美容師・サロンLP</span><span style="font-size:8.5px;font-weight:700;color:#fff;background:#9C7E5C;border-radius:999px;padding:2px 7px;">最新</span></div><div style="font-size:10px;color:#8A7A68;margin-top:2px;">二度と外さない＋おかえり後マネタイズ</div></div>
+            <span style="color:#C2B097;font-size:16px;">›</span>
+          </a>
+          <a href="Salon Page v4.dc.html" class="f5row" style="display:flex;align-items:center;gap:13px;padding:13px 15px;text-decoration:none;">
+            <img src="assets/stylist-hero.png" alt="" style="width:46px;height:46px;border-radius:9px;object-fit:cover;flex-shrink:0;">
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#2F2A24;">3つの機会ページ（A/B案）</div><div style="font-size:10px;color:#8A7A68;margin-top:2px;">来店前・当日・おかえり後</div></div>
+            <span style="color:#C2B097;font-size:16px;">›</span>
+          </a>
+        </div>
+
+        <!-- PARTNER panel -->
+        <div id="partner" style="border:1px solid #ECE4D6;border-radius:14px;overflow:hidden;background:#FBF8F2;">
+          <div style="display:flex;align-items:center;gap:9px;background:#6E7152;padding:11px 16px;">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:16px;letter-spacing:0.14em;color:#FBF8F2;font-weight:600;">PARTNER</span>
+            <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:rgba(251,248,242,0.8);">A day with Yuka</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:13px;padding:13px 15px;">
+            <div style="width:46px;height:46px;border-radius:9px;background:#EDE5D5;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#9C8A6A" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+            <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:#2F2A24;">代理店LP</div><div style="font-size:10px;color:#8A7A68;margin-top:2px;">複数店舗ダッシュボード・事前登録</div></div>
+            <span style="font-size:9px;color:#7E7A5C;border:1px solid #C9CBA8;background:#F3F2E6;border-radius:999px;padding:4px 9px;">準備中</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============ SHARED CORE ============ -->
+    <div style="padding:46px 26px 44px;">
+      <div data-rev style="opacity:0;text-align:center;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#B0996E;">SHARED CORE</div>
+        <p style="font-family:'Shippori Mincho B1',serif;font-size:19px;font-weight:600;line-height:1.6;color:#2F2A24;margin:12px 0 6px;">GUESTとSTYLISTを、<br>1つのカルテがつなぐ。</p>
+        <p style="font-size:11px;color:#7E6256;line-height:1.7;margin:0 0 26px;">同じ施術を、お客様には“物語”、サロンには“記録”として。所有はそれぞれに。</p>
+
+        <div style="display:flex;align-items:stretch;gap:8px;">
+          <div style="flex:1;background:#FBF8F2;border:1px solid #ECE4D6;border-radius:13px;padding:15px 11px;">
+            <div style="font-size:9px;letter-spacing:0.12em;color:#B8923C;font-weight:700;">お客様カルテ</div>
+            <div style="font-size:11px;color:#4A4238;line-height:1.55;margin-top:6px;">複数サロンで共有できる“物語”。<br>似合う・履歴・Before/After</div>
+            <div style="font-size:9px;color:#8A7A68;margin-top:7px;">＝ ポータブル（客の所有）</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;color:#9C7E5C;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>
+            <div style="font-size:8px;color:#9C7E5C;margin-top:3px;writing-mode:vertical-rl;letter-spacing:0.1em;">連携</div>
+          </div>
+          <div style="flex:1;background:#FBF8F2;border:1px solid #ECE4D6;border-radius:13px;padding:15px 11px;">
+            <div style="font-size:9px;letter-spacing:0.12em;color:#3A332B;font-weight:700;">美容師カルテ</div>
+            <div style="font-size:11px;color:#4A4238;line-height:1.55;margin-top:6px;">複数客を蓄積する臨床記録。<br>薬剤レシピは画像で残す</div>
+            <div style="font-size:9px;color:#8A7A68;margin-top:7px;">＝ サロンの私物（非公開）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ THE MESSAGE ============ -->
+    <div style="background:#2E2820;padding:54px 30px 48px;text-align:center;">
+      <div data-rev style="opacity:0;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#C2A878;">THE MESSAGE</div>
+        <p style="font-family:'Shippori Mincho B1',serif;font-size:28px;font-weight:600;line-height:1.5;color:#F6EFE2;margin:18px 0 0;">髪を、<br>ひとりにしない。</p>
+        <p style="font-size:12px;line-height:1.95;color:#BDB2A0;margin:20px 0 0;">来店前・当日・おかえり後。<br>サロンを出たあとも、ずっとそばに。<br>LINEで共有するマイカルテが、<br>お客様と美容師をつなぐ。</p>
+      </div>
+    </div>
+
+    <!-- ============ OWNER CTA + FOOTER ============ -->
+    <div style="background:#F2ECDE;padding:38px 30px 30px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:0.26em;color:#B0996E;">FOR SALON OWNERS</div>
+      <p style="font-family:'Shippori Mincho B1',serif;font-size:16px;font-weight:600;color:#2F2A24;margin:9px 0 4px;">サロンを経営されている方へ</p>
+      <p style="font-size:11px;color:#7E6256;line-height:1.7;margin:0 0 16px;">初期費用0円・月額¥1,980〜・14日間無料・違約金なし</p>
+      <a href="https://salonrink.com/register" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:12px;padding:14px 28px;font-size:14px;font-weight:700;letter-spacing:0.04em;box-shadow:0 14px 30px -14px rgba(58,51,43,0.5);">14日間無料で始める ›</a>
+    </div>
+    <div style="background:#3A332B;padding:28px 30px 26px;text-align:center;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:18px;letter-spacing:0.3em;color:#F3EFE7;font-weight:600;">SALONRINK</div>
+      <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:13px;margin-top:16px;">
+        <a href="https://salonrink.com/company" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:10.5px;">運営会社</a>
+        <a href="https://salonrink.com/privacy" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:10.5px;">プライバシーポリシー</a>
+        <a href="https://salonrink.com/terms" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:10.5px;">利用規約</a>
+        <a href="https://salonrink.com/tokushoho" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:10.5px;">特定商取引法に基づく表記</a>
+        <a href="https://salonrink.com/contact" target="_blank" rel="noopener" style="color:#CFC6BA;text-decoration:none;font-size:10.5px;">お問い合わせ</a>
+      </div>
+      <p style="font-size:9.5px;color:rgba(207,198,186,0.65);line-height:1.7;margin:16px 0 0;">※AI髪診断は髪質・好みの傾向の可視化であり、医療・効能を保証するものではありません。</p>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:11px;color:rgba(207,198,186,0.7);margin-top:12px;letter-spacing:0.08em;">© AOKAE合同会社　SALONRINK</div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:412,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  rootRef = React.createRef();
+  renderVals() { return {}; }
+  componentDidMount() {
+    const root = this.rootRef.current || document;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.style.animation = 'f5rise .8s cubic-bezier(.22,.61,.36,1) both';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.14 });
+    root.querySelectorAll('[data-rev]').forEach((el) => io.observe(el));
+  }
+}
+</script>
+</body>
+</html>

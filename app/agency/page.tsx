@@ -33,11 +33,11 @@ export default function AgencyPage() {
           <div style={{background:'#fff',borderRadius:10,padding:20,border:'1px solid #E8E8E8'}}>
             <h2 style={{fontSize:14,fontWeight:500,marginBottom:16,color:'#1A1018'}}>契約サロン一覧</h2>
             {[
-              {name:'キレイ鶴見店',plan:'Standard',status:'正常',fee:'¥5,980'},
-              {name:'ヘアサロン Bloom',plan:'Starter',status:'正常',fee:'¥2,980'},
+              {name:'Hair Atelier 表参道',plan:'Standard',status:'正常',fee:'¥2,980'},
+              {name:'ヘアサロン Bloom',plan:'Light',status:'正常',fee:'¥1,980'},
               {name:'NALU Hair',plan:'トライアル',status:'期限3日',fee:'¥0'},
-              {name:'Hair Studio 渋谷',plan:'Premium',status:'正常',fee:'¥9,800'},
-              {name:'美容室 ナチュラル',plan:'Standard',status:'正常',fee:'¥5,980'},
+              {name:'Hair Studio 渋谷',plan:'Premium',status:'正常',fee:'¥4,580'},
+              {name:'美容室 ナチュラル',plan:'Standard',status:'正常',fee:'¥2,980'},
             ].map(s => (
               <div key={s.name} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 0',borderBottom:'1px solid #F5F5F5',fontSize:13}}>
                 <div>

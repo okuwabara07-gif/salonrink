@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>07 EFFECTS v2 — SalonRink Concierge LP</title>
+<link rel="icon" type="image/png" href="./images/a110_favicon_gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<style>
+  body { background: var(--ivory); }
+  .eff {
+    padding: 96px 0;
+    position: relative; overflow: hidden;
+  }
+  .eff::before {
+    content: ""; position: absolute; right: -100px; top: -80px;
+    width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+    opacity: 0.7;
+  }
+  .eff::after {
+    content: ""; position: absolute; left: -80px; bottom: -80px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, var(--brand-soft) 0%, transparent 70%);
+    opacity: 0.5;
+  }
+
+  .eff__head {
+    text-align: center; margin-bottom: 64px;
+    position: relative; z-index: 1;
+  }
+  .eff__head .sr-eyebrow { margin-bottom: 20px; }
+  .eff__h2 .brand { color: var(--brand); }
+
+  .eff__grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+    margin-bottom: 48px;
+    position: relative; z-index: 1;
+  }
+  .ec {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-xl); padding: 36px 30px 32px;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column;
+    text-align: center;
+    position: relative;
+    transition: 0.2s;
+  }
+  .ec:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .ec--featured {
+    background: linear-gradient(180deg, #fff 0%, var(--brand-soft) 100%);
+    border: 1.5px solid var(--brand);
+    box-shadow: 0 12px 36px rgba(201,169,97,0.20);
+  }
+  .ec__badge {
+    position: absolute; top: -12px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--brand); color: #fff;
+    padding: 5px 14px; border-radius: 999px;
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .ec__icon-wrap {
+    width: 96px; height: 96px; border-radius: 50%;
+    margin: 0 auto 24px;
+    background: var(--brand-soft);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--brand);
+    position: relative;
+  }
+  .ec__icon-wrap::before {
+    content: ""; position: absolute; inset: -8px;
+    border: 1.5px dashed var(--brand-soft); border-radius: 50%;
+  }
+  .ec__num-mark {
+    font-family: var(--mono); font-size: 10px; font-weight: 700;
+    color: var(--brand); letter-spacing: 0.18em;
+    margin-bottom: 12px;
+  }
+  .ec__title {
+    font-family: var(--serif); font-weight: 700; font-size: 22px;
+    color: var(--ink); line-height: 1.5; margin: 0 0 14px;
+    letter-spacing: 0.01em;
+  }
+  .ec__title .accent { color: var(--brand); }
+  .ec__sub {
+    font-size: 13px; line-height: 1.85; color: var(--ink-2); margin: 0 0 20px;
+  }
+  .ec__bullets {
+    list-style: none; padding: 16px 0 0; margin: 0;
+    border-top: 1px dashed var(--line);
+    display: flex; flex-direction: column; gap: 8px;
+    text-align: left;
+  }
+  .ec__bullets li {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 12px; color: var(--ink-2); line-height: 1.6;
+  }
+  .ec__bullets .sr-check {
+    background: var(--brand-soft); color: var(--brand);
+  }
+
+  /* Trust band */
+  .eff__trust {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    box-shadow: var(--shadow-sm);
+    position: relative; z-index: 1;
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0;
+    align-items: center;
+  }
+  .eff__trust-item {
+    padding: 0 24px;
+    border-right: 1px solid var(--line-soft);
+    text-align: center;
+  }
+  .eff__trust-item:last-child { border-right: none; }
+  .eff__trust-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    margin: 0 auto 10px;
+    background: var(--brand-soft); color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .eff__trust-title {
+    font-family: var(--serif); font-weight: 700; font-size: 14px;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .eff__trust-sub {
+    font-size: 11.5px; color: var(--ink-3); line-height: 1.6;
+  }
+
+  /* footnote */
+  .eff__foot {
+    text-align: center; margin-top: 28px;
+    font-family: var(--mono); font-size: 10.5px;
+    color: var(--ink-3); letter-spacing: 0.06em; line-height: 1.7;
+    position: relative; z-index: 1;
+  }
+
+  @media (max-width: 980px) {
+    .eff__grid { grid-template-columns: 1fr; }
+    .eff__trust { grid-template-columns: 1fr; }
+    .eff__trust-item { border-right: none; border-bottom: 1px solid var(--line-soft); padding: 16px 0; }
+    .eff__trust-item:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="eff" id="effects">
+  <div class="sr-container">
+    <div class="eff__head">
+      <div class="sr-eyebrow sr-eyebrow--brand">EXPECTED EFFECTS · 期待できる効果</div>
+      <h2 class="sr-h2 eff__h2">SalonRink で<br><span class="brand">期待できる効果</span>。</h2>
+      <p class="sr-lead">1人サロンが、忙しさに追われずに伸びていくために。<br>SalonRink Concierge が支える、3つの変化。</p>
+    </div>
+
+    <div class="eff__grid">
+
+      <!-- 01 -->
+      <div class="ec">
+        <div class="ec__icon-wrap">
+          <svg width="38" height="38" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M16 27l-9-9c-2.5-2.5-2.5-6.5 0-9s6.5-2.5 9 0l0 0 0 0c2.5-2.5 6.5-2.5 9 0s2.5 6.5 0 9l-9 9z"/>
+          </svg>
+        </div>
+        <div class="ec__num-mark">01 / RETENTION</div>
+        <h3 class="ec__title">リピートが、<br><span class="accent">自然に増える</span></h3>
+        <p class="ec__sub">最適タイミングでのご案内と、過去履歴に基づく自然なご提案で、「次もまた来たい」を仕組み化。</p>
+        <ul class="ec__bullets">
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>来店周期の自動分析</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>離脱予兆を早期検知</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>配信文も下書きまで</li>
+        </ul>
+      </div>
+
+      <!-- 02 FEATURED -->
+      <div class="ec ec--featured">
+        <div class="ec__badge">CORE VALUE</div>
+        <div class="ec__icon-wrap">
+          <svg width="38" height="38" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M16 4l3.5 7.5 8 1-6 6 1.5 8L16 22l-7 4.5 1.5-8-6-6 8-1L16 4z" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="ec__num-mark">02 / RELATIONSHIP</div>
+        <h3 class="ec__title">お客様一人ひとりに、<br><span class="accent">もっと寄り添える</span></h3>
+        <p class="ec__sub">過去の会話・好み・施術履歴を瞬時に呼び出し。<br>「覚えていてくれた」が、毎回起こる体験に。</p>
+        <ul class="ec__bullets">
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去カルテをLINEから即呼出</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>好み・避ける色も自動記録</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>細部までずれない提案</li>
+        </ul>
+      </div>
+
+      <!-- 03 -->
+      <div class="ec">
+        <div class="ec__icon-wrap">
+          <svg width="38" height="38" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="16" cy="16" r="11"/>
+            <path d="M16 9v7l5 3" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="ec__num-mark">03 / TIME</div>
+        <h3 class="ec__title">確認の時間を、<br><span class="accent">接客の時間</span>に変える</h3>
+        <p class="ec__sub">カルテ探しも、引き継ぎ確認も、配信文作成も不要。<br>LINEで名前を検索するだけ。</p>
+        <ul class="ec__bullets">
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>カルテ作成が手入力ゼロ</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>過去履歴の確認が一瞬</li>
+          <li><span class="sr-check"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6l3 3 5-6"/></svg></span>配信文も自動生成</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Trust band -->
+    <div class="eff__trust">
+      <div class="eff__trust-item">
+        <div class="eff__trust-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 1l2.5 5 5.5 1-4 4 1 5.5L9 14l-5 2.5 1-5.5-4-4 5.5-1L9 1z" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="eff__trust-title">1人サロン特化設計</div>
+        <div class="eff__trust-sub">小規模サロンの<br>業務フローに最適化</div>
+      </div>
+      <div class="eff__trust-item">
+        <div class="eff__trust-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="6" width="12" height="9" rx="1.5"/><path d="M6 6V4a3 3 0 016 0v2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="eff__trust-title">セキュリティ重視</div>
+        <div class="eff__trust-sub">店舗ごと暗号化、<br>外部に共有されません</div>
+      </div>
+      <div class="eff__trust-item">
+        <div class="eff__trust-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 9l4 4 8-9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="eff__trust-title">14日間無料 / 月¥1,980〜</div>
+        <div class="eff__trust-sub">カード登録不要、<br>いつでも解約OK</div>
+      </div>
+    </div>
+
+    <div class="eff__foot">
+      ※ 効果は店舗・業態・運用状況により異なります。実装の活用度合いに応じて成果は変動します。
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 07 / 10 · EXPECTED EFFECTS · v2 MARKET-IN</span>
+    <span><a href="./06_ai_karte.html">← 06 AI KARTE</a> &nbsp;|&nbsp; <a href="./08_case.html">08 CASE 01 →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

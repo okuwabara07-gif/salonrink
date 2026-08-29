@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 const notoSerifJP = Noto_Serif_JP({
-  variable: "--font-noto-serif-jp",
-  weight: ["400", "700"],
+  variable: "--font-serif",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
 });
 
@@ -30,14 +30,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const shipporiMinchoB1 = Shippori_Mincho_B1({
-  variable: "--font-serif",
-  weight: "400",
-  // @ts-expect-error Next.js 16.2 の型定義では CJK subset が削除されたが、
-  // Google Fonts API は japanese subset を受け取り日本語グリフを配信する。
-  // ランタイム動作を保持するため型チェックを一時的に無視。
-  subsets: ["latin", "japanese"],
-});
+// Shippori_Mincho_B1 は Noto_Serif_JP に統合（変数を削除）;
 
 const cormorantGaramond = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -52,9 +45,10 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://salonrink.com'
+const siteUrl = 'https://salonrink.com'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://salonrink.com'),
   title: "SalonRink（サロンリンク）| LINEで予約自動化するサロン経営SaaS",
   description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥1,980から。ホットペッパー依存から脱却。",
   keywords: ["サロン管理", "LINE予約", "予約システム", "顧客管理", "美容サロン", "SaaS"],
@@ -131,7 +125,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${notoSansJP.variable} ${inter.variable} ${shipporiMinchoB1.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${notoSerifJP.variable} ${notoSansJP.variable} ${inter.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}>
         {children}
         <PWAInstallPrompt />
       </body>

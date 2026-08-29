@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>05 IN ACTION — SalonRink Concierge LP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./shared/tokens.css">
+<style>
+  body { background: var(--bg); }
+  .action { padding: 96px 0 96px; position: relative; overflow: hidden; }
+  .action::before {
+    content: ""; position: absolute; left: -120px; top: 100px;
+    width: 320px; height: 320px; border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+    opacity: 0.6;
+  }
+  .action__head { text-align: center; margin-bottom: 64px; }
+  .action__head .sr-eyebrow { margin-bottom: 20px; }
+
+  .timeline {
+    position: relative; max-width: 1080px; margin: 0 auto;
+  }
+  .timeline::before {
+    content: ""; position: absolute; left: 50%; transform: translateX(-50%);
+    top: 0; bottom: 0; width: 2px; background: var(--accent-soft);
+  }
+
+  .scene {
+    display: grid; grid-template-columns: 1fr 64px 1fr; gap: 24px;
+    align-items: center; margin-bottom: 56px;
+    position: relative;
+  }
+  .scene:last-child { margin-bottom: 0; }
+  .scene__dot {
+    width: 56px; height: 56px; border-radius: 50%; background: #fff;
+    border: 2px solid var(--accent); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono); font-weight: 700; font-size: 13px;
+    box-shadow: 0 4px 14px rgba(6,199,85,0.15);
+    margin: 0 auto; position: relative; z-index: 2;
+  }
+
+  .scene__phone {
+    background: #1a1a1a; border-radius: 28px; padding: 8px;
+    box-shadow: var(--shadow-md); justify-self: end;
+    width: 280px; height: 480px;
+  }
+  .scene__phone-screen {
+    background: #f7f7f7; border-radius: 22px; width: 100%; height: 100%;
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .scene__phone-head {
+    padding: 18px 14px 10px; background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600;
+  }
+  .scene__phone-head .back { color: #666; }
+  .scene__phone-head .avatar {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--bg-soft);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--serif); font-size: 12px; color: var(--ink-2); font-weight: 600;
+  }
+  .scene__phone-body { flex: 1; padding: 12px; overflow: hidden; }
+
+  .scene__body { padding: 14px 0; }
+  .scene__body--left { text-align: right; }
+  .scene__time {
+    font-family: var(--mono); font-size: 11px; color: var(--accent);
+    font-weight: 600; letter-spacing: 0.16em; margin-bottom: 8px;
+  }
+  .scene__title {
+    font-family: var(--serif); font-weight: 700; font-size: 24px;
+    color: var(--ink); margin: 0 0 12px; line-height: 1.45;
+  }
+  .scene__title .accent { color: var(--accent); }
+  .scene__desc {
+    font-size: 13px; line-height: 1.85; color: var(--ink-2);
+    margin: 0 0 14px;
+  }
+  .scene__tags {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .scene__body--left .scene__tags { justify-content: flex-end; }
+  .scene__tag {
+    background: var(--accent-soft); color: var(--accent-ink);
+    font-family: var(--mono); font-size: 10px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Chat bubble mini */
+  .mini-msg-row { display: flex; align-items: flex-end; gap: 6px; margin-bottom: 10px; }
+  .mini-msg-row--user { justify-content: flex-end; }
+  .mini-msg-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--bg-soft); flex-shrink: 0; }
+  .mini-msg {
+    background: #fff; border-radius: 12px; padding: 8px 10px;
+    font-size: 10.5px; line-height: 1.5; color: var(--ink);
+    max-width: 80%; box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .mini-msg--user { background: #B2EBC8; }
+  .mini-time { font-size: 8px; color: var(--ink-3); align-self: flex-end; }
+
+  /* Customer card mini */
+  .mini-card {
+    background: #fff; border-radius: 12px; padding: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    font-size: 10px;
+  }
+  .mini-card__row { display: flex; justify-content: space-between; padding: 3px 0; color: var(--ink-2); }
+  .mini-card__row b { color: var(--ink); font-family: var(--serif); }
+  .mini-card__title {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; color: var(--ink);
+    padding-bottom: 6px; border-bottom: 1px solid var(--line-soft);
+    margin-bottom: 6px;
+  }
+  .mini-card__title .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 7px; }
+
+  /* Suggest panel */
+  .suggest {
+    background: #fff; border-radius: 12px; padding: 10px 12px;
+    border: 1px solid var(--accent-soft);
+    font-size: 10px; margin-bottom: 8px;
+  }
+  .suggest__head {
+    display: flex; align-items: center; gap: 6px;
+    font-weight: 700; color: var(--accent-ink); font-size: 10px;
+    margin-bottom: 6px;
+  }
+  .suggest__body { color: var(--ink-2); line-height: 1.55; font-size: 9.5px; }
+
+  /* Right scene = reverse direction */
+  .scene--reverse .scene__phone { justify-self: start; }
+  .scene--reverse .scene__body { padding-left: 12px; }
+  .scene--reverse .scene__body--right { text-align: left; }
+
+  @media (max-width: 980px) {
+    .timeline::before { left: 27px; transform: none; }
+    .scene { grid-template-columns: 56px 1fr; gap: 14px; margin-bottom: 32px; }
+    .scene__phone { grid-row: 2; grid-column: 2; width: 100%; max-width: 280px; }
+    .scene__dot { grid-row: 1; grid-column: 1; }
+    .scene__body { grid-row: 1; grid-column: 2; text-align: left !important; padding: 0; }
+    .scene__body .scene__tags { justify-content: flex-start !important; }
+    .scene--reverse .scene__phone, .scene--reverse .scene__body { grid-column: 2; }
+  }
+</style>
+</head>
+<body>
+
+<section class="action" id="in-action">
+  <div class="sr-container">
+    <div class="action__head">
+      <div class="sr-eyebrow">IN ACTION · 1日の動き</div>
+      <h2 class="sr-h2">"<span class="accent">いつものLINE</span>"の中で、<br>すべてが完結する。</h2>
+      <p class="sr-lead">予約・接客・記録・提案・分析まで、<br>1日の業務をLINEの中でつないでいきます。</p>
+    </div>
+
+    <div class="timeline">
+
+      <!-- SCENE 1 — Morning : owner -->
+      <div class="scene">
+        <div class="scene__body scene__body--left">
+          <div class="scene__time">07:30 ／ 朝</div>
+          <h3 class="scene__title">朝のLINEに、<br><span class="accent">今日のサマリー</span>が届く。</h3>
+          <p class="scene__desc">予約・予測売上・再来危険顧客が、Conciergeから自動配信。<br>管理画面を開かなくても、状況が把握できます。</p>
+          <div class="scene__tags">
+            <span class="scene__tag">SUMMARY</span>
+            <span class="scene__tag">FORECAST</span>
+          </div>
+        </div>
+        <div class="scene__dot">01</div>
+        <div class="scene__phone">
+          <div class="scene__phone-screen">
+            <div class="scene__phone-head">
+              <span class="back">‹</span>
+              <div class="avatar" style="background: var(--accent); color:#fff;">C</div>
+              <div style="flex:1;">
+                <div style="font-size: 11px;">SalonRink Concierge</div>
+                <div style="font-size: 8px; color: var(--ink-3); font-weight: 400;">サロン公式アカウント</div>
+              </div>
+            </div>
+            <div class="scene__phone-body">
+              <div class="mini-msg-row">
+                <div class="mini-msg-avatar" style="background: var(--accent);"></div>
+                <div class="mini-msg">おはようございます、山田様。<br>本日のサマリーをお届けします。</div>
+              </div>
+              <div class="mini-msg-row">
+                <div class="mini-msg-avatar" style="visibility:hidden;"></div>
+                <div class="mini-card" style="max-width: 80%;">
+                  <div class="mini-card__title"><span class="dot">📊</span> 本日のサマリー</div>
+                  <div class="mini-card__row"><span>予約件数</span><b>12 件</b></div>
+                  <div class="mini-card__row"><span>予測売上</span><b style="color:var(--accent);">¥352,400</b></div>
+                  <div class="mini-card__row"><span>再来危険顧客</span><b style="color:var(--coral);">8 名</b></div>
+                  <div style="background: var(--accent); color:#fff; text-align: center; padding: 5px; border-radius: 8px; margin-top: 8px; font-size: 10px; font-weight: 600;">詳細をみる</div>
+                </div>
+                <div class="mini-time">7:32</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 2 — Reservation : customer -->
+      <div class="scene scene--reverse">
+        <div class="scene__phone">
+          <div class="scene__phone-screen">
+            <div class="scene__phone-head">
+              <span class="back">‹</span>
+              <div class="avatar">A</div>
+              <div style="flex:1;">
+                <div style="font-size: 11px;">Atelier Lumière</div>
+                <div style="font-size: 8px; color: var(--ink-3); font-weight: 400;">サロン公式</div>
+              </div>
+            </div>
+            <div class="scene__phone-body">
+              <div class="mini-msg-row mini-msg-row--user">
+                <div class="mini-msg mini-msg--user">来週土曜の14時、ご予約お願いします</div>
+                <div class="mini-time">10:14</div>
+              </div>
+              <div class="mini-msg-row">
+                <div class="mini-msg-avatar"></div>
+                <div class="mini-msg">承知しました🌿<br>5/30(土) 14:00 でご予約承りました</div>
+              </div>
+              <div class="mini-msg-row">
+                <div class="mini-msg-avatar" style="visibility:hidden;"></div>
+                <div class="mini-card" style="max-width: 80%;">
+                  <div class="mini-card__title"><span class="dot">✓</span> ご予約確定</div>
+                  <div class="mini-card__row"><span>日時</span><b>5/30 14:00</b></div>
+                  <div class="mini-card__row"><span>担当</span><b>田中</b></div>
+                  <div class="mini-card__row"><span>メニュー</span><b>カラー+カット</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scene__dot">02</div>
+        <div class="scene__body scene__body--right">
+          <div class="scene__time">10:14 ／ 午前</div>
+          <h3 class="scene__title">お客様は、<br>LINEで<span class="accent">いつものように予約</span>。</h3>
+          <p class="scene__desc">予約フォームへの遷移なし。LINEのトーク画面で完結。<br>裏ではAIが過去履歴と照合して、最適な担当・メニューを提案します。</p>
+          <div class="scene__tags">
+            <span class="scene__tag">RESERVATION</span>
+            <span class="scene__tag">AUTO-MATCH</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 3 — Karte search : staff -->
+      <div class="scene">
+        <div class="scene__body scene__body--left">
+          <div class="scene__time">13:45 ／ 来店前</div>
+          <h3 class="scene__title">スタッフは、<br>名前で<span class="accent">カルテを呼び出す</span>。</h3>
+          <p class="scene__desc">LINEのトーク内で「@田中様」と打つだけ。<br>前回履歴・写真・好み・注意事項が、すぐに表示されます。</p>
+          <div class="scene__tags">
+            <span class="scene__tag">@MENTION</span>
+            <span class="scene__tag">AI CHART</span>
+          </div>
+        </div>
+        <div class="scene__dot">03</div>
+        <div class="scene__phone">
+          <div class="scene__phone-screen">
+            <div class="scene__phone-head">
+              <span class="back">‹</span>
+              <div class="avatar">田</div>
+              <div style="flex:1;">
+                <div style="font-size: 11px;">田中 真由美 さま</div>
+                <div style="font-size: 8px; color: var(--ink-3); font-weight: 400;">来店 18回目</div>
+              </div>
+            </div>
+            <div class="scene__phone-body">
+              <div class="mini-msg-row mini-msg-row--user">
+                <div class="mini-msg mini-msg--user">@田中様</div>
+                <div class="mini-time">13:45</div>
+              </div>
+              <div class="mini-msg-row">
+                <div class="mini-msg-avatar" style="background: var(--accent);"></div>
+                <div class="mini-card" style="max-width: 88%; padding: 12px;">
+                  <div class="mini-card__title"><span class="dot">C</span> Concierge カルテ</div>
+                  <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                    <div style="width: 36px; height: 44px; background: linear-gradient(135deg, #f0d0a8, #d4a380); border-radius: 6px;"></div>
+                    <div style="flex:1; font-size: 9px;">
+                      <div style="color: var(--ink-3);">前回 3/29</div>
+                      <div style="font-weight: 600;">ピンクベージュ ×<br>レイヤーカット</div>
+                    </div>
+                  </div>
+                  <div class="mini-card__row"><span>避けたい色</span><b>ハイトーン</b></div>
+                  <div class="mini-card__row"><span>頭皮</span><b style="color: var(--coral);">敏感肌</b></div>
+                  <div class="mini-card__row"><span>最終 6/29</span><b>3ヶ月半 前</b></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCENE 4 — Suggestion : after visit -->
+      <div class="scene scene--reverse">
+        <div class="scene__phone">
+          <div class="scene__phone-screen">
+            <div class="scene__phone-head">
+              <span class="back">‹</span>
+              <div class="avatar">A</div>
+              <div style="flex:1;">
+                <div style="font-size: 11px;">Atelier Lumière</div>
+                <div style="font-size: 8px; color: var(--ink-3); font-weight: 400;">配信予約済</div>
+              </div>
+            </div>
+            <div class="scene__phone-body">
+              <div class="suggest">
+                <div class="suggest__head">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M2 9h8M4 7V3m4 4V5"/></svg>
+                  Concierge 提案 — 配信文案
+                </div>
+                <div class="suggest__body">
+                  田中さま、こんにちは🌸<br>
+                  前回のご来店から3ヶ月半が経ちました。<br>
+                  そろそろリタッチのタイミングですね。
+                </div>
+              </div>
+              <div class="suggest" style="border-color: var(--coral-soft);">
+                <div class="suggest__head" style="color: #7a2912;">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6" cy="6" r="4.5"/><path d="M6 4v2.5l1.5 1"/></svg>
+                  おすすめタイミング
+                </div>
+                <div class="suggest__body">
+                  来週金曜 14:00〜 がご都合よろしいかと
+                </div>
+              </div>
+              <div style="background: var(--accent); color: #fff; text-align: center; padding: 8px; border-radius: 10px; font-size: 10.5px; font-weight: 600;">
+                配信する
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="scene__dot">04</div>
+        <div class="scene__body scene__body--right">
+          <div class="scene__time">19:30 ／ 営業後</div>
+          <h3 class="scene__title">明日への提案を、<br><span class="accent">AIが書きおこす</span>。</h3>
+          <p class="scene__desc">過去の周期と履歴から、再来タイミングをConciergeが予測。<br>配信文案まで自動で用意します。タップ1つで送信。</p>
+          <div class="scene__tags">
+            <span class="scene__tag">AI SUGGEST</span>
+            <span class="scene__tag">1-TAP SEND</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 05 / 10 · IN ACTION</span>
+    <span><a href="./04_for_everyone.html">← 04 FOR EVERYONE</a> &nbsp;|&nbsp; <a href="./06_ai_karte.html">06 AI KARTE →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

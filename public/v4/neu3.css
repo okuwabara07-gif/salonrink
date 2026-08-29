@@ -1,0 +1,127 @@
+/* ============================================================
+   neu3.css — NEUMORPHISM overlay for the flat 3-page LP
+   Load AFTER flat.css. Re-skins the same .fl / .lp2 / .fl-*
+   classes into soft warm-sand neumorphism by overriding tokens
+   + a handful of inset/pressed wells.
+   ============================================================ */
+.fl{
+  /* warm sand neumorphic palette (token remap) */
+  --cream:#E9E2DA; --cream2:#E9E2DA; --card:#E9E2DA; --line:transparent;
+  --ink:#41382F; --sub:#857a6e; --gold:#A98552; --gold-lt:#c0a06b;
+  --coral:#B85647; --green:#2EB872;
+  --serif:"Shippori Mincho B1", serif;
+  --sans:"Zen Kaku Gothic New", sans-serif;
+  --r:18px; --r-sm:13px; --r-lg:22px;
+
+  /* neumorphic shadow recipes */
+  --nlt:#ffffff; --ndk:#C5B8AB;
+  --sh:5px 5px 11px var(--ndk), -5px -5px 11px var(--nlt);
+  --sh-card:6px 6px 14px var(--ndk), -6px -6px 14px var(--nlt);
+  --ins:inset 4px 4px 9px var(--ndk), inset -4px -4px 9px var(--nlt);
+  --ins-sm:inset 3px 3px 6px var(--ndk), inset -3px -3px 6px var(--nlt);
+
+  background:#E9E2DA;
+}
+
+/* phone shell */
+.fl-screen{background:var(--surface,var(--cream));}
+.fl-status{color:var(--ink);}
+.fl-header{background:var(--surface,var(--cream));border-bottom:none;box-shadow:0 6px 16px -12px var(--ndk);}
+.fl-logo .mk{background:var(--cream);border:none;box-shadow:var(--ins-sm);}
+
+/* tabs — raised, active = pressed-in + accent text (no flat fill) */
+.fl-tab{background:var(--cream);border:none;box-shadow:var(--sh);color:var(--sub);}
+.fl-tab.on{background:var(--coral);box-shadow:var(--sh);color:#fff;}
+
+/* buttons — primary stays accent but softly raised; ghost = soft */
+.fl-btn{border:none;box-shadow:var(--sh);}
+.fl-btn--gold{background:var(--gold);color:#fff;box-shadow:var(--sh);}
+.fl-btn--coral{background:var(--coral);color:#fff;box-shadow:var(--sh);}
+.fl-btn--ghost{background:var(--cream);color:var(--sub);box-shadow:var(--ins-sm);}
+.fl-btn--line{background:var(--green);color:#fff;box-shadow:var(--sh);}
+
+/* generic raised cards */
+.fl-card,.lp2-prob .it,.lp2-feat,.lp2-voice,.lp2-plan,.lp2-flow .it,.cust-card,
+.persona,.support-list .it,.lp2-cmp,.letter,.lp2-faq details{
+  background:var(--cream);border:none;box-shadow:var(--sh-card), 0 0 0 1px color-mix(in srgb,var(--ndk) 22%, transparent);
+}
+
+/* inset wells (visuals, inputs, soft notes) */
+.lp2-feat .vis,.cust-card .vis{background:var(--cream);border-bottom:none;box-shadow:var(--ins);}
+.fl-input,.fl-textarea{background:var(--cream);border:none;box-shadow:var(--ins-sm);}
+.fl-photo{background:var(--cream);border:none;box-shadow:var(--ins-sm);}
+.fl-consent,.lp2-addon,.prep-note,.lp2-mantra span,.lp2-trust span,.state-legend span{
+  background:var(--cream);border:none;box-shadow:var(--ins-sm);
+}
+.lp2-voice .av,.letter .av,.lp2-feat .vis{box-shadow:var(--ins-sm);}
+.lp2-prob .ic,.mycarte .ic,.lp2-flow .n,.lp2-sec .it .ic,.support-list .it .ic{background:color-mix(in srgb,var(--coral) 14%, var(--cream));box-shadow:var(--sh);}
+
+/* chips / badges → soft */
+.fl-chip{background:var(--cream);border:none;box-shadow:var(--sh);}
+.fl-chip.on{background:var(--cream);box-shadow:var(--ins-sm);color:var(--coral);}
+.fl-badge-soft{background:var(--cream);box-shadow:var(--sh);color:var(--gold);}
+.fl-badge-gold{background:var(--gold);color:#fff;}
+.fl-badge-green{background:var(--green);color:#fff;}
+
+/* eyebrow + heads */
+.fl-eye,.lp2-hero .kick{color:var(--gold);}
+.fl-h2,.lp2-hero h1{color:var(--ink);}
+
+/* section alt tint → keep same tone (neumorphism = single surface) */
+.lp2 .sec.alt,.lp2-final{background:var(--surface,var(--cream));}
+.lp2-final{box-shadow:inset 0 10px 22px -18px var(--ndk), inset 0 -10px 22px -18px var(--ndk);}
+
+/* steps / loop */
+.lp2-step .num{background:var(--cream);color:var(--coral);box-shadow:var(--sh);}
+.lp2-step .line{background:transparent;box-shadow:none;border-left:2px dotted var(--ndk);width:0;margin-left:1px;}
+.lp2-handwork{background:var(--cream);border:none;box-shadow:var(--ins-sm);color:var(--coral);}
+
+/* stats */
+.lp2-stat{background:var(--cream);box-shadow:var(--sh-card);}
+.lp2-stat .v{color:var(--coral);}
+
+/* comparison coins (glyphs already in cells) */
+.lp2-cmp{overflow:hidden;}
+.lp2-cmp .row + .row{border-top:none;box-shadow:inset 0 1px 0 var(--ndk),inset 0 2px 0 var(--nlt);}
+.lp2-cmp .c.us{background:color-mix(in srgb,var(--coral) 6%, var(--cream));}
+.lp2-cmp .o{color:var(--green);}
+.lp2-cmp .t{color:var(--gold);}
+.lp2-cmp .x{color:var(--sub);opacity:.6;}
+
+/* pricing popular ring */
+.lp2-plan.pop{box-shadow:var(--sh-card), inset 0 0 0 2px color-mix(in srgb,var(--gold) 34%, transparent);}
+.lp2-plan .poptag{background:var(--gold);color:#fff;}
+
+/* letter recos */
+.letter .from{border-bottom:none;box-shadow:inset 0 -1px 0 var(--ndk),inset 0 -2px 0 var(--nlt);}
+.letter .reco{background:var(--cream);border:none;box-shadow:var(--ins-sm);}
+.letter .reco .thumb{background:var(--cream);border:none;box-shadow:var(--sh);}
+.letter .reco .buy{background:var(--cream);color:var(--gold);box-shadow:var(--sh);}
+
+/* requisition placeholders */
+.req{background:var(--cream);border:none;box-shadow:var(--ins-sm);color:var(--coral);}
+.req-card{background:var(--cream);border:none;box-shadow:var(--sh-card);}
+
+/* why list / personas */
+.why-list .it .ck{background:var(--cream);box-shadow:var(--sh);color:var(--gold);}
+.persona .ic{filter:none;}
+
+/* faq */
+.lp2-faq summary .pm{color:var(--coral);}
+.lp2-faq details{box-shadow:var(--sh);}
+
+/* dots */
+.fl-dots i{background:var(--cream);box-shadow:var(--ins-sm);}
+.fl-dots i.on{background:var(--coral);box-shadow:var(--sh);}
+
+/* sticky */
+.lp2-sticky{background:var(--cream);border-top:none;box-shadow:0 -8px 20px -14px var(--ndk);}
+
+/* footer */
+.lp2-foot{border-top:none;box-shadow:inset 0 10px 20px -16px var(--ndk);}
+
+/* ===== white panels for contrast / rhythm ===== */
+.fl{--white:#FBF7F1;}
+.demo,.carte{background:var(--white);box-shadow:var(--sh-card), 0 0 0 1px color-mix(in srgb,var(--ndk) 16%, transparent);}
+.lpanel{background:var(--white);box-shadow:var(--sh-card);}
+.lp-head{box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--ndk) 45%, transparent);}

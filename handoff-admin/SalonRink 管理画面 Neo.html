@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalonRink 管理画面 — ニューモーフィズム再デザイン</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="admin-neo.css">
+</head>
+<body>
+<div class="ad" id="ad" data-screen-label="管理画面 Neo">
+
+  <!-- ============ サイドバー ============ -->
+  <aside class="sb">
+    <div class="sb-brand">
+      <span class="sb-logo">S</span>
+      <div><strong>SalonRink</strong><span>サロン管理</span></div>
+    </div>
+    <nav class="sb-nav" id="nav">
+      <button class="sb-item on" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>ホーム</button>
+      <button class="sb-item" data-v="booking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>HPB予約</button>
+      <button class="sb-item" data-v="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5c2.6.3 4.5 2.5 4.5 5.5"/></svg>顧客</button>
+      <button class="sb-item" data-v="dm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>DM配信</button>
+      <button class="sb-item" data-v="int"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M8 7H6a5 5 0 0 0 0 10h2M16 7h2a5 5 0 0 1 0 10h-2"/></svg>連携</button>
+      <button class="sb-item" data-v="con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z"/></svg>コンシェルジュ<span class="tag">NEW</span></button>
+      <button class="sb-item" data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>プラン<span class="tag">FREE</span></button>
+      <button class="sb-item" data-v="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 2 8 2 8H4s2-1 2-8"/><path d="M10 21h4"/></svg>お知らせ<span class="tag">3</span></button>
+      <button class="sb-item" data-v="ec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.8H9a1.8 1.8 0 0 1-1.8-1.8L6 7z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>店販EC</button>
+      <button class="sb-item" data-v="rev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"/></svg>口コミ承認</button>
+    </nav>
+    <div class="sb-user">
+      <span class="ava">サ</span>
+      <div><strong>サロン</strong><span>salonrink.concierge@gmail.com</span></div>
+    </div>
+    <button class="sb-logout">→ ログアウト</button>
+  </aside>
+
+  <!-- ============ メイン ============ -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="vTitle">ホーム</h1>
+        <span class="date">2026年 6月 12日（金）</span>
+      </div>
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        顧客・予約を検索
+        <kbd>⌘K</kbd>
+      </div>
+      <div class="top-right">
+        <div class="theme-pick" id="themePick" title="ベースの色合い">
+          <span class="theme-lbl">ベース</span>
+          <button data-t="" class="on" style="background: #EFE8E2; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1), 2px 2px 5px var(--dark);" aria-label="ベージュ"></button>
+          <button data-t="white" style="background: linear-gradient(145deg, #FFFFFF, #E8E6E1); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.12), 2px 2px 5px var(--dark);" aria-label="ホワイト"></button>
+        </div>
+        <div class="theme-pick" id="accPick" title="アクセント色">
+          <span class="theme-lbl">アクセント</span>
+          <button data-a="terracotta" class="on" style="background: linear-gradient(145deg, #CD7758, #AE5C40);" aria-label="テラコッタ"></button>
+          <button data-a="sage" style="background: linear-gradient(145deg, #67A07B, #54855F);" aria-label="セージ"></button>
+          <button data-a="bluegray" style="background: linear-gradient(145deg, #7B93B4, #5F7798);" aria-label="ブルーグレー"></button>
+          <button data-a="gold" style="background: linear-gradient(145deg, #C29D58, #A37F3E);" aria-label="ゴールド"></button>
+          <button data-a="plum" style="background: linear-gradient(145deg, #A87288, #8A4F66);" aria-label="プラム"></button>
+          <button data-a="charcoal" style="background: linear-gradient(145deg, #6B6560, #4A4540);" aria-label="チャコール"></button>
+        </div>
+        <span class="plan-chip"><span class="dot"></span>プラン FREE</span>
+        <button class="icon-btn" aria-label="通知"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 2 8 2 8H4s2-1 2-8"/><path d="M10 21h4"/></svg><span class="n">3</span></button>
+        <button class="cta-btn">＋ 新規予約</button>
+      </div>
+    </div>
+
+    <!-- ホーム -->
+    <section class="view on" id="v-home" data-screen-label="ホーム">
+      <div class="kpis">
+        <div class="kpi"><div class="lbl">本日の予約</div><div class="val">5<small> 件</small></div><div class="delta">うち指名 3件</div></div>
+        <div class="kpi"><div class="lbl">今月の来客</div><div class="val">128<small> 人</small></div><div class="delta">＋12% 前月比</div></div>
+        <div class="kpi"><div class="lbl">リピート率</div><div class="val">68<small> %</small></div><div class="delta">＋4pt 前月比</div></div>
+        <div class="kpi"><div class="lbl">今月の売上</div><div class="val">¥86<small>.4万</small></div><div class="delta">目標の 82%</div></div>
+      </div>
+      <div class="home-grid">
+        <div class="card">
+          <div class="v-head" style="margin: 0 0 4px;"><h2>本日のタイムライン</h2><span class="en">Today</span><span class="right">6/12（金）</span></div>
+          <div class="tl">
+            <div class="tl-row"><span class="t">10:00</span><div><strong>佐藤 美咲 様</strong><span class="m">カット＋カラー · 高橋</span></div><span class="st ok">来店済み</span></div>
+            <div class="tl-row"><span class="t">11:30</span><div><strong>田中 結衣 様</strong><span class="m">トリートメント · 高橋</span></div><span class="st">まもなく</span></div>
+            <div class="tl-row"><span class="t">14:00</span><div><strong>鈴木 花 様</strong><span class="m">カット · フリー枠</span></div><span class="st">確定</span></div>
+            <div class="tl-row"><span class="t">16:00</span><div><strong>山本 凛 様</strong><span class="m">パーマ＋カット · 高橋</span></div><span class="st">確定</span></div>
+            <div class="tl-row"><span class="t">18:30</span><div><strong>伊藤 さくら 様</strong><span class="m">カラーリタッチ · フリー枠</span></div><span class="st">リクエスト</span></div>
+          </div>
+          <p class="note">※表示は本日の確定・リクエスト予約です。数値・予約はモックデータです。</p>
+        </div>
+        <div class="card">
+          <div class="v-head" style="margin: 0 0 4px;"><h2>お知らせ</h2><span class="en">News</span></div>
+          <div class="news-li">
+            <div class="news-row"><div class="meta"><span class="b">新機能</span>2026/05/14</div><strong>HPB予約の自動同期が安定稼働を開始しました</strong></div>
+            <div class="news-row"><div class="meta"><span class="b">新機能</span>2026/05/13</div><strong>顧客カルテに4タブ構成を導入</strong></div>
+            <div class="news-row"><div class="meta"><span class="b">ヒント</span>2026/05/10</div><strong>AIカルテの活用で紹介につなげる方法</strong></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HPB予約 -->
+    <section class="view" id="v-booking" data-screen-label="HPB予約">
+      <div class="card">
+        <div class="day-nav">
+          <div class="arrows"><button>‹</button><button>›</button></div>
+          <span class="big">12 Jun</span>
+          <span class="d">6月12日（金）· 本日</span>
+          <div class="chip-row" style="margin-left: auto;">
+            <button class="chip on">日</button><button class="chip">週</button><button class="chip">月</button>
+          </div>
+        </div>
+        <div class="tt">
+          <div class="tt-grid">
+            <div class="tt-hours"><span></span><span>10:00</span><span>:30</span><span>11:00</span><span>:30</span><span>12:00</span><span>:30</span><span>13:00</span><span>:30</span><span>14:00</span><span>:30</span></div>
+            <div class="tt-lane">
+              <div class="tt-staff"><span class="ava">高</span><div><strong>高橋（オーナー）</strong><span>稼働 64%</span></div></div>
+              <span class="tt-block" style="left: calc(150px + (100% - 150px) * 0.0); width: calc((100% - 150px) * 0.3);">佐藤 美咲 様<small>カット＋カラー</small></span>
+              <span class="tt-block" style="left: calc(150px + (100% - 150px) * 0.4); width: calc((100% - 150px) * 0.2);">田中 結衣 様<small>トリートメント</small></span>
+            </div>
+            <div class="tt-lane">
+              <div class="tt-staff"><span class="ava" style="box-shadow: var(--inset-sm); background: var(--bg); color: var(--acc-ink);">空</span><div><strong>フリー枠</strong><span>指名なし受付可能</span></div></div>
+              <span class="tt-block lite" style="left: calc(150px + (100% - 150px) * 0.6); width: calc((100% - 150px) * 0.25);">鈴木 花 様<small>カット</small></span>
+            </div>
+          </div>
+        </div>
+        <p class="note">＋ スタッフ枠を追加（¥3,300/月・1名）· タイムテーブルはモックです。</p>
+      </div>
+    </section>
+
+    <!-- 顧客 -->
+    <section class="view" id="v-cust" data-screen-label="顧客一覧">
+      <div class="v-head"><h2>顧客一覧</h2><span class="en">Customers</span><span class="right">128名</span></div>
+      <div class="chip-row" style="margin-bottom: 18px;">
+        <button class="chip on">すべて<span class="c">128</span></button>
+        <button class="chip">直近30日<span class="c">42</span></button>
+        <button class="chip">60日休眠<span class="c">17</span></button>
+        <button class="chip">今月誕生月<span class="c">9</span></button>
+      </div>
+      <div class="th-row"><span>お客様</span><span>タグ</span><span>来店回数</span><span>前回来店</span><span>単価</span></div>
+      <div class="cust-table">
+        <div class="cust-row"><div class="cust-id"><span class="ava">佐</span><div><strong>佐藤 美咲</strong><span>LINE連携済み</span></div></div><div class="cust-tags"><em>カラー</em><em>敏感肌</em></div><span class="cust-num"><b>12</b> 回</span><span class="cust-num">5/20</span><span class="cust-num">¥9,800</span></div>
+        <div class="cust-row"><div class="cust-id"><span class="ava">田</span><div><strong>田中 結衣</strong><span>LINE連携済み</span></div></div><div class="cust-tags"><em>トリートメント</em></div><span class="cust-num"><b>8</b> 回</span><span class="cust-num">5/28</span><span class="cust-num">¥7,200</span></div>
+        <div class="cust-row"><div class="cust-id"><span class="ava">鈴</span><div><strong>鈴木 花</strong><span>HPB経由</span></div></div><div class="cust-tags"><em>くせ毛</em><em>時短希望</em></div><span class="cust-num"><b>3</b> 回</span><span class="cust-num">4/30</span><span class="cust-num">¥5,500</span></div>
+        <div class="cust-row"><div class="cust-id"><span class="ava">山</span><div><strong>山本 凛</strong><span>紹介</span></div></div><div class="cust-tags"><em>パーマ</em></div><span class="cust-num"><b>15</b> 回</span><span class="cust-num">6/1</span><span class="cust-num">¥11,400</span></div>
+        <div class="cust-row"><div class="cust-id"><span class="ava">伊</span><div><strong>伊藤 さくら</strong><span>60日休眠</span></div></div><div class="cust-tags"><em>カラー</em><em>誕生月</em></div><span class="cust-num"><b>6</b> 回</span><span class="cust-num">4/8</span><span class="cust-num">¥8,600</span></div>
+      </div>
+      <p class="note">※顧客データはモックです。行をタップでカルテ詳細（モック対象外）へ。</p>
+    </section>
+
+    <!-- DM配信 -->
+    <section class="view" id="v-dm" data-screen-label="DM配信">
+      <div class="dm-grid">
+        <div class="card">
+          <div class="v-head" style="margin: 0;"><h2>1. テンプレート選択</h2><span class="en">Template</span></div>
+          <div class="dm-tpls" id="dmTpls">
+            <button class="dm-tpl on"><strong>来店リマインド</strong><em>定期配信</em></button>
+            <button class="dm-tpl"><strong>空き枠埋め（平日特典）</strong><em>集客</em></button>
+            <button class="dm-tpl"><strong>来店御礼</strong><em>CRM</em></button>
+            <button class="dm-tpl"><strong>お誕生月特典</strong><em>CRM</em></button>
+            <button class="dm-tpl"><strong>キャンペーン告知</strong><em>プロモ</em></button>
+            <button class="dm-tpl"><strong>カスタム</strong><em>自由作成</em></button>
+          </div>
+          <div class="dm-seg">
+            <div class="v-head" style="margin: 0 0 12px;"><h2>2. 配信対象を絞り込み</h2><span class="en">Segment</span></div>
+            <div class="chip-row" id="dmSegs">
+              <button class="chip">全顧客<span class="c">128</span></button>
+              <button class="chip">直近30日来店<span class="c">42</span></button>
+              <button class="chip on">60日休眠<span class="c">17</span></button>
+              <button class="chip">90日以上休眠<span class="c">11</span></button>
+              <button class="chip">今月誕生月<span class="c">9</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="v-head" style="margin: 0;"><h2>プレビューと配信</h2><span class="en">Preview</span></div>
+          <div class="dm-preview">
+            <div class="bub">{{customerName}}様、いつもありがとうございます。前回のご来店から63日が経過しました。そろそろメンテナンスのタイミングです。ご都合のよい日時でご予約お待ちしております。</div>
+          </div>
+          <div class="dm-sum">
+            <div class="r"><span>配信対象</span><b>60日休眠</b></div>
+            <div class="r"><span>対象人数</span><b>17名</b></div>
+            <div class="r"><span>配信媒体</span><b>LINE公式</b></div>
+          </div>
+          <button class="dm-send">17名に配信する →</button>
+          <p class="note">配信は数分間隔で順次行われ、スパム判定を回避します。{{customerName}} などの変数が利用できます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 連携 -->
+    <section class="view" id="v-int" data-screen-label="連携">
+      <div class="v-head"><h2>連携設定</h2><span class="en">Integrations</span><span class="right">1 接続中 · 3 未接続</span></div>
+      <div class="int-grid">
+        <div class="int-card"><div class="int-head"><span class="int-ic">L</span><div><strong>LINE連携</strong><span>予約・リマインド・フォローアップ</span></div></div><div class="int-foot"><span class="int-st ok">● 接続中</span><button class="int-go">設定を開く →</button></div></div>
+        <div class="int-card"><div class="int-head"><span class="int-ic">H</span><div><strong>ホットペッパー連携</strong><span>外部予約サイトの自動同期</span></div></div><div class="int-foot"><span class="int-st">● 未接続</span><button class="int-go">接続する →</button></div></div>
+        <div class="int-card"><div class="int-head"><span class="int-ic">R</span><div><strong>リッチメニュー設定</strong><span>LINEメニューをカスタマイズ</span></div></div><div class="int-foot"><span class="int-st">● 未接続</span><button class="int-go">接続する →</button></div></div>
+        <div class="int-card"><div class="int-head"><span class="int-ic">G</span><div><strong>Googleカレンダー</strong><span>スタッフ予定の双方向同期</span></div></div><div class="int-foot"><span class="int-st">● 未接続</span><button class="int-go">接続する →</button></div></div>
+      </div>
+    </section>
+
+    <!-- コンシェルジュ -->
+    <section class="view" id="v-con" data-screen-label="コンシェルジュ">
+      <div class="v-head"><h2>コンシェルジュ</h2><span class="en">Concierge</span></div>
+      <div class="kpis" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="kpi"><div class="lbl">AIカルテ作成数</div><div class="val">214<small> 件</small></div><div class="delta">今月 ＋38件</div></div>
+        <div class="kpi"><div class="lbl">診断 完了数</div><div class="val">96<small> 件</small></div><div class="delta">完了率 81%</div></div>
+        <div class="kpi"><div class="lbl">LINEフォロー自動送信</div><div class="val">152<small> 通</small></div><div class="delta">開封 72%</div></div>
+      </div>
+      <p class="note">※経営ダッシュボードのサマリー(モック)。数値はシミュレーションです。</p>
+    </section>
+
+    <!-- プラン -->
+    <section class="view" id="v-plan" data-screen-label="プラン管理">
+      <div class="v-head"><h2>プラン管理</h2><span class="en">Plan</span><span class="right">現在: トライアル / 招待 · ¥0/月</span></div>
+      <div class="card">
+        <div class="plan-grid">
+          <div class="plan-opt cur"><span class="b">現在</span><strong>トライアル</strong><div class="pr">¥0<small>/月</small></div><p>14日間・全機能</p></div>
+          <div class="plan-opt"><strong>Light</strong><div class="pr">¥1,980<small>/月</small></div><p>ソロオーナー向け</p></div>
+          <div class="plan-opt"><strong>Standard</strong><div class="pr">¥2,980<small>/月</small></div><p>2〜5名のサロン向け</p></div>
+        </div>
+        <p class="note">税込・初期費用0円。プラン変更は次回請求から適用されます。</p>
+      </div>
+    </section>
+
+    <!-- お知らせ -->
+    <section class="view" id="v-news" data-screen-label="お知らせ">
+      <div class="v-head"><h2>お知らせ</h2><span class="en">News</span></div>
+      <div class="chip-row"><button class="chip on">すべて</button><button class="chip">新機能</button><button class="chip">ヒント</button><button class="chip">メンテ</button></div>
+      <div class="news-big">
+        <div class="card"><div class="news-row" style="box-shadow: none; padding: 0;"><div class="meta"><span class="b">新機能</span>2026/05/14</div><strong style="font-size: 14.5px;">HPB予約の自動同期が安定稼働を開始しました</strong><p style="font-size: 12px; color: var(--sub); margin-top: 5px;">ホットペッパー予約の取り込みが30分間隔で自動実行されるようになりました。連携ページから接続状態を確認できます。</p></div></div>
+        <div class="card"><div class="news-row" style="box-shadow: none; padding: 0;"><div class="meta"><span class="b">新機能</span>2026/05/13</div><strong style="font-size: 14.5px;">顧客カルテに4タブ構成を導入</strong><p style="font-size: 12px; color: var(--sub); margin-top: 5px;">概要・来店履歴・カルテ・メッセージの4つのタブで顧客情報を整理できるようになりました。</p></div></div>
+        <div class="card"><div class="news-row" style="box-shadow: none; padding: 0;"><div class="meta"><span class="b">ヒント</span>2026/05/10</div><strong style="font-size: 14.5px;">AIカルテで紹介につなげる方法</strong><p style="font-size: 12px; color: var(--sub); margin-top: 5px;">カウンセリング自動化で顧客の満足度を上げ、紹介につなげる活用例をご紹介します。</p></div></div>
+      </div>
+    </section>
+
+    <!-- 店販EC -->
+    <section class="view" id="v-ec" data-screen-label="店販EC">
+      <div class="v-head"><h2>店販EC</h2><span class="en">Store</span></div>
+      <div class="chip-row" id="ecTabs" style="margin-bottom: 18px;">
+        <button class="chip on" data-t="orders">注文管理<span class="c">2</span></button>
+        <button class="chip" data-t="products">商品一覧<span class="c">8</span></button>
+        <button class="chip" data-t="register">＋ 商品を登録</button>
+      </div>
+
+      <!-- 注文管理 -->
+      <div id="ec-orders">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="order-row"><span class="th">オ</span><div><strong>コンシェルジュ ヘアオイル（しっとり）×1</strong><span class="m">#1042 · 佐藤 美咲 様 · 6/11 LINEミニアプリ</span></div><span class="pr">¥3,520</span></div>
+          <div class="order-row"><span class="th">セ</span><div><strong>スカルプセラム ×1 / シャンプー ×1</strong><span class="m">#1041 · 山本 凛 様 · 6/10 LINEミニアプリ</span></div><span class="pr">¥7,040</span></div>
+        </div>
+        <p class="note">※注文はモックです。発送処理・決済はリポジトリ側(Stripe)で実装されます。</p>
+      </div>
+
+      <!-- 商品一覧 -->
+      <div id="ec-products" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="prod-row"><span class="th">オ</span><div><strong>コンシェルジュ ヘアオイル 100mL</strong><span class="m">ヘアケア · バリエーション2 · 在庫24</span></div><span class="pr">¥3,520</span><span class="st">公開中</span></div>
+          <div class="prod-row"><span class="th">シ</span><div><strong>モイスト シャンプー 300mL</strong><span class="m">ヘアケア · バリエーション2 · 在庫18</span></div><span class="pr">¥2,860</span><span class="st">公開中</span></div>
+          <div class="prod-row"><span class="th">セ</span><div><strong>頭皮美容液 スカルプセラム 80mL</strong><span class="m">スカルプ · 在庫9</span></div><span class="pr">¥4,180</span><span class="st">公開中</span></div>
+          <div class="prod-row"><span class="th">ナ</span><div><strong>シルク ナイトキャップ</strong><span class="m">雑貨 · バリエーション2 · 在庫0</span></div><span class="pr">¥2,200</span><span class="st off">非公開</span></div>
+        </div>
+        <p class="note">※在庫・公開状態はモックです。行をタップで編集(登録フォームと同じ画面)へ。</p>
+      </div>
+
+      <!-- 商品登録 -->
+      <div id="ec-register" style="display: none;">
+        <div class="f-grid">
+          <div class="card">
+            <label class="f-label" for="pName">商品名</label>
+            <input class="f-input" id="pName" type="text" placeholder="例：コンシェルジュ ヘアオイル 100mL">
+            <div class="f-row">
+              <div>
+                <label class="f-label" for="pCat">カテゴリ</label>
+                <select class="f-select" id="pCat">
+                  <option>ヘアケア</option><option>スカルプ</option><option>スタイリング</option><option>雑貨</option>
+                </select>
+              </div>
+              <div>
+                <label class="f-label" for="pPrice">販売価格（税込）</label>
+                <span class="f-unit"><input class="f-input" id="pPrice" type="text" inputmode="numeric" placeholder="3,520"><span class="u">円</span></span>
+              </div>
+            </div>
+            <div class="f-row">
+              <div>
+                <label class="f-label" for="pStock">在庫数</label>
+                <span class="f-unit"><input class="f-input" id="pStock" type="text" inputmode="numeric" placeholder="24"><span class="u">個</span></span>
+              </div>
+              <div>
+                <label class="f-label" for="pSku">品番（任意）</label>
+                <input class="f-input" id="pSku" type="text" placeholder="SR-OIL-100">
+              </div>
+            </div>
+            <label class="f-label">バリエーション</label>
+            <div class="var-chips" id="pVars">
+              <span class="vc">しっとり<b title="削除">×</b></span>
+              <span class="vc">さらさら<b title="削除">×</b></span>
+              <button class="vc-add" id="pVarAdd">＋ 追加</button>
+            </div>
+            <label class="f-label" for="pDesc">商品説明</label>
+            <textarea class="f-area" id="pDesc" placeholder="サロン帰りの質感を毎日に。AIカルテの髪質データに合わせて選べる2タイプ。使用方法や香りなどもここに。"></textarea>
+          </div>
+          <div>
+            <div class="card">
+              <label class="f-label">商品画像（最大5枚）</label>
+              <div class="f-photos">
+                <button class="f-photo-add"><span class="plus">＋</span>メイン</button>
+                <button class="f-photo-add"><span class="plus">＋</span>追加</button>
+                <button class="f-photo-add"><span class="plus">＋</span>追加</button>
+              </div>
+              <p class="f-photo-hint">正方形・1200px以上推奨。ドラッグ&ドロップ対応（モック）。</p>
+            </div>
+            <div class="card" style="margin-top: 16px;">
+              <div class="f-toggle-row"><div><strong>ストアに公開</strong><span>LINEミニアプリの商品一覧に表示</span></div><button class="f-sw on" aria-label="公開切替"></button></div>
+              <div class="f-toggle-row"><div><strong>カウンセリングで提案</strong><span>AI診断のおすすめ候補に含める</span></div><button class="f-sw on" aria-label="提案切替"></button></div>
+              <div class="f-toggle-row"><div><strong>在庫連動</strong><span>在庫0で自動的に非公開</span></div><button class="f-sw" aria-label="在庫連動切替"></button></div>
+              <button class="dm-send" id="pSave" style="margin-top: 18px;">この内容で登録する</button>
+              <p class="note">※登録はモックです。保存・画像アップロードはリポジトリ側で実装されます。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 口コミ承認 -->
+    <section class="view" id="v-rev" data-screen-label="口コミ承認">
+      <div class="v-head"><h2>口コミ承認</h2><span class="en">Reviews</span></div>
+      <div class="empty">承認待ちの口コミはありません。<br>新しい口コミが届くとここに表示されます。</div>
+    </section>
+
+  </main>
+
+  <!-- モバイル下部タブ -->
+  <nav class="m-nav" id="mNav">
+    <button class="on" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>ホーム</button>
+    <button data-v="booking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>予約</button>
+    <button data-v="cust"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14.5c2.6.3 4.5 2.5 4.5 5.5"/></svg>顧客</button>
+    <button data-v="dm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/></svg>DM配信</button>
+    <button id="mMoreBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg>その他</button>
+  </nav>
+
+  <!-- 「その他」シート -->
+  <div class="m-more" id="mMore">
+    <div class="scrim" id="mMoreScrim"></div>
+    <div class="sheet">
+      <h3>その他のメニュー</h3>
+      <div class="grid" id="mMoreGrid">
+        <button data-v="int"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M8 7H6a5 5 0 0 0 0 10h2M16 7h2a5 5 0 0 1 0 10h-2"/></svg>連携</button>
+        <button data-v="con"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.4L19 10l-5.2 1.6L12 17l-1.8-5.4L5 10l5.2-1.6L12 3z"/></svg>コンシェルジュ</button>
+        <button data-v="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>プラン</button>
+        <button data-v="news"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 2 8 2 8H4s2-1 2-8"/><path d="M10 21h4"/></svg>お知らせ</button>
+        <button data-v="ec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 7h12l-1.2 12.2a1.8 1.8 0 0 1-1.8 1.8H9a1.8 1.8 0 0 1-1.8-1.8L6 7z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>店販EC</button>
+        <button data-v="rev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.8 1-6.1-4.4-4.3 6.1-.9L12 3z"/></svg>口コミ承認</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ビュー切替(サイドバー + モバイルタブ/シート共通)
+(function () {
+  var titles = { home: 'ホーム', booking: 'HPB予約', cust: '顧客', dm: 'DM配信', int: '連携', con: 'コンシェルジュ', plan: 'プラン', news: 'お知らせ', ec: '店販EC', rev: '口コミ承認' };
+  var nav = document.getElementById('nav');
+  var mNav = document.getElementById('mNav');
+  var mMoreGrid = document.getElementById('mMoreGrid');
+  var mMore = document.getElementById('mMore');
+  var moreViews = ['int', 'con', 'plan', 'news', 'ec', 'rev'];
+  function go(v) {
+    document.querySelectorAll('.view').forEach(function (x) { x.classList.remove('on'); });
+    document.getElementById('v-' + v).classList.add('on');
+    document.getElementById('vTitle').textContent = titles[v];
+    nav.querySelectorAll('.sb-item').forEach(function (x) { x.classList.toggle('on', x.dataset.v === v); });
+    mNav.querySelectorAll('button[data-v]').forEach(function (x) { x.classList.toggle('on', x.dataset.v === v); });
+    document.getElementById('mMoreBtn').classList.toggle('on', moreViews.indexOf(v) !== -1);
+    mMoreGrid.querySelectorAll('button').forEach(function (x) { x.classList.toggle('on', x.dataset.v === v); });
+    mMore.classList.remove('open');
+    window.scrollTo(0, 0);
+  }
+  nav.addEventListener('click', function (e) {
+    var b = e.target.closest('.sb-item'); if (!b) { return; }
+    go(b.dataset.v);
+  });
+  mNav.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) { return; }
+    if (b.id === 'mMoreBtn') { mMore.classList.add('open'); return; }
+    go(b.dataset.v);
+  });
+  mMoreGrid.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) { return; }
+    go(b.dataset.v);
+  });
+  document.getElementById('mMoreScrim').addEventListener('click', function () { mMore.classList.remove('open'); });
+})();
+
+// 色合い切替(ベース × アクセント)
+(function () {
+  var ad = document.getElementById('ad');
+  var pick = document.getElementById('themePick');
+  var accPick = document.getElementById('accPick');
+  function applyBase(t) {
+    if (t) { ad.dataset.theme = t; } else { delete ad.dataset.theme; }
+    pick.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.dataset.t === t); });
+  }
+  function applyAcc(a) {
+    if (a) { ad.dataset.acc = a; } else { delete ad.dataset.acc; }
+    accPick.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', (b.dataset.a === a) || (!a && b.dataset.a === 'terracotta')); });
+  }
+  var savedBase = localStorage.getItem('sr-admin-base');
+  applyBase(savedBase === null ? '' : savedBase);
+  applyAcc(localStorage.getItem('sr-admin-acc') || '');
+  pick.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) { return; }
+    localStorage.setItem('sr-admin-base', b.dataset.t);
+    applyBase(b.dataset.t);
+  });
+  accPick.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) { return; }
+    localStorage.setItem('sr-admin-acc', b.dataset.a);
+    applyAcc(b.dataset.a);
+  });
+})();
+
+// チップのトグル(見た目のみ)
+document.querySelectorAll('.chip-row').forEach(function (row) {
+  row.addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) { return; }
+    row.querySelectorAll('.chip').forEach(function (x) { x.classList.toggle('on', x === c); });
+  });
+});
+// DMテンプレ選択
+(function () {
+  var wrap = document.getElementById('dmTpls');
+  wrap.addEventListener('click', function (e) {
+    var t = e.target.closest('.dm-tpl'); if (!t) { return; }
+    wrap.querySelectorAll('.dm-tpl').forEach(function (x) { x.classList.toggle('on', x === t); });
+  });
+})();
+
+// 店販EC: タブ切替(注文/商品一覧/登録) + 登録フォームのモック挙動
+(function () {
+  var tabs = document.getElementById('ecTabs');
+  var panes = { orders: 'ec-orders', products: 'ec-products', register: 'ec-register' };
+  tabs.addEventListener('click', function (e) {
+    var c = e.target.closest('.chip'); if (!c) { return; }
+    Object.keys(panes).forEach(function (k) {
+      document.getElementById(panes[k]).style.display = (c.dataset.t === k) ? '' : 'none';
+    });
+  });
+  // トグルスイッチ
+  document.querySelectorAll('.f-sw').forEach(function (sw) {
+    sw.addEventListener('click', function () { sw.classList.toggle('on'); });
+  });
+  // バリエーション追加/削除(モック)
+  var vars = document.getElementById('pVars');
+  document.getElementById('pVarAdd').addEventListener('click', function () {
+    var name = prompt('バリエーション名（例：詰替え用）');
+    if (!name) { return; }
+    var s = document.createElement('span');
+    s.className = 'vc';
+    s.innerHTML = name + '<b title="削除">×</b>';
+    vars.insertBefore(s, document.getElementById('pVarAdd'));
+  });
+  vars.addEventListener('click', function (e) {
+    if (e.target.tagName === 'B') { e.target.closest('.vc').remove(); }
+  });
+  // 登録ボタン(モック)
+  document.getElementById('pSave').addEventListener('click', function () {
+    var name = document.getElementById('pName').value.trim();
+    this.textContent = (name || '商品') + ' を登録しました（モック）';
+    this.disabled = true; this.style.opacity = '0.6';
+    var btn = this;
+    setTimeout(function () {
+      btn.textContent = 'この内容で登録する';
+      btn.disabled = false; btn.style.opacity = '';
+    }, 2200);
+  });
+})();
+</script>
+</body>
+</html>

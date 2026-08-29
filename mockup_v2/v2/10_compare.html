@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>10 COMPARE v2 — SalonRink Concierge LP</title>
+<link rel="icon" type="image/png" href="./images/a110_favicon_gold.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared/tokens.css">
+<style>
+  body { background: var(--bg-tint); }
+  .cmp { padding: 96px 0 80px; }
+  .cmp__head { text-align: center; margin-bottom: 56px; }
+  .cmp__head .sr-eyebrow { margin-bottom: 20px; }
+
+  .cmp__table {
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-xl); overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Header row */
+  .cmp__row-h {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    background: var(--bg-tint);
+    border-bottom: 1.5px solid var(--line);
+  }
+  .cmp__cell-h {
+    padding: 22px 20px;
+    border-right: 1px solid var(--line-soft);
+    position: relative;
+  }
+  .cmp__cell-h:last-child { border-right: none; }
+  .cmp__cell-h--center {
+    background: linear-gradient(180deg, var(--accent-soft) 0%, #fff 100%);
+    border-right-color: var(--accent-soft);
+    position: relative;
+  }
+  .cmp__cell-h--center::before {
+    content: "RECOMMENDED";
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #fff;
+    padding: 4px 12px; border-radius: 999px;
+    font-family: var(--mono); font-size: 9px; font-weight: 700;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+  }
+
+  .cmp__svc-name {
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    color: var(--ink); margin-bottom: 6px; line-height: 1.4;
+  }
+  .cmp__svc-name--brand { color: var(--accent); }
+  .cmp__svc-sub {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+    letter-spacing: 0.12em;
+  }
+  .cmp__svc-tag {
+    display: inline-block; margin-top: 6px;
+    background: var(--bg-soft); color: var(--ink-3);
+    padding: 3px 8px; border-radius: 999px;
+    font-family: var(--mono); font-size: 9px; font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .cmp__svc-tag--brand { background: var(--accent-soft); color: var(--accent-ink); }
+
+  /* Body row */
+  .cmp__row {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .cmp__row:last-child { border-bottom: none; }
+  .cmp__cell {
+    padding: 22px 20px;
+    border-right: 1px solid var(--line-soft);
+    display: flex; align-items: center;
+    font-size: 13px; line-height: 1.65; color: var(--ink-2);
+  }
+  .cmp__cell:last-child { border-right: none; }
+  .cmp__cell--label {
+    background: var(--bg-tint);
+    font-family: var(--serif); font-weight: 700; font-size: 14px;
+    color: var(--ink);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .cmp__cell--center {
+    background: var(--accent-soft);
+    font-weight: 600; color: var(--accent-ink);
+  }
+  .cmp__cell-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #fff; color: var(--ink-3);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .cmp__cell--center .cmp__cell-icon {
+    background: var(--accent); color: #fff;
+  }
+
+  /* Status mark */
+  .cmp__mark {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; font-weight: 600;
+  }
+  .cmp__mark--ng { color: var(--coral); }
+  .cmp__mark--mid { color: var(--warn); }
+  .cmp__mark--ok { color: var(--accent); }
+  .cmp__mark-icon {
+    width: 18px; height: 18px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .cmp__mark--ng .cmp__mark-icon { background: var(--coral-soft); color: var(--coral); }
+  .cmp__mark--mid .cmp__mark-icon { background: var(--warn-soft); color: var(--warn); }
+  .cmp__mark--ok .cmp__mark-icon { background: var(--accent-soft); color: var(--accent); }
+
+  /* Price row */
+  .cmp__price {
+    font-family: var(--serif); font-weight: 700; font-size: 16px;
+    color: var(--ink);
+  }
+  .cmp__price-large {
+    font-family: var(--serif); font-weight: 700; font-size: 20px;
+    color: var(--accent);
+  }
+  .cmp__price-sub {
+    font-family: var(--mono); font-size: 10px; color: var(--ink-3);
+    margin-top: 2px; display: block;
+  }
+
+  /* CTA band */
+  .cmp__cta {
+    margin-top: 40px;
+    background: #fff; border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 28px 32px;
+    display: grid; grid-template-columns: 1fr auto; gap: 32px;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .cmp__cta-text h3 {
+    font-family: var(--serif); font-weight: 700; font-size: 18px;
+    color: var(--ink); margin: 0 0 6px;
+  }
+  .cmp__cta-text p {
+    font-size: 12.5px; color: var(--ink-2); margin: 0; line-height: 1.7;
+  }
+  .cmp__cta-text p b { color: var(--accent); }
+
+  /* footnote */
+  .cmp__foot {
+    margin-top: 20px; text-align: center;
+    font-family: var(--mono); font-size: 10px;
+    color: var(--ink-3); letter-spacing: 0.04em; line-height: 1.7;
+  }
+
+  @media (max-width: 980px) {
+    .cmp__row-h, .cmp__row { grid-template-columns: 1fr; }
+    .cmp__cell-h, .cmp__cell {
+      border-right: none;
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .cmp__cta { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<section class="cmp" id="compare">
+  <div class="sr-container">
+    <div class="cmp__head">
+      <div class="sr-eyebrow">COMPARE · 比較で見る違い</div>
+      <h2 class="sr-h2">なぜ SalonRink が、<br><span class="accent">1人サロンに選ばれる</span>のか。</h2>
+      <p class="sr-lead">予約管理ツールや顧客管理ツールは数多くありますが、<br>「LINEに乗せる」アプローチで、サロン業務を変えるのは私たちだけです。</p>
+    </div>
+
+    <div class="cmp__table">
+      <!-- Header -->
+      <div class="cmp__row-h">
+        <div class="cmp__cell-h">
+          <div class="cmp__svc-name" style="color: var(--ink-3);">比較項目</div>
+        </div>
+        <div class="cmp__cell-h">
+          <div class="cmp__svc-name">他サービス A</div>
+          <div class="cmp__svc-sub">予約管理タイプ</div>
+          <span class="cmp__svc-tag">予約特化</span>
+        </div>
+        <div class="cmp__cell-h cmp__cell-h--center">
+          <div class="cmp__svc-name cmp__svc-name--brand">SalonRink<br>Concierge</div>
+          <div class="cmp__svc-sub">LINE業務レイヤー</div>
+          <span class="cmp__svc-tag cmp__svc-tag--brand">全領域カバー</span>
+        </div>
+        <div class="cmp__cell-h">
+          <div class="cmp__svc-name">他サービス B</div>
+          <div class="cmp__svc-sub">顧客管理タイプ</div>
+          <span class="cmp__svc-tag">CRM特化</span>
+        </div>
+      </div>
+
+      <!-- Row 1: 顧客との接点 -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 5h12v6H8l-3 3V5z"/></svg>
+          </span>
+          顧客との接点
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            アプリ・電話<br>サロン専用画面
+          </span>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <span class="cmp__mark cmp__mark--ok">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><b>LINEだけ</b><br>追加アプリ不要</span>
+          </span>
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            管理画面でのみ操作<br>顧客接点は別途
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 2: 導入手間 -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v4l2.5 2" stroke-linecap="round"/></svg>
+          </span>
+          導入の手間
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            1-2週間<br>初期設定が必要
+          </span>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <span class="cmp__mark cmp__mark--ok">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><b>最短5分</b><br>LINE連携のみ</span>
+          </span>
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--ng">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 2l6 6M2 8l6-6" stroke-linecap="round"/></svg>
+            </span>
+            数週間<br>業務フロー整備が必要
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 3: カルテ作成 -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 3h8l2 2v10H4V3z"/><path d="M12 3v3h3M7 9h5M7 12h3"/></svg>
+          </span>
+          カルテ作成
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--ng">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 2l6 6M2 8l6-6" stroke-linecap="round"/></svg>
+            </span>
+            機能なし、別途必要
+          </span>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <span class="cmp__mark cmp__mark--ok">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><b>会話から自動作成</b><br>手入力ゼロ</span>
+          </span>
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            手入力が必要<br>テンプレート対応
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 4: リピート施策 -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 6V4a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h2"/><circle cx="13" cy="14" r="3"/></svg>
+          </span>
+          リピート施策
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--ng">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 2l6 6M2 8l6-6" stroke-linecap="round"/></svg>
+            </span>
+            予約以降は<br>追跡なし
+          </span>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <span class="cmp__mark cmp__mark--ok">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span>来店周期検知 +<br><b>配信文も自動下書き</b></span>
+          </span>
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            セグメント配信のみ<br>個別文案は手作業
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 5: 引き継ぎ -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="6" r="2.5"/><circle cx="12" cy="6" r="2.5"/><path d="M2 15c0-2.2 1.8-4 4-4M16 15c0-2.2-1.8-4-4-4"/></svg>
+          </span>
+          引き継ぎ品質
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--ng">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 2l6 6M2 8l6-6" stroke-linecap="round"/></svg>
+            </span>
+            機能なし
+          </span>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <span class="cmp__mark cmp__mark--ok">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+            <span><b>引き継ぎゼロ</b><br>過去会話を即呼出</span>
+          </span>
+        </div>
+        <div class="cmp__cell">
+          <span class="cmp__mark cmp__mark--mid">
+            <span class="cmp__mark-icon">
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h6" stroke-linecap="round"/></svg>
+            </span>
+            メモ機能あり<br>会話内容は別管理
+          </span>
+        </div>
+      </div>
+
+      <!-- Row 6: 月額費用 -->
+      <div class="cmp__row">
+        <div class="cmp__cell cmp__cell--label">
+          <span class="cmp__cell-icon">
+            <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="6.5"/><path d="M9 5v8M11 7c0-1-1-1.5-2-1.5s-2 .5-2 1.5 1 1.5 2 1.5 2 .5 2 1.5-1 1.5-2 1.5-2-.5-2-1.5"/></svg>
+          </span>
+          月額費用
+        </div>
+        <div class="cmp__cell">
+          <div>
+            <div class="cmp__price">¥10,000 〜</div>
+            <span class="cmp__price-sub">/ 1店舗</span>
+          </div>
+        </div>
+        <div class="cmp__cell cmp__cell--center">
+          <div>
+            <div class="cmp__price-large">¥1,980 〜</div>
+            <span class="cmp__price-sub">/ 1店舗 · 14日無料</span>
+          </div>
+        </div>
+        <div class="cmp__cell">
+          <div>
+            <div class="cmp__price">¥15,000 〜</div>
+            <span class="cmp__price-sub">/ 1店舗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="cmp__cta">
+      <div class="cmp__cta-text">
+        <h3>もう、ツールを行き来する必要はありません。</h3>
+        <p>LINEの中で、顧客接点・カルテ・リピート施策まですべて完結。<br>月 <b>¥1,980〜</b> / 14日間無料でお試しいただけます。</p>
+      </div>
+      <button class="sr-btn sr-btn--primary" style="padding: 16px 28px; font-size: 14px;">
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none"><path d="M8 1.5C4.4 1.5 1.5 4 1.5 7c0 1.7.9 3.2 2.4 4.2L3 14l3-1.5c.6.2 1.3.3 2 .3 3.6 0 6.5-2.5 6.5-5.8S11.6 1.5 8 1.5z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+        LINEで無料ではじめる
+      </button>
+    </div>
+
+    <div class="cmp__foot">
+      ※ 「他サービス A」「他サービス B」は予約管理SaaS / CRM SaaS の一般的な比較として参考用に記載しています。<br>特定の競合サービスを指すものではありません。
+    </div>
+  </div>
+</section>
+
+<div class="sr-meta">
+  <div class="sr-meta__inner">
+    <span>SECTION 10 / 10 · COMPARE · v2 MARKET-IN</span>
+    <span><a href="./09_onboarding.html">← 09 ONBOARDING</a> &nbsp;|&nbsp; <a href="./index.html">一覧へ戻る →</a></span>
+  </div>
+</div>
+
+</body>
+</html>

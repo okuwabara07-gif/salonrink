@@ -33,18 +33,21 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // 全ページでセッション自動更新
   await supabase.auth.getUser()
 
-  // 保護対象パスのみログイン確認
   const isProtected = PROTECTED_PREFIXES.some(p => pathname.startsWith(p))
   if (isProtected) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
-      const url = request.nextUrl.clone()
-      url.pathname = '/login'
-      url.searchParams.set('redirect', pathname)
-      return NextResponse.redirect(url)
+      // LIFF context (LINE in-app browser) は LiffAutoLogin に auth を委譲、middleware ではスキップ
+      const userAgent = request.headers.get('user-agent') || ''
+      const isLiff = userAgent.includes('Line/')
+      if (!isLiff) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        url.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(url)
+      }
     }
   }
 

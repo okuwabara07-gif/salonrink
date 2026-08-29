@@ -1,0 +1,227 @@
+/* /demo/booking page styles */
+
+.page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Demo badge */
+.demoBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #E7F3FF;
+  border: 1px solid #B3D9FF;
+  border-radius: 6px;
+  font-size: 12.5px;
+  color: #0066CC;
+  font-weight: 500;
+  width: fit-content;
+}
+
+.demoBadgeIcon {
+  font-size: 14px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-family: "Shippori Mincho", "Noto Serif JP", serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2a1f15;
+}
+
+.stats {
+  display: flex;
+  gap: 20px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 11.5px;
+  color: #8a7860;
+  font-weight: 500;
+}
+
+.statValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2a1f15;
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* New booking button */
+.newBookingBtn {
+  padding: 10px 18px;
+  border-radius: 7px;
+  border: 0;
+  background: #2a1f15;
+  color: #f0e6d2;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.newBookingBtn:hover {
+  background: #3a2c1c;
+}
+
+/* Time table */
+.timeTableContainer {
+  overflow-x: auto;
+}
+
+.timeTable {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #E4D5B8;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #FFFFFF;
+  min-width: 600px;
+}
+
+.timeSlot {
+  display: grid;
+  grid-template-columns: 70px 1fr;
+  gap: 0;
+  border-bottom: 1px solid #E4D5B8;
+  min-height: 80px;
+}
+
+.timeSlot:last-child {
+  border-bottom: none;
+}
+
+.timeLabel {
+  padding: 12px 14px;
+  background: #FAF5E9;
+  border-right: 1px solid #E4D5B8;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #4a3a28;
+  display: flex;
+  align-items: center;
+}
+
+.slotContent {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.emptySlot {
+  color: #C5B5A0;
+  font-size: 12px;
+  align-self: center;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Reservations list */
+.reservationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reservationCard {
+  display: grid;
+  grid-template-columns: 50px 1fr 90px 50px;
+  gap: 10px;
+  padding: 8px 10px;
+  background: #F9F6F1;
+  border-left: 3px solid #06C755;
+  border-radius: 4px;
+  font-size: 12px;
+  align-items: center;
+}
+
+.resTime {
+  font-weight: 600;
+  color: #2a1f15;
+  font-family: 'Courier New', monospace;
+}
+
+.resCustomer {
+  flex: 1;
+  min-width: 0;
+}
+
+.resName {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #2a1f15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resMenu {
+  font-size: 11px;
+  color: #8a7860;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resPrice {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #06C755;
+  font-family: 'Courier New', monospace;
+  text-align: right;
+}
+
+.resSource {
+  font-size: 10px;
+  color: #C5B5A0;
+  background: #FFFBF7;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #E4D5B8;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .timeTable {
+    min-width: 100%;
+  }
+
+  .reservationCard {
+    grid-template-columns: 45px 1fr 70px;
+    gap: 8px;
+  }
+
+  .resSource {
+    display: none;
+  }
+}
