@@ -195,6 +195,7 @@ export function useHomeData(palette: HomePalette) {
 
   return {
     data,
+    lineUserId: profile?.userId ?? null,
     greeting,
     visitSummary,
     scoreChangeLabel,

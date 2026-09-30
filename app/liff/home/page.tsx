@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import LiffTabBar from '../_components/LiffTabBar'
+import PassCard from '../_components/PassCard'
 import { useHomeData } from './homeData'
 
 // デザイントークン（ホーム系 クリーム／明朝トーン）
@@ -41,6 +42,7 @@ const TOKENS = {
 export default function HomePage() {
   const {
     data,
+    lineUserId,
     greeting,
     visitSummary,
     scoreChangeLabel,
@@ -138,6 +140,8 @@ export default function HomePage() {
           marginTop: '-14px',
         }}
       >
+        <PassCard lineUserId={lineUserId} />
+
         {/* 挨拶ブロック */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
           <h1
