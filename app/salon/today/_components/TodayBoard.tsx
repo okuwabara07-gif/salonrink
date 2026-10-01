@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import DetailPanel from './DetailPanel'
 import {
   normalizeTodayResult,
   toRowView,
@@ -233,6 +234,9 @@ export default function TodayBoard({ salonId, salonName }: { salonId: string; sa
   const [error, setError] = useState<string | null>(null)
   const [filter, setFilter] = useState<FilterKey>('all')
   const [query, setQuery] = useState('')
+  const [open, setOpen] = useState<{ id: string; qr: boolean } | null>(null)
+  const closePanel = useCallback(() => setOpen(null), [])
+  const openRow = open ? (rows ?? []).find((r) => r.reservation_id === open.id) ?? null : null
 
   const changeDate = (next: string) => {
     setRows(null)
@@ -607,7 +611,13 @@ export default function TodayBoard({ salonId, salonName }: { salonId: string; sa
           {rows === null && !error && <Empty text="読み込み中…" />}
           {rows !== null && shown.length === 0 && <Empty text="該当するご予約はありません" />}
           {shown.map((v, i) => (
-            <Row key={v.id} v={v} avatar={AVATARS[i % AVATARS.length]} />
+            <Row
+              key={v.id}
+              v={v}
+              avatar={AVATARS[i % AVATARS.length]}
+              onDetail={() => setOpen({ id: v.id, qr: false })}
+              onQr={() => setOpen({ id: v.id, qr: true })}
+            />
           ))}
         </div>
 
@@ -663,6 +673,17 @@ export default function TodayBoard({ salonId, salonName }: { salonId: string; sa
           前回の薬剤は店側のみ表示。お客様のLINEには色名だけが表示されます。
         </span>
       </main>
+
+      {openRow && (
+        <DetailPanel
+          key={openRow.reservation_id}
+          row={openRow}
+          salonId={salonId}
+          date={date}
+          showQr={open?.qr ?? false}
+          onClose={closePanel}
+        />
+      )}
     </div>
   )
 }
@@ -815,7 +836,17 @@ function Foot(props: {
   )
 }
 
-function Row({ v, avatar }: { v: RowView; avatar: string }) {
+function Row({
+  v,
+  avatar,
+  onDetail,
+  onQr,
+}: {
+  v: RowView
+  avatar: string
+  onDetail: () => void
+  onQr: () => void
+}) {
   const tone = TONE[v.tone]
   const st = STATUS[v.status]
   return (
@@ -972,13 +1003,12 @@ function Row({ v, avatar }: { v: RowView; avatar: string }) {
           </span>
         )}
         {v.chip && <Pill chip={v.chip} radius="999px" lh="28px" size="13px" />}
-        {/* TODO(design): 登録QRの表示（S2）は未実装 */}
         {v.qr && (
           <button
             type="button"
-            disabled
-            title="準備中"
+            onClick={onQr}
             style={{
+              cursor: 'pointer',
               fontSize: '13.5px',
               fontWeight: 700,
               color: '#fff',
@@ -989,7 +1019,6 @@ function Row({ v, avatar }: { v: RowView; avatar: string }) {
               border: 'none',
               whiteSpace: 'nowrap',
               boxShadow: '0 4px 10px rgba(47,111,196,.3)',
-              opacity: 0.6,
             }}
           >
             登録QRを表示
@@ -997,12 +1026,11 @@ function Row({ v, avatar }: { v: RowView; avatar: string }) {
         )}
       </div>
 
-      {/* TODO(design): 詳細（S2 サイドパネル）は未実装 */}
       <button
         type="button"
-        disabled
-        title="準備中"
+        onClick={onDetail}
         style={{
+          cursor: 'pointer',
           minHeight: '44px',
           borderRadius: '12px',
           background: '#fff',
@@ -1011,7 +1039,6 @@ function Row({ v, avatar }: { v: RowView; avatar: string }) {
           fontWeight: 700,
           color: C.text,
           boxShadow: '0 3px 8px rgba(40,70,120,.08)',
-          opacity: 0.6,
         }}
       >
         詳細

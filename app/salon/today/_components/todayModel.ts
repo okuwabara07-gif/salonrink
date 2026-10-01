@@ -2,8 +2,11 @@
 export type PassTodayRow = {
   reservation_id: string
   start_time: string | null
+  customer_id: string | null
   customer_name: string | null
   menu_name: string | null
+  staff_name: string | null
+  unlinked_customer: unknown
   visit_count: number | null
   is_new: boolean | null
   line_linked: boolean | null
@@ -115,7 +118,7 @@ export function chemicalLines(v: unknown): string[] {
   return [String(v)]
 }
 
-function memoView(v: unknown): { wish: string; sub: string } {
+export function memoView(v: unknown): { wish: string; sub: string } {
   if (v == null || v === '') return { wish: '—', sub: '' }
   if (typeof v === 'string') return { wish: MEMO_LABEL[v] ?? v, sub: '' }
   if (typeof v === 'object') {
@@ -193,7 +196,7 @@ export function toRowView(r: PassTodayRow): RowView {
     ptags,
     gift: !!reached && !isSync,
     chip,
-    qr: isUnlinked,
+    qr: isUnlinked && !!r.customer_id,
     tone: isSync ? 'sync' : isDone ? 'done' : isOver ? 'over' : 'normal',
     isUnlinked,
     isRedeemable: !!reached && !isSync,
