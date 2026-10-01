@@ -64,8 +64,8 @@ export async function loadStats(salonId: string, now = new Date()): Promise<Stat
   const active90 = new Date(now.getTime() + JST - 90 * DAY).toISOString().slice(0, 10)
 
   const [links, activeRes, visits, sources, redeems] = await Promise.all([
-    fetchAll<{ customer_id: string; created_at: string | null }>((f, t) =>
-      supabase.from('line_customer_links').select('customer_id, created_at').eq('salon_id', salonId).range(f, t),
+    fetchAll<{ customer_id: string; linked_at: string | null }>((f, t) =>
+      supabase.from('line_customer_links').select('customer_id, linked_at').eq('salon_id', salonId).range(f, t),
     ),
     supabase.from('customers').select('id', { count: 'exact', head: true }).eq('salon_id', salonId).gte('last_visit', active90),
     fetchAll<{ id: string; customer_id: string | null; checked_out_at: string }>((f, t) =>
@@ -101,7 +101,7 @@ export async function loadStats(salonId: string, now = new Date()): Promise<Stat
   const sourceSet = new Set(sources.map((s) => s.bonus_source_id))
   const linkAt = new Map<string, number>()
   for (const l of links) {
-    const t = l.created_at ? Date.parse(l.created_at) : 0
+    const t = l.linked_at ? Date.parse(l.linked_at) : 0
     const prev = linkAt.get(l.customer_id)
     if (prev == null || t < prev) linkAt.set(l.customer_id, t)
   }
