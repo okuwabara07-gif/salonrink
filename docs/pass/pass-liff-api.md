@@ -9,7 +9,7 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
 リクエスト（JSON）
 | フィールド | 型 | 必須 | 内容 |
 |---|---|---|---|
-| action | "get" \| "link" \| "memo" | 任意（既定 "get"） | 操作 |
+| action | "get" \| "link" \| "memo" \| "set_reserve" | 任意（既定 "get"） | 操作 |
 | line_user_id | string | 必須 | LIFF の userId |
 | salon_code | string | 任意（既定 "kirei-tsurumi"） | サロン識別子 |
 
@@ -26,8 +26,12 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
 
 ### 未連携のとき
 ```json
-{ "ok": true, "salon_code": "kirei-tsurumi", "linked": false }
+{
+  "ok": true, "salon_code": "kirei-tsurumi", "linked": false,
+  "reserve_url": "https://…", "reserve_source": "salon", "user_reserve": null, "points_enabled": true
+}
 ```
+`reserve_url` `reserve_source` `user_reserve` `points_enabled` は連携の有無に関わらず返る。
 → C1 の「未連携」ステート（「お店の会員情報と連携する」ボタン）を表示。
 
 ### 連携済みのとき
@@ -42,6 +46,9 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
   "has_pending_bonus": true,
   "next_reservation_at": "2026-10-27T01:00:00+00:00",
   "reserve_url": "https://…",
+  "reserve_source": "salon",
+  "user_reserve": null,
+  "points_enabled": true,
   "next_reward": { "name": "スタンダードトリートメント", "points_required": 25, "remaining": 7 },
   "redeemable": [ { "name": "…", "points_required": 25 } ],
   "rewards": [
@@ -68,7 +75,10 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
 | rewards | 全特典（進捗バーの目盛り） | C1, C2 |
 | has_pending_bonus | 次回予約ボーナス対象の予約がある | C1「◯/◯ ご予約済み：ご来店時に+2P」 |
 | next_reservation_at | 次回予約日時（無ければ null） | C1 |
-| reserve_url | HPB の予約ページ URL（未設定なら null） | C1・C2「予約する」ボタン。null なら出さない。has_pending_bonus または next_reservation_at があるときは「ご予約を確認・変更」。LIFF 内は `liff.openWindow({url, external:true})`、それ以外は通常のリンク |
+| reserve_url | 実際に使う予約ページ URL。サロンの登録があればそれ、無ければ客の登録、どちらも無ければ null | C1・C2「予約する」ボタン。null のときは代わりに「いつものサロンの予約先を登録」リンク（→ /liff/pass/reserve）。has_pending_bonus または next_reservation_at があるときは「ご予約を確認・変更」。LIFF 内は `liff.openWindow({url, external:true})`、それ以外は通常のリンク |
+| reserve_source | reserve_url の出どころ。"salon"＝お店が登録 / "user"＝客が登録 / null＝未登録 | /liff/pass/reserve。"salon" のときは「お店が登録した予約先が使われます」と表示して編集不可 |
+| user_reserve | 客が登録した予約先 `{salon_name, reserve_url}`。未登録なら null | /liff/pass/reserve の初期値 |
+| points_enabled | サロンがポイントを使うか | false のときは C1 のポイント残高・特典・次回予約ボーナス・期限、C2 の残高・特典・履歴を出さず、前回の施術・髪の記録・予約ボタンだけにする |
 | last_visit | 前回の来店。null なら初回ステート | C1 |
 | last_visit.color_label | 客に見せてよい色名だけ。配合は含まれない | C1 |
 | expires_on | 有効期限（最終来店日+12ヶ月）。null は来店実績なし | C1 期限間近（30日以内）判定, C2 |
@@ -127,6 +137,27 @@ C1 ステート判定（この順で評価）
 ```
 `reservation_id` が付いていれば次回予約に紐付いた。null なら予約なしで保存（店側の一覧には表示されない）。
 写真添付は既存の mycarte-photos の仕組みで先にアップロードし、そのパスを `memo_text` に含めるか、後続で `consult_memos.diagnosis_ids` に入れる（MVPでは写真なしで可）。
+
+---
+
+## action: "set_reserve" — 客による予約先の登録・変更・削除
+
+リクエスト
+```json
+{ "action":"set_reserve", "line_user_id", "salon_name":"…（任意）", "reserve_url":"https://…" }
+```
+`reserve_url` を空文字で送ると登録を削除する。
+
+レスポンス
+```json
+{ "ok": true }
+{ "ok": false, "reason": "invalid_url" }
+```
+| reason | 画面 |
+|---|---|
+| invalid_url | 「このURLは登録できません。https:// で始まる予約ページのURLを入力してください」 |
+
+画面（/liff/pass/reserve）：サロン名（任意）と予約ページのURL（必須、https:// で始まる）を入力して保存。登録済みなら現在の値を表示し、変更・削除ができる。
 
 ---
 

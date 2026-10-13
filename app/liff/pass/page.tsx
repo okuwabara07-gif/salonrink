@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { PASS_TOKENS as T } from '../_components/PassCard'
 import { PassHeader, PassNotice, PassPage } from '../_components/PassHeader'
-import PassReserveButton from '../_components/PassReserveButton'
+import PassReserveButton, { PassReserveEditLink } from '../_components/PassReserveButton'
 import { fetchPass, type PassGet, type PassHistoryRow, type PassLinked } from '../_lib/passApi'
 import { useRedirectIfUnlinked } from '../_lib/useRedirectIfUnlinked'
 import { PASS_OUTSIDE_MESSAGE, usePassUser } from '../_lib/usePassUser'
@@ -78,13 +78,18 @@ export default function PassHistoryPage() {
     body = <PassNotice text="読み込み中…" />
   } else if (!data.linked) {
     body = <PassNotice text="会員連携の画面へ移動します…" />
+  } else if (data.points_enabled === false) {
+    body = <ReserveOnly data={data} />
   } else {
     body = <Linked data={data} rulesOpen={rulesOpen} toggleRules={() => setRulesOpen((v) => !v)} />
   }
 
   return (
     <PassPage>
-      <PassHeader title="ポイント履歴・特典" backHref="/liff/home" />
+      <PassHeader
+        title={data?.linked && data.points_enabled === false ? 'ご予約' : 'ポイント履歴・特典'}
+        backHref="/liff/home"
+      />
       {body}
     </PassPage>
   )
@@ -263,7 +268,25 @@ function Linked({
           ))}
       </div>
 
+      <ReserveLinks data={data} />
+    </div>
+  )
+}
+
+function ReserveLinks({ data }: { data: PassLinked }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
       <PassReserveButton data={data} />
+      <PassReserveEditLink data={data} />
+    </div>
+  )
+}
+
+/** ポイントを使わないサロン：残高・特典・履歴は出さず、予約まわりだけ */
+function ReserveOnly({ data }: { data: PassLinked }) {
+  return (
+    <div style={{ padding: '18px' }}>
+      <ReserveLinks data={data} />
     </div>
   )
 }

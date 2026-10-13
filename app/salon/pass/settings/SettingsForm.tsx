@@ -57,6 +57,15 @@ const box = {
   boxSizing: 'border-box',
 } as const
 
+function isHttpsUrl(v: string): boolean {
+  if (!/^https:\/\/\S+$/.test(v)) return false
+  try {
+    return new URL(v).hostname.includes('.')
+  } catch {
+    return false
+  }
+}
+
 function posInt(v: string): number | null {
   const n = Number(v.trim())
   return Number.isInteger(n) && n >= 0 ? n : null
@@ -68,7 +77,9 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
   const [loadError, setLoadError] = useState<string | null>(null)
   const [programMsg, setProgramMsg] = useState<Msg>(null)
   const [rewardMsg, setRewardMsg] = useState<Msg>(null)
-  const [busy, setBusy] = useState<'program' | 'rewards' | null>(null)
+  const [reserveUrl, setReserveUrl] = useState('')
+  const [reserveMsg, setReserveMsg] = useState<Msg>(null)
+  const [busy, setBusy] = useState<'program' | 'rewards' | 'reserve' | null>(null)
   const [nonce, setNonce] = useState(0)
 
   useEffect(() => {
@@ -77,7 +88,7 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
     Promise.all([
       supabase
         .from('pass_programs')
-        .select('yen_per_point, next_booking_bonus, expiry_months, include_retail, migration_bonus_points')
+        .select('yen_per_point, next_booking_bonus, expiry_months, include_retail, migration_bonus_points, reserve_url')
         .eq('salon_id', salonId)
         .maybeSingle(),
       supabase
@@ -100,6 +111,7 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
         include_retail: d?.include_retail ?? true,
         migration_bonus_points: String(d?.migration_bonus_points ?? 5),
       })
+      setReserveUrl((d?.reserve_url as string | null) ?? '')
       setRewards(
         (r.data ?? []).map((x) => ({
           id: x.id as string,
@@ -143,6 +155,30 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
       )
     setBusy(null)
     setProgramMsg(error ? { kind: 'error', text: `保存できませんでした（${error.message}）` } : { kind: 'ok', text: '保存しました' })
+  }
+
+  const saveReserveUrl = async () => {
+    const url = reserveUrl.trim()
+    if (url && !isHttpsUrl(url)) {
+      setReserveMsg({ kind: 'error', text: 'https:// で始まるURLを入力してください。' })
+      return
+    }
+    setBusy('reserve')
+    setReserveMsg(null)
+    const { data, error } = await createClient()
+      .from('pass_programs')
+      .update({ reserve_url: url || null })
+      .eq('salon_id', salonId)
+      .select('salon_id')
+    setBusy(null)
+    if (error) {
+      setReserveMsg({ kind: 'error', text: `保存できませんでした（${error.message}）` })
+    } else if (!data?.length) {
+      setReserveMsg({ kind: 'error', text: '先に「ポイント規定」を保存してから、もう一度お試しください。' })
+    } else {
+      setReserveUrl(url)
+      setReserveMsg({ kind: 'ok', text: url ? '保存しました' : '予約ページのURLを削除しました' })
+    }
   }
 
   const saveRewards = async () => {
@@ -216,6 +252,27 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
               <Unit>P</Unit>
             </RuleRow>
             <SaveBar busy={busy === 'program'} msg={programMsg} onSave={() => void saveProgram()} />
+          </section>
+        )}
+
+        {program && (
+          <section style={{ ...card, width: '1100px', maxWidth: '100%', boxSizing: 'border-box' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+              <strong style={{ fontSize: '15px', fontWeight: 900 }}>予約ページのURL</strong>
+              <span style={{ fontSize: '11px', color: C.weak }}>
+                会員証の「予約する」ボタンの行き先。https:// で始まるURL
+              </span>
+            </div>
+            <input
+              value={reserveUrl}
+              onChange={(e) => setReserveUrl(e.target.value)}
+              type="url"
+              inputMode="url"
+              placeholder="https://"
+              aria-label="予約ページのURL"
+              style={box}
+            />
+            <SaveBar busy={busy === 'reserve'} msg={reserveMsg} onSave={() => void saveReserveUrl()} />
           </section>
         )}
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import PassNavLink from './PassNavLink'
-import PassReserveButton from './PassReserveButton'
+import PassReserveButton, { PassReserveEditLink } from './PassReserveButton'
 import {
   expiryLabel,
   fetchPass,
@@ -171,111 +171,116 @@ function LinkedBody({ data }: { data: PassLinked }) {
     (r, i) => `${r.points_required - (i > 0 ? rewards[i - 1].points_required : 0)}fr`,
   )
 
+  // ポイントを使わないサロンは、前回の施術・髪の記録・予約ボタンだけにする
+  const points = data.points_enabled !== false
+
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-          <span style={{ fontSize: '14px', color: T.sub, marginRight: '6px' }}>現在のポイント</span>
-          <span style={{ fontFamily: serif, fontSize: '52px', fontWeight: 500, lineHeight: 1 }}>{data.balance}</span>
-          <span style={{ fontFamily: serif, fontSize: '20px' }}>P</span>
-        </div>
+      {points && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+            <span style={{ fontSize: '14px', color: T.sub, marginRight: '6px' }}>現在のポイント</span>
+            <span style={{ fontFamily: serif, fontSize: '52px', fontWeight: 500, lineHeight: 1 }}>{data.balance}</span>
+            <span style={{ fontFamily: serif, fontSize: '20px' }}>P</span>
+          </div>
 
-        <div style={{ position: 'relative', height: '10px', borderRadius: '99px', background: T.lineSoft }}>
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              bottom: 0,
-              borderRadius: '99px',
-              background: T.gold,
-              width: `${pct}%`,
-            }}
-          />
-          {rewards.slice(0, -1).map((r) => (
+          <div style={{ position: 'relative', height: '10px', borderRadius: '99px', background: T.lineSoft }}>
             <div
-              key={r.points_required}
               style={{
                 position: 'absolute',
-                left: `${(r.points_required / maxP) * 100}%`,
-                top: '-3px',
-                bottom: '-3px',
-                width: '2px',
-                background: '#FFFFFF',
-                borderRadius: '1px',
+                left: 0,
+                top: 0,
+                bottom: 0,
+                borderRadius: '99px',
+                background: T.gold,
+                width: `${pct}%`,
               }}
             />
-          ))}
-        </div>
-
-        {rewards.length > 0 && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: columns.join(' '),
-              fontSize: '13px',
-              lineHeight: 1.45,
-              color: T.sub,
-              marginTop: '-4px',
-            }}
-          >
-            {rewards.map((r, i) => (
+            {rewards.slice(0, -1).map((r) => (
               <div
                 key={r.points_required}
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'flex-end',
-                  paddingRight: i < rewards.length - 1 ? '6px' : 0,
-                  borderRight: i < rewards.length - 1 ? `1px solid ${T.line}` : 'none',
+                  position: 'absolute',
+                  left: `${(r.points_required / maxP) * 100}%`,
+                  top: '-3px',
+                  bottom: '-3px',
+                  width: '2px',
+                  background: '#FFFFFF',
+                  borderRadius: '1px',
                 }}
-              >
-                <b style={{ fontSize: '14px', color: T.text }}>{r.points_required}P</b>
-                <span>{shortRewardName(r.name)}</span>
-              </div>
+              />
             ))}
           </div>
-        )}
 
-        {!topRedeem && data.next_reward && (
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              alignItems: 'baseline',
-              columnGap: '6px',
-              fontSize: '16px',
-              lineHeight: 1.6,
-            }}
-          >
-            <span>{data.next_reward.name}まで</span>
-            <b style={{ fontSize: '20px', color: T.goldDeep, whiteSpace: 'nowrap' }}>
-              あと{data.next_reward.remaining}P
-            </b>
-          </div>
-        )}
+          {rewards.length > 0 && (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: columns.join(' '),
+                fontSize: '13px',
+                lineHeight: 1.45,
+                color: T.sub,
+                marginTop: '-4px',
+              }}
+            >
+              {rewards.map((r, i) => (
+                <div
+                  key={r.points_required}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'flex-end',
+                    paddingRight: i < rewards.length - 1 ? '6px' : 0,
+                    borderRight: i < rewards.length - 1 ? `1px solid ${T.line}` : 'none',
+                  }}
+                >
+                  <b style={{ fontSize: '14px', color: T.text }}>{r.points_required}P</b>
+                  <span>{shortRewardName(r.name)}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
-        {topRedeem && (
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '4px',
-              background: T.surface,
-              border: `1.5px solid ${T.goldFrame}`,
-              borderRadius: '14px',
-              padding: '14px 16px',
-            }}
-          >
-            <span style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.6 }}>
-              {topRedeem.name}と交換できます
-            </span>
-            <span style={{ fontSize: '15px', color: T.sub, lineHeight: 1.6 }}>{rewardSub}</span>
-          </div>
-        )}
-      </div>
+          {!topRedeem && data.next_reward && (
+            <div
+              style={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                alignItems: 'baseline',
+                columnGap: '6px',
+                fontSize: '16px',
+                lineHeight: 1.6,
+              }}
+            >
+              <span>{data.next_reward.name}まで</span>
+              <b style={{ fontSize: '20px', color: T.goldDeep, whiteSpace: 'nowrap' }}>
+                あと{data.next_reward.remaining}P
+              </b>
+            </div>
+          )}
 
-      {data.has_pending_bonus ? (
+          {topRedeem && (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px',
+                background: T.surface,
+                border: `1.5px solid ${T.goldFrame}`,
+                borderRadius: '14px',
+                padding: '14px 16px',
+              }}
+            >
+              <span style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.6 }}>
+                {topRedeem.name}と交換できます
+              </span>
+              <span style={{ fontSize: '15px', color: T.sub, lineHeight: 1.6 }}>{rewardSub}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {!points ? null : data.has_pending_bonus ? (
         <div
           style={{
             display: 'flex',
@@ -310,7 +315,7 @@ function LinkedBody({ data }: { data: PassLinked }) {
         </div>
       )}
 
-      {isExpiringSoon(data.expires_on) && data.expires_on && (
+      {points && isExpiringSoon(data.expires_on) && data.expires_on && (
         <div
           style={{
             display: 'flex',
@@ -331,8 +336,7 @@ function LinkedBody({ data }: { data: PassLinked }) {
       {data.last_visit ? (
         <div
           style={{
-            borderTop: `1px solid ${T.line}`,
-            paddingTop: '14px',
+            ...lastVisitTop(points),
             display: 'flex',
             flexDirection: 'column',
             gap: '10px',
@@ -362,8 +366,7 @@ function LinkedBody({ data }: { data: PassLinked }) {
       ) : (
         <div
           style={{
-            borderTop: `1px solid ${T.line}`,
-            paddingTop: '14px',
+            ...lastVisitTop(points),
             display: 'flex',
             flexDirection: 'column',
             gap: '4px',
@@ -376,15 +379,26 @@ function LinkedBody({ data }: { data: PassLinked }) {
         </div>
       )}
 
-      <PassReserveButton data={data} />
-      <PassNavLink href="/liff/pass/memo" style={primaryButton}>
-        今回のご希望を伝える
-      </PassNavLink>
-      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-4px' }}>
-        <PassNavLink href="/liff/pass" style={linkRow(!!data.last_visit)}>
-          <span>ポイント履歴・特典を見る</span>
-          <span style={{ color: T.gold, fontSize: '18px' }}>›</span>
+      {data.reserve_url ? <PassReserveButton data={data} /> : <PassReserveEditLink data={data} />}
+      {points && (
+        <PassNavLink href="/liff/pass/memo" style={primaryButton}>
+          今回のご希望を伝える
         </PassNavLink>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column', marginTop: '-4px' }}>
+        {points ? (
+          <PassNavLink href="/liff/pass" style={linkRow(!!data.last_visit)}>
+            <span>ポイント履歴・特典を見る</span>
+            <span style={{ color: T.gold, fontSize: '18px' }}>›</span>
+          </PassNavLink>
+        ) : (
+          data.reserve_url && (
+            <PassNavLink href="/liff/pass/reserve" style={linkRow(!!data.last_visit)}>
+              <span>予約先を変更</span>
+              <span style={{ color: T.gold, fontSize: '18px' }}>›</span>
+            </PassNavLink>
+          )
+        )}
         {data.last_visit && (
           <PassNavLink href="/liff/karte" style={linkRow(false)}>
             <span>過去の写真を見る</span>
@@ -394,6 +408,11 @@ function LinkedBody({ data }: { data: PassLinked }) {
       </div>
     </>
   )
+}
+
+/** ポイント欄が上にあるときだけ区切り線を引く */
+function lastVisitTop(withBorder: boolean) {
+  return withBorder ? ({ borderTop: `1px solid ${T.line}`, paddingTop: '14px' } as const) : {}
 }
 
 function linkRow(withBorder: boolean) {

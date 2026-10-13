@@ -23,7 +23,18 @@ export type PassHistoryRow = {
   note: string | null
 }
 
-export type PassUnlinked = { ok: true; salon_code: string; linked: false }
+export type PassReserveSource = 'salon' | 'user' | null
+export type PassUserReserve = { salon_name: string | null; reserve_url: string }
+
+/** 連携の有無に関わらず get が返す予約先まわりの項目 */
+type PassReserveFields = {
+  reserve_url: string | null
+  reserve_source: PassReserveSource
+  user_reserve: PassUserReserve | null
+  points_enabled: boolean
+}
+
+export type PassUnlinked = { ok: true; salon_code: string; linked: false } & PassReserveFields
 
 export type PassLinked = {
   ok: true
@@ -34,7 +45,6 @@ export type PassLinked = {
   expires_on: string | null
   has_pending_bonus: boolean
   next_reservation_at: string | null
-  reserve_url: string | null
   next_reward: (PassReward & { remaining: number }) | null
   redeemable: PassReward[]
   rewards: PassReward[]
@@ -46,7 +56,7 @@ export type PassLinked = {
     expiry_months: number
     include_retail: boolean
   }
-}
+} & PassReserveFields
 
 export type PassGet = PassUnlinked | PassLinked
 
@@ -61,6 +71,8 @@ export type PassMemoResult = {
   memo: { id: string; created_at: string }
   reservation_id: string | null
 }
+
+export type PassSetReserveResult = { ok: true } | { ok: false; reason: 'invalid_url' }
 
 async function callPass<T>(body: Record<string, unknown>): Promise<T> {
   const res = await fetch(`${SR_FUNCTIONS_BASE}/pass-liff`, {
@@ -92,6 +104,24 @@ export function sendPassMemo(
   params: { choice: PassMemoChoice; memo_text?: string; concerns?: string[] },
 ): Promise<PassMemoResult> {
   return callPass<PassMemoResult>({ action: 'memo', line_user_id: lineUserId, ...params })
+}
+
+/** reserve_url を空で送ると登録を削除する */
+export function setPassReserve(
+  lineUserId: string,
+  params: { salon_name: string; reserve_url: string },
+): Promise<PassSetReserveResult> {
+  return callPass<PassSetReserveResult>({ action: 'set_reserve', line_user_id: lineUserId, ...params })
+}
+
+/** 予約先として受け付ける URL か（https:// で始まる） */
+export function isReserveUrl(value: string): boolean {
+  if (!/^https:\/\/\S+$/.test(value)) return false
+  try {
+    return new URL(value).hostname.includes('.')
+  } catch {
+    return false
+  }
 }
 
 const WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土']

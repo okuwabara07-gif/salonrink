@@ -1,6 +1,7 @@
 'use client'
 
 import type { CSSProperties, MouseEvent } from 'react'
+import PassNavLink from './PassNavLink'
 import { liff } from '../_lib/liffLite'
 import type { PassLinked } from '../_lib/passApi'
 
@@ -48,5 +49,26 @@ export default function PassReserveButton({
     <a href={url} target="_blank" rel="noopener noreferrer" onClick={open} style={{ ...reserveButton, ...style }}>
       {booked ? 'ご予約を確認・変更' : '予約する'}
     </a>
+  )
+}
+
+/** 予約先の登録・変更画面へのリンク。reserve_url が無いときは登録、あるときは変更の文言 */
+export function PassReserveEditLink({ data }: { data: Pick<PassLinked, 'reserve_url'> }) {
+  return (
+    <PassNavLink
+      href="/liff/pass/reserve"
+      style={{
+        minHeight: '48px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '16px',
+        color: '#5F584E',
+        textDecoration: 'underline',
+        textUnderlineOffset: '4px',
+      }}
+    >
+      {data.reserve_url ? '予約先を変更' : 'いつものサロンの予約先を登録'}
+    </PassNavLink>
   )
 }
