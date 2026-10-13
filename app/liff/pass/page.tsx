@@ -277,7 +277,7 @@ function ReserveLinks({ data }: { data: PassLinked }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
       <PassReserveButton data={data} />
-      <PassReserveEditLink data={data} />
+      {data.reserve_source !== 'salon' && <PassReserveEditLink data={data} />}
     </div>
   )
 }

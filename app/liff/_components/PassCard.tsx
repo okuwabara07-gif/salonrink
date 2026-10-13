@@ -392,7 +392,8 @@ function LinkedBody({ data }: { data: PassLinked }) {
             <span style={{ color: T.gold, fontSize: '18px' }}>›</span>
           </PassNavLink>
         ) : (
-          data.reserve_url && (
+          data.reserve_url &&
+          data.reserve_source !== 'salon' && (
             <PassNavLink href="/liff/pass/reserve" style={linkRow(!!data.last_visit)}>
               <span>予約先を変更</span>
               <span style={{ color: T.gold, fontSize: '18px' }}>›</span>
