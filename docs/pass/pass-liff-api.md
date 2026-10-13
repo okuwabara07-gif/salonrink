@@ -41,6 +41,7 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
   "expires_on": "2027-09-01",
   "has_pending_bonus": true,
   "next_reservation_at": "2026-10-27T01:00:00+00:00",
+  "reserve_url": "https://…",
   "next_reward": { "name": "スタンダードトリートメント", "points_required": 25, "remaining": 7 },
   "redeemable": [ { "name": "…", "points_required": 25 } ],
   "rewards": [
@@ -67,6 +68,7 @@ CORS 許可：salonrink.com / *.salonrink.com / liff.line.me / localhost
 | rewards | 全特典（進捗バーの目盛り） | C1, C2 |
 | has_pending_bonus | 次回予約ボーナス対象の予約がある | C1「◯/◯ ご予約済み：ご来店時に+2P」 |
 | next_reservation_at | 次回予約日時（無ければ null） | C1 |
+| reserve_url | HPB の予約ページ URL（未設定なら null） | C1・C2「予約する」ボタン。null なら出さない。has_pending_bonus または next_reservation_at があるときは「ご予約を確認・変更」。LIFF 内は `liff.openWindow({url, external:true})`、それ以外は通常のリンク |
 | last_visit | 前回の来店。null なら初回ステート | C1 |
 | last_visit.color_label | 客に見せてよい色名だけ。配合は含まれない | C1 |
 | expires_on | 有効期限（最終来店日+12ヶ月）。null は来店実績なし | C1 期限間近（30日以内）判定, C2 |

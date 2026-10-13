@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { PASS_TOKENS as T } from '../_components/PassCard'
 import { PassHeader, PassNotice, PassPage } from '../_components/PassHeader'
+import PassReserveButton from '../_components/PassReserveButton'
 import { fetchPass, type PassGet, type PassHistoryRow, type PassLinked } from '../_lib/passApi'
 import { useRedirectIfUnlinked } from '../_lib/useRedirectIfUnlinked'
 import { PASS_OUTSIDE_MESSAGE, usePassUser } from '../_lib/usePassUser'
@@ -261,6 +262,8 @@ function Linked({
             </div>
           ))}
       </div>
+
+      <PassReserveButton data={data} />
     </div>
   )
 }
