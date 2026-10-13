@@ -34,6 +34,7 @@ export type PassLinked = {
   expires_on: string | null
   has_pending_bonus: boolean
   next_reservation_at: string | null
+  reserve_url: string | null
   next_reward: (PassReward & { remaining: number }) | null
   redeemable: PassReward[]
   rewards: PassReward[]

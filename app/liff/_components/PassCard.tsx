@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import PassNavLink from './PassNavLink'
+import PassReserveButton from './PassReserveButton'
 import {
   expiryLabel,
   fetchPass,
@@ -375,6 +376,7 @@ function LinkedBody({ data }: { data: PassLinked }) {
         </div>
       )}
 
+      <PassReserveButton data={data} />
       <PassNavLink href="/liff/pass/memo" style={primaryButton}>
         今回のご希望を伝える
       </PassNavLink>
