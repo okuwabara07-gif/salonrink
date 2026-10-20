@@ -87,13 +87,14 @@ function buildUserEmailHtml(name: string): string {
       施術の最終判断は、いつも美容師さんの経験と感性です。</p>
 
       <p><strong>【SalonRink について】</strong><br>
-      月額¥1,980〜(税込¥2,178〜)<br>
+      無料で始める（PASS 0円）<br>
       • LINE × AIカルテで、美容師さんの仕事を支えます<br>
       • お客様1人1人を、ちゃんと「覚えている」サロンへ<br>
-      • 14日間無料お試し</p>
+      • クレジットカード不要<br>
+      • 有料の機能は、使いたくなったときに追加</p>
 
       <p><strong>【次の一歩】</strong><br>
-      <a href="https://salonrink.com/signup" class="cta">14日間無料で試す</a></p>
+      <a href="https://salonrink.com/register" class="cta">無料で始める（PASS 0円）</a></p>
 
       <p>ご不明な点がございましたら、本メールにご返信ください。</p>
     </div>

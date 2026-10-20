@@ -156,15 +156,16 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       その体験の先に、SalonRinkがあります。</p>
 
       <p><strong>【サービス概要】</strong><br>
-      月額¥1,980(税込¥2,178〜)<br>
+      LINE会員証・ポイント・来店前メモ・当日の来店一覧まで、PASS 0円<br>
       • AI カルテで、お客様の好みを一元管理<br>
       • 事前LINE カウンセリングで、当日の時間短縮<br>
       • 施術後も継続的に「覚えてくれる」関係を構築<br>
       <br>
-      • 14日間無料お試し<br>
-      • 解約はいつでも</p>
+      • 無料で始める（PASS 0円）<br>
+      • クレジットカード不要<br>
+      • 有料の機能は、使いたくなったときに追加</p>
 
-      <p><a href="https://salonrink.com/register" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">無料で始める（PASS 0円）</a></p>
       <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p>ご質問やご不明な点がございましたら、本メールにご返信ください。</p>
@@ -223,10 +224,10 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       • お客様との会話時間が、月25時間取り戻せる<br>
       • スタッフの満足度が向上する</p>
 
-      <p><strong>【月額¥1,980(税込¥2,178〜)で実現】</strong><br>
-      年間で計算すると、削減時間の時給以上の投資対効果が出ます。</p>
+      <p><strong>【PASS 0円から始められます】</strong><br>
+      クレジットカード不要。有料の機能は、使いたくなったときに追加できます。</p>
 
-      <p><a href="https://salonrink.com/register" class="cta">14日間無料で試してみる</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">無料で始める（PASS 0円）</a></p>
       <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p>質問や詳細なお見積りご希望の場合は、本メールへのご返信をお願いします。</p>
@@ -243,7 +244,7 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       `,
     },
     7: {
-      subject: '【SalonRink】14日間、リスクゼロでお試しいただけます',
+      subject: '【SalonRink】0円で、まずは始めてみませんか',
       html: (name: string) => `
 <!DOCTYPE html>
 <html>
@@ -262,7 +263,7 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
 </head>
 <body>
   <div class="container">
-    <div class="header">リスクゼロで、まずは試してみませんか?</div>
+    <div class="header">0円で、まずは始めてみませんか?</div>
 
     <div class="content">
       <p>${name} 様</p>
@@ -270,23 +271,24 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <p>導入を迷われている理由の多くは、<br>
       <strong>「本当に業務が改善されるのか?」</strong>という不安ではないでしょうか。</p>
 
-      <p>だからこそ、SalonRinkは<strong>14日間の完全無料お試し</strong>をご用意しました。</p>
+      <p>だからこそ、SalonRinkは<strong>PASS 0円</strong>から始められるようにしました。</p>
 
       <div class="feature-list">
-        <strong>✓ 14日後、自動課金なし</strong><br>
-        <strong>✓ いつでも解約可能</strong><br>
+        <strong>✓ クレジットカード不要</strong><br>
+        <strong>✓ 有料の機能は、使いたくなったときに追加</strong><br>
         <strong>✓ 専門サポートチーム対応</strong>
       </div>
 
       <p>実際に使ってみて、<br>
-      「これなら続けたい」と感じたら、その後も月額¥1,980(税込¥2,178〜)でお使いいただけます。</p>
+      PASS（LINE会員証・ポイント）は0円のまま使い続けられます。<br>
+      自動化・通知・AIは、使いたくなったときに追加できます。</p>
 
       <p><strong>【よくあるご質問例】</strong><br>
       • 導入までの期間は?<br>
       • 既存システムとの連携は?<br>
       • スタッフ教育は必要?<br>
       <br>
-      こうしたご質問も、無料期間中にサポートチームがサポートいたします。</p>
+      こうしたご質問も、サポートチームがお答えします。</p>
 
       <p><a href="https://salonrink.com/register" class="cta">今すぐ始める</a></p>
       <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
@@ -331,12 +333,12 @@ function buildEmailHtml(day: 1 | 3 | 7 | 14, contactName: string): {
       <p>このシリーズのメール配信は、本メールが最終となります。</p>
 
       <p>SalonRinkを導入いただく場合は、<br>
-      以下のボタンより<strong>14日間無料トライアル</strong>をお始めください。</p>
+      以下のボタンより<strong>PASS 0円</strong>で始められます。クレジットカードは不要です。</p>
 
       <p>本当にお客様を<strong>「覚えてくれるサロン」</strong>にしたいなら、<br>
       今が行動する時です。</p>
 
-      <p><a href="https://salonrink.com/register" class="cta">今すぐ14日間無料で試す</a></p>
+      <p><a href="https://salonrink.com/register" class="cta">無料で始める（PASS 0円）</a></p>
       <p><a href="https://lin.ee/UDNlEOAA" target="_blank" rel="noopener noreferrer" class="cta">LINEで相談する</a></p>
 
       <p><strong>ご不明な点や導入のご相談</strong>がございましたら、<br>
