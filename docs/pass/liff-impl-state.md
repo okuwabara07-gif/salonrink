@@ -131,7 +131,7 @@ PassCard コンポーネントの実装を始めます。
 - 新規 `app/liff/_lib/usePassUser.ts`：useMycarte と同じ手順で LIFF 初期化し userId だけ返す
 - 新規 `app/liff/_components/PassHeader.tsx`：見出しバー（‹ 戻る）・ページ枠・お知らせ表示
 - C3 `app/liff/pass/link/page.tsx`：?t= があればトークン連携、なければ手入力（カナ＋下4桁、揃うまで無効）。完了／見つからない／QR期限切れ／通信失敗
-- C2 `app/liff/pass/page.tsx`：残高・有効期限、特典（交換可否）、履歴20件、ルール折りたたみ（初期は閉）。未連携なら連携ボタン
+- C2 `app/liff/pass/page.tsx`：残高・有効期限、特典（交換可否）、履歴20件、ルール折りたたみ（初期は閉）。未連携なら /liff/pass/link へ移動（表示条件の追加で変更）
 - C4 `app/liff/pass/memo/page.tsx`：予約日時、4択（単一・必須）、自由記入（任意）、送信後画面、「内容を変更する」
 - 写真欄は今回なし（指示どおり）
 
@@ -150,3 +150,9 @@ PassCard コンポーネントの実装を始めます。
 - /liff/home の PassCard：linked:true のときだけ表示。未連携は URL に ?t= / ?salon= があるときだけ連携ボタンを表示（?t= は /liff/pass/link?t= に引き継ぐ）。それ以外は非表示
 - /liff/pass と /liff/pass/memo：未連携なら /liff/pass/link へ replace（新規 `app/liff/_lib/useRedirectIfUnlinked.ts`）
 - ブランチ feat/pass-liff に commit・push（main には push しない）
+
+### 2026-10-01 本番反映
+- main へ fast-forward マージして push（c2093bf..dd31060）
+- Production デプロイ salonrink-hl2vfztsv が Ready
+- https://salonrink.com/liff/home → 200、https://salonrink.com/liff/pass/link → 200
+- 残り：実機（LINE）での表示確認、デザイン未定義の文言の確認、写真の添付（C4）
