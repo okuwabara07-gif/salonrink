@@ -50,7 +50,7 @@ const siteUrl = 'https://salonrink.com'
 export const metadata: Metadata = {
   metadataBase: new URL('https://salonrink.com'),
   title: "SalonRink（サロンリンク）| LINEで予約自動化するサロン経営SaaS",
-  description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥1,980から。ホットペッパー依存から脱却。",
+  description: "紙のポイントカードを、無料でLINE会員証に。ポイント・髪の記録・当日の来店一覧まで0円で始められる美容サロン向けサービス。",
   keywords: ["サロン管理", "LINE予約", "予約システム", "顧客管理", "美容サロン", "SaaS"],
   authors: [{ name: "AOKAE合同会社" }],
   manifest: "/manifest.json",
@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "SalonRink（サロンリンク）| LINEで予約自動化するサロン経営SaaS",
-    description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥1,980から。ホットペッパー依存から脱却。",
+    description: "紙のポイントカードを、無料でLINE会員証に。ポイント・髪の記録・当日の来店一覧まで0円で始められる美容サロン向けサービス。",
     url: siteUrl,
     siteName: "SalonRink",
     type: "website",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "SalonRink（サロンリンク）| LINEで予約自動化するサロン経営SaaS",
-    description: "美容サロンのLINE予約・顧客管理・リマインド通知を自動化。月額¥1,980から。",
+    description: "紙のポイントカードを、無料でLINE会員証に。PASS 0円から始められます。",
     creator: "@salonrink_jp",
     images: [`${siteUrl}/og-image.jpg`],
   },

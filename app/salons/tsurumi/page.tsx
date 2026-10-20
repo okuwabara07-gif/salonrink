@@ -256,7 +256,7 @@ export default function KireiturumiPage() {
           月額売上 ¥680k → ¥850k へ。
         </p>
         <a href="/register" style={styles.button}>
-          14日無料で始める
+          無料で始める
         </a>
       </section>
 
@@ -356,69 +356,41 @@ export default function KireiturumiPage() {
       <section style={styles.section4}>
         <h2 style={styles.section4Title}>料金プラン</h2>
         <div style={styles.pricingContainer}>
-          {/* Basic */}
-          <div style={styles.pricingCard(false)}>
-            <div style={styles.planName}>Light</div>
-            <div style={styles.planPrice}>¥1,980/月</div>
-            <div style={styles.featureList}>
-              ✅ LINE予約<br />
-              ✅ 重複ブロック<br />
-              ❌ 顧客カルテ<br />
-              ❌ AI推奨<br />
-              ❌ ポイント管理<br />
-              ❌ ECストア<br />
-              ❌ 売上レポート<br />
-              ❌ スタッフ管理
-            </div>
-          </div>
-
-          {/* Small - Recommended */}
           <div style={styles.pricingCard(true)}>
-            <div style={styles.planName}>⭐ Standard</div>
-            <div style={styles.planPrice}>¥2,980/月</div>
-            <div style={styles.planBadge}>推奨プラン</div>
+            <div style={styles.planName}>PASS</div>
+            <div style={styles.planPrice}>0円</div>
             <div style={styles.featureList}>
-              ✅ LINE予約<br />
-              ✅ 重複ブロック<br />
-              ✅ 顧客カルテ<br />
-              ✅ AI推奨<br />
-              ✅ ポイント管理<br />
-              ❌ ECストア<br />
-              ❌ 売上レポート<br />
-              ❌ スタッフ管理
+              ✅ LINE会員証<br />
+              ✅ ポイント・ポイント履歴<br />
+              ✅ 来店前メモ<br />
+              ✅ 髪の記録<br />
+              ✅ 当日の来店一覧
             </div>
           </div>
-
-          {/* Medium */}
           <div style={styles.pricingCard(false)}>
-            <div style={styles.planName}>Premium</div>
-            <div style={styles.planPrice}>¥4,580/月</div>
+            <div style={styles.planName}>自動化・通知・AI</div>
+            <div style={styles.planPrice}>月800円〜</div>
             <div style={styles.featureList}>
-              ✅ LINE予約<br />
-              ✅ 重複ブロック<br />
-              ✅ 顧客カルテ<br />
-              ✅ AI推奨<br />
-              ✅ ポイント管理<br />
-              ✅ ECストア<br />
-              ✅ 売上レポート<br />
-              ✅ スタッフ管理
+              自動化 月1,500円<br />
+              通知 月800円<br />
+              AI 月800円<br />
+              必要なものだけ追加
             </div>
           </div>
         </div>
         <p style={styles.pricingNote}>
-          14日間無料トライアル付き。<br />
-          キレイ鶴見店の成果は Small プランで実現。<br />
-          いつでも解約可能。
+          初期費用0円。いつでも解約可。価格はすべて税込。<br />
+          詳しくは <a href="/pricing">料金ページ</a> をご覧ください。
         </p>
       </section>
 
       {/* Section 5: CTA */}
       <section style={styles.section5}>
         <a href="/register" style={styles.ctaButton}>
-          14日無料で始める
+          無料で始める
         </a>
         <p style={styles.ctaSubText}>
-          14日後に自動で Small プランに移行します。
+          クレジットカードは不要です。
         </p>
         <p style={styles.ctaFooter}>
           ご質問は support@salonrink.com までお気軽に

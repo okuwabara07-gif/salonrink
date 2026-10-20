@@ -163,7 +163,7 @@ export default function CaseStudyPage() {
         <section style={{ padding: 36, background: '#1A1018', borderRadius: 16, textAlign: 'center', color: '#FAF6EE' }}>
           <h2 style={{ fontSize: 22, fontWeight: 400, letterSpacing: 3, marginBottom: 12 }}>あなたのサロンでも同じ成果を</h2>
           <p style={{ fontSize: 14, opacity: 0.85, marginBottom: 24, fontFamily: 'sans-serif', lineHeight: 1.8 }}>
-            14日間無料トライアルで、キレイ鶴見店と同じ機能をお試しください。<br />
+            PASS（0円）から、キレイ鶴見店と同じ会員証を始められます。<br />
             ¥2,480/月のスモールプランで、月¥20,000以上の効率化が見込めます。
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>

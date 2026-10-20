@@ -21,7 +21,7 @@ const services = [
     name: 'SalonRink / SalonRink',
     category: 'SaaS事業',
     url: 'https://salonrink.com',
-    desc: '美容サロン向け統合管理プラットフォーム。LINE予約連動、顧客カルテ、売上分析、失客防止を一つに。月額¥980〜',
+    desc: '美容サロン向け統合管理プラットフォーム。LINE予約連動、顧客カルテ、売上分析、失客防止を一つに。PASS 0円から',
     color: '#7A3550',
   },
   {
