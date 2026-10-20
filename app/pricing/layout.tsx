@@ -2,11 +2,11 @@ import { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: '料金プラン | SalonRink',
-  description: 'SalonRink の料金プラン。Light ¥1,980/月、Standard ¥2,980/月、Premium ¥4,580/月。すべてのプランに14日間無料期間付き。',
+  description: 'SalonRink の料金プラン。LINE会員証とポイントのPASSは0円。自動化 月1,500円、通知 月800円、AI 月800円を必要なときに追加。初期費用0円・税込。',
   alternates: { canonical: 'https://salonrink.com/pricing' },
   openGraph: {
     title: '料金プラン | SalonRink',
-    description: 'Light ¥1,980/月から始められる、美容サロン向けAIカルテ SaaS。',
+    description: '紙のポイントカードを、無料でLINE会員証に。PASS 0円から始められます。',
     url: 'https://salonrink.com/pricing',
   },
 }

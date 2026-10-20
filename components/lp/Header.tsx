@@ -188,7 +188,7 @@ export default function Header() {
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            14日間無料で試す
+            無料で始める
           </Link>
         </nav>
       </div>
@@ -266,7 +266,7 @@ export default function Header() {
             }}
             onClick={() => setMenuOpen(false)}
           >
-            14日間無料で試す
+            無料で始める
           </Link>
         </nav>
       )}
