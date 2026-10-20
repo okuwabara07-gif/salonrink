@@ -96,4 +96,4 @@ AIカルテは「カルテの自動化」ではなく、「顧客理解の高度
 
 SalonRinkのAIカルテで、あなたのサロンも2026年の競争に勝つ準備をしましょう。
 
-[AIカルテを試す（14日無料） →](https://salonrink.com/register)
+[無料で始める（PASS 0円） →](https://salonrink.com/register)

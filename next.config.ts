@@ -24,6 +24,7 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: '/tokushoho', destination: '/tokusho', permanent: false },
+      { source: '/blog/salonrink-vs-repitte-individual-salon', destination: '/blog/line-reservation-tools', statusCode: 301 },
       { source: '/contact', destination: 'https://lin.ee/UDNlEOAA', permanent: false },
       { source: '/neo', destination: '/', permanent: true },
       { source: '/diagnosis.html', destination: '/neo/diagnosis.html', permanent: false },
