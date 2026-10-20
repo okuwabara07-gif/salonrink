@@ -224,6 +224,11 @@ export default function SettingsForm({ salonId, salonName }: { salonId: string; 
     <SalonShell active="settings" salonName={salonName}>
       <main style={{ minWidth: 0, padding: '30px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
         <h1 style={{ margin: 0, fontSize: '36px', fontWeight: 900, lineHeight: 1.2 }}>PASS設定</h1>
+        <span style={{ fontSize: '13px', color: C.weak }}>
+          自動化・通知・AI の追加は準備中。ご希望は
+          <a href="/contact" target="_blank" rel="noopener noreferrer" style={{ color: C.primary }}>お問い合わせ</a>
+          から
+        </span>
         {loadError && <span style={{ color: C.error }}>設定を読み込めませんでした（{loadError}）</span>}
         {!loadError && (!program || !rewards) && <span style={{ color: C.weak }}>読み込み中…</span>}
 
