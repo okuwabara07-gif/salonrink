@@ -2,7 +2,6 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { registerSalon, sendRegistrationOtp } from './actions'
-import { CheckoutButton } from '@/app/pricing/checkout-button'
 import { createClient } from '@/lib/supabase/client'
 
 function RegisterFormContent() {
@@ -15,10 +14,6 @@ function RegisterFormContent() {
   const [error, setError] = useState('')
   const [authUser, setAuthUser] = useState<{ id: string; email: string } | null>(null)
   const [otpSent, setOtpSent] = useState(false)
-  const [inviteCodeInput, setInviteCodeInput] = useState('')
-  const [inviteCodeValidated, setInviteCodeValidated] = useState(false)
-  const [inviteCodeChecking, setInviteCodeChecking] = useState(false)
-  const [inviteCodeError, setInviteCodeError] = useState('')
 
   const [form, setForm] = useState({
     salonName: '',
@@ -27,7 +22,6 @@ function RegisterFormContent() {
     ownerName: '',
     phone: '',
     email: '',
-    plan: 'basic',
   })
 
   // Check for step=2 param and verify session on mount
@@ -76,45 +70,6 @@ function RegisterFormContent() {
     }
   }
 
-  const handleValidateInviteCode = async () => {
-    const code = inviteCodeInput.trim().toUpperCase()
-    if (!code) {
-      setInviteCodeError('コードを入力してください')
-      return
-    }
-
-    setInviteCodeError('')
-    setInviteCodeChecking(true)
-
-    try {
-      const res = await fetch('/api/validate-invite-code', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code })
-      })
-      const data = await res.json()
-
-      if (data.valid) {
-        setInviteCodeValidated(true)
-        setInviteCodeError('')
-      } else {
-        setInviteCodeValidated(false)
-        setInviteCodeError(data.error || 'コードが無効です')
-      }
-    } catch (err) {
-      setInviteCodeValidated(false)
-      setInviteCodeError('コード検証に失敗しました')
-    } finally {
-      setInviteCodeChecking(false)
-    }
-  }
-
-  const handleInviteCodeKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleValidateInviteCode()
-    }
-  }
-
   const handleSubmit = async () => {
     if (loading || !authUser) return
     setLoading(true)
@@ -127,9 +82,9 @@ function RegisterFormContent() {
       ownerName: form.ownerName,
       phone: form.phone,
       email: authUser.email,
-      plan: inviteCodeValidated ? 'free' : form.plan,
+      // v7: 登録はすべて PASS（0円・plan='free'）。有料の追加はダッシュボードのプラン画面から
+      plan: 'free',
       ownerUserId: authUser.id,
-      inviteCodeUsed: inviteCodeValidated,
       utm_source: searchParams.get('utm_source') || undefined,
       utm_medium: searchParams.get('utm_medium') || undefined,
       utm_campaign: searchParams.get('utm_campaign') || undefined,
@@ -146,17 +101,6 @@ function RegisterFormContent() {
     setRegistered(true)
   }
 
-  // プラン定義（Stripe内部名と表示名のマッピング）
-  // lib/plans.ts を参照して統一管理される:
-  // - id (Stripe内部名): basic / small / medium / free
-  // - name: ユーザー向けUI表記 ※LP表記とは異なる
-  // - LP表記は components/lp/PricingSection.tsx で管理
-  const plans = [
-    { id: 'basic', name: 'Light', price: '¥1,980', desc: 'ソロオーナー向け・AIカルテ/LINE連携' },
-    { id: 'small', name: 'Standard', price: '¥2,980', desc: '小規模店舗向け・AIカルテ自動生成（おすすめ）' },
-    { id: 'medium', name: 'Premium', price: '¥4,580', desc: 'HPB同期・中〜大規模向け・スタッフ管理' },
-  ]
-
   if (registered) {
     return (
       <main style={{minHeight:'100vh',background:'#F8F4EF',fontFamily:'Georgia, serif',padding:'40px 20px',display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -166,7 +110,7 @@ function RegisterFormContent() {
           {freePlanActivated ? (
             <>
               <div style={{background:'#E8F5E9',borderRadius:12,padding:16,border:'2px solid #4CAF50',marginBottom:24}}>
-                <p style={{fontSize:13,color:'#228B22',fontWeight:700,margin:0}}>✅ 永久無料プランが適用されました</p>
+                <p style={{fontSize:13,color:'#228B22',fontWeight:700,margin:0}}>✅ PASS（0円）で登録しました</p>
               </div>
               <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
                 {form.ownerName}様、ご登録ありがとうございます。<br/>
@@ -177,15 +121,12 @@ function RegisterFormContent() {
                 <a href="https://line.me/R/ti/p/@545fncvi" target="_blank" rel="noopener noreferrer" style={{display:'block',padding:'12px 20px',borderRadius:6,background:'#00B900',color:'#fff',textDecoration:'none',fontSize:13,fontFamily:'sans-serif',textAlign:'center',fontWeight:500}}>LINE公式アカウントと連携する →</a>
                 <a href="/dashboard" style={{display:'block',padding:'12px 20px',borderRadius:6,background:'#1A1018',color:'#FAF6EE',textDecoration:'none',fontSize:13,fontFamily:'sans-serif',textAlign:'center',fontWeight:500}}>ダッシュボードへ →</a>
               </div>
+              <p style={{fontSize:12,color:'#888',lineHeight:1.8,marginBottom:8}}>自動化・通知・AIは、ダッシュボードのプラン画面から追加できます。</p>
             </>
           ) : (
-            <>
-              <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
-                {form.ownerName}様、ご登録ありがとうございます。<br/>
-                次に決済を完了してください。
-              </p>
-              <CheckoutButton plan={form.plan as 'basic' | 'small' | 'medium' | 'free'} style={{marginBottom:16}} />
-            </>
+            <p style={{fontSize:13,color:'#888',marginBottom:32,lineHeight:1.8}}>
+              登録の処理を確認できませんでした。お手数ですが、ログインページからサインインしてください。
+            </p>
           )}
           <a href="/" style={{fontSize:13,color:'#888',textDecoration:'none',display:'block',marginTop:16,textAlign:'center'}}>トップページに戻る</a>
         </div>
@@ -201,12 +142,12 @@ function RegisterFormContent() {
           <div style={{fontSize:10,letterSpacing:4,color:'#B8966A',marginTop:4}}>SalonRink</div>
         </div>
         <h1 style={{fontSize:22,fontWeight:400,color:'#1A1018',letterSpacing:2,margin:'16px 0 8px'}}>無料で始める</h1>
-        <p style={{fontSize:13,color:'#888',lineHeight:1.8,margin:0}}>メールアドレスとサロン名だけで、今日からLINE会員証が使えます。</p>
+        <p style={{fontSize:13,color:'#888',lineHeight:1.8,margin:0}}>メールアドレスとサロン名だけで、今日からLINE会員証が使えます。<br/>クレジットカードは不要です。</p>
       </div>
 
       {/* ステップインジケーター */}
       <div style={{display:'flex',justifyContent:'center',alignItems:'center',gap:8,marginBottom:40}}>
-        {['メール認証','サロン情報','プラン選択'].map((label,i) => (
+        {['メール認証','サロン情報','確認'].map((label,i) => (
           <div key={label} style={{display:'flex',alignItems:'center',gap:8}}>
             <div style={{width:28,height:28,borderRadius:'50%',background:step>i+1?'#1A1018':step===i+1?'#B8966A':'#E0D8D0',color:step>=i+1?'#fff':'#999',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12}}>
               {step>i+1?'✓':i+1}
@@ -297,94 +238,31 @@ function RegisterFormContent() {
             ))}
             <div style={{display:'flex',gap:12,marginTop:8}}>
               <button onClick={()=>setStep(1)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-              <button onClick={()=>setStep(3)} disabled={!form.salonName||!form.ownerName} style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:(!form.salonName||!form.ownerName)?'#E0D8D0':'#1A1018',color:(!form.salonName||!form.ownerName)?'#999':'#FAF6EE',fontSize:14,cursor:'pointer'}}>次へ：プランを選択 →</button>
+              <button onClick={()=>setStep(3)} disabled={!form.salonName||!form.ownerName} style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:(!form.salonName||!form.ownerName)?'#E0D8D0':'#1A1018',color:(!form.salonName||!form.ownerName)?'#999':'#FAF6EE',fontSize:14,cursor:'pointer'}}>次へ：内容を確認 →</button>
             </div>
           </div>
         )}
 
         {step===3&&(
           <div>
-            {/* 招待コード確認済みの場合：フリープラン確認画面 */}
-            {inviteCodeValidated ? (
-              <div>
-                <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>登録内容を確認</h2>
-                <p style={{fontSize:13,color:'#888',marginBottom:24}}>永久無料プランで登録を完了します</p>
+            <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>登録内容を確認</h2>
+            <p style={{fontSize:13,color:'#888',marginBottom:24}}>PASS（0円）で登録します。クレジットカードは不要です</p>
 
-                <div style={{background:'#E8F5E9',borderRadius:10,padding:16,border:'2px solid #4CAF50',marginBottom:24}}>
-                  <p style={{fontSize:12,color:'#228B22',marginBottom:10,fontWeight:500}}>✅ 永久無料プランが適用されます</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>サロン名：{form.salonName}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>担当者：{form.ownerName}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>メール：{authUser?.email}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>プラン：永久無料 ¥0/月</p>
-                </div>
+            <div style={{background:'#F8F4EF',borderRadius:10,padding:16,border:'1px solid #EAE0D5',marginBottom:24}}>
+              <p style={{fontSize:12,color:'#7A6E64',marginBottom:10,fontWeight:500}}>登録内容</p>
+              <p style={{margin:'4px 0',fontSize:13}}>サロン名：{form.salonName}</p>
+              <p style={{margin:'4px 0',fontSize:13}}>担当者：{form.ownerName}</p>
+              <p style={{margin:'4px 0',fontSize:13}}>メール：{authUser?.email}</p>
+              <p style={{margin:'4px 0',fontSize:13}}>プラン：PASS 0円（LINE会員証・ポイント・来店前メモ・当日の来店一覧）</p>
+            </div>
 
-                <div style={{display:'flex',gap:12}}>
-                  <button onClick={()=>{setInviteCodeValidated(false);setInviteCodeInput('')}} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-                  <button onClick={handleSubmit} disabled={loading || !authUser}
-                    style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:(loading || !authUser)?'#E0D8D0':'#4CAF50',color:(loading || !authUser)?'#999':'#FAF6EE',fontSize:14,cursor:(loading || !authUser)?'not-allowed':'pointer'}}>
-                    {loading?'登録中...':'永久無料で登録する →'}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <h2 style={{fontSize:18,fontWeight:400,color:'#1A1018',marginBottom:6}}>プランを選択して登録</h2>
-                <p style={{fontSize:13,color:'#888',marginBottom:24}}>プランを選択して登録を完了してください</p>
-
-                {plans.map(plan=>(
-                  <div key={plan.id} onClick={()=>setForm({...form,plan:plan.id})}
-                    style={{padding:'16px 20px',borderRadius:10,border:`2px solid ${form.plan===plan.id?'#B8966A':'#E8E0D8'}`,background:form.plan===plan.id?'#FBF6F0':'#fff',cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
-                    <div>
-                      <div style={{fontSize:15,fontWeight:500,color:'#1A1018'}}>{plan.name}</div>
-                      <div style={{fontSize:12,color:'#888',marginTop:2}}>{plan.desc}</div>
-                    </div>
-                    <div style={{textAlign:'right'}}>
-                      <div style={{fontSize:18,fontWeight:500,color:'#B8966A'}}>{plan.price}</div>
-                      <div style={{fontSize:11,color:'#999'}}>/月（税込）</div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* 招待コード入力欄 */}
-                <div style={{background:'#FFF8F0',borderRadius:10,padding:16,border:'1px solid #FFD8A8',marginBottom:24,marginTop:24}}>
-                  <label style={{fontSize:12,color:'#996633',display:'block',marginBottom:8,fontWeight:500}}>招待コードをお持ちですか？</label>
-                  <div style={{display:'flex',gap:8}}>
-                    <input
-                      type="password"
-                      value={inviteCodeInput}
-                      onChange={(e) => setInviteCodeInput(e.target.value.toUpperCase())}
-                      onKeyPress={handleInviteCodeKeyPress}
-                      placeholder="••••••••••"
-                      style={{flex:1,padding:'10px 12px',borderRadius:8,border:'1px solid #FFD8A8',fontSize:13,outline:'none',boxSizing:'border-box',background:'#fff',letterSpacing:'0.3em'}}
-                    />
-                    <button
-                      onClick={handleValidateInviteCode}
-                      disabled={inviteCodeChecking || !inviteCodeInput.trim()}
-                      style={{padding:'10px 16px',borderRadius:8,border:'none',background:'#996633',color:'#fff',fontSize:12,cursor:inviteCodeChecking || !inviteCodeInput.trim()?'not-allowed':'pointer',opacity:inviteCodeChecking || !inviteCodeInput.trim()?0.6:1}}
-                    >
-                      {inviteCodeChecking?'確認中...':'確認'}
-                    </button>
-                  </div>
-                  {inviteCodeError && <p style={{fontSize:12,color:'#C00',margin:'8px 0 0 0'}}>{inviteCodeError}</p>}
-                </div>
-
-                <div style={{background:'#F8F4EF',borderRadius:10,padding:16,border:'1px solid #EAE0D5',marginBottom:24}}>
-                  <p style={{fontSize:12,color:'#7A6E64',marginBottom:10,fontWeight:500}}>登録内容</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>サロン名：{form.salonName}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>担当者：{form.ownerName}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>メール：{authUser?.email}</p>
-                  <p style={{margin:'4px 0',fontSize:13}}>プラン：{plans.find(p=>p.id===form.plan)?.name} {plans.find(p=>p.id===form.plan)?.price}/月</p>
-                </div>
-
-                <div style={{display:'flex',gap:12}}>
-                  <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
-                  <button onClick={handleSubmit} disabled={loading || !authUser}
-                    style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:(loading || !authUser)?'#E0D8D0':'#1A1018',color:(loading || !authUser)?'#999':'#FAF6EE',fontSize:14,cursor:(loading || !authUser)?'not-allowed':'pointer'}}>
-                    {loading?'登録中...':'登録してStripeで決済へ →'}
-                  </button>
-                </div>
-              </div>
-            )}
+            <div style={{display:'flex',gap:12}}>
+              <button onClick={()=>setStep(2)} style={{padding:'14px 20px',borderRadius:10,border:'1px solid #E0D8D0',background:'#fff',color:'#666',fontSize:14,cursor:'pointer'}}>← 戻る</button>
+              <button onClick={handleSubmit} disabled={loading || !authUser}
+                style={{flex:1,padding:'14px',borderRadius:10,border:'none',background:(loading || !authUser)?'#E0D8D0':'#1A1018',color:(loading || !authUser)?'#999':'#FAF6EE',fontSize:14,cursor:(loading || !authUser)?'not-allowed':'pointer'}}>
+                {loading?'登録中...':'無料で始める →'}
+              </button>
+            </div>
           </div>
         )}
       </div>
