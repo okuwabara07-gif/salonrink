@@ -66,6 +66,48 @@
       色味を調整
     </div>
   </div>
+  <!-- ===== FOR SALONS (v7) ===== -->
+  <section id="sr-salon-top" style="max-width:980px;margin:0 auto 56px;background:#FBF8F2;border:1px solid #ECE4D6;border-radius:20px;padding:clamp(32px,6vw,56px) clamp(20px,5vw,48px);font-family:'Zen Kaku Gothic New',sans-serif;color:#2B2722;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:12px;letter-spacing:0.3em;color:#B0996E;">FOR SALONS</div>
+    <h1 style="font-family:'Shippori Mincho B1',serif;font-size:clamp(24px,4.6vw,38px);font-weight:600;line-height:1.5;letter-spacing:0.03em;margin-top:14px;">紙のポイントカードを、<br>無料でLINE会員証に。</h1>
+    <p style="font-size:14px;line-height:2;color:#5C5247;margin-top:16px;max-width:640px;">印刷費はゼロ。お会計のたびにポイントが自動で貯まり、前回のカラーや髪の記録まで、お客様のLINEに残ります。スタッフの操作はいりません。</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:28px;">
+      <div style="background:#fff;border:1px solid #ECE4D6;border-radius:14px;padding:18px 20px;">
+        <div style="font-size:15px;font-weight:700;">0円で始められる</div>
+        <p style="font-size:12.5px;line-height:1.8;color:#5C5247;margin-top:6px;">会員証・ポイント・来店前メモ・当日の来店一覧まで無料</p>
+      </div>
+      <div style="background:#fff;border:1px solid #ECE4D6;border-radius:14px;padding:18px 20px;">
+        <div style="font-size:15px;font-weight:700;">スタッフは何もしない</div>
+        <p style="font-size:12.5px;line-height:1.8;color:#5C5247;margin-top:6px;">SALON BOARDの会計から自動でポイントが付く（自動連携プラン）</p>
+      </div>
+      <div style="background:#fff;border:1px solid #ECE4D6;border-radius:14px;padding:18px 20px;">
+        <div style="font-size:15px;font-weight:700;">お客様が離れにくくなる</div>
+        <p style="font-size:12.5px;line-height:1.8;color:#5C5247;margin-top:6px;">髪の記録はお店に溜まり、次の来店へつながる</p>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:28px;">
+      <a href="/register" style="display:inline-flex;align-items:center;gap:8px;background:#9C7E5C;color:#FBF8F2;text-decoration:none;border-radius:999px;padding:14px 28px;font-size:15px;font-weight:700;letter-spacing:0.04em;">無料で始める <span style="font-size:18px;">›</span></a>
+      <a href="/case-studies/kirei-tsurumi" style="font-size:13px;color:#8A6F52;text-decoration:underline;text-underline-offset:3px;">導入事例を見る（キレイ鶴見店）</a>
+    </div>
+    <div style="margin-top:36px;overflow-x:auto;">
+      <table style="width:100%;min-width:300px;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid #ECE4D6;border-radius:12px;overflow:hidden;">
+        <thead>
+          <tr style="background:#3A332B;color:#FBF8F2;">
+            <th style="text-align:left;padding:12px 16px;font-weight:500;">今払っているもの</th>
+            <th style="text-align:left;padding:12px 16px;font-weight:500;white-space:nowrap;">SalonRinkなら</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-top:1px solid #ECE4D6;"><td style="padding:12px 16px;">紙のポイントカード印刷</td><td style="padding:12px 16px;font-weight:700;color:#8A6F52;">0円</td></tr>
+          <tr style="border-top:1px solid #ECE4D6;"><td style="padding:12px 16px;">LINE会員証ツール 月2,000〜10,000円<span style="color:#9A8F82;">※</span></td><td style="padding:12px 16px;font-weight:700;color:#8A6F52;">0円</td></tr>
+          <tr style="border-top:1px solid #ECE4D6;"><td style="padding:12px 16px;">顧客カルテアプリ 月2,000〜8,000円<span style="color:#9A8F82;">※</span></td><td style="padding:12px 16px;font-weight:700;color:#8A6F52;">0円</td></tr>
+          <tr style="border-top:1px solid #ECE4D6;"><td style="padding:12px 16px;">スタンプを押す・カルテを書く手間</td><td style="padding:12px 16px;font-weight:700;color:#8A6F52;">自動</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:#9A8F82;line-height:1.7;margin-top:8px;">※ 他社サービスの価格は一般的な価格帯です。自動化はSALON BOARD連携（自動化プラン）をご利用の場合。</p>
+    </div>
+  </section>
+
   <!-- ===== ENTRY: choose audience ===== -->
   <div id="entry-screen" style="position:relative;min-height:calc(100vh - 120px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:64px 0 52px;background:radial-gradient(120% 80% at 50% 28%, #F5EDDF 0%, #ECE1CE 56%, #E2D5BE 100%);">
     <div style="position:absolute;top:2px;left:6px;right:6px;display:flex;align-items:flex-start;justify-content:flex-end;">
@@ -1169,7 +1211,7 @@ class Component extends DCLogic {
     '広がり・まとまりがない': '広がりは、毛量と水分バランスの調整がカギ。まとまりの出るカット＋洗い流さないトリートメントで扱いやすくなります◎',
     'パサつき・乾燥': '乾燥には高保湿のシャンプー＆ヘアオイルを。週1回の集中トリートメントで、指通りが変わってきますよ。',
     'うねり・くせ': 'うねりは髪の水分ムラが原因のことが多いです。まずはケアで扱いやすさを整えて、必要なら矯正もご提案します。',
-    'ダメージ・切れ毛': 'ダメージには内部補修のトリートメントを。アイロンは160℃以下に設定すると、切れ毛を防げます。',
+    'ダメージ・切れ毛': 'ダメージが気になるときは、サロンのトリートメントメニューもご相談ください。アイロンは160℃以下の設定がおすすめです。',
     'カラーの持ちが悪い': '色持ちにはカラーシャンプーが◎ すすぎをぬるま湯（38℃前後）にすると、退色を抑えられます。',
     'その他': 'どんな小さなことでも大丈夫。気になることを教えてください。担当美容師が一緒に考えます。',
   };

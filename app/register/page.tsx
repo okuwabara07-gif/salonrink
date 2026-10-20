@@ -200,7 +200,8 @@ function RegisterFormContent() {
           <div style={{fontSize:26,fontWeight:400,letterSpacing:8,color:'#1A1018'}}>SalonRink</div>
           <div style={{fontSize:10,letterSpacing:4,color:'#B8966A',marginTop:4}}>SalonRink</div>
         </div>
-        <p style={{fontSize:13,color:'#888',letterSpacing:2}}>無料トライアル 14日間</p>
+        <h1 style={{fontSize:22,fontWeight:400,color:'#1A1018',letterSpacing:2,margin:'16px 0 8px'}}>無料で始める</h1>
+        <p style={{fontSize:13,color:'#888',lineHeight:1.8,margin:0}}>メールアドレスとサロン名だけで、今日からLINE会員証が使えます。</p>
       </div>
 
       {/* ステップインジケーター */}
@@ -373,7 +374,6 @@ function RegisterFormContent() {
                   <p style={{margin:'4px 0',fontSize:13}}>担当者：{form.ownerName}</p>
                   <p style={{margin:'4px 0',fontSize:13}}>メール：{authUser?.email}</p>
                   <p style={{margin:'4px 0',fontSize:13}}>プラン：{plans.find(p=>p.id===form.plan)?.name} {plans.find(p=>p.id===form.plan)?.price}/月</p>
-                  <p style={{margin:'8px 0 0',fontSize:11,color:'#B8966A'}}>✅ 14日間無料トライアル付き</p>
                 </div>
 
                 <div style={{display:'flex',gap:12}}>
@@ -388,6 +388,7 @@ function RegisterFormContent() {
           </div>
         )}
       </div>
+      <p style={{textAlign:'center',fontSize:12,color:'#888',marginTop:24}}>自動化・通知・AIは、使いたくなったときに追加できます。</p>
       <p style={{textAlign:'center',fontSize:12,color:'#AAA',marginTop:32}}>
         <a href="/tokusho" style={{color:'#AAA'}}>特定商取引法</a>　|
         <a href="/privacy" style={{color:'#AAA'}}>プライバシーポリシー</a>
